@@ -8,24 +8,35 @@ export default async function DashboardPage() {
   if (!session) redirect("/auth/login");
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      <h1 className="font-display text-3xl font-bold text-void-50">
-        Panel de usuario
+    <>
+      <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
+        PANEL
       </h1>
-      <p className="mt-2 text-void-400">
+      <p className="mt-2 font-body text-punk-white/60">
         Hola, {session.user?.name ?? session.user?.email}
-          </p>
+      </p>
 
-      <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <Link
+          href="/dashboard/perfil"
+          className="border-2 border-punk-white/20 bg-punk-black/50 p-6 transition-colors hover:border-punk-pink hover:bg-punk-black/80"
+        >
+          <h2 className="font-display text-lg font-semibold text-punk-white">
+            Mi perfil
+          </h2>
+          <p className="mt-2 text-sm text-punk-white/60">
+            Datos personales y estado de aprobación
+          </p>
+        </Link>
         {session.user?.role === "ADMIN" && (
           <Link
             href="/admin"
-            className="rounded-lg border border-rock-600/50 bg-rock-950/30 p-6 hover:border-rock-600"
+            className="border-2 border-punk-green/50 bg-punk-green/10 p-6 transition-colors hover:border-punk-green"
           >
-            <h2 className="font-display text-lg font-semibold text-rock-400">
+            <h2 className="font-display text-lg font-semibold text-punk-green">
               Administración
             </h2>
-            <p className="mt-2 text-sm text-void-400">
+            <p className="mt-2 text-sm text-punk-white/60">
               CRUD bandas, eventos, salas, usuarios
             </p>
           </Link>
@@ -33,13 +44,26 @@ export default async function DashboardPage() {
         {(session.user?.role === "BANDA" || session.user?.role === "ADMIN") && (
           <Link
             href="/dashboard/banda"
-            className="rounded-lg border border-void-800 p-6 hover:border-rock-600/50"
+            className="border-2 border-punk-white/20 bg-punk-black/50 p-6 transition-colors hover:border-punk-pink hover:bg-punk-black/80"
           >
-            <h2 className="font-display text-lg font-semibold text-void-100">
+            <h2 className="font-display text-lg font-semibold text-punk-white">
               Mi banda
             </h2>
-            <p className="mt-2 text-sm text-void-400">
-              Editar perfil, enlaces, imágenes
+            <p className="mt-2 text-sm text-punk-white/60">
+              Editar perfil, logo, enlaces
+            </p>
+          </Link>
+        )}
+        {(session.user?.role === "SALA" || session.user?.role === "ADMIN") && (
+          <Link
+            href="/dashboard/sala"
+            className="border-2 border-punk-white/20 bg-punk-black/50 p-6 transition-colors hover:border-punk-pink hover:bg-punk-black/80"
+          >
+            <h2 className="font-display text-lg font-semibold text-punk-white">
+              Mi sala
+            </h2>
+            <p className="mt-2 text-sm text-punk-white/60">
+              Editar perfil, logo, redes
             </p>
           </Link>
         )}
@@ -50,22 +74,22 @@ export default async function DashboardPage() {
           session.user?.role === "ADMIN") && (
           <Link
             href="/dashboard/eventos"
-            className="rounded-lg border border-void-800 p-6 hover:border-rock-600/50"
+            className="border-2 border-punk-white/20 bg-punk-black/50 p-6 transition-colors hover:border-punk-pink hover:bg-punk-black/80"
           >
-            <h2 className="font-display text-lg font-semibold text-void-100">
+            <h2 className="font-display text-lg font-semibold text-punk-white">
               Mis eventos
             </h2>
-            <p className="mt-2 text-sm text-void-400">
-              Crear y gestionar conciertos (si tu entidad está aprobada)
+            <p className="mt-2 text-sm text-punk-white/60">
+              Crear y gestionar conciertos
             </p>
           </Link>
         )}
         {session.user?.role === "USUARIO" && (
-          <p className="text-void-500">
-            Explorando como usuario. Regístrate como banda o promotor para más opciones.
+          <p className="font-body text-punk-white/50">
+            Regístrate como banda, sala o promotor para más opciones.
           </p>
         )}
       </div>
-    </main>
+    </>
   );
 }

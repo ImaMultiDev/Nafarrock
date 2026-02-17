@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { PageLayout } from "@/components/ui/PageLayout";
 
-export default async function DashboardEventosLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -19,8 +19,22 @@ export default async function DashboardEventosLayout({
           href="/dashboard"
           className="font-punch text-xs uppercase tracking-widest text-punk-green hover:text-punk-green/80"
         >
-          ← Panel
+          Panel
         </Link>
+        <div className="flex gap-4">
+          <Link
+            href="/dashboard/perfil"
+            className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white"
+          >
+            Mi perfil
+          </Link>
+          <Link
+            href="/dashboard/eventos"
+            className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white"
+          >
+            Eventos
+          </Link>
+        </div>
       </div>
       {children}
     </PageLayout>

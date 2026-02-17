@@ -104,7 +104,7 @@ Sistema completo para convertir Nafarrock en la **plataforma #1** de bandas, eve
 - Validación 1 evento cada 5 días
 - Admin puede eximir (eventLimitExempt en edición)
 
-### Fase 6: Dashboard usuario
-- Perfil propio
-- Editar datos
+### Fase 6: Dashboard usuario ✅ COMPLETADA
+- Perfil propio (datos personales, estado aprobación)
+- Editar datos (User: nombre, apellidos; Banda/Sala: logo, redes, etc.)
 - Ver estado de aprobación
