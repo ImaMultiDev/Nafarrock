@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Nafarrock - Estética rock/punk oscura */
+:root {
+  --background: #0d0d0d;
+  --foreground: #e7e7e7;
+  --accent: #e97c1f;
+  --accent-hover: #da6215;
+  --muted: #454545;
+  --border: #2a2a2a;
+}
+
+@layer base {
+  body {
+    @apply bg-void-950 text-void-100 antialiased;
+  }
+}

@@ -1,0 +1,55 @@
+# ============================================
+# Nafarrock - Git ignore
+# ============================================
+
+# Variables de entorno (¡NUNCA commitear credenciales!)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+
+# Dependencias
+node_modules
+.pnp
+.pnp.js
+
+# Next.js
+.next/
+out/
+
+# Build y cache
+dist
+build
+*.tsbuildinfo
+
+# Prisma
+prisma/migrations/**/migration_lock.toml
+
+# Testing
+coverage
+.nyc_output
+playwright-report/
+test-results/
+.blob
+
+# IDE y sistema
+.DS_Store
+*.pem
+.idea
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Turbo (si se usa monorepo)
+.turbo
+
+# Misc
+*.swp
+*.swo
+*~
