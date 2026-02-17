@@ -1,0 +1,56 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import Link from "next/link";
+import { PageLayout } from "@/components/ui/PageLayout";
+
+export default async function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user?.role !== "ADMIN") {
+    redirect("/auth/login");
+  }
+
+  return (
+    <PageLayout>
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+        <Link
+          href="/admin"
+          className="font-punch text-xs uppercase tracking-widest text-punk-green hover:text-punk-green/80"
+        >
+          ← Panel admin
+        </Link>
+        <div className="flex gap-4">
+          <Link
+            href="/admin/bandas"
+            className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white"
+          >
+            Bandas
+          </Link>
+          <Link
+            href="/admin/eventos"
+            className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white"
+          >
+            Eventos
+          </Link>
+          <Link
+            href="/admin/salas"
+            className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white"
+          >
+            Salas
+          </Link>
+          <Link
+            href="/admin/usuarios"
+            className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white"
+          >
+            Usuarios
+          </Link>
+        </div>
+      </div>
+      {children}
+    </PageLayout>
+  );
+}

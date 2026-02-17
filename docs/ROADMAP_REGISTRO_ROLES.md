@@ -94,7 +94,7 @@ Sistema completo para convertir Nafarrock en la **plataforma #1** de bandas, eve
 - Formulario dinámico por tipo
 - Crear User + entidad pendiente (approved: false)
 
-### Fase 4: Admin CRUD
+### Fase 4: Admin CRUD ✅ COMPLETADA
 - Aprobar/rechazar
 - Crear/editar/borrar bandas, eventos, salas
 - Botón "Registrar banda"

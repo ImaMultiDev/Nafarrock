@@ -1,0 +1,45 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+type Props = {
+  entity: "band" | "venue" | "event";
+  id: string;
+  approved: boolean;
+};
+
+export function ApproveButton({ entity, id, approved }: Props) {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  const handleClick = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/admin/${entity}s/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ approved: !approved }),
+      });
+      if (res.ok) router.refresh();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const label = approved ? "Quitar aprobación" : "Aprobar";
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      disabled={loading}
+      className={`border-2 px-3 py-1 font-punch text-xs uppercase tracking-widest transition-colors disabled:opacity-50 ${
+        approved
+          ? "border-punk-green/50 bg-punk-green/10 text-punk-green hover:bg-punk-green/20"
+          : "border-punk-red/50 bg-punk-red/10 text-punk-red hover:bg-punk-red/20"
+      }`}
+    >
+      {loading ? "..." : label}
+    </button>
+  );
+}
