@@ -85,12 +85,12 @@ Sistema completo para convertir Nafarrock en la **plataforma #1** de bandas, eve
 - Event con createdBy, eventLimitExempt
 - Organizer entity
 
-### Fase 2: Cloudinary
+### Fase 2: Cloudinary ✅ COMPLETADA
 - API upload con carpetas: `nafarrock/{tipo}/{id}/`
 - Límite 3 imágenes por entidad
 - Logo separado
 
-### Fase 3: Registro multi-rol
+### Fase 3: Registro multi-rol ✅ COMPLETADA
 - Formulario dinámico por tipo
 - Crear User + entidad pendiente (approved: false)
 

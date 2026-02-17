@@ -318,6 +318,7 @@ model BandEvent {
 // Promotores
 model Promoter {
   id           String   @id @default(cuid())
+  slug         String   @unique
   name         String
   description  String?  @db.Text
   websiteUrl   String?
@@ -333,5 +334,6 @@ model Promoter {
   events Event[]
 
   @@index([approved])
+  @@index([slug])
   @@map("promoters")
 }
