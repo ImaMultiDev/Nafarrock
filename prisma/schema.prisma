@@ -1,5 +1,5 @@
 // Nafarrock - Prisma Schema
-// Guía del rock en Navarra | PostgreSQL
+// Guía del rock en Nafarroa | PostgreSQL
 // Diseñado para escalabilidad y normalización
 
 generator client {
@@ -16,10 +16,13 @@ datasource db {
 // ============================================
 
 enum UserRole {
-  ADMIN      // Moderación, aprobación, CRUD total
-  BANDA      // Registro de banda: editar perfil propio, crear contenido
-  PROMOTOR   // Crear y gestionar eventos
-  USUARIO    // Usuario registrado sin rol especial
+  ADMIN       // Moderación, aprobación, CRUD total
+  BANDA       // Registro de banda
+  SALA        // Registro de sala/espacio
+  FESTIVAL    // Organizador de festival
+  ORGANIZADOR // Organizador de eventos
+  PROMOTOR    // Crear y gestionar eventos
+  USUARIO     // Usuario registrado sin rol especial
 }
 
 model User {
@@ -27,16 +30,23 @@ model User {
   email         String    @unique
   password      String?   // Hash bcrypt para login email
   emailVerified DateTime?
-  name          String?
+  name          String?   // Nombre completo (legacy)
+  firstName     String?   // Nombre personal
+  lastName      String?   // Apellidos
+  phone         String?   // Solo visible para admin
   image         String?
   role          UserRole  @default(USUARIO)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  accounts        Account[]
-  sessions        Session[]
-  bandProfile     Band?     // Si es rol BANDA
-  promoterProfile Promoter? // Si es rol PROMOTOR
+  accounts         Account[]
+  sessions         Session[]
+  bandProfile      Band?      // Si es rol BANDA
+  promoterProfile  Promoter?   // Si es rol PROMOTOR
+  venueProfile     Venue?      // Si es rol SALA
+  organizerProfile Organizer? // Si es rol ORGANIZADOR
+  festivalProfile  Festival?   // Si es rol FESTIVAL
+  eventsCreated    Event[]    @relation("EventCreator")
 
   @@index([email])
   @@index([role])
@@ -50,12 +60,12 @@ model Account {
   provider          String
   providerAccountId String
   refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
+  access_token     String? @db.Text
+  expires_at       Int?
+  token_type       String?
+  scope            String?
+  id_token         String? @db.Text
+  session_state    String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -88,32 +98,35 @@ model VerificationToken {
 
 model Band {
   id          String   @id @default(cuid())
-  slug        String   @unique // URL amigable
+  slug        String   @unique
   name        String
   bio         String?  @db.Text
   genres      String[] // ["punk", "rock urbano", "grunge"]
-  location    String?  // Localidad principal
-  isActive    Boolean  @default(true) // Activa/inactiva
-  isEmerging  Boolean  @default(false) // Destacar bandas emergentes
-  imageUrl    String?  // Cloudinary
+  location    String?
+  foundedYear Int?
+  isActive    Boolean  @default(true)
+  isEmerging  Boolean  @default(false)
+  imageUrl    String?  // Imagen principal
   logoUrl     String?
+  images      String[] // Max 3 imágenes en Cloudinary
   // Enlaces externos
-  spotifyUrl  String?
-  bandcampUrl String?
+  spotifyUrl   String?
+  bandcampUrl  String?
   instagramUrl String?
-  facebookUrl String?
-  youtubeUrl  String?
-  webUrl      String?
-  // Aprobación (anti-spam)
+  facebookUrl  String?
+  youtubeUrl   String?
+  webUrl       String?
+  // Aprobación
   approved    Boolean  @default(false)
   approvedAt  DateTime?
   approvedBy  String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  userId  String  @unique // Usuario propietario
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  String? @unique // null si admin creó la banda directamente
+  user    User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
   events  BandEvent[]
+  members BandMember[]
 
   @@index([slug])
   @@index([isActive])
@@ -122,6 +135,20 @@ model Band {
   @@index([genres])
   @@index([location])
   @@map("bands")
+}
+
+// Miembros de banda (nombre + instrumento)
+model BandMember {
+  id         String @id @default(cuid())
+  name       String
+  instrument String
+  order      Int    @default(0)
+
+  bandId String
+  band   Band   @relation(fields: [bandId], references: [id], onDelete: Cascade)
+
+  @@index([bandId])
+  @@map("band_members")
 }
 
 // ============================================
@@ -134,21 +161,89 @@ model Venue {
   name        String
   description String?  @db.Text
   address     String?
-  city        String   // Localidad en Navarra
+  city        String
+  foundedYear Int?
   imageUrl    String?
+  logoUrl     String?
+  images      String[] // Max 3
   capacity    Int?
   websiteUrl  String?
   mapUrl      String?
+  instagramUrl String?
+  facebookUrl  String?
   isActive    Boolean  @default(true)
+  // Aprobación (cuando creado por usuario)
+  approved    Boolean  @default(true) // true si admin lo creó, false si usuario pendiente
+  approvedAt  DateTime?
+  approvedBy  String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  userId String? @unique
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
   events Event[]
 
   @@index([slug])
   @@index([city])
   @@index([isActive])
+  @@index([approved])
   @@map("venues")
+}
+
+// ============================================
+// FESTIVALES (organizaciones)
+// ============================================
+
+model Festival {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String?  @db.Text
+  location    String?
+  foundedYear Int?
+  logoUrl     String?
+  images      String[]
+  websiteUrl  String?
+  instagramUrl String?
+  facebookUrl  String?
+  approved    Boolean  @default(false)
+  approvedAt  DateTime?
+  approvedBy  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userId String  @unique
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  events Event[] @relation("FestivalEvents")
+
+  @@index([slug])
+  @@index([approved])
+  @@map("festivals")
+}
+
+// ============================================
+// ORGANIZADORES DE EVENTOS
+// ============================================
+
+model Organizer {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String?  @db.Text
+  logoUrl     String?
+  websiteUrl  String?
+  contactEmail String?
+  approved    Boolean  @default(false)
+  approvedAt  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userId String  @unique
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  events Event[] @relation("OrganizerEvents")
+
+  @@index([approved])
+  @@map("organizers")
 }
 
 // ============================================
@@ -156,33 +251,45 @@ model Venue {
 // ============================================
 
 model Event {
-  id          String    @id @default(cuid())
-  slug        String    @unique
-  title       String
-  description String?   @db.Text
-  type        EventType // CONCIERTO | FESTIVAL
-  date        DateTime
-  endDate     DateTime? // Para festivales multi-día
-  doorsOpen   String?   // "20:00"
-  imageUrl    String?
-  ticketUrl   String?
-  price       String?   // "Entrada libre" | "15€"
-  isApproved  Boolean   @default(false)
-  approvedAt  DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id               String    @id @default(cuid())
+  slug             String    @unique
+  title            String
+  description      String?   @db.Text
+  type             EventType
+  date             DateTime
+  endDate          DateTime?
+  doorsOpen        String?
+  imageUrl         String?   // Cartel principal
+  images           String[]  // Imágenes adicionales del cartel
+  ticketUrl        String?
+  price            String?
+  abonos           String?   // Info de abonos
+  capacity         Int?      // Aforo del evento
+  isApproved       Boolean   @default(false)
+  approvedAt       DateTime?
+  // Límite 1 evento cada 5 días - admin puede eximir
+  eventLimitExempt Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
-  venueId     String
-  venue       Venue     @relation(fields: [venueId], references: [id], onDelete: Restrict)
-  promoterId  String?
-  promoter    Promoter? @relation(fields: [promoterId], references: [id], onDelete: SetNull)
-  bands       BandEvent[]
+  venueId          String
+  venue            Venue     @relation(fields: [venueId], references: [id], onDelete: Restrict)
+  promoterId       String?
+  promoter         Promoter? @relation(fields: [promoterId], references: [id], onDelete: SetNull)
+  organizerId      String?
+  organizer        Organizer? @relation("OrganizerEvents", fields: [organizerId], references: [id], onDelete: SetNull)
+  festivalId       String?
+  festival         Festival? @relation("FestivalEvents", fields: [festivalId], references: [id], onDelete: SetNull)
+  createdByUserId  String?
+  createdByUser     User?     @relation("EventCreator", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  bands             BandEvent[]
 
   @@index([slug])
   @@index([date])
   @@index([type])
   @@index([venueId])
   @@index([isApproved])
+  @@index([createdByUserId])
   @@map("events")
 }
 
@@ -191,14 +298,13 @@ enum EventType {
   FESTIVAL
 }
 
-// Relación many-to-many: Bandas en eventos
 model BandEvent {
-  id        String   @id @default(cuid())
-  eventId   String
-  bandId    String
-  order     Int      @default(0) // Orden de actuación
+  id         String   @id @default(cuid())
+  eventId    String
+  bandId     String
+  order      Int      @default(0)
   isHeadliner Boolean @default(false)
-  createdAt DateTime @default(now())
+  createdAt  DateTime @default(now())
 
   event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
   band  Band  @relation(fields: [bandId], references: [id], onDelete: Cascade)
@@ -209,22 +315,22 @@ model BandEvent {
   @@map("band_events")
 }
 
-// Promotores (gestionan eventos)
+// Promotores
 model Promoter {
-  id          String   @id @default(cuid())
-  name        String
-  description String?  @db.Text
-  websiteUrl  String?
+  id           String   @id @default(cuid())
+  name         String
+  description  String?  @db.Text
+  websiteUrl   String?
   contactEmail String?
-  imageUrl    String?
-  approved    Boolean  @default(false)
-  approvedAt  DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  imageUrl     String?
+  approved     Boolean  @default(false)
+  approvedAt   DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  userId  String  @unique
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  events  Event[]
+  userId String  @unique
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  events Event[]
 
   @@index([approved])
   @@map("promoters")

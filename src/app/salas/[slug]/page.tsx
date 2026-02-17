@@ -2,6 +2,8 @@ import { getVenueBySlug } from "@/services/venue.service";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import { PageLayout } from "@/components/ui/PageLayout";
 
 export async function generateMetadata({
   params,
@@ -27,37 +29,42 @@ export default async function VenuePage({
   if (!venue) notFound();
 
   return (
-    <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
-      <Link href="/salas" className="text-sm text-void-400 hover:text-void-100">
+    <PageLayout>
+      <Link
+        href="/salas"
+        className="font-punch text-xs uppercase tracking-widest text-punk-pink transition-colors hover:text-punk-pink/80"
+      >
         ← Volver a salas
       </Link>
 
-      <div className="mt-8">
-        <h1 className="font-display text-3xl font-bold text-void-50">
+      <div className="mt-12">
+        <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
           {venue.name}
         </h1>
-        <p className="mt-2 text-void-400">{venue.city}</p>
+        <p className="mt-3 font-body text-punk-white/70">{venue.city}</p>
         {venue.capacity && (
-          <p className="mt-1 text-void-500">Aforo: {venue.capacity}</p>
+          <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-pink">
+            Aforo: {venue.capacity} personas
+          </p>
         )}
 
         {venue.description && (
-          <p className="mt-6 text-void-300 leading-relaxed">
+          <p className="mt-8 font-body leading-relaxed text-punk-white/80">
             {venue.description}
           </p>
         )}
 
         {(venue.address || venue.websiteUrl || venue.mapUrl) && (
-          <div className="mt-6 space-y-2">
+          <div className="mt-8 space-y-3">
             {venue.address && (
-              <p className="text-void-400">📍 {venue.address}</p>
+              <p className="font-body text-punk-white/70">📍 {venue.address}</p>
             )}
             {venue.websiteUrl && (
               <a
                 href={venue.websiteUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block text-rock-400 hover:underline"
+                className="inline-block border-2 border-punk-pink px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-pink transition-all hover:bg-punk-pink hover:text-punk-black"
               >
                 Web oficial →
               </a>
@@ -67,7 +74,7 @@ export default async function VenuePage({
                 href={venue.mapUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block text-rock-400 hover:underline"
+                className="ml-2 inline-block border-2 border-punk-pink px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-pink transition-all hover:bg-punk-pink hover:text-punk-black"
               >
                 Ver en mapa →
               </a>
@@ -76,22 +83,22 @@ export default async function VenuePage({
         )}
 
         {venue.events.length > 0 && (
-          <div className="mt-12">
-            <h2 className="font-display text-xl font-semibold text-void-100">
+          <div className="mt-16">
+            <h2 className="font-display text-2xl tracking-tighter text-punk-white">
               Próximos eventos
             </h2>
-            <ul className="mt-4 space-y-3">
-              {venue.events.map((event) => (
-                <li key={event.id}>
+            <ul className="mt-6 space-y-3">
+              {venue.events.map((evt) => (
+                <li key={evt.id}>
                   <Link
-                    href={`/eventos/${event.slug}`}
-                    className="flex items-center justify-between rounded border border-void-800 p-4 hover:border-rock-600/50 transition"
+                    href={`/eventos/${evt.slug}`}
+                    className="flex items-center justify-between border-2 border-punk-pink/50 bg-punk-black p-4 transition-all hover:border-punk-pink hover:shadow-[0_0_20px_rgba(255,0,110,0.15)]"
                   >
-                    <span className="font-medium text-void-100">
-                      {event.title}
+                    <span className="font-display text-punk-white">
+                      {evt.title}
                     </span>
-                    <span className="text-sm text-void-500">
-                      {format(event.date, "d MMM yyyy")}
+                    <span className="font-punch text-xs uppercase tracking-widest text-punk-pink">
+                      {format(evt.date, "d MMM yyyy", { locale: es })}
                     </span>
                   </Link>
                 </li>
@@ -100,6 +107,6 @@ export default async function VenuePage({
           </div>
         )}
       </div>
-    </main>
+    </PageLayout>
   );
 }

@@ -1,8 +1,8 @@
 import type { Config } from "tailwindcss";
 
 /**
- * Nafarrock - Estética rock/punk oscura
- * Colores: negros, rojos, amarillos ácidos, grises industriales
+ * Nafarrock - Estética punk-rock agresiva
+ * Colores: negros puros, rojo sangre, amarillo ácido, rosa neón, blanco cortante
  */
 const config: Config = {
   content: [
@@ -13,7 +13,16 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Paleta rock/punk
+        punk: {
+          black: "#0a0a0a",
+          red: "#E60026",
+          blood: "#b91c1c",
+          yellow: "#ffd60a",
+          green: "#00C853",
+          acid: "#c8ff00",
+          pink: "#ff006e",
+          white: "#f8f8f8",
+        },
         rock: {
           50: "#fef7ee",
           100: "#fcedd7",
@@ -43,7 +52,46 @@ const config: Config = {
       },
       fontFamily: {
         display: ["var(--font-display)", "sans-serif"],
+        punch: ["var(--font-punch)", "sans-serif"],
         body: ["var(--font-body)", "sans-serif"],
+      },
+      animation: {
+        glitch: "glitch 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite",
+        "glitch-slow": "glitch 2s ease-in-out both infinite",
+        pulse: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "spin-slow": "spin 8s linear infinite",
+        "flicker": "flicker 0.15s infinite",
+      },
+      keyframes: {
+        glitch: {
+          "0%": { transform: "translate(0)" },
+          "20%": { transform: "translate(-3px, 3px)" },
+          "40%": { transform: "translate(-3px, -3px)" },
+          "60%": { transform: "translate(3px, 3px)" },
+          "80%": { transform: "translate(3px, -3px)" },
+          "100%": { transform: "translate(0)" },
+        },
+        flicker: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.8" },
+        },
+        "scan-line": {
+          "0%": { transform: "translateY(-100%)" },
+          "100%": { transform: "translateY(100vh)" },
+        },
+      },
+      maxWidth: {
+        "content-wide": "min(1600px, 92vw)",
+      },
+      minHeight: {
+        "hero-cap": "min(100dvh, 820px)",
+      },
+      spacing: {
+        "section-gap": "clamp(1.5rem, 4vh, 3rem)",
+      },
+      backgroundImage: {
+        noise: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E\")",
+        "grid-punk": "linear-gradient(rgba(0,200,83,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,200,83,0.03) 1px, transparent 1px)",
       },
     },
   },

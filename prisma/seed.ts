@@ -48,7 +48,7 @@ async function main() {
       data: {
         slug: "banda-ejemplo",
         name: "Banda Ejemplo",
-        bio: "Rock navarro desde siempre.",
+        bio: "Rock nafarroar desde siempre.",
         genres: ["punk", "rock urbano"],
         location: "Pamplona",
         isActive: true,

@@ -48,12 +48,14 @@ export async function getBands(filters: BandFilters = {}) {
   });
 }
 
-export async function getBandBySlug(slug: string) {
+export async function getBandBySlug(slug: string, approvedOnly = true) {
   return prisma.band.findUnique({
-    where: { slug, approved: true },
+    where: approvedOnly ? { slug, approved: true } : { slug },
     include: {
       events: { include: { event: true } },
-      user: { select: { name: true } },
+      user: { select: { name: true, email: true } },
+      members: { orderBy: { order: "asc" } },
     },
   });
 }
+

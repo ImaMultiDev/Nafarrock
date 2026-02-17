@@ -41,10 +41,14 @@ export default function BandSearchForm({
   );
 
   return (
-    <form onSubmit={handleSubmit} className="mt-8 rounded-lg border border-void-800 bg-void-900/50 p-6">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <form
+      onSubmit={handleSubmit}
+      className="relative border-2 border-punk-acid bg-punk-black p-6 sm:p-8"
+    >
+      <div className="absolute right-0 top-0 h-12 w-12 border-t-2 border-r-2 border-punk-acid" style={{ clipPath: "polygon(100% 0, 100% 100%, 0 0)" }} />
+      <div className="relative grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div>
-          <label htmlFor="search" className="block text-sm text-void-400">
+          <label htmlFor="search" className="block font-punch text-xs uppercase tracking-widest text-punk-white/70">
             Búsqueda por texto
           </label>
           <input
@@ -53,27 +57,29 @@ export default function BandSearchForm({
             type="text"
             defaultValue={defaultSearch}
             placeholder="Nombre de banda..."
-            className="mt-1 w-full rounded border border-void-700 bg-void-900 px-3 py-2 text-void-100 placeholder:text-void-500 focus:border-rock-500 focus:outline-none"
+            className="mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-acid focus:outline-none"
           />
         </div>
         <div>
-          <label htmlFor="genre" className="block text-sm text-void-400">
+          <label htmlFor="genre" className="block font-punch text-xs uppercase tracking-widest text-punk-white/70">
             Género
           </label>
           <select
             id="genre"
             name="genre"
             defaultValue={defaultGenre}
-            className="mt-1 w-full rounded border border-void-700 bg-void-900 px-3 py-2 text-void-100 focus:border-rock-500 focus:outline-none"
+            className="mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white focus:border-punk-acid focus:outline-none"
           >
             <option value="">Todos</option>
             {GENRES.map((g) => (
-              <option key={g} value={g}>{g}</option>
+              <option key={g} value={g}>
+                {g}
+              </option>
             ))}
           </select>
         </div>
         <div>
-          <label htmlFor="location" className="block text-sm text-void-400">
+          <label htmlFor="location" className="block font-punch text-xs uppercase tracking-widest text-punk-white/70">
             Localidad
           </label>
           <input
@@ -82,21 +88,23 @@ export default function BandSearchForm({
             type="text"
             defaultValue={defaultLocation}
             placeholder="Pamplona, Tudela..."
-            className="mt-1 w-full rounded border border-void-700 bg-void-900 px-3 py-2 text-void-100 placeholder:text-void-500 focus:border-rock-500 focus:outline-none"
+            className="mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-acid focus:outline-none"
           />
         </div>
         <div className="flex flex-col gap-2">
-          <label className="block text-sm text-void-400">Filtros</label>
-          <div className="flex flex-wrap gap-2">
+          <label className="block font-punch text-xs uppercase tracking-widest text-punk-white/70">
+            Filtros
+          </label>
+          <div className="flex flex-wrap gap-4">
             <label className="flex items-center gap-2">
               <input
                 type="radio"
                 name="active"
                 value=""
                 defaultChecked={!defaultActive}
-                className="rounded border-void-600"
+                className="accent-punk-acid"
               />
-              <span className="text-sm text-void-400">Todo</span>
+              <span className="font-body text-sm text-punk-white/70">Todo</span>
             </label>
             <label className="flex items-center gap-2">
               <input
@@ -104,9 +112,9 @@ export default function BandSearchForm({
                 name="active"
                 value="true"
                 defaultChecked={defaultActive === "true"}
-                className="rounded border-void-600"
+                className="accent-punk-acid"
               />
-              <span className="text-sm text-void-400">Activas</span>
+              <span className="font-body text-sm text-punk-white/70">Activas</span>
             </label>
             <label className="flex items-center gap-2">
               <input
@@ -114,9 +122,9 @@ export default function BandSearchForm({
                 name="active"
                 value="false"
                 defaultChecked={defaultActive === "false"}
-                className="rounded border-void-600"
+                className="accent-punk-acid"
               />
-              <span className="text-sm text-void-400">Inactivas</span>
+              <span className="font-body text-sm text-punk-white/70">Inactivas</span>
             </label>
           </div>
           <label className="flex items-center gap-2">
@@ -125,16 +133,16 @@ export default function BandSearchForm({
               name="emerging"
               value="true"
               defaultChecked={defaultEmerging === "true"}
-              className="rounded border-void-600"
+              className="accent-punk-acid"
             />
-            <span className="text-sm text-void-400">Solo emergentes</span>
+            <span className="font-body text-sm text-punk-white/70">Solo emergentes</span>
           </label>
         </div>
       </div>
-      <div className="mt-4">
+      <div className="mt-6">
         <button
           type="submit"
-          className="rounded bg-rock-600 px-6 py-2 font-medium text-white hover:bg-rock-500 transition-colors"
+          className="border-2 border-punk-acid bg-punk-acid px-8 py-3 font-punch text-sm uppercase tracking-widest text-punk-black transition-all hover:bg-punk-acid/90 hover:shadow-[0_0_30px_rgba(200,255,0,0.3)]"
         >
           Buscar
         </button>

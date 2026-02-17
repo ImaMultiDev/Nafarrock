@@ -1,6 +1,6 @@
 # Nafarrock
 
-**Guía del rock en Navarra** — plataforma de referencia del punk rock, rock urbano y escena alternativa navarra.
+**Guía del rock en Nafarroa** — plataforma de referencia del punk rock, rock urbano y escena alternativa nafarroa.
 
 ## Stack tecnológico
 

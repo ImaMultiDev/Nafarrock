@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { PageLayout } from "@/components/ui/PageLayout";
 
 export async function generateMetadata({
   params,
@@ -28,47 +29,49 @@ export default async function EventPage({
   if (!event) notFound();
 
   return (
-    <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+    <PageLayout>
       <Link
         href="/eventos"
-        className="text-sm text-void-400 hover:text-void-100"
+        className="font-punch text-xs uppercase tracking-widest text-punk-red transition-colors hover:text-punk-red/80"
       >
         ← Volver a eventos
       </Link>
 
-      <article className="mt-8">
+      <article className="mt-12">
         <span
-          className={`inline-block rounded px-3 py-1 text-sm ${
+          className={`inline-block border-2 px-4 py-2 font-punch text-xs uppercase tracking-widest ${
             event.type === "FESTIVAL"
-              ? "bg-rock-600/30 text-rock-400"
-              : "bg-void-700 text-void-300"
+              ? "border-punk-red bg-punk-red/20 text-punk-red"
+              : "border-punk-white/40 bg-punk-black text-punk-white/90"
           }`}
         >
           {event.type === "FESTIVAL" ? "Festival" : "Concierto"}
         </span>
-        <h1 className="mt-4 font-display text-3xl font-bold text-void-50">
+        <h1 className="mt-6 font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
           {event.title}
         </h1>
-        <p className="mt-2 text-xl text-void-400">
+        <p className="mt-3 font-body text-xl text-punk-white/70">
           {format(event.date, "EEEE d 'de' MMMM, yyyy", { locale: es })}
           {event.doorsOpen && ` · Puertas: ${event.doorsOpen}`}
         </p>
 
-        <div className="mt-8 rounded-lg border border-void-800 bg-void-900/50 p-6">
-          <h2 className="font-display text-lg font-semibold text-void-100">
+        <div className="mt-10 border-2 border-punk-red/50 bg-punk-black p-6">
+          <h2 className="font-display text-xl tracking-tighter text-punk-red">
             Lugar
           </h2>
-          <p className="mt-1 font-medium">{event.venue.name}</p>
+          <p className="mt-2 font-display text-lg text-punk-white">
+            {event.venue.name}
+          </p>
           {event.venue.address && (
-            <p className="text-void-400">{event.venue.address}</p>
+            <p className="font-body text-punk-white/70">{event.venue.address}</p>
           )}
-          <p className="text-void-400">{event.venue.city}</p>
+          <p className="font-body text-punk-white/70">{event.venue.city}</p>
           {event.venue.mapUrl && (
             <a
               href={event.venue.mapUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-2 inline-block text-rock-400 hover:underline"
+              className="mt-3 inline-block border-2 border-punk-red px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-red transition-all hover:bg-punk-red hover:text-punk-black"
             >
               Ver en mapa →
             </a>
@@ -76,22 +79,24 @@ export default async function EventPage({
         </div>
 
         {event.bands.length > 0 && (
-          <div className="mt-6">
-            <h2 className="font-display text-lg font-semibold text-void-100">
+          <div className="mt-10">
+            <h2 className="font-display text-xl tracking-tighter text-punk-white">
               Cartel
             </h2>
-            <ul className="mt-2 space-y-2">
+            <ul className="mt-4 space-y-2">
               {event.bands.map((be, i) => (
-                <li key={be.id} className="flex items-center gap-2">
-                  <span className="text-void-500">{i + 1}.</span>
+                <li key={be.id} className="flex items-center gap-3">
+                  <span className="font-punch text-punk-green/70">{i + 1}.</span>
                   <Link
                     href={`/bandas/${be.band.slug}`}
-                    className="text-rock-400 hover:text-rock-300 hover:underline"
+                    className="font-display text-punk-white transition-colors hover:text-punk-green"
                   >
                     {be.band.name}
                   </Link>
                   {be.isHeadliner && (
-                    <span className="text-xs text-rock-500">(cabecera)</span>
+                    <span className="font-punch text-xs uppercase tracking-widest text-punk-red">
+                      (cabecera)
+                    </span>
                   )}
                 </li>
               ))}
@@ -100,20 +105,20 @@ export default async function EventPage({
         )}
 
         {event.description && (
-          <div className="mt-6">
-            <h2 className="font-display text-lg font-semibold text-void-100">
+          <div className="mt-10">
+            <h2 className="font-display text-xl tracking-tighter text-punk-white">
               Descripción
             </h2>
-            <p className="mt-2 text-void-300 whitespace-pre-wrap">
+            <p className="mt-4 whitespace-pre-wrap font-body leading-relaxed text-punk-white/80">
               {event.description}
             </p>
           </div>
         )}
 
         {(event.price || event.ticketUrl) && (
-          <div className="mt-6 flex flex-wrap gap-4">
+          <div className="mt-10 flex flex-wrap gap-4">
             {event.price && (
-              <span className="rounded bg-void-800 px-4 py-2 text-void-200">
+              <span className="border-2 border-punk-white/30 bg-punk-black px-4 py-3 font-punch text-sm uppercase tracking-widest text-punk-white">
                 {event.price}
               </span>
             )}
@@ -122,7 +127,7 @@ export default async function EventPage({
                 href={event.ticketUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded bg-rock-600 px-4 py-2 text-white hover:bg-rock-500 transition-colors"
+                className="border-2 border-punk-red bg-punk-red px-6 py-3 font-punch text-sm uppercase tracking-widest text-punk-white transition-all hover:bg-punk-blood hover:border-punk-blood hover:shadow-[0_0_30px_rgba(230,0,38,0.4)]"
               >
                 Comprar entradas
               </a>
@@ -130,6 +135,6 @@ export default async function EventPage({
           </div>
         )}
       </article>
-    </main>
+    </PageLayout>
   );
 }

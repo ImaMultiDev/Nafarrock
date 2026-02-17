@@ -2,18 +2,282 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Nafarrock - Estética rock/punk oscura */
+/* ============================================
+   NAFARROCK - Estética punk-rock brutal
+   ============================================ */
+
 :root {
-  --background: #0d0d0d;
-  --foreground: #e7e7e7;
-  --accent: #e97c1f;
-  --accent-hover: #da6215;
-  --muted: #454545;
-  --border: #2a2a2a;
+  --punk-black: #0a0a0a;
+  --punk-red: #E60026;
+  --punk-blood: #b91c1c;
+  --punk-yellow: #ffd60a;
+  --punk-acid: #c8ff00;
+  --punk-green: #00C853;
+  --punk-pink: #ff006e;
+  --punk-white: #f8f8f8;
 }
 
-@layer base {
-  body {
-    @apply bg-void-950 text-void-100 antialiased;
+/* Guitarra de fondo en hero - oscurecida para legibilidad */
+.hero-guitar-bg {
+  opacity: 0.5;
+  filter: brightness(0.25);
+}
+
+@media (min-width: 1024px) {
+  .hero-guitar-bg {
+    opacity: 0.6;
+    filter: brightness(0.2);
+  }
+}
+
+/* Noise overlay - textura grunge */
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Glitch NAFARROCK - split limpio 50/50, bursts ocasionales */
+.glitch-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+/* Overlay en logo guitarra - zona donde está el texto NAFARROCK */
+/* Mobile: centrado, desktop: ajuste fino */
+.glitch-on-logo {
+  pointer-events: none;
+  top: 8%;
+  left: 8%;
+  right: 8%;
+  bottom: 50%;
+  transform: translate(-50px, 10px);
+  /* Mobile: centrado */
+}
+
+@media (min-width: 1024px) {
+  .glitch-on-logo {
+    transform: translate(-168px, 40px);
+    /* Desktop: posición ajustada */
+  }
+}
+
+/* Tamaño y ángulo del texto sobre el logo */
+.glitch-on-logo-text {
+  font-size: clamp(1.5rem, 8vw, 2.5rem);
+  /* Mobile: ajusta min/max aquí */
+  text-align: center;
+  white-space: nowrap;
+  transform: rotate(-14deg);
+}
+
+@media (min-width: 768px) {
+  .glitch-on-logo-text {
+    font-size: clamp(2.5rem, 10vw, 5rem);
+    /* Tablet */
+  }
+}
+
+@media (min-width: 1024px) {
+  .glitch-on-logo-text {
+    font-size: clamp(2.5rem, 12vw, 6.5rem);
+    /* Desktop */
+  }
+}
+
+/* Mitad superior: rojo - estática, se mueve solo en burst */
+.glitch-top {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  color: var(--punk-red);
+  clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
+  z-index: 1;
+  animation: glitch-top-burst 4s ease-in-out infinite;
+}
+
+/* Mitad inferior: blanco - siempre legible */
+.glitch-bottom {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  color: var(--punk-white);
+  clip-path: polygon(0 50%, 100% 50%, 100% 100%, 0 100%);
+  z-index: 0;
+}
+
+/* Cromática verde - flash breve durante burst */
+.glitch-burst {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  color: var(--punk-green);
+  clip-path: polygon(0 50%, 100% 50%, 100% 100%, 0 100%);
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+  animation: glitch-burst 4s ease-in-out infinite;
+}
+
+/* Mitad superior - jitter extendido durante burst */
+@keyframes glitch-top-burst {
+
+  0%,
+  68%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  72% {
+    transform: translate(-3px, -1px);
+  }
+
+  76% {
+    transform: translate(2px, 1px);
+  }
+
+  80% {
+    transform: translate(-2px, 0);
+  }
+
+  84% {
+    transform: translate(1px, -1px);
+  }
+
+  88% {
+    transform: translate(-1px, 1px);
+  }
+
+  92% {
+    transform: translate(0, 0);
+  }
+}
+
+/* Cromática inferior - aparición extendida */
+@keyframes glitch-burst {
+
+  0%,
+  67%,
+  100% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+
+  70% {
+    opacity: 0.85;
+    transform: translate(4px, 0);
+  }
+
+  74% {
+    opacity: 0.9;
+    transform: translate(-3px, 1px);
+  }
+
+  78% {
+    opacity: 0.9;
+    transform: translate(2px, -1px);
+  }
+
+  82% {
+    opacity: 0.85;
+    transform: translate(-2px, 0);
+  }
+
+  86% {
+    opacity: 0.9;
+    transform: translate(1px, 1px);
+  }
+
+  90% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+}
+
+/* Línea neón entre mitades - segmentos discontinuos tipo señal digital */
+.glitch-line {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: 2px;
+  transform: translateY(-50%);
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      transparent 5%,
+      var(--punk-green) 8%,
+      var(--punk-green) 15%,
+      transparent 18%,
+      transparent 28%,
+      var(--punk-green) 32%,
+      var(--punk-green) 38%,
+      transparent 42%,
+      transparent 52%,
+      var(--punk-green) 56%,
+      var(--punk-green) 62%,
+      transparent 66%,
+      transparent 76%,
+      var(--punk-green) 80%,
+      var(--punk-green) 88%,
+      transparent 92%,
+      transparent 100%);
+  opacity: 0.95;
+  animation: glitch-line-flicker 4s ease-in-out infinite;
+}
+
+@keyframes glitch-line-flicker {
+
+  0%,
+  68%,
+  92%,
+  100% {
+    opacity: 0.95;
+  }
+
+  70%,
+  76%,
+  82%,
+  84% {
+    opacity: 1;
+  }
+
+  72%,
+  74%,
+  78%,
+  80%,
+  86%,
+  88% {
+    opacity: 0.5;
+  }
+}
+
+/* Scan line efecto CRT */
+.scan-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(transparent, rgba(0, 200, 83, 0.15), transparent);
+  animation: scan 4s linear infinite;
+}
+
+@keyframes scan {
+  0% {
+    top: 0;
+  }
+
+  100% {
+    top: 100%;
   }
 }
