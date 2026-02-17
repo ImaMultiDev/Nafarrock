@@ -99,10 +99,10 @@ Sistema completo para convertir Nafarrock en la **plataforma #1** de bandas, eve
 - Crear/editar/borrar bandas, eventos, salas
 - Botón "Registrar banda"
 
-### Fase 5: Eventos por validados
+### Fase 5: Eventos por validados ✅ COMPLETADA
 - Dashboard para crear eventos
 - Validación 1 evento cada 5 días
-- Admin puede eximir
+- Admin puede eximir (eventLimitExempt en edición)
 
 ### Fase 6: Dashboard usuario
 - Perfil propio

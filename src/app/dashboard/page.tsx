@@ -43,7 +43,11 @@ export default async function DashboardPage() {
             </p>
           </Link>
         )}
-        {(session.user?.role === "PROMOTOR" || session.user?.role === "ADMIN") && (
+        {(session.user?.role === "SALA" ||
+          session.user?.role === "FESTIVAL" ||
+          session.user?.role === "ORGANIZADOR" ||
+          session.user?.role === "PROMOTOR" ||
+          session.user?.role === "ADMIN") && (
           <Link
             href="/dashboard/eventos"
             className="rounded-lg border border-void-800 p-6 hover:border-rock-600/50"
@@ -52,7 +56,7 @@ export default async function DashboardPage() {
               Mis eventos
             </h2>
             <p className="mt-2 text-sm text-void-400">
-              Crear y gestionar conciertos
+              Crear y gestionar conciertos (si tu entidad está aprobada)
             </p>
           </Link>
         )}

@@ -18,6 +18,7 @@ type Event = {
   price: string | null;
   ticketUrl: string | null;
   isApproved: boolean;
+  eventLimitExempt: boolean;
   venueId: string;
 };
 
@@ -57,6 +58,7 @@ export function EventEditForm({
         price: formData.get("price") || null,
         ticketUrl: formData.get("ticketUrl") || null,
         isApproved: (formData.get("approved") as string) === "on",
+        eventLimitExempt: (formData.get("eventLimitExempt") as string) === "on",
       }),
     });
 
@@ -136,10 +138,14 @@ export function EventEditForm({
           <input id="ticketUrl" name="ticketUrl" type="url" defaultValue={event.ticketUrl ?? ""} className={inputClass} />
         </div>
       </div>
-      <div>
+      <div className="flex flex-wrap gap-6">
         <label className="flex cursor-pointer items-center gap-2">
           <input type="checkbox" name="approved" defaultChecked={event.isApproved} className="accent-punk-green" />
           <span className={labelClass}>Aprobado</span>
+        </label>
+        <label className="flex cursor-pointer items-center gap-2">
+          <input type="checkbox" name="eventLimitExempt" defaultChecked={event.eventLimitExempt} className="accent-punk-green" />
+          <span className={labelClass}>Exento de límite 5 días</span>
         </label>
       </div>
       <div className="flex gap-4">

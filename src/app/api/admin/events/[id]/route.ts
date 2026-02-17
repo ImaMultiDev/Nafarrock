@@ -16,6 +16,7 @@ const updateSchema = z.object({
   price: z.string().optional().nullable(),
   ticketUrl: z.string().url().optional().nullable().or(z.literal("")),
   isApproved: z.boolean().optional(),
+  eventLimitExempt: z.boolean().optional(),
 });
 
 export async function PATCH(
@@ -56,6 +57,7 @@ export async function PATCH(
         updateData.approvedAt = new Date();
       }
     }
+    if (data.eventLimitExempt != null) updateData.eventLimitExempt = data.eventLimitExempt;
     if (data.slug != null && data.slug !== event.slug) {
       const slug = await uniqueSlug(
         (s) => prisma.event.findUnique({ where: { slug: s } }).then(Boolean),
