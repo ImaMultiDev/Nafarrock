@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
+import { ImageGallery } from "@/components/ui/ImageGallery";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
@@ -21,6 +22,7 @@ type Venue = {
   instagramUrl: string | null;
   facebookUrl: string | null;
   logoUrl: string | null;
+  images: string[];
 };
 
 export function SalaForm({ venue }: { venue: Venue }) {
@@ -28,6 +30,7 @@ export function SalaForm({ venue }: { venue: Venue }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [logoUrl, setLogoUrl] = useState(venue.logoUrl ?? "");
+  const [images, setImages] = useState<string[]>(venue.images ?? []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -55,6 +58,7 @@ export function SalaForm({ venue }: { venue: Venue }) {
         instagramUrl: formData.get("instagramUrl") || null,
         facebookUrl: formData.get("facebookUrl") || null,
         logoUrl: logoUrl || null,
+        images,
       }),
     });
 
@@ -97,6 +101,9 @@ export function SalaForm({ venue }: { venue: Venue }) {
           onRemove={() => setLogoUrl("")}
           label="Logo"
         />
+      </div>
+      <div>
+        <ImageGallery folder="venues" entityId={venue.id} images={images} onChange={setImages} label="Galería (máx. 3 imágenes)" />
       </div>
       <div className="grid gap-6 sm:grid-cols-2">
         <div>

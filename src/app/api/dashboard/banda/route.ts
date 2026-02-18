@@ -2,7 +2,14 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { uniqueSlug } from "@/lib/slug";
 import { z } from "zod";
+
+const memberSchema = z.object({
+  name: z.string().min(1),
+  instrument: z.string().min(1),
+  order: z.number().optional(),
+});
 
 const updateSchema = z.object({
   name: z.string().min(1).optional(),
@@ -19,6 +26,7 @@ const updateSchema = z.object({
   logoUrl: z.string().optional().nullable(),
   imageUrl: z.string().optional().nullable(),
   images: z.array(z.string()).optional(),
+  members: z.array(memberSchema).optional(),
 });
 
 function cleanUrl(s: string | null | undefined): string | null {
@@ -65,6 +73,30 @@ export async function PATCH(req: Request) {
     if (data.logoUrl !== undefined) updateData.logoUrl = data.logoUrl;
     if (data.imageUrl !== undefined) updateData.imageUrl = data.imageUrl;
     if (data.images !== undefined) updateData.images = data.images;
+
+    if (data.name != null && data.name !== band.name) {
+      const newSlug = await uniqueSlug(
+        (s) => prisma.band.findFirst({ where: { slug: s, id: { not: band.id } } }).then(Boolean),
+        data.name
+      );
+      updateData.slug = newSlug;
+    }
+
+    if (data.members !== undefined) {
+      await prisma.bandMember.deleteMany({ where: { bandId: band.id } });
+      if (data.members.length > 0) {
+        await prisma.bandMember.createMany({
+          data: data.members
+            .filter((m) => m.name.trim() && m.instrument.trim())
+            .map((m, i) => ({
+              bandId: band.id,
+              name: m.name,
+              instrument: m.instrument,
+              order: m.order ?? i,
+            })),
+        });
+      }
+    }
 
     const updated = await prisma.band.update({
       where: { id: band.id },

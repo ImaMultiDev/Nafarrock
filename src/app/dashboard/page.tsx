@@ -54,6 +54,45 @@ export default async function DashboardPage() {
             </p>
           </Link>
         )}
+        {(session.user?.role === "FESTIVAL" || session.user?.role === "ADMIN") && (
+          <Link
+            href="/dashboard/festival"
+            className="border-2 border-punk-white/20 bg-punk-black/50 p-6 transition-colors hover:border-punk-pink hover:bg-punk-black/80"
+          >
+            <h2 className="font-display text-lg font-semibold text-punk-white">
+              Mi festival
+            </h2>
+            <p className="mt-2 text-sm text-punk-white/60">
+              Editar perfil, logo, redes
+            </p>
+          </Link>
+        )}
+        {(session.user?.role === "ORGANIZADOR" || session.user?.role === "ADMIN") && (
+          <Link
+            href="/dashboard/organizador"
+            className="border-2 border-punk-white/20 bg-punk-black/50 p-6 transition-colors hover:border-punk-pink hover:bg-punk-black/80"
+          >
+            <h2 className="font-display text-lg font-semibold text-punk-white">
+              Mi organizador
+            </h2>
+            <p className="mt-2 text-sm text-punk-white/60">
+              Editar perfil, logo, redes
+            </p>
+          </Link>
+        )}
+        {(session.user?.role === "PROMOTOR" || session.user?.role === "ADMIN") && (
+          <Link
+            href="/dashboard/promotor"
+            className="border-2 border-punk-white/20 bg-punk-black/50 p-6 transition-colors hover:border-punk-pink hover:bg-punk-black/80"
+          >
+            <h2 className="font-display text-lg font-semibold text-punk-white">
+              Mi promotor
+            </h2>
+            <p className="mt-2 text-sm text-punk-white/60">
+              Editar perfil, logo, redes
+            </p>
+          </Link>
+        )}
         {(session.user?.role === "SALA" || session.user?.role === "ADMIN") && (
           <Link
             href="/dashboard/sala"

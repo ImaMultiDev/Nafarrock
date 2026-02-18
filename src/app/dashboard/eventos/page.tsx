@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { canUserCreateEvent } from "@/lib/validated-event";
 import { DashboardEventForm } from "./DashboardEventForm";
+import { DeleteEventButton } from "@/components/dashboard/DeleteEventButton";
 import Link from "next/link";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -95,15 +96,24 @@ export default async function DashboardEventosPage() {
                   </p>
                 )}
               </div>
-              <span
-                className={`px-2 py-1 font-punch text-xs uppercase ${
-                  e.isApproved
-                    ? "border border-punk-green/50 bg-punk-green/10 text-punk-green"
-                    : "border border-punk-red/50 bg-punk-red/10 text-punk-red"
-                }`}
-              >
-                {e.isApproved ? "Aprobado" : "Pendiente"}
-              </span>
+              <div className="flex flex-wrap items-center gap-2">
+                <span
+                  className={`px-2 py-1 font-punch text-xs uppercase ${
+                    e.isApproved
+                      ? "border border-punk-green/50 bg-punk-green/10 text-punk-green"
+                      : "border border-punk-red/50 bg-punk-red/10 text-punk-red"
+                  }`}
+                >
+                  {e.isApproved ? "Aprobado" : "Pendiente"}
+                </span>
+                <Link
+                  href={`/dashboard/eventos/${e.id}/editar`}
+                  className="border-2 border-punk-white/30 bg-punk-white/5 px-3 py-1 font-punch text-xs uppercase tracking-widest text-punk-white/80 transition-colors hover:border-punk-green hover:text-punk-green"
+                >
+                  Editar
+                </Link>
+                <DeleteEventButton eventId={e.id} />
+              </div>
             </div>
           ))}
         </div>

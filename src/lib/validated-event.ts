@@ -15,7 +15,8 @@ export type CanCreateEventResult =
  */
 export async function canUserCreateEvent(
   userId: string,
-  newEventDate: Date
+  newEventDate: Date,
+  excludeEventId?: string
 ): Promise<CanCreateEventResult> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -67,13 +68,14 @@ export async function canUserCreateEvent(
   const windowEnd = new Date(newEventDate);
   windowEnd.setDate(windowEnd.getDate() + DAYS_BETWEEN_EVENTS);
 
-  const existingInWindow = await prisma.event.count({
-    where: {
-      createdByUserId: userId,
-      eventLimitExempt: false,
-      date: { gte: windowStart, lte: windowEnd },
-    },
-  });
+  const where: { createdByUserId: string; eventLimitExempt: boolean; date: { gte: Date; lte: Date }; id?: { not: string } } = {
+    createdByUserId: userId,
+    eventLimitExempt: false,
+    date: { gte: windowStart, lte: windowEnd },
+  };
+  if (excludeEventId) where.id = { not: excludeEventId };
+
+  const existingInWindow = await prisma.event.count({ where });
 
   if (existingInWindow >= 1) {
     return {

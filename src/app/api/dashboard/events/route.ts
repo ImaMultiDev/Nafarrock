@@ -16,6 +16,7 @@ const createSchema = z.object({
   description: z.string().optional(),
   price: z.string().optional(),
   ticketUrl: z.string().url().optional().or(z.literal("")),
+  imageUrl: z.string().optional().nullable(),
   bandIds: z.array(z.string()).optional().default([]),
 });
 
@@ -91,6 +92,7 @@ export async function POST(req: Request) {
         description: data.description || null,
         price: data.price || null,
         ticketUrl: data.ticketUrl || null,
+        imageUrl: data.imageUrl || null,
         isApproved: false,
         createdByUserId: session.user.id,
         promoterId: role === "PROMOTOR" ? user?.promoterProfile?.id : undefined,

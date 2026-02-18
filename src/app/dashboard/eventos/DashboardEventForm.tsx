@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ImageUpload } from "@/components/ui/ImageUpload";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
@@ -22,6 +23,7 @@ export function DashboardEventForm({
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -54,6 +56,7 @@ export function DashboardEventForm({
         description: formData.get("description") || undefined,
         price: formData.get("price") || undefined,
         ticketUrl: formData.get("ticketUrl") || undefined,
+        imageUrl: imageUrl || undefined,
         bandIds: bandIds.filter(Boolean),
       }),
     });
@@ -79,6 +82,17 @@ export function DashboardEventForm({
           Título *
         </label>
         <input id="title" name="title" type="text" required className={inputClass} />
+      </div>
+      <div>
+        <ImageUpload
+          folder="events"
+          type="logo"
+          entityId={null}
+          value={imageUrl}
+          onChange={setImageUrl}
+          onRemove={() => setImageUrl("")}
+          label="Cartel / Imagen"
+        />
       </div>
       <div>
         <label htmlFor="type" className={labelClass}>

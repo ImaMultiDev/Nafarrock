@@ -36,6 +36,8 @@ export async function getEventBySlug(slug: string) {
     include: {
       venue: true,
       promoter: true,
+      festival: true,
+      organizer: true,
       bands: { include: { band: true }, orderBy: { order: "asc" } },
     },
   });

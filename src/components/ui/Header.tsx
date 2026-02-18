@@ -20,7 +20,10 @@ const navLinks = [
   { href: "/", label: "Inicio" },
   { href: "/bandas", label: "Bandas" },
   { href: "/eventos", label: "Eventos" },
+  { href: "/festivales", label: "Festivales" },
   { href: "/salas", label: "Salas" },
+  { href: "/promotores", label: "Promotores" },
+  { href: "/organizadores", label: "Organizadores" },
   { href: "/buscar", label: "Buscar" },
 ];
 

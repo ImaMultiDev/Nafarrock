@@ -45,7 +45,13 @@ export default async function PerfilPage() {
     ? "/dashboard/banda"
     : user.venueProfile
       ? "/dashboard/sala"
-      : null;
+      : user.festivalProfile
+        ? "/dashboard/festival"
+        : user.organizerProfile
+          ? "/dashboard/organizador"
+          : user.promoterProfile
+            ? "/dashboard/promotor"
+            : null;
 
   return (
     <>

@@ -50,6 +50,16 @@ export default async function EventPage({
         <h1 className="mt-6 font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
           {event.title}
         </h1>
+        {event.imageUrl && (
+          <div className="mt-6 max-w-md overflow-hidden border-2 border-punk-red/50">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={event.imageUrl}
+              alt={`Cartel ${event.title}`}
+              className="w-full object-cover"
+            />
+          </div>
+        )}
         <p className="mt-3 font-body text-xl text-punk-white/70">
           {format(event.date, "EEEE d 'de' MMMM, yyyy", { locale: es })}
           {event.doorsOpen && ` · Puertas: ${event.doorsOpen}`}
@@ -77,6 +87,35 @@ export default async function EventPage({
             </a>
           )}
         </div>
+
+        {(event.festival || event.promoter || event.organizer) && (
+          <div className="mt-10 flex flex-wrap gap-3">
+            {event.festival && (
+              <Link
+                href={`/festivales/${event.festival.slug}`}
+                className="border-2 border-punk-red/50 bg-punk-red/10 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-red transition-all hover:border-punk-red hover:bg-punk-red hover:text-punk-black"
+              >
+                Festival: {event.festival.name}
+              </Link>
+            )}
+            {event.promoter && (
+              <Link
+                href={`/promotores/${event.promoter.slug}`}
+                className="border-2 border-punk-pink/50 bg-punk-pink/10 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-pink transition-all hover:border-punk-pink hover:bg-punk-pink hover:text-punk-black"
+              >
+                Promotor: {event.promoter.name}
+              </Link>
+            )}
+            {event.organizer && (
+              <Link
+                href={`/organizadores/${event.organizer.slug}`}
+                className="border-2 border-punk-green/50 bg-punk-green/10 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-green transition-all hover:border-punk-green hover:bg-punk-green hover:text-punk-black"
+              >
+                Organizador: {event.organizer.name}
+              </Link>
+            )}
+          </div>
+        )}
 
         {event.bands.length > 0 && (
           <div className="mt-10">

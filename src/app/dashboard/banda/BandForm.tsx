@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
+import { ImageGallery } from "@/components/ui/ImageGallery";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
 const labelClass = "block font-punch text-xs uppercase tracking-widest text-punk-white/70";
 
+type Member = { name: string; instrument: string };
 type Band = {
   id: string;
   name: string;
@@ -22,6 +24,8 @@ type Band = {
   youtubeUrl: string | null;
   webUrl: string | null;
   logoUrl: string | null;
+  images: string[];
+  members?: { name: string; instrument: string; order: number }[];
 };
 
 export function BandForm({ band, genres }: { band: Band; genres: string[] }) {
@@ -29,6 +33,17 @@ export function BandForm({ band, genres }: { band: Band; genres: string[] }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [logoUrl, setLogoUrl] = useState(band.logoUrl ?? "");
+  const [images, setImages] = useState<string[]>(band.images ?? []);
+  const [members, setMembers] = useState<Member[]>(
+    (band.members ?? []).length > 0
+      ? band.members!.map((m) => ({ name: m.name, instrument: m.instrument }))
+      : [{ name: "", instrument: "" }]
+  );
+
+  const addMember = () => setMembers((m) => [...m, { name: "", instrument: "" }]);
+  const removeMember = (i: number) => setMembers((m) => m.filter((_, j) => j !== i));
+  const updateMember = (i: number, field: keyof Member, value: string) =>
+    setMembers((m) => m.map((x, j) => (j === i ? { ...x, [field]: value } : x)));
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -54,6 +69,10 @@ export function BandForm({ band, genres }: { band: Band; genres: string[] }) {
         youtubeUrl: formData.get("youtubeUrl") || null,
         webUrl: formData.get("webUrl") || null,
         logoUrl: logoUrl || null,
+        images,
+        members: members
+          .filter((m) => m.name.trim() && m.instrument.trim())
+          .map((m, i) => ({ name: m.name, instrument: m.instrument, order: i })),
       }),
     });
 
@@ -81,6 +100,9 @@ export function BandForm({ band, genres }: { band: Band; genres: string[] }) {
         <ImageUpload folder="bands" type="logo" entityId={band.id} value={logoUrl} onChange={setLogoUrl} onRemove={() => setLogoUrl("")} label="Logo" />
       </div>
       <div>
+        <ImageGallery folder="bands" entityId={band.id} images={images} onChange={setImages} label="Galería (máx. 3 imágenes)" />
+      </div>
+      <div>
         <label htmlFor="bio" className={labelClass}>Biografía</label>
         <textarea id="bio" name="bio" rows={3} defaultValue={band.bio ?? ""} className={inputClass} />
       </div>
@@ -91,6 +113,43 @@ export function BandForm({ band, genres }: { band: Band; genres: string[] }) {
       <div>
         <label htmlFor="foundedYear" className={labelClass}>Año fundación</label>
         <input id="foundedYear" name="foundedYear" type="number" min={1900} defaultValue={band.foundedYear ?? ""} className={inputClass} />
+      </div>
+      <div>
+        <label className={labelClass}>Miembros</label>
+        <div className="mt-2 space-y-3">
+          {members.map((m, i) => (
+            <div key={i} className="flex flex-wrap gap-2 items-center">
+              <input
+                type="text"
+                placeholder="Nombre"
+                value={m.name}
+                onChange={(e) => updateMember(i, "name", e.target.value)}
+                className={inputClass + " flex-1 min-w-[120px]"}
+              />
+              <input
+                type="text"
+                placeholder="Instrumento"
+                value={m.instrument}
+                onChange={(e) => updateMember(i, "instrument", e.target.value)}
+                className={inputClass + " flex-1 min-w-[120px]"}
+              />
+              <button
+                type="button"
+                onClick={() => removeMember(i)}
+                className="border-2 border-punk-red/50 px-3 py-2 font-punch text-xs text-punk-red hover:bg-punk-red/10"
+              >
+                Quitar
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={addMember}
+            className="border-2 border-dashed border-punk-white/30 px-4 py-2 font-punch text-xs text-punk-white/70 hover:border-punk-green hover:text-punk-green"
+          >
+            + Añadir miembro
+          </button>
+        </div>
       </div>
       <div>
         <label className={labelClass}>Géneros</label>
