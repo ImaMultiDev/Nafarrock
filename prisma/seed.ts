@@ -19,7 +19,7 @@ async function main() {
   console.log("Creando admin:", adminEmail, process.env.ADMIN_EMAIL ? "(desde .env)" : "(por defecto)");
   const admin = await prisma.user.upsert({
     where: { email: adminEmail },
-    update: { role: "ADMIN", password: adminPassword },
+    update: { role: "ADMIN", password: adminPassword, emailVerified: new Date() },
     create: {
       email: adminEmail,
       password: adminPassword,
@@ -27,6 +27,7 @@ async function main() {
       firstName: "Admin",
       lastName: "Nafarrock",
       role: "ADMIN",
+      emailVerified: new Date(),
     },
   });
 
@@ -51,6 +52,7 @@ async function main() {
         password: await hash("banda123", 12),
         name: "Banda Ejemplo",
         role: "BANDA",
+        emailVerified: new Date(),
       },
     });
     band1 = await prisma.band.create({

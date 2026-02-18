@@ -2,13 +2,16 @@ import { Suspense } from "react";
 import { getBands } from "@/services/band.service";
 import { getEvents } from "@/services/event.service";
 import { getVenues } from "@/services/venue.service";
+import { getFestivals } from "@/services/festival.service";
+import { getPromoters } from "@/services/promoter.service";
+import { getOrganizers } from "@/services/organizer.service";
 import BandSearchForm from "./BandSearchForm";
 import Link from "next/link";
 import { PageLayout } from "@/components/ui/PageLayout";
 
 export const metadata = {
-  title: "Buscador avanzado",
-  description: "Busca bandas, eventos y salas por género, localidad y más",
+  title: "Buscador",
+  description: "Busca bandas, eventos, salas, festivales, promotores y organizadores",
 };
 
 type SearchParams = { searchParams: Promise<Record<string, string | undefined>> };
@@ -21,7 +24,7 @@ export default async function BuscarPage({ searchParams }: SearchParams) {
   const active = params.active;
   const emerging = params.emerging;
 
-  const [bands, events, venues] = await Promise.all([
+  const [bands, events, venues, festivals, promoters, organizers] = await Promise.all([
     getBands({
       search: search || undefined,
       genre: genre || undefined,
@@ -29,8 +32,11 @@ export default async function BuscarPage({ searchParams }: SearchParams) {
       isActive: active === "true" ? true : active === "false" ? false : undefined,
       isEmerging: emerging === "true" ? true : undefined,
     }),
-    getEvents(),
-    getVenues({ city: location || undefined }),
+    getEvents({ search: search || undefined }),
+    getVenues({ city: location || undefined, search: search || undefined }),
+    getFestivals({ search: search || undefined }, true),
+    getPromoters({ search: search || undefined }, true),
+    getOrganizers({ search: search || undefined }, true),
   ]);
 
   return (
@@ -128,6 +134,63 @@ export default async function BuscarPage({ searchParams }: SearchParams) {
                 </span>
                 <span className="ml-2 font-body text-punk-white/60">
                   · {venue.city}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section>
+          <h2 className="font-display text-3xl tracking-tighter text-punk-red sm:text-4xl">
+            Festivales ({festivals.length})
+          </h2>
+          <div className="mt-6 space-y-3">
+            {festivals.slice(0, 5).map((festival) => (
+              <Link
+                key={festival.id}
+                href={`/festivales/${festival.slug}`}
+                className="block border-2 border-punk-red/50 bg-punk-black p-4 transition-all hover:border-punk-red hover:shadow-[0_0_20px_rgba(230,0,38,0.15)]"
+              >
+                <span className="font-display text-punk-white">
+                  {festival.name}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section>
+          <h2 className="font-display text-3xl tracking-tighter text-punk-pink sm:text-4xl">
+            Promotores ({promoters.length})
+          </h2>
+          <div className="mt-6 space-y-3">
+            {promoters.slice(0, 5).map((promoter) => (
+              <Link
+                key={promoter.id}
+                href={`/promotores/${promoter.slug}`}
+                className="block border-2 border-punk-pink/50 bg-punk-black p-4 transition-all hover:border-punk-pink hover:shadow-[0_0_20px_rgba(255,0,110,0.15)]"
+              >
+                <span className="font-display text-punk-white">
+                  {promoter.name}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section>
+          <h2 className="font-display text-3xl tracking-tighter text-punk-green sm:text-4xl">
+            Organizadores ({organizers.length})
+          </h2>
+          <div className="mt-6 space-y-3">
+            {organizers.slice(0, 5).map((organizer) => (
+              <Link
+                key={organizer.id}
+                href={`/organizadores/${organizer.slug}`}
+                className="block border-2 border-punk-green/50 bg-punk-black p-4 transition-all hover:border-punk-green hover:shadow-[0_0_20px_rgba(0,200,83,0.15)]"
+              >
+                <span className="font-display text-punk-white">
+                  {organizer.name}
                 </span>
               </Link>
             ))}

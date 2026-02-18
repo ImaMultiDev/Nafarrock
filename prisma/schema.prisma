@@ -235,6 +235,9 @@ model Organizer {
   contactEmail String?
   approved    Boolean  @default(false)
   approvedAt  DateTime?
+  // Plan PRO (preparado, inactivo)
+  isPro       Boolean  @default(false)
+  planType    String?  // PRO, PRO_PLUS, etc.
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -243,6 +246,7 @@ model Organizer {
   events Event[] @relation("OrganizerEvents")
 
   @@index([approved])
+  @@index([isPro])
   @@map("organizers")
 }
 
@@ -326,6 +330,9 @@ model Promoter {
   imageUrl     String?
   approved     Boolean  @default(false)
   approvedAt   DateTime?
+  // Plan PRO (preparado, inactivo)
+  isPro        Boolean  @default(false)
+  planType     String?  // PRO, PRO_PLUS, etc.
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -335,5 +342,6 @@ model Promoter {
 
   @@index([approved])
   @@index([slug])
+  @@index([isPro])
   @@map("promoters")
 }

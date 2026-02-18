@@ -1,8 +1,18 @@
 import { prisma } from "@/lib/prisma";
 
-export async function getOrganizers(approvedOnly = true) {
+export type OrganizerFilters = { search?: string; approved?: boolean };
+
+export async function getOrganizers(filters: OrganizerFilters = {}, approvedOnly = true) {
+  const where: Record<string, unknown> = approvedOnly ? { approved: true } : {};
+  if (typeof filters.approved === "boolean") where.approved = filters.approved;
+  if (filters.search) {
+    where.OR = [
+      { name: { contains: filters.search, mode: "insensitive" } },
+      { description: { contains: filters.search, mode: "insensitive" } },
+    ];
+  }
   return prisma.organizer.findMany({
-    where: approvedOnly ? { approved: true } : undefined,
+    where: Object.keys(where).length ? where : undefined,
     orderBy: { name: "asc" },
     include: { user: { select: { name: true } } },
   });

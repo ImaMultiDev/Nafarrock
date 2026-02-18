@@ -1,8 +1,19 @@
 import { prisma } from "@/lib/prisma";
 
-export async function getFestivals(approvedOnly = true) {
+export type FestivalFilters = { search?: string; approved?: boolean };
+
+export async function getFestivals(filters: FestivalFilters = {}, approvedOnly = true) {
+  const where: Record<string, unknown> = approvedOnly ? { approved: true } : {};
+  if (typeof filters.approved === "boolean") where.approved = filters.approved;
+  if (filters.search) {
+    where.OR = [
+      { name: { contains: filters.search, mode: "insensitive" } },
+      { description: { contains: filters.search, mode: "insensitive" } },
+      { location: { contains: filters.search, mode: "insensitive" } },
+    ];
+  }
   return prisma.festival.findMany({
-    where: approvedOnly ? { approved: true } : undefined,
+    where: Object.keys(where).length ? where : undefined,
     orderBy: { name: "asc" },
     include: { user: { select: { name: true } } },
   });

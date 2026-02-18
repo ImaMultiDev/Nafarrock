@@ -57,16 +57,22 @@ export function FooterSection() {
               Eventos
             </Link>
             <Link
+              href="/entradas"
+              className="font-punch text-xs uppercase tracking-widest text-punk-white/70 transition-colors hover:text-punk-green"
+            >
+              Entradas
+            </Link>
+            <Link
               href="/salas"
               className="font-punch text-xs uppercase tracking-widest text-punk-white/70 transition-colors hover:text-punk-green"
             >
               Salas
             </Link>
             <Link
-              href="/buscar"
+              href="/escena"
               className="font-punch text-xs uppercase tracking-widest text-punk-white/70 transition-colors hover:text-punk-green"
             >
-              Buscar
+              Escena
             </Link>
           </motion.div>
         </div>

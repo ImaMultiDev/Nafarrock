@@ -1,14 +1,25 @@
 import { getVenues } from "@/services/venue.service";
 import Link from "next/link";
 import { PageLayout } from "@/components/ui/PageLayout";
+import { SalasFilters } from "@/components/buscador/SalasFilters";
 
 export const metadata = {
   title: "Salas y espacios",
   description: "Salas de conciertos y espacios de la escena nafarroa",
 };
 
-export default async function SalasPage() {
-  const venues = await getVenues();
+type Props = { searchParams: Promise<Record<string, string | undefined>> };
+
+export default async function SalasPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const capacityMin = params.capacityMin ? parseInt(params.capacityMin, 10) : undefined;
+  const capacityMax = params.capacityMax ? parseInt(params.capacityMax, 10) : undefined;
+  const venues = await getVenues({
+    search: params.search || undefined,
+    city: params.city || undefined,
+    capacityMin: Number.isNaN(capacityMin) ? undefined : capacityMin,
+    capacityMax: Number.isNaN(capacityMax) ? undefined : capacityMax,
+  });
 
   return (
     <PageLayout>
@@ -20,6 +31,8 @@ export default async function SalasPage() {
           Espacios de la escena. {venues.length} salas y lugares en Nafarroa.
         </p>
       </div>
+
+      <SalasFilters />
 
       <div className="grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
         {venues.map((venue) => (

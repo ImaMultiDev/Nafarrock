@@ -3,14 +3,25 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { PageLayout } from "@/components/ui/PageLayout";
+import { EventosFilters } from "@/components/buscador/EventosFilters";
 
 export const metadata = {
   title: "Eventos",
   description: "Conciertos y festivales en Nafarroa",
 };
 
-export default async function EventosPage() {
-  const events = await getEvents();
+type Props = { searchParams: Promise<Record<string, string | undefined>> };
+
+export default async function EventosPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const fromDate = params.fromDate ? new Date(params.fromDate) : undefined;
+  const toDate = params.toDate ? new Date(params.toDate) : undefined;
+  const events = await getEvents({
+    search: params.search || undefined,
+    type: (params.type as "CONCIERTO" | "FESTIVAL") || undefined,
+    fromDate,
+    toDate,
+  });
 
   return (
     <PageLayout>
@@ -22,6 +33,8 @@ export default async function EventosPage() {
           Conciertos y festivales. {events.length} eventos próximos en la escena nafarroa.
         </p>
       </div>
+
+      <EventosFilters />
 
       <div className="space-y-4 lg:space-y-5">
         {events.map((event) => (

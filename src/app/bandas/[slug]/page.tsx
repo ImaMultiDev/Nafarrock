@@ -119,6 +119,20 @@ export default async function BandPage({
               </ul>
             </div>
           )}
+          <div className="mt-6 flex flex-wrap gap-4">
+            <Link
+              href="/promotores"
+              className="border-2 border-punk-pink bg-transparent px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-pink transition-all hover:bg-punk-pink hover:text-punk-black"
+            >
+              Buscar promotores
+            </Link>
+            <Link
+              href="/organizadores"
+              className="border-2 border-punk-green bg-transparent px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-green transition-all hover:bg-punk-green hover:text-punk-black"
+            >
+              Contactar organizadores
+            </Link>
+          </div>
           {links.length > 0 && (
             <div className="mt-6 flex flex-wrap gap-4">
               {links.map(({ label, url }) => (

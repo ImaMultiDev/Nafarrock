@@ -17,6 +17,9 @@ function LoginForm() {
     if (searchParams.get("registered") === "1") setRegistered(true);
   }, [searchParams]);
 
+  const verified = searchParams.get("verified") === "1";
+  const urlError = searchParams.get("error");
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -26,7 +29,11 @@ function LoginForm() {
       redirect: false,
     });
     if (res?.error) {
-      setError("Email o contraseña incorrectos");
+      if (res.error === "EmailNotVerified") {
+        setError("Debes verificar tu email antes de iniciar sesión. Revisa tu bandeja de entrada o spam.");
+      } else {
+        setError("Email o contraseña incorrectos");
+      }
       return;
     }
     window.location.href = "/dashboard";
@@ -46,6 +53,30 @@ function LoginForm() {
           Accede a tu cuenta de Nafarrock
         </p>
 
+        {verified && (
+          <div className="mt-6 border-2 border-punk-green bg-punk-green/10 p-4">
+            <p className="font-body text-punk-green">
+              ✓ Email verificado. Ya puedes iniciar sesión.
+            </p>
+          </div>
+        )}
+
+        {urlError === "VerificationTokenExpired" && (
+          <div className="mt-6 border-2 border-punk-red bg-punk-red/10 p-4">
+            <p className="font-body text-punk-red">
+              El enlace de verificación ha expirado. Solicita uno nuevo desde el registro.
+            </p>
+          </div>
+        )}
+
+        {urlError === "VerificationTokenInvalid" && (
+          <div className="mt-6 border-2 border-punk-red bg-punk-red/10 p-4">
+            <p className="font-body text-punk-red">
+              Enlace de verificación no válido. Puede que ya lo hayas usado.
+            </p>
+          </div>
+        )}
+
         {registered && (
           <div className="mt-6 border-2 border-punk-green bg-punk-green/10 p-4">
             <p className="font-body text-punk-green">
@@ -61,6 +92,14 @@ function LoginForm() {
           {error && (
             <div className="border-2 border-punk-red bg-punk-red/10 p-4">
               <p className="font-body text-punk-red">{error}</p>
+              {error.includes("verificar") && email && (
+                <Link
+                  href={`/auth/verificar-email?email=${encodeURIComponent(email)}`}
+                  className="mt-2 inline-block font-punch text-xs uppercase tracking-widest text-punk-green hover:text-punk-green/80"
+                >
+                  Reenviar email de verificación →
+                </Link>
+              )}
             </div>
           )}
           <div>

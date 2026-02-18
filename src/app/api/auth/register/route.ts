@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
+import { randomBytes } from "crypto";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { uniqueSlug } from "@/lib/slug";
+import { sendVerificationEmail } from "@/lib/email";
 
 const ROLES = ["USUARIO", "BANDA", "SALA", "FESTIVAL", "ORGANIZADOR", "PROMOTOR"] as const;
 
@@ -84,6 +86,27 @@ function cleanUrl(url: string | undefined): string | undefined {
   return url;
 }
 
+async function createAndSendVerificationToken(
+  email: string,
+  name?: string | null
+): Promise<{ skipVerification: boolean }> {
+  if (!process.env.RESEND_API_KEY) {
+    await prisma.user.update({
+      where: { email },
+      data: { emailVerified: new Date() },
+    });
+    return { skipVerification: true };
+  }
+  const token = randomBytes(32).toString("hex");
+  const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 horas
+  await prisma.verificationToken.deleteMany({ where: { identifier: email } });
+  await prisma.verificationToken.create({
+    data: { identifier: email, token, expires },
+  });
+  await sendVerificationEmail(email, token, name ?? undefined);
+  return { skipVerification: false };
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -143,7 +166,15 @@ export async function POST(req: Request) {
           role: "USUARIO",
         },
       });
-      return NextResponse.json({ success: true });
+      const { skipVerification } = await createAndSendVerificationToken(
+        data.email,
+        name
+      );
+      return NextResponse.json({
+        success: true,
+        requiresVerification: !skipVerification,
+        email: data.email,
+      });
     }
 
     const user = await prisma.user.create({
@@ -268,7 +299,15 @@ export async function POST(req: Request) {
       });
     }
 
-    return NextResponse.json({ success: true });
+    const { skipVerification } = await createAndSendVerificationToken(
+      data.email,
+      name
+    );
+    return NextResponse.json({
+      success: true,
+      requiresVerification: !skipVerification,
+      email: data.email,
+    });
   } catch (e) {
     console.error("Register error:", e);
     return NextResponse.json(

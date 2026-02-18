@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { createPortal } from "react-dom";
 import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect } from "react";
@@ -18,13 +19,11 @@ import { SOCIAL_LINKS } from "@/lib/social-links";
 
 const navLinks = [
   { href: "/", label: "Inicio" },
-  { href: "/bandas", label: "Bandas" },
   { href: "/eventos", label: "Eventos" },
-  { href: "/festivales", label: "Festivales" },
+  { href: "/entradas", label: "Entradas" },
+  { href: "/bandas", label: "Bandas" },
   { href: "/salas", label: "Salas" },
-  { href: "/promotores", label: "Promotores" },
-  { href: "/organizadores", label: "Organizadores" },
-  { href: "/buscar", label: "Buscar" },
+  { href: "/escena", label: "Escena" },
 ];
 
 function SocialIcon({ icon, className }: { icon: string; className?: string }) {
@@ -45,7 +44,16 @@ function SocialIcon({ icon, className }: { icon: string; className?: string }) {
   }
 }
 
+function isActivePath(pathname: string, href: string): boolean {
+  if (href === "/") return pathname === "/";
+  if (href === "/escena") {
+    return pathname === "/escena" || pathname.startsWith("/promotores") || pathname.startsWith("/organizadores") || pathname.startsWith("/festivales");
+  }
+  return pathname === href || pathname.startsWith(href + "/");
+}
+
 export function Header() {
+  const pathname = usePathname();
   const { data: session } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -96,15 +104,22 @@ export function Header() {
 
         {/* Desktop: nav + redes + auth */}
         <div className="hidden items-center gap-4 nav:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="font-punch text-xs uppercase tracking-widest text-punk-white/80 transition-colors hover:text-punk-green"
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const active = isActivePath(pathname, link.href);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`relative font-punch text-xs uppercase tracking-widest transition-colors hover:text-punk-green ${
+                  active
+                    ? "text-punk-red after:absolute after:bottom-[-4px] after:left-0 after:right-0 after:h-[2px] after:skew-x-[-12deg] after:bg-punk-red after:content-['']"
+                    : "text-punk-white/80"
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
           <div className="ml-4 flex items-center gap-1 border-l border-punk-white/20 pl-4">
             {SOCIAL_LINKS.slice(0, 5).map((social) => (
               <a
@@ -171,16 +186,23 @@ export function Header() {
 
               {/* Nav links */}
               <nav className="flex flex-col gap-1 mt-2">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMenuOpen(false)}
-                className="rounded px-4 py-3 font-punch text-sm uppercase tracking-widest text-punk-white/90 transition-colors hover:bg-punk-white/10 hover:text-punk-green"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const active = isActivePath(pathname, link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMenuOpen(false)}
+                  className={`rounded px-4 py-3 font-punch text-sm uppercase tracking-widest transition-colors hover:bg-punk-white/10 hover:text-punk-green ${
+                    active
+                      ? "border-l-4 border-punk-red bg-punk-red/10 text-punk-red"
+                      : "text-punk-white/90"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
             {session ? (
               <>
                 <Link

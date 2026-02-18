@@ -22,6 +22,14 @@ const links = [
     size: "small",
   },
   {
+    href: "/entradas",
+    title: "ENTRADAS",
+    desc: "Próximos conciertos y festivales",
+    color: "punk-red",
+    delay: 0.15,
+    size: "small",
+  },
+  {
     href: "/salas",
     title: "SALAS",
     desc: "Espacios de la escena",
@@ -30,9 +38,9 @@ const links = [
     size: "small",
   },
   {
-    href: "/buscar",
-    title: "BUSCAR",
-    desc: "Por género, localidad...",
+    href: "/escena",
+    title: "ESCENA",
+    desc: "Promotores, organizadores, festivales",
     color: "punk-acid",
     delay: 0.3,
     size: "large",

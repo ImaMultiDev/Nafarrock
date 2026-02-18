@@ -56,7 +56,7 @@ export default function BandSearchForm({
             name="search"
             type="text"
             defaultValue={defaultSearch}
-            placeholder="Nombre de banda..."
+            placeholder="Bandas, eventos, salas, escena..."
             className="mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-acid focus:outline-none"
           />
         </div>

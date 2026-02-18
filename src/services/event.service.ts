@@ -5,6 +5,7 @@ export type EventFilters = {
   venueId?: string;
   fromDate?: Date;
   toDate?: Date;
+  search?: string;
 };
 
 export async function getEvents(filters: EventFilters = {}) {
@@ -18,6 +19,12 @@ export async function getEvents(filters: EventFilters = {}) {
       (where.date as Record<string, Date>).gte = filters.fromDate;
     if (filters.toDate)
       (where.date as Record<string, Date>).lte = filters.toDate;
+  }
+  if (filters.search) {
+    where.OR = [
+      { title: { contains: filters.search, mode: "insensitive" } },
+      { description: { contains: filters.search, mode: "insensitive" } },
+    ];
   }
 
   return prisma.event.findMany({

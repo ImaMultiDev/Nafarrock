@@ -1,14 +1,23 @@
 import { getBands } from "@/services/band.service";
 import Link from "next/link";
 import { PageLayout } from "@/components/ui/PageLayout";
+import { BandasFilters } from "@/components/buscador/BandasFilters";
 
 export const metadata = {
   title: "Bandas",
   description: "Bandas nafarroas históricas y emergentes",
 };
 
-export default async function BandasPage() {
-  const bands = await getBands();
+type Props = { searchParams: Promise<Record<string, string | undefined>> };
+
+export default async function BandasPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const bands = await getBands({
+    search: params.search || undefined,
+    genre: params.genre || undefined,
+    location: params.location || undefined,
+    isEmerging: params.emerging === "1" ? true : undefined,
+  });
 
   return (
     <PageLayout>
@@ -20,6 +29,8 @@ export default async function BandasPage() {
           Históricas y emergentes de Nafarroa. {bands.length} bandas en la escena.
         </p>
       </div>
+
+      <BandasFilters />
 
       <div className="grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
         {bands.map((band) => (

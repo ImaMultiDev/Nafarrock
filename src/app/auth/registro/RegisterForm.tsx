@@ -107,7 +107,11 @@ export function RegisterForm() {
       setError(data.message ?? "Error al registrarse");
       return;
     }
-    router.push("/auth/login?registered=1");
+    if (data.requiresVerification && data.email) {
+      router.push(`/auth/verificar-email?email=${encodeURIComponent(data.email)}`);
+    } else {
+      router.push("/auth/login?registered=1");
+    }
   };
 
   const needsEntity = role !== "USUARIO";
