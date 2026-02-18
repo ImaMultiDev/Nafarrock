@@ -3,16 +3,22 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { PageLayout } from "@/components/ui/PageLayout";
+import { Pagination } from "@/components/ui/Pagination";
 
 export const metadata = {
   title: "Entradas",
   description: "Próximos eventos y festivales. Consigue tus entradas.",
 };
 
-export default async function EntradasPage() {
+type Props = { searchParams: Promise<Record<string, string | undefined>> };
+
+export default async function EntradasPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
   const now = new Date();
-  const events = await getEvents({
+  const { items: events, total } = await getEvents({
     fromDate: now,
+    page,
   });
 
   const conciertos = events.filter((e) => e.type === "CONCIERTO");
@@ -25,7 +31,7 @@ export default async function EntradasPage() {
           ENTRADAS
         </h1>
         <p className="mt-3 max-w-xl font-body text-punk-white/60 sm:mt-4">
-          Próximos conciertos y festivales. {events.length} eventos en la escena nafarroa.
+          Próximos conciertos y festivales. {total} {total === 1 ? "evento" : "eventos"} en la escena nafarroa.
         </p>
       </div>
 
@@ -116,10 +122,12 @@ export default async function EntradasPage() {
         </section>
       </div>
 
+      <Pagination page={page} totalItems={total} />
+
       {events.length === 0 && (
         <div className="border-2 border-punk-white/20 border-dashed p-16 text-center">
           <p className="font-body text-punk-white/60">
-            No hay eventos con entradas disponibles. Pronto habrá contenido.
+            No hay eventos con entradas disponibles de momento. Pronto habrá contenido. Mientras tanto, explora el resto de eventos.
           </p>
           <Link
             href="/eventos"

@@ -136,8 +136,8 @@ export function DashboardEventForm({
           ))}
         </select>
         {venues.length === 0 && (
-          <p className="mt-2 font-body text-sm text-punk-red">
-            No hay salas aprobadas disponibles.
+          <p className="mt-2 font-body text-sm text-punk-white/70">
+            No hay salas aprobadas aún. Debe existir al menos una sala en la plataforma para poder crear eventos. Ponte en contacto con el administrador si necesitas registrar una.
           </p>
         )}
       </div>
@@ -153,7 +153,7 @@ export function DashboardEventForm({
             </label>
           ))}
           {bands.length === 0 && (
-            <p className="font-body text-sm text-punk-white/50">No hay bandas aprobadas</p>
+            <p className="font-body text-sm text-punk-white/50">No hay bandas aprobadas aún. Puedes crear el evento sin bandas; podrás añadirlas más tarde cuando estén registradas.</p>
           )}
         </div>
       </div>
@@ -185,7 +185,7 @@ export function DashboardEventForm({
         {loading ? "Creando..." : "Crear evento"}
       </button>
       <p className="font-body text-sm text-punk-white/50">
-        El evento quedará pendiente hasta que el administrador lo apruebe.
+        El evento quedará pendiente hasta que el administrador lo apruebe. Recibirás un aviso cuando esté visible en la agenda.
       </p>
     </form>
   );

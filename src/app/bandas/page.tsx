@@ -2,6 +2,7 @@ import { getBands } from "@/services/band.service";
 import Link from "next/link";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { BandasFilters } from "@/components/buscador/BandasFilters";
+import { Pagination } from "@/components/ui/Pagination";
 
 export const metadata = {
   title: "Bandas",
@@ -12,11 +13,13 @@ type Props = { searchParams: Promise<Record<string, string | undefined>> };
 
 export default async function BandasPage({ searchParams }: Props) {
   const params = await searchParams;
-  const bands = await getBands({
+  const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
+  const { items: bands, total } = await getBands({
     search: params.search || undefined,
     genre: params.genre || undefined,
     location: params.location || undefined,
     isEmerging: params.emerging === "1" ? true : undefined,
+    page,
   });
 
   return (
@@ -26,7 +29,7 @@ export default async function BandasPage({ searchParams }: Props) {
           BANDAS
         </h1>
         <p className="mt-3 max-w-xl font-body text-punk-white/60 sm:mt-4">
-          Históricas y emergentes de Nafarroa. {bands.length} bandas en la escena.
+          Históricas y emergentes de Nafarroa. {total} {total === 1 ? "banda" : "bandas"} en la escena.
         </p>
       </div>
 
@@ -76,13 +79,26 @@ export default async function BandasPage({ searchParams }: Props) {
         ))}
       </div>
 
+      <Pagination
+        page={page}
+        totalItems={total}
+        searchParams={Object.fromEntries(
+          Object.entries({
+            search: params.search,
+            genre: params.genre,
+            location: params.location,
+            emerging: params.emerging,
+          }).filter(([, v]) => v != null && v !== "")
+        )}
+      />
+
       {bands.length === 0 && (
         <div className="border-2 border-punk-white/20 border-dashed p-16 text-center">
           <p className="font-body text-punk-white/60">
-            Aún no hay bandas registradas. Pronto habrá contenido.
+            Aún no hay bandas registradas. Pronto habrá contenido. Mientras tanto, explora eventos y salas.
           </p>
           <Link href="/" className="mt-4 inline-block font-punch text-sm uppercase tracking-widest text-punk-green hover:text-punk-green/80 transition-colors">
-            Volver al inicio →
+            ← Volver al inicio
           </Link>
         </div>
       )}

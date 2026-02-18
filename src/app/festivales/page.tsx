@@ -1,14 +1,19 @@
 import { getFestivals } from "@/services/festival.service";
 import Link from "next/link";
 import { PageLayout } from "@/components/ui/PageLayout";
+import { Pagination } from "@/components/ui/Pagination";
 
 export const metadata = {
   title: "Festivales",
   description: "Festivales de rock en Nafarroa",
 };
 
-export default async function FestivalesPage() {
-  const festivals = await getFestivals();
+type Props = { searchParams: Promise<Record<string, string | undefined>> };
+
+export default async function FestivalesPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
+  const { items: festivals, total } = await getFestivals({ page }, true);
 
   return (
     <PageLayout>
@@ -17,7 +22,7 @@ export default async function FestivalesPage() {
           FESTIVALES
         </h1>
         <p className="mt-3 max-w-xl font-body text-punk-white/60 sm:mt-4">
-          Festivales de rock en Nafarroa. {festivals.length} festivales.
+          Festivales de rock en Nafarroa. {total} {total === 1 ? "festival" : "festivales"}.
         </p>
       </div>
 
@@ -58,13 +63,15 @@ export default async function FestivalesPage() {
         ))}
       </div>
 
+      <Pagination page={page} totalItems={total} />
+
       {festivals.length === 0 && (
         <div className="border-2 border-dashed border-punk-white/20 p-16 text-center">
           <p className="font-body text-punk-white/60">
-            No hay festivales registrados.
+            Aún no hay festivales registrados. Pronto habrá contenido. Mientras tanto, explora eventos y promotores.
           </p>
           <Link href="/" className="mt-4 inline-block font-punch text-sm uppercase tracking-widest text-punk-red hover:text-punk-red/80">
-            Volver al inicio
+            ← Volver al inicio
           </Link>
         </div>
       )}

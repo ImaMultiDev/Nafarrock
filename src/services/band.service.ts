@@ -7,7 +7,11 @@ export type BandFilters = {
   isEmerging?: boolean;
   approved?: boolean;
   search?: string;
+  page?: number;
+  pageSize?: number;
 };
+
+const DEFAULT_PAGE_SIZE = 12;
 
 /**
  * Servicio de dominio: Bandas
@@ -41,11 +45,22 @@ export async function getBands(filters: BandFilters = {}) {
     ];
   }
 
-  return prisma.band.findMany({
-    where,
-    orderBy: { name: "asc" },
-    include: { user: { select: { name: true } } },
-  });
+  const pageSize = filters.pageSize ?? DEFAULT_PAGE_SIZE;
+  const page = Math.max(1, filters.page ?? 1);
+  const skip = (page - 1) * pageSize;
+
+  const [items, total] = await Promise.all([
+    prisma.band.findMany({
+      where,
+      orderBy: { name: "asc" },
+      include: { user: { select: { name: true } } },
+      skip,
+      take: pageSize,
+    }),
+    prisma.band.count({ where }),
+  ]);
+
+  return { items, total, page, pageSize };
 }
 
 export async function getBandBySlug(slug: string, approvedOnly = true) {

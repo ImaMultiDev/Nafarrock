@@ -1,14 +1,19 @@
 import { getPromoters } from "@/services/promoter.service";
 import Link from "next/link";
 import { PageLayout } from "@/components/ui/PageLayout";
+import { Pagination } from "@/components/ui/Pagination";
 
 export const metadata = {
   title: "Promotores",
   description: "Promotores de conciertos en Nafarroa",
 };
 
-export default async function PromotoresPage() {
-  const promoters = await getPromoters();
+type Props = { searchParams: Promise<Record<string, string | undefined>> };
+
+export default async function PromotoresPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
+  const { items: promoters, total } = await getPromoters({ page }, true);
 
   return (
     <PageLayout>
@@ -17,7 +22,7 @@ export default async function PromotoresPage() {
           PROMOTORES
         </h1>
         <p className="mt-3 max-w-xl font-body text-punk-white/60 sm:mt-4">
-          Promotores de conciertos en Nafarroa. {promoters.length} promotores.
+          Promotores de conciertos en Nafarroa. {total} {total === 1 ? "promotor" : "promotores"}.
         </p>
       </div>
 
@@ -53,13 +58,15 @@ export default async function PromotoresPage() {
         ))}
       </div>
 
+      <Pagination page={page} totalItems={total} />
+
       {promoters.length === 0 && (
         <div className="border-2 border-dashed border-punk-white/20 p-16 text-center">
           <p className="font-body text-punk-white/60">
-            No hay promotores registrados.
+            Aún no hay promotores registrados. Pronto habrá contenido. Mientras tanto, explora eventos y organizadores.
           </p>
           <Link href="/" className="mt-4 inline-block font-punch text-sm uppercase tracking-widest text-punk-pink hover:text-punk-pink/80">
-            Volver al inicio
+            ← Volver al inicio
           </Link>
         </div>
       )}

@@ -24,19 +24,21 @@ export default async function BuscarPage({ searchParams }: SearchParams) {
   const active = params.active;
   const emerging = params.emerging;
 
-  const [bands, events, venues, festivals, promoters, organizers] = await Promise.all([
+  const [bandsResult, events, venues, festivals, promoters, organizers] = await Promise.all([
     getBands({
       search: search || undefined,
       genre: genre || undefined,
       location: location || undefined,
       isActive: active === "true" ? true : active === "false" ? false : undefined,
       isEmerging: emerging === "true" ? true : undefined,
+      page: 1,
+      pageSize: 9,
     }),
-    getEvents({ search: search || undefined }),
-    getVenues({ city: location || undefined, search: search || undefined }),
-    getFestivals({ search: search || undefined }, true),
-    getPromoters({ search: search || undefined }, true),
-    getOrganizers({ search: search || undefined }, true),
+    getEvents({ search: search || undefined, pageSize: 5 }),
+    getVenues({ city: location || undefined, search: search || undefined, pageSize: 5 }),
+    getFestivals({ search: search || undefined, pageSize: 5 }, true),
+    getPromoters({ search: search || undefined, pageSize: 5 }, true),
+    getOrganizers({ search: search || undefined, pageSize: 5 }, true),
   ]);
 
   return (
@@ -67,10 +69,10 @@ export default async function BuscarPage({ searchParams }: SearchParams) {
       <div className="mt-16 space-y-16">
         <section>
           <h2 className="font-display text-3xl tracking-tighter text-punk-green sm:text-4xl">
-            Bandas ({bands.length})
+            Bandas ({bandsResult.total})
           </h2>
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {bands.slice(0, 9).map((band) => (
+            {bandsResult.items.map((band) => (
               <Link
                 key={band.id}
                 href={`/bandas/${band.slug}`}
@@ -89,19 +91,19 @@ export default async function BuscarPage({ searchParams }: SearchParams) {
               </Link>
             ))}
           </div>
-          {bands.length > 9 && (
+          {bandsResult.total > 9 && (
             <p className="mt-3 font-body text-sm text-punk-white/50">
-              Mostrando 9 de {bands.length}. Ajusta filtros para ver más.
+              Mostrando 9 de {bandsResult.total}. <Link href="/bandas" className="text-punk-green hover:underline">Ver todas las bandas</Link>
             </p>
           )}
         </section>
 
         <section>
           <h2 className="font-display text-3xl tracking-tighter text-punk-red sm:text-4xl">
-            Eventos ({events.length})
+            Eventos ({events.total})
           </h2>
           <div className="mt-6 space-y-3">
-            {events.slice(0, 5).map((event) => (
+            {events.items.map((event) => (
               <Link
                 key={event.id}
                 href={`/eventos/${event.slug}`}
@@ -120,10 +122,10 @@ export default async function BuscarPage({ searchParams }: SearchParams) {
 
         <section>
           <h2 className="font-display text-3xl tracking-tighter text-punk-pink sm:text-4xl">
-            Salas ({venues.length})
+            Salas ({venues.total})
           </h2>
           <div className="mt-6 space-y-3">
-            {venues.slice(0, 5).map((venue) => (
+            {venues.items.map((venue) => (
               <Link
                 key={venue.id}
                 href={`/salas/${venue.slug}`}
@@ -142,10 +144,10 @@ export default async function BuscarPage({ searchParams }: SearchParams) {
 
         <section>
           <h2 className="font-display text-3xl tracking-tighter text-punk-red sm:text-4xl">
-            Festivales ({festivals.length})
+            Festivales ({festivals.total})
           </h2>
           <div className="mt-6 space-y-3">
-            {festivals.slice(0, 5).map((festival) => (
+            {festivals.items.map((festival) => (
               <Link
                 key={festival.id}
                 href={`/festivales/${festival.slug}`}
@@ -161,10 +163,10 @@ export default async function BuscarPage({ searchParams }: SearchParams) {
 
         <section>
           <h2 className="font-display text-3xl tracking-tighter text-punk-pink sm:text-4xl">
-            Promotores ({promoters.length})
+            Promotores ({promoters.total})
           </h2>
           <div className="mt-6 space-y-3">
-            {promoters.slice(0, 5).map((promoter) => (
+            {promoters.items.map((promoter) => (
               <Link
                 key={promoter.id}
                 href={`/promotores/${promoter.slug}`}
@@ -180,10 +182,10 @@ export default async function BuscarPage({ searchParams }: SearchParams) {
 
         <section>
           <h2 className="font-display text-3xl tracking-tighter text-punk-green sm:text-4xl">
-            Organizadores ({organizers.length})
+            Organizadores ({organizers.total})
           </h2>
           <div className="mt-6 space-y-3">
-            {organizers.slice(0, 5).map((organizer) => (
+            {organizers.items.map((organizer) => (
               <Link
                 key={organizer.id}
                 href={`/organizadores/${organizer.slug}`}

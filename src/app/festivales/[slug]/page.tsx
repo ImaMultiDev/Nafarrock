@@ -41,7 +41,7 @@ export default async function FestivalPage({
         href="/festivales"
         className="font-punch text-xs uppercase tracking-widest text-punk-red transition-colors hover:text-punk-red/80"
       >
-        Volver a festivales
+        ← Volver a festivales
       </Link>
 
       <div className="mt-8 flex flex-col gap-8 md:flex-row">

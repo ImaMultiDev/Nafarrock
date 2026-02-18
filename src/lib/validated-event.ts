@@ -81,7 +81,7 @@ export async function canUserCreateEvent(
     return {
       ok: false,
       reason: "limit_exceeded",
-      message: `Solo puedes crear 1 evento cada ${DAYS_BETWEEN_EVENTS} días. Tienes otro evento en esa ventana.`,
+      message: `Para garantizar visibilidad para todos, ahora mismo puedes publicar 1 evento cada ${DAYS_BETWEEN_EVENTS} días. Ya tienes uno en esa ventana. Con Plan PRO podrás ampliar este límite.`,
     };
   }
 

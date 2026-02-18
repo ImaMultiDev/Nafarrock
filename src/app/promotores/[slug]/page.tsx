@@ -43,7 +43,7 @@ export default async function PromoterPage({
         href="/promotores"
         className="font-punch text-xs uppercase tracking-widest text-punk-pink transition-colors hover:text-punk-pink/80"
       >
-        Volver a promotores
+        ← Volver a promotores
       </Link>
 
       <div className="mt-8 flex flex-col gap-8 md:flex-row">

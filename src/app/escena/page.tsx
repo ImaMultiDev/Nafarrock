@@ -10,10 +10,10 @@ export const metadata = {
 };
 
 export default async function EscenaPage() {
-  const [promoters, organizers, festivals] = await Promise.all([
-    getPromoters(),
-    getOrganizers(),
-    getFestivals(),
+  const [promotersRes, organizersRes, festivalsRes] = await Promise.all([
+    getPromoters({ pageSize: 1 }, true),
+    getOrganizers({ pageSize: 1 }, true),
+    getFestivals({ pageSize: 1 }, true),
   ]);
 
   const escenaItems = [
@@ -21,7 +21,7 @@ export default async function EscenaPage() {
       tipo: "promotor",
       label: "Promotores",
       href: "/promotores",
-      count: promoters.length,
+      count: promotersRes.total,
       color: "punk-pink",
       desc: "Promoción de conciertos y eventos",
     },
@@ -29,7 +29,7 @@ export default async function EscenaPage() {
       tipo: "organizador",
       label: "Organizadores",
       href: "/organizadores",
-      count: organizers.length,
+      count: organizersRes.total,
       color: "punk-green",
       desc: "Organización de eventos puntuales",
     },
@@ -37,7 +37,7 @@ export default async function EscenaPage() {
       tipo: "festival",
       label: "Festivales",
       href: "/festivales",
-      count: festivals.length,
+      count: festivalsRes.total,
       color: "punk-red",
       desc: "Festivales de la escena",
     },

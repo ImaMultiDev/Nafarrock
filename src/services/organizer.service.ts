@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 
-export type OrganizerFilters = { search?: string; approved?: boolean };
+export type OrganizerFilters = { search?: string; approved?: boolean; page?: number; pageSize?: number };
+
+const DEFAULT_PAGE_SIZE = 12;
 
 export async function getOrganizers(filters: OrganizerFilters = {}, approvedOnly = true) {
   const where: Record<string, unknown> = approvedOnly ? { approved: true } : {};
@@ -11,11 +13,23 @@ export async function getOrganizers(filters: OrganizerFilters = {}, approvedOnly
       { description: { contains: filters.search, mode: "insensitive" } },
     ];
   }
-  return prisma.organizer.findMany({
-    where: Object.keys(where).length ? where : undefined,
-    orderBy: { name: "asc" },
-    include: { user: { select: { name: true } } },
-  });
+  const w = Object.keys(where).length ? where : undefined;
+  const pageSize = filters.pageSize ?? DEFAULT_PAGE_SIZE;
+  const page = Math.max(1, filters.page ?? 1);
+  const skip = (page - 1) * pageSize;
+
+  const [items, total] = await Promise.all([
+    prisma.organizer.findMany({
+      where: w,
+      orderBy: { name: "asc" },
+      include: { user: { select: { name: true } } },
+      skip,
+      take: pageSize,
+    }),
+    prisma.organizer.count({ where: w }),
+  ]);
+
+  return { items, total, page, pageSize };
 }
 
 export async function getOrganizerBySlug(slug: string, approvedOnly = true) {

@@ -1,14 +1,19 @@
 import { getOrganizers } from "@/services/organizer.service";
 import Link from "next/link";
 import { PageLayout } from "@/components/ui/PageLayout";
+import { Pagination } from "@/components/ui/Pagination";
 
 export const metadata = {
   title: "Organizadores",
   description: "Organizadores de eventos en Nafarroa",
 };
 
-export default async function OrganizadoresPage() {
-  const organizers = await getOrganizers();
+type Props = { searchParams: Promise<Record<string, string | undefined>> };
+
+export default async function OrganizadoresPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
+  const { items: organizers, total } = await getOrganizers({ page }, true);
 
   return (
     <PageLayout>
@@ -17,7 +22,7 @@ export default async function OrganizadoresPage() {
           ORGANIZADORES
         </h1>
         <p className="mt-3 max-w-xl font-body text-punk-white/60 sm:mt-4">
-          Organizadores de eventos en Nafarroa. {organizers.length} organizadores.
+          Organizadores de eventos en Nafarroa. {total} {total === 1 ? "organizador" : "organizadores"}.
         </p>
       </div>
 
@@ -53,16 +58,18 @@ export default async function OrganizadoresPage() {
         ))}
       </div>
 
+      <Pagination page={page} totalItems={total} />
+
       {organizers.length === 0 && (
         <div className="border-2 border-dashed border-punk-white/20 p-16 text-center">
           <p className="font-body text-punk-white/60">
-            Aún no hay organizadores registrados.
+            Aún no hay organizadores registrados. Pronto habrá contenido. Mientras tanto, explora eventos y promotores.
           </p>
           <Link
             href="/"
             className="mt-4 inline-block font-punch text-sm uppercase tracking-widest text-punk-green transition-colors hover:text-punk-green/80"
           >
-            Volver al inicio
+            ← Volver al inicio
           </Link>
         </div>
       )}

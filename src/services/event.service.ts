@@ -6,7 +6,11 @@ export type EventFilters = {
   fromDate?: Date;
   toDate?: Date;
   search?: string;
+  page?: number;
+  pageSize?: number;
 };
+
+const DEFAULT_PAGE_SIZE = 10;
 
 export async function getEvents(filters: EventFilters = {}) {
   const where: Record<string, unknown> = { isApproved: true };
@@ -27,14 +31,25 @@ export async function getEvents(filters: EventFilters = {}) {
     ];
   }
 
-  return prisma.event.findMany({
-    where,
-    orderBy: { date: "asc" },
-    include: {
-      venue: true,
-      bands: { include: { band: true }, orderBy: { order: "asc" } },
-    },
-  });
+  const pageSize = filters.pageSize ?? DEFAULT_PAGE_SIZE;
+  const page = Math.max(1, filters.page ?? 1);
+  const skip = (page - 1) * pageSize;
+
+  const [items, total] = await Promise.all([
+    prisma.event.findMany({
+      where,
+      orderBy: { date: "asc" },
+      include: {
+        venue: true,
+        bands: { include: { band: true }, orderBy: { order: "asc" } },
+      },
+      skip,
+      take: pageSize,
+    }),
+    prisma.event.count({ where }),
+  ]);
+
+  return { items, total, page, pageSize };
 }
 
 export async function getEventBySlug(slug: string) {

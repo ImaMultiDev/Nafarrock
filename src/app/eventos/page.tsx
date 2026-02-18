@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { EventosFilters } from "@/components/buscador/EventosFilters";
+import { Pagination } from "@/components/ui/Pagination";
 
 export const metadata = {
   title: "Eventos",
@@ -14,13 +15,15 @@ type Props = { searchParams: Promise<Record<string, string | undefined>> };
 
 export default async function EventosPage({ searchParams }: Props) {
   const params = await searchParams;
+  const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
   const fromDate = params.fromDate ? new Date(params.fromDate) : undefined;
   const toDate = params.toDate ? new Date(params.toDate) : undefined;
-  const events = await getEvents({
+  const { items: events, total } = await getEvents({
     search: params.search || undefined,
     type: (params.type as "CONCIERTO" | "FESTIVAL") || undefined,
     fromDate,
     toDate,
+    page,
   });
 
   return (
@@ -30,7 +33,7 @@ export default async function EventosPage({ searchParams }: Props) {
           EVENTOS
         </h1>
         <p className="mt-3 max-w-xl font-body text-punk-white/60 sm:mt-4">
-          Conciertos y festivales. {events.length} eventos próximos en la escena nafarroa.
+          Conciertos y festivales. {total} {total === 1 ? "evento" : "eventos"} en la escena nafarroa.
         </p>
       </div>
 
@@ -80,13 +83,26 @@ export default async function EventosPage({ searchParams }: Props) {
         ))}
       </div>
 
+      <Pagination
+        page={page}
+        totalItems={total}
+        searchParams={Object.fromEntries(
+          Object.entries({
+            search: params.search,
+            type: params.type,
+            fromDate: params.fromDate,
+            toDate: params.toDate,
+          }).filter(([, v]) => v != null && v !== "")
+        )}
+      />
+
       {events.length === 0 && (
         <div className="border-2 border-punk-white/20 border-dashed p-16 text-center">
           <p className="font-body text-punk-white/60">
-            No hay eventos próximos. Pronto habrá contenido.
+            No hay eventos próximos. Pronto habrá contenido. Mientras tanto, explora bandas, salas y la escena.
           </p>
           <Link href="/" className="mt-4 inline-block font-punch text-sm uppercase tracking-widest text-punk-red hover:text-punk-red/80 transition-colors">
-            Volver al inicio →
+            ← Volver al inicio
           </Link>
         </div>
       )}

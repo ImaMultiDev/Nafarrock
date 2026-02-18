@@ -7,7 +7,11 @@ export type VenueFilters = {
   isActive?: boolean;
   approved?: boolean;
   search?: string;
+  page?: number;
+  pageSize?: number;
 };
+
+const DEFAULT_PAGE_SIZE = 12;
 
 export async function getVenues(filters: VenueFilters = {}) {
   const where: Record<string, unknown> = { approved: true };
@@ -29,10 +33,21 @@ export async function getVenues(filters: VenueFilters = {}) {
     ];
   }
 
-  return prisma.venue.findMany({
-    where,
-    orderBy: { name: "asc" },
-  });
+  const pageSize = filters.pageSize ?? DEFAULT_PAGE_SIZE;
+  const page = Math.max(1, filters.page ?? 1);
+  const skip = (page - 1) * pageSize;
+
+  const [items, total] = await Promise.all([
+    prisma.venue.findMany({
+      where,
+      orderBy: { name: "asc" },
+      skip,
+      take: pageSize,
+    }),
+    prisma.venue.count({ where }),
+  ]);
+
+  return { items, total, page, pageSize };
 }
 
 export async function getVenueBySlug(slug: string) {

@@ -2,6 +2,7 @@ import { getVenues } from "@/services/venue.service";
 import Link from "next/link";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { SalasFilters } from "@/components/buscador/SalasFilters";
+import { Pagination } from "@/components/ui/Pagination";
 
 export const metadata = {
   title: "Salas y espacios",
@@ -12,13 +13,15 @@ type Props = { searchParams: Promise<Record<string, string | undefined>> };
 
 export default async function SalasPage({ searchParams }: Props) {
   const params = await searchParams;
+  const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
   const capacityMin = params.capacityMin ? parseInt(params.capacityMin, 10) : undefined;
   const capacityMax = params.capacityMax ? parseInt(params.capacityMax, 10) : undefined;
-  const venues = await getVenues({
+  const { items: venues, total } = await getVenues({
     search: params.search || undefined,
     city: params.city || undefined,
     capacityMin: Number.isNaN(capacityMin) ? undefined : capacityMin,
     capacityMax: Number.isNaN(capacityMax) ? undefined : capacityMax,
+    page,
   });
 
   return (
@@ -28,7 +31,7 @@ export default async function SalasPage({ searchParams }: Props) {
           SALAS
         </h1>
         <p className="mt-3 max-w-xl font-body text-punk-white/60 sm:mt-4">
-          Espacios de la escena. {venues.length} salas y lugares en Nafarroa.
+          Espacios de la escena. {total} {total === 1 ? "sala" : "salas"} en Nafarroa.
         </p>
       </div>
 
@@ -69,13 +72,26 @@ export default async function SalasPage({ searchParams }: Props) {
         ))}
       </div>
 
+      <Pagination
+        page={page}
+        totalItems={total}
+        searchParams={Object.fromEntries(
+          Object.entries({
+            search: params.search,
+            city: params.city,
+            capacityMin: params.capacityMin,
+            capacityMax: params.capacityMax,
+          }).filter(([, v]) => v != null && v !== "")
+        )}
+      />
+
       {venues.length === 0 && (
         <div className="border-2 border-punk-white/20 border-dashed p-16 text-center">
           <p className="font-body text-punk-white/60">
-            Aún no hay salas registradas. Pronto habrá contenido.
+            Aún no hay salas registradas. Pronto habrá contenido. Mientras tanto, explora eventos y bandas.
           </p>
           <Link href="/" className="mt-4 inline-block font-punch text-sm uppercase tracking-widest text-punk-pink hover:text-punk-pink/80 transition-colors">
-            Volver al inicio →
+            ← Volver al inicio
           </Link>
         </div>
       )}
