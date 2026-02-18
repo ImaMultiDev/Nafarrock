@@ -2,6 +2,7 @@ import { getBandBySlug } from "@/services/band.service";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { PageLayout } from "@/components/ui/PageLayout";
+import { ImageLightbox } from "@/components/ui/ImageLightbox";
 
 export async function generateMetadata({
   params,
@@ -44,14 +45,13 @@ export default async function BandPage({
       </Link>
 
       <div className="mt-8 flex flex-col gap-8 md:flex-row">
-        <div className="shrink-0">
-          <div className="aspect-square w-64 overflow-hidden border-2 border-punk-green">
-            {band.imageUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={band.imageUrl}
+        <div className="min-w-0 shrink-0 space-y-4">
+          <div className="aspect-square w-full max-w-64 overflow-hidden border-2 border-punk-green">
+            {(band.logoUrl || band.imageUrl || (band.images && band.images[0])) ? (
+              <ImageLightbox
+                src={band.logoUrl || band.imageUrl || band.images[0]}
                 alt={band.name}
-                className="h-full w-full object-cover"
+                thumbnailClassName="h-full w-full object-cover cursor-pointer"
               />
             ) : (
               <div className="flex h-full items-center justify-center bg-punk-black font-display text-6xl text-punk-green/40">
@@ -59,6 +59,23 @@ export default async function BandPage({
               </div>
             )}
           </div>
+          {band.images && band.images.length > 0 && (() => {
+            const mainImg = band.logoUrl || band.imageUrl || band.images[0];
+            const gallery = mainImg === band.images[0] ? band.images.slice(1) : band.images;
+            if (gallery.length === 0) return null;
+            return (
+              <div className="flex flex-wrap gap-2">
+                {gallery.map((url, i) => (
+                  <ImageLightbox
+                    key={i}
+                    src={url}
+                    alt={`${band.name} ${i + 2}`}
+                    thumbnailClassName="h-20 w-20 object-cover border-2 border-punk-green/50 cursor-pointer"
+                  />
+                ))}
+              </div>
+            );
+          })()}
         </div>
         <div className="flex-1">
           <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">

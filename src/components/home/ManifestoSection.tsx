@@ -18,7 +18,7 @@ export function ManifestoSection() {
   return (
     <section
       ref={ref}
-      className="relative overflow-hidden bg-punk-red py-12 px-6 sm:py-20 sm:px-12 lg:py-28 lg:px-20"
+      className="relative overflow-hidden bg-punk-red py-12 px-6 sm:py-20 sm:px-12 lg:py-28 lg:px-20 max-[299px]:px-3"
     >
       {/* Patrón diagonal */}
       <div
@@ -41,7 +41,7 @@ export function ManifestoSection() {
           transition={{ duration: 0.5 }}
           className="text-center"
         >
-          <p className="font-punch mb-8 text-xl uppercase tracking-[0.5em] text-punk-black sm:mb-10">
+          <p className="font-punch mb-8 text-xl uppercase tracking-[0.5em] text-punk-black sm:mb-10 max-[299px]:text-base max-[299px]:tracking-[0.15em]">
             La filosofía
           </p>
           <div className="space-y-4 sm:space-y-5">

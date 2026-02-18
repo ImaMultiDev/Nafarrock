@@ -4,6 +4,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { PageLayout } from "@/components/ui/PageLayout";
+import { ImageLightbox } from "@/components/ui/ImageLightbox";
 
 export async function generateMetadata({
   params,
@@ -52,11 +53,10 @@ export default async function EventPage({
         </h1>
         {event.imageUrl && (
           <div className="mt-6 max-w-md overflow-hidden border-2 border-punk-red/50">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <ImageLightbox
               src={event.imageUrl}
               alt={`Cartel ${event.title}`}
-              className="w-full object-cover"
+              thumbnailClassName="w-full object-cover cursor-pointer"
             />
           </div>
         )}
@@ -76,16 +76,24 @@ export default async function EventPage({
             <p className="font-body text-punk-white/70">{event.venue.address}</p>
           )}
           <p className="font-body text-punk-white/70">{event.venue.city}</p>
-          {event.venue.mapUrl && (
-            <a
-              href={event.venue.mapUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 inline-block border-2 border-punk-red px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-red transition-all hover:bg-punk-red hover:text-punk-black"
+          <div className="mt-3 flex flex-wrap gap-3">
+            <Link
+              href={`/salas/${event.venue.slug}`}
+              className="inline-block border-2 border-punk-red px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-red transition-all hover:bg-punk-red hover:text-punk-black"
             >
-              Ver en mapa →
-            </a>
-          )}
+              Ver sala →
+            </Link>
+            {event.venue.mapUrl && (
+              <a
+                href={event.venue.mapUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block border-2 border-punk-red px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-red transition-all hover:bg-punk-red hover:text-punk-black"
+              >
+                Ver en mapa →
+              </a>
+            )}
+          </div>
         </div>
 
         {(event.festival || event.promoter || event.organizer) && (

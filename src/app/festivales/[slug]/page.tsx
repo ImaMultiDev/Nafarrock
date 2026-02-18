@@ -4,6 +4,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { PageLayout } from "@/components/ui/PageLayout";
+import { ImageLightbox } from "@/components/ui/ImageLightbox";
 
 export async function generateMetadata({
   params,
@@ -44,14 +45,13 @@ export default async function FestivalPage({
       </Link>
 
       <div className="mt-8 flex flex-col gap-8 md:flex-row">
-        <div className="shrink-0">
-          <div className="aspect-square w-64 overflow-hidden border-2 border-punk-red">
+        <div className="min-w-0 shrink-0">
+          <div className="aspect-square w-full max-w-64 overflow-hidden border-2 border-punk-red">
             {festival.logoUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <ImageLightbox
                 src={festival.logoUrl}
                 alt={festival.name}
-                className="h-full w-full object-cover"
+                thumbnailClassName="h-full w-full object-cover cursor-pointer"
               />
             ) : (
               <div className="flex h-full items-center justify-center bg-punk-black font-display text-6xl text-punk-red/40">
@@ -80,12 +80,11 @@ export default async function FestivalPage({
           {festival.images && festival.images.length > 0 && (
             <div className="mt-6 flex flex-wrap gap-4">
               {festival.images.map((url, i) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <ImageLightbox
                   key={i}
                   src={url}
                   alt={`${festival.name} ${i + 1}`}
-                  className="h-24 w-24 object-cover border-2 border-punk-red/50"
+                  thumbnailClassName="h-24 w-24 object-cover border-2 border-punk-red/50 cursor-pointer"
                 />
               ))}
             </div>

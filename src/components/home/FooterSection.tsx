@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 
 export function FooterSection() {
   return (
-    <footer className="relative overflow-hidden border-t-2 border-punk-green bg-punk-black py-10 px-6 sm:py-12 sm:px-12 lg:py-14 lg:px-20">
+    <footer className="relative overflow-hidden border-t-2 border-punk-green bg-punk-black py-10 px-4 sm:py-12 sm:px-12 lg:py-14 lg:px-20 max-[299px]:px-3 max-[299px]:py-8">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,200,83,0.03)_0%,transparent_70%)]" />
 
       <div className="relative z-10 mx-auto max-w-7xl 2xl:max-w-content-wide">
@@ -19,7 +19,7 @@ export function FooterSection() {
           >
             <Link
               href="/"
-              className="flex items-center gap-4 transition-opacity hover:opacity-90"
+              className="flex items-center gap-4 transition-opacity hover:opacity-90 max-[299px]:hidden"
             >
               <Image
                 src="/logo.png"
@@ -42,7 +42,7 @@ export function FooterSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="flex gap-8"
+            className="flex flex-wrap justify-center gap-x-6 gap-y-2 max-[299px]:grid max-[299px]:grid-cols-2 max-[299px]:gap-x-4 max-[299px]:gap-y-1"
           >
             <Link
               href="/bandas"

@@ -25,7 +25,7 @@ export function PageLayout({
       />
       {/* Gradiente radial sutil */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(230,0,38,0.08)_0%,transparent_50%)]" />
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-6 py-12 sm:px-12 sm:py-16 lg:px-20 lg:py-20 2xl:max-w-content-wide">
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-6 py-12 sm:px-12 sm:py-16 lg:px-20 lg:py-20 2xl:max-w-content-wide max-[299px]:px-3 max-[299px]:py-8">
         {children}
       </div>
     </main>

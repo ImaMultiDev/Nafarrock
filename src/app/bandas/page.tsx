@@ -21,19 +21,19 @@ export default async function BandasPage() {
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
+      <div className="grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
         {bands.map((band) => (
           <Link
             key={band.id}
             href={`/bandas/${band.slug}`}
-            className="group relative block overflow-hidden border-2 border-punk-green bg-punk-black p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(0,200,83,0.2)]"
+            className="group relative block min-w-0 overflow-hidden border-2 border-punk-green bg-punk-black p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(0,200,83,0.2)] max-[299px]:p-3"
           >
             <div className="absolute right-0 top-0 h-16 w-16 border-t-2 border-r-2 border-punk-green" style={{ clipPath: "polygon(100% 0, 100% 100%, 0 0)" }} />
-            <div className="aspect-[4/3] overflow-hidden border border-punk-white/10">
-              {band.imageUrl ? (
+            <div className="aspect-[4/3] min-h-0 min-w-0 overflow-hidden border border-punk-white/10">
+              {(band.logoUrl || band.imageUrl || (band.images && band.images[0])) ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
-                  src={band.imageUrl}
+                  src={band.logoUrl || band.imageUrl || band.images[0]}
                   alt={band.name}
                   className="h-full w-full object-cover transition group-hover:scale-105"
                 />

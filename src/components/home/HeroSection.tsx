@@ -40,7 +40,7 @@ export function HeroSection() {
       </div>
 
       {/* Contenido principal - misma estructura que EXPLORA: padding fuera, max-w-7xl sin padding */}
-      <div className="relative z-10 flex min-h-0 flex-col justify-start px-6 pt-14 pb-section-gap sm:min-h-hero-cap sm:px-12 sm:pt-20 sm:pb-section-gap lg:px-20 lg:pt-24 lg:pb-section-gap">
+      <div className="relative z-10 flex min-h-0 flex-col justify-start px-6 pt-14 pb-section-gap sm:min-h-hero-cap sm:px-12 sm:pt-20 sm:pb-section-gap lg:px-20 lg:pt-24 lg:pb-section-gap max-[299px]:px-3 max-[299px]:pt-10">
         <div className="mx-auto w-full max-w-7xl 2xl:max-w-content-wide">
           <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -58,8 +58,8 @@ export function HeroSection() {
             Nafarroa · Punk · Rock · Alternativo
           </motion.p>
 
-          {/* Título NAFARROCK con glitch - más grande en mobile */}
-          <h1 className="glitch-wrapper relative mx-auto font-display text-[clamp(5.5rem,22vw,12rem)] leading-[0.9] tracking-tighter lg:mx-0">
+          {/* Título NAFARROCK con glitch - más grande en mobile, más pequeño por debajo de 300px */}
+          <h1 className="glitch-wrapper relative mx-auto font-display leading-[0.9] tracking-tighter lg:mx-0 text-[clamp(3.5rem,22vw,12rem)] max-[299px]:text-[clamp(2.5rem,18vw,5rem)]">
             <span className="invisible" aria-hidden>
               NAFARROCK
             </span>

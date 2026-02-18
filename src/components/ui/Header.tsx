@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { createPortal } from "react-dom";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect } from "react";
 import {
   Menu,
@@ -68,9 +68,9 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b-2 border-punk-red bg-punk-black/95 backdrop-blur-md">
-      <nav className="relative flex w-full items-center justify-between px-4 py-3 sm:px-6 lg:px-12">
+      <nav className="relative flex w-full min-w-0 items-center justify-between px-3 py-3 sm:px-6 lg:px-12 max-[299px]:px-2">
         {/* Logo a la izquierda + NAFARROCK centrado y más grande en mobile */}
-        <div className="flex flex-1 items-center md:flex-initial">
+        <div className="flex flex-1 items-center nav:flex-initial">
           <Link
             href="/"
             className="flex shrink-0 items-center transition-opacity hover:opacity-90"
@@ -86,16 +86,16 @@ export function Header() {
           </Link>
           <Link
             href="/"
-            className="flex flex-1 justify-center py-2 transition-opacity hover:opacity-90 md:ml-3 md:flex-initial md:justify-start"
+            className="flex flex-1 justify-center py-2 transition-opacity hover:opacity-90 nav:ml-3 nav:flex-initial nav:justify-start max-[299px]:hidden"
           >
-            <span className="font-display text-3xl text-punk-red tracking-tighter sm:text-4xl md:text-xl lg:text-4xl">
+            <span className="font-display text-3xl text-punk-red tracking-tighter sm:text-4xl nav:text-xl lg:text-4xl">
               NAFAR<span className="text-punk-green">ROCK</span>
             </span>
           </Link>
         </div>
 
         {/* Desktop: nav + redes + auth */}
-        <div className="hidden items-center gap-4 md:flex">
+        <div className="hidden items-center gap-4 nav:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -120,12 +120,21 @@ export function Header() {
             ))}
           </div>
           {session ? (
-            <Link
-              href="/dashboard"
-              className="ml-2 border-2 border-punk-red bg-punk-red px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white transition-colors hover:bg-transparent hover:text-punk-red"
-            >
-              Panel
-            </Link>
+            <div className="ml-2 flex items-center gap-2">
+              <Link
+                href="/dashboard"
+                className="border-2 border-punk-red bg-punk-red px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white transition-colors hover:bg-transparent hover:text-punk-red"
+              >
+                Panel
+              </Link>
+              <button
+                type="button"
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="border-2 border-punk-white/40 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white/80 transition-colors hover:border-punk-red hover:text-punk-red"
+              >
+                Salir
+              </button>
+            </div>
           ) : (
             <Link
               href="/auth/login"
@@ -140,7 +149,7 @@ export function Header() {
         <button
           type="button"
           onClick={() => setMenuOpen(!menuOpen)}
-          className="absolute right-4 top-1/2 flex h-10 w-10 shrink-0 -translate-y-1/2 items-center justify-center rounded border border-punk-white/30 text-punk-white md:relative md:right-0 md:top-0 md:translate-y-0 md:hidden"
+          className="absolute right-4 top-1/2 flex h-10 w-10 shrink-0 -translate-y-1/2 items-center justify-center rounded border border-punk-white/30 text-punk-white nav:relative nav:right-0 nav:top-0 nav:translate-y-0 nav:hidden"
           aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
           aria-expanded={menuOpen}
         >
@@ -152,7 +161,7 @@ export function Header() {
       {mounted &&
         createPortal(
           <div
-            className={`fixed left-0 right-0 bottom-0 top-16 z-[9999] bg-punk-black backdrop-blur-lg transition-opacity duration-300 md:hidden ${
+            className={`fixed left-0 right-0 bottom-0 top-16 z-[9999] bg-punk-black backdrop-blur-lg transition-opacity duration-300 nav:hidden ${
               menuOpen ? "opacity-100" : "pointer-events-none opacity-0"
             }`}
             aria-hidden={!menuOpen}
@@ -173,13 +182,25 @@ export function Header() {
               </Link>
             ))}
             {session ? (
-              <Link
-                href="/dashboard"
-                onClick={() => setMenuOpen(false)}
-                className="mt-2 rounded border-2 border-punk-red bg-punk-red px-4 py-3 text-center font-punch text-xs uppercase tracking-widest text-punk-white"
-              >
-                Panel
-              </Link>
+              <>
+                <Link
+                  href="/dashboard"
+                  onClick={() => setMenuOpen(false)}
+                  className="mt-2 rounded border-2 border-punk-red bg-punk-red px-4 py-3 text-center font-punch text-xs uppercase tracking-widest text-punk-white"
+                >
+                  Panel
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    signOut({ callbackUrl: "/" });
+                  }}
+                  className="mt-2 rounded border-2 border-punk-white/40 px-4 py-3 text-center font-punch text-xs uppercase tracking-widest text-punk-white/80 hover:border-punk-red hover:text-punk-red"
+                >
+                  Salir
+                </button>
+              </>
             ) : (
               <Link
                 href="/auth/login"

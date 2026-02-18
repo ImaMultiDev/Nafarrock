@@ -1,22 +1,31 @@
 /**
  * Seed inicial para Nafarrock
  * Datos de ejemplo: bandas, salas, eventos
+ *
+ * Admin: usa ADMIN_EMAIL y ADMIN_PASSWORD del .env si existen.
+ * Si no, crea admin@nafarrock.local / admin123
  */
+import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import { hash } from "bcryptjs";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  const adminPassword = await hash("admin123", 12);
+  const adminEmail = process.env.ADMIN_EMAIL ?? "admin@nafarrock.local";
+  const adminPasswordPlain = process.env.ADMIN_PASSWORD ?? "admin123";
+  const adminPassword = await hash(adminPasswordPlain, 12);
 
+  console.log("Creando admin:", adminEmail, process.env.ADMIN_EMAIL ? "(desde .env)" : "(por defecto)");
   const admin = await prisma.user.upsert({
-    where: { email: "admin@nafarrock.local" },
-    update: {},
+    where: { email: adminEmail },
+    update: { role: "ADMIN", password: adminPassword },
     create: {
-      email: "admin@nafarrock.local",
+      email: adminEmail,
       password: adminPassword,
       name: "Admin Nafarrock",
+      firstName: "Admin",
+      lastName: "Nafarrock",
       role: "ADMIN",
     },
   });

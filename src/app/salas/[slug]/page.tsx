@@ -4,6 +4,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { PageLayout } from "@/components/ui/PageLayout";
+import { ImageLightbox } from "@/components/ui/ImageLightbox";
 
 export async function generateMetadata({
   params,
@@ -37,11 +38,44 @@ export default async function VenuePage({
         ← Volver a salas
       </Link>
 
-      <div className="mt-12">
-        <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
-          {venue.name}
-        </h1>
-        <p className="mt-3 font-body text-punk-white/70">{venue.city}</p>
+      <div className="mt-8 flex flex-col gap-8 md:flex-row">
+        <div className="min-w-0 shrink-0 space-y-4">
+          <div className="aspect-square w-full max-w-64 overflow-hidden border-2 border-punk-pink">
+            {(venue.logoUrl || venue.imageUrl || (venue.images && venue.images[0])) ? (
+              <ImageLightbox
+                src={venue.logoUrl || venue.imageUrl || venue.images[0]}
+                alt={venue.name}
+                thumbnailClassName="h-full w-full object-cover cursor-pointer"
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center bg-punk-black font-display text-6xl text-punk-pink/40">
+                {venue.name.charAt(0)}
+              </div>
+            )}
+          </div>
+          {venue.images && venue.images.length > 0 && (() => {
+            const mainImg = venue.logoUrl || venue.imageUrl || venue.images[0];
+            const gallery = mainImg === venue.images[0] ? venue.images.slice(1) : venue.images;
+            if (gallery.length === 0) return null;
+            return (
+              <div className="flex flex-wrap gap-2">
+                {gallery.map((url, i) => (
+                  <ImageLightbox
+                    key={i}
+                    src={url}
+                    alt={`${venue.name} ${i + 2}`}
+                    thumbnailClassName="h-20 w-20 object-cover border-2 border-punk-pink/50 cursor-pointer"
+                  />
+                ))}
+              </div>
+            );
+          })()}
+        </div>
+        <div className="flex-1">
+          <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
+            {venue.name}
+          </h1>
+          <p className="mt-3 font-body text-punk-white/70">{venue.city}</p>
         {venue.capacity && (
           <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-pink">
             Aforo: {venue.capacity} personas
@@ -106,6 +140,7 @@ export default async function VenuePage({
             </ul>
           </div>
         )}
+        </div>
       </div>
     </PageLayout>
   );

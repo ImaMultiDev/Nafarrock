@@ -12,6 +12,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      screens: {
+        nav: "1470px", // Menú completo (no hamburguesa) a partir de este ancho
+      },
       colors: {
         punk: {
           black: "#0a0a0a",

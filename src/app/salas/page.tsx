@@ -21,18 +21,32 @@ export default async function SalasPage() {
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
+      <div className="grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
         {venues.map((venue) => (
           <Link
             key={venue.id}
             href={`/salas/${venue.slug}`}
-            className="group relative block overflow-hidden border-2 border-punk-pink bg-punk-black p-8 transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(255,0,110,0.2)]"
+            className="group relative block min-w-0 overflow-hidden border-2 border-punk-pink bg-punk-black p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_40px_rgba(255,0,110,0.2)] max-[299px]:p-3"
           >
             <div className="absolute right-0 top-0 h-16 w-16 border-t-2 border-r-2 border-punk-pink" style={{ clipPath: "polygon(100% 0, 100% 100%, 0 0)" }} />
-            <h2 className="font-display text-2xl tracking-tighter text-punk-white group-hover:text-punk-pink transition-colors">
+            <div className="aspect-[4/3] min-h-0 min-w-0 overflow-hidden border border-punk-white/10">
+              {(venue.logoUrl || venue.imageUrl || (venue.images && venue.images[0])) ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={venue.logoUrl || venue.imageUrl || venue.images[0]}
+                  alt={venue.name}
+                  className="h-full w-full object-cover transition group-hover:scale-105"
+                />
+              ) : (
+                <div className="flex h-full items-center justify-center bg-punk-black/80 font-display text-4xl text-punk-pink/50">
+                  {venue.name.charAt(0)}
+                </div>
+              )}
+            </div>
+            <h2 className="mt-4 font-display text-xl tracking-tighter text-punk-white group-hover:text-punk-pink transition-colors">
               {venue.name}
             </h2>
-            <p className="mt-2 font-body text-punk-white/70">{venue.city}</p>
+            <p className="mt-2 font-body text-sm text-punk-white/70">{venue.city}</p>
             {venue.capacity && (
               <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-pink/80">
                 Aforo: {venue.capacity} personas

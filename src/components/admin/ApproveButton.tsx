@@ -17,10 +17,12 @@ export function ApproveButton({ entity, id, approved }: Props) {
     setLoading(true);
     try {
       const paths: Record<string, string> = { band: "bands", venue: "venues", event: "events", promoter: "promoters", organizer: "organizers", festival: "festivals" };
+      // Eventos usan isApproved, el resto usa approved
+      const body = entity === "event" ? { isApproved: !approved } : { approved: !approved };
       const res = await fetch(`/api/admin/${paths[entity]}/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ approved: !approved }),
+        body: JSON.stringify(body),
       });
       if (res.ok) router.refresh();
     } finally {

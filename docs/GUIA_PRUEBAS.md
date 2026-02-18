@@ -8,62 +8,93 @@ Guía paso a paso para comprobar que todo funciona correctamente. Marca cada cas
 
 ## Requisitos previos
 
-- [ ] PostgreSQL ejecutándose con base de datos configurada
-- [ ] Variables `.env` configuradas: `DATABASE_URL`, `NEXTAUTH_URL`, `NEXTAUTH_SECRET`
-- [ ] Cloudinary configurado: `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
-- [ ] `npm install` ejecutado
-- [ ] `npx prisma migrate dev` (o `prisma db push`) aplicado
-- [ ] `npm run dev` en ejecución
+- [V] PostgreSQL ejecutándose con base de datos configurada
+- [V] Variables `.env` configuradas: `DATABASE_URL`, `NEXTAUTH_URL`, `NEXTAUTH_SECRET`
+- [V] Cloudinary configurado: `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
+- [V] `npm install` ejecutado
+- [V] `npx prisma migrate dev` (o `prisma db push`) aplicado
+- [V] `npm run dev` en ejecución
+
+---
+
+## 0. Crear usuario admin
+
+El admin se crea en la tabla `users` con `role = ADMIN`. Opciones:
+
+### Opción A: Seed (recomendado)
+
+```bash
+npm run db:seed
+```
+
+- **Por defecto**: crea `admin@nafarrock.local` / `admin123`
+- **Con .env**: define `ADMIN_EMAIL` y `ADMIN_PASSWORD` en `.env` (o en Vercel) y ejecuta el seed. Usará tus credenciales.
+
+Si el email ya existe (p. ej. te registraste antes), el seed lo promueve a ADMIN y actualiza la contraseña.
+
+### Opción B: Promover usuario existente en BD
+
+En **Prisma Studio** (`npx prisma studio`):
+
+1. Tabla `users` → localiza tu usuario por email
+2. Campo `role` → cambiar de `USUARIO` (o BANDA, etc.) a `ADMIN`
+3. Guardar
+
+### Opción C: SQL directo
+
+```sql
+UPDATE users SET role = 'ADMIN' WHERE email = 'tu-email@ejemplo.com';
+```
 
 ---
 
 ## 1. Autenticación y registro
 
 ### 1.1 Login
-- [ ] Ir a `/auth/login`
-- [ ] Introducir credenciales incorrectas → mensaje de error
-- [ ] Introducir credenciales correctas → redirección exitosa
-- [ ] Tras login, Header muestra estado de sesión
-- [ ] Botón/logout funciona y cierra sesión
+- [V] Ir a `/auth/login`
+- [V] Introducir credenciales incorrectas → mensaje de error
+- [V] Introducir credenciales correctas → redirección exitosa
+- [V] Tras login, Header muestra estado de sesión
+- [V] Botón/logout funciona y cierra sesión
 
 ### 1.2 Registro – Usuario básico
-- [ ] Ir a `/auth/registro`
-- [ ] Seleccionar rol "Usuario"
-- [ ] Completar email, contraseña, nombre, apellidos
-- [ ] Enviar → cuenta creada, redirección a login
-- [ ] Login con la nueva cuenta → acceso al dashboard
+- [V] Ir a `/auth/registro`
+- [V] Seleccionar rol "Usuario"
+- [V] Completar email, contraseña, nombre, apellidos
+- [V] Enviar → cuenta creada, redirección a login
+- [V] Login con la nueva cuenta → acceso al dashboard
 
 ### 1.3 Registro – Banda
-- [ ] Ir a `/auth/registro`
-- [ ] Seleccionar rol "Banda"
-- [ ] Completar datos personales y entidad (nombre banda, localidad, etc.)
-- [ ] Añadir al menos un miembro (nombre + instrumento)
-- [ ] Opcional: subir logo, completar redes sociales
-- [ ] Enviar → cuenta creada
-- [ ] Login → en dashboard aparece "Mi banda"
-- [ ] Banda creada con `approved: false` (pendiente)
+- [V] Ir a `/auth/registro`
+- [V] Seleccionar rol "Banda"
+- [V] Completar datos personales y entidad (nombre banda, localidad, etc.)
+- [V] Añadir al menos un miembro (nombre + instrumento)
+- [V] Opcional: subir logo, completar redes sociales
+- [V] Enviar → cuenta creada
+- [V] Login → en dashboard aparece "Mi banda"
+- [V] Banda creada con `approved: false` (pendiente)
 
 ### 1.4 Registro – Sala
-- [ ] Ir a `/auth/registro` y registrar nueva cuenta
-- [ ] Seleccionar rol "Sala"
-- [ ] Completar nombre sala, ciudad, dirección, etc.
-- [ ] Enviar → cuenta y sala creadas
-- [ ] Sala creada con `approved: false`
+- [V] Ir a `/auth/registro` y registrar nueva cuenta
+- [V] Seleccionar rol "Sala"
+- [V] Completar nombre sala, ciudad, dirección, etc.
+- [V] Enviar → cuenta y sala creadas
+- [V] Sala creada con `approved: false`
 
 ### 1.5 Registro – Festival
-- [ ] Registrar con rol "Festival"
-- [ ] Completar nombre, localidad, descripción, redes
-- [ ] Verificar que se crea la entidad Festival pendiente
+- [V] Registrar con rol "Festival"
+- [V] Completar nombre, localidad, descripción, redes
+- [V] Verificar que se crea la entidad Festival pendiente
 
 ### 1.6 Registro – Organizador
-- [ ] Registrar con rol "Organizador"
-- [ ] Completar datos
-- [ ] Verificar que se crea entidad Organizer pendiente
+- [V] Registrar con rol "Organizador"
+- [V] Completar datos
+- [V] Verificar que se crea entidad Organizer pendiente
 
 ### 1.7 Registro – Promotor
-- [ ] Registrar con rol "Promotor"
-- [ ] Completar datos
-- [ ] Verificar que se crea entidad Promoter pendiente
+- [V] Registrar con rol "Promotor"
+- [V] Completar datos
+- [V] Verificar que se crea entidad Promoter pendiente
 
 ---
 

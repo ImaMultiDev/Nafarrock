@@ -51,7 +51,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`${inter.variable} ${bebas.variable} ${spaceMono.variable}`}>
-      <body className="font-body min-h-screen bg-punk-black">
+      <body className="font-body min-h-screen overflow-x-hidden bg-punk-black">
         <div className="noise-overlay" aria-hidden />
         <Providers>
           <Header />
