@@ -82,14 +82,19 @@ export default async function BandasPage({ searchParams }: Props) {
       <Pagination
         page={page}
         totalItems={total}
-        searchParams={Object.fromEntries(
-          Object.entries({
-            search: params.search,
-            genre: params.genre,
-            location: params.location,
-            emerging: params.emerging,
-          }).filter(([, v]) => v != null && v !== "")
-        )}
+        searchParams={
+          Object.fromEntries(
+            Object.entries({
+              search: params.search,
+              genre: params.genre,
+              location: params.location,
+              emerging: params.emerging,
+            }).filter((entry): entry is [string, string] => {
+          const v = entry[1];
+          return v != null && v !== "";
+        })
+          ) as Record<string, string>
+        }
       />
 
       {bands.length === 0 && (

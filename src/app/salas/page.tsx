@@ -75,14 +75,19 @@ export default async function SalasPage({ searchParams }: Props) {
       <Pagination
         page={page}
         totalItems={total}
-        searchParams={Object.fromEntries(
-          Object.entries({
-            search: params.search,
-            city: params.city,
-            capacityMin: params.capacityMin,
-            capacityMax: params.capacityMax,
-          }).filter(([, v]) => v != null && v !== "")
-        )}
+        searchParams={
+          Object.fromEntries(
+            Object.entries({
+              search: params.search,
+              city: params.city,
+              capacityMin: params.capacityMin,
+              capacityMax: params.capacityMax,
+            }).filter((entry): entry is [string, string] => {
+          const v = entry[1];
+          return v != null && v !== "";
+        })
+          ) as Record<string, string>
+        }
       />
 
       {venues.length === 0 && (
