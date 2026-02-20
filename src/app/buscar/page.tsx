@@ -34,7 +34,7 @@ export default async function BuscarPage({ searchParams }: SearchParams) {
       page: 1,
       pageSize: 9,
     }),
-    getEvents({ search: search || undefined, pageSize: 5 }),
+    getEvents({ search: search || undefined, pageSize: 5, includePast: false }),
     getVenues({ city: location || undefined, search: search || undefined, pageSize: 5 }),
     getFestivals({ search: search || undefined, pageSize: 5 }, true),
     getPromoters({ search: search || undefined, pageSize: 5 }, true),
@@ -114,6 +114,9 @@ export default async function BuscarPage({ searchParams }: SearchParams) {
                 </span>
                 <span className="ml-2 font-body text-punk-white/60">
                   · {event.venue.name}
+                  {event.isSoldOut && (
+                    <span className="ml-2 font-punch text-xs uppercase text-punk-red">SOLD OUT</span>
+                  )}
                 </span>
               </Link>
             ))}

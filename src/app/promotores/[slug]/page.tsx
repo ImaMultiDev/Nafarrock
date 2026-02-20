@@ -92,7 +92,7 @@ export default async function PromoterPage({
       {promoter.events.length > 0 && (
         <div className="mt-16">
           <h2 className="font-display text-2xl tracking-tighter text-punk-white">
-            Eventos
+            Próximos eventos
           </h2>
           <ul className="mt-6 space-y-3">
             {promoter.events.map((evt) => (

@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ImageUpload } from "@/components/ui/ImageUpload";
+import { ImageGallery } from "@/components/ui/ImageGallery";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
@@ -14,6 +16,8 @@ export function EventForm({ venues, bands }: { venues: Venue[]; bands: Band[] })
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState("");
+  const [images, setImages] = useState<string[]>([]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -46,6 +50,13 @@ export function EventForm({ venues, bands }: { venues: Venue[]; bands: Band[] })
         description: formData.get("description") || undefined,
         price: formData.get("price") || undefined,
         ticketUrl: formData.get("ticketUrl") || undefined,
+        instagramUrl: formData.get("instagramUrl") || undefined,
+        facebookUrl: formData.get("facebookUrl") || undefined,
+        twitterUrl: formData.get("twitterUrl") || undefined,
+        webUrl: formData.get("webUrl") || undefined,
+        imageUrl: imageUrl || undefined,
+        images,
+        isSoldOut: (formData.get("isSoldOut") as string) === "on",
         bandIds: bandIds.filter(Boolean),
       }),
     });
@@ -72,6 +83,12 @@ export function EventForm({ venues, bands }: { venues: Venue[]; bands: Band[] })
           Título *
         </label>
         <input id="title" name="title" type="text" required className={inputClass} />
+      </div>
+      <div>
+        <ImageUpload folder="events" type="logo" entityId={null} value={imageUrl} onChange={setImageUrl} onRemove={() => setImageUrl("")} label="Imagen principal (opcional)" />
+      </div>
+      <div>
+        <ImageGallery folder="events" entityId="new" images={images} onChange={setImages} label="Imágenes adicionales (opcionales, máx. 2)" maxImages={2} />
       </div>
       <div>
         <label htmlFor="type" className={labelClass}>
@@ -150,6 +167,19 @@ export function EventForm({ venues, bands }: { venues: Venue[]; bands: Band[] })
           <input id="ticketUrl" name="ticketUrl" type="url" className={inputClass} />
         </div>
       </div>
+      <div>
+        <label className={labelClass}>Redes y enlaces (opcional)</label>
+        <div className="mt-2 grid gap-4 sm:grid-cols-2">
+          <input id="instagramUrl" name="instagramUrl" type="url" className={inputClass} placeholder="Instagram" />
+          <input id="facebookUrl" name="facebookUrl" type="url" className={inputClass} placeholder="Facebook" />
+          <input id="twitterUrl" name="twitterUrl" type="url" className={inputClass} placeholder="X (Twitter)" />
+          <input id="webUrl" name="webUrl" type="url" className={inputClass} placeholder="Web del evento" />
+        </div>
+      </div>
+      <label className="flex cursor-pointer items-center gap-2">
+        <input type="checkbox" name="isSoldOut" className="accent-punk-red" />
+        <span className={labelClass}>Entradas agotadas (SOLD OUT)</span>
+      </label>
       <div className="flex gap-4">
         <button
           type="submit"

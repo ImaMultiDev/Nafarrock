@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { ApproveButton } from "@/components/admin/ApproveButton";
 
@@ -20,6 +21,12 @@ export default async function AdminFestivalesPage() {
             {festivals.length} festivales · {pending.length} pendientes de aprobar
           </p>
         </div>
+        <Link
+          href="/admin/festivales/nueva"
+          className="border-2 border-punk-red bg-punk-red px-6 py-3 font-punch text-sm uppercase tracking-widest text-punk-black transition-all hover:bg-punk-red/90"
+        >
+          Registrar festival
+        </Link>
       </div>
 
       <div className="mt-10 overflow-x-auto">
@@ -30,7 +37,7 @@ export default async function AdminFestivalesPage() {
                 Nombre
               </th>
               <th className="py-3 font-punch text-xs uppercase tracking-widest text-punk-white/70">
-                Email
+                Propietario
               </th>
               <th className="py-3 font-punch text-xs uppercase tracking-widest text-punk-white/70">
                 Estado
@@ -44,7 +51,11 @@ export default async function AdminFestivalesPage() {
             {festivals.map((f) => (
               <tr key={f.id} className="border-b border-punk-white/10">
                 <td className="py-3 font-display text-punk-white">{f.name}</td>
-                <td className="py-3 font-body text-punk-white/70">{f.user?.email ?? "—"}</td>
+                <td className="py-3 font-body text-punk-white/70">
+                  {f.user?.email ?? (
+                    <span className="text-punk-red">Nafarrock</span>
+                  )}
+                </td>
                 <td className="py-3">
                   <span
                     className={`inline-block px-2 py-1 font-punch text-xs uppercase ${

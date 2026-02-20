@@ -41,6 +41,9 @@ export default async function AdminSalasPage() {
                 Ciudad
               </th>
               <th className="py-3 font-punch text-xs uppercase tracking-widest text-punk-white/70">
+                Propietario
+              </th>
+              <th className="py-3 font-punch text-xs uppercase tracking-widest text-punk-white/70">
                 Estado
               </th>
               <th className="py-3 font-punch text-xs uppercase tracking-widest text-punk-white/70">
@@ -60,6 +63,9 @@ export default async function AdminSalasPage() {
                   </Link>
                 </td>
                 <td className="py-3 font-body text-punk-white/70">{v.city}</td>
+                <td className="py-3 font-body text-sm text-punk-white/60">
+                  {v.user?.email ?? <span className="text-punk-red">Nafarrock</span>}
+                </td>
                 <td className="py-3">
                   <span
                     className={`inline-block px-2 py-1 font-punch text-xs uppercase ${

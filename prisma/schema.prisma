@@ -47,6 +47,7 @@ model User {
   organizerProfile Organizer? // Si es rol ORGANIZADOR
   festivalProfile  Festival?   // Si es rol FESTIVAL
   eventsCreated    Event[]    @relation("EventCreator")
+  profileClaims    ProfileClaim[]
 
   @@index([email])
   @@index([role])
@@ -122,10 +123,12 @@ model Band {
   approvedBy  String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
-  userId  String? @unique // null si admin creó la banda directamente
+  // Perfil híbrido: creado por Nafarrock sin propietario hasta reclamación
+  createdByNafarrock Boolean @default(false)
+  userId  String? @unique // null si admin creó la banda o pendiente de reclamación
   user    User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
   events  BandEvent[]
+  claimRequests ProfileClaim[]
   members BandMember[]
 
   @@index([slug])
@@ -178,10 +181,11 @@ model Venue {
   approvedBy  String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
+  createdByNafarrock Boolean @default(false)
   userId String? @unique
   user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
   events Event[]
+  claimRequests ProfileClaim[]
 
   @@index([slug])
   @@index([city])
@@ -211,10 +215,11 @@ model Festival {
   approvedBy  String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
-  userId String  @unique
-  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdByNafarrock Boolean @default(false)
+  userId String? @unique
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
   events Event[] @relation("FestivalEvents")
+  claimRequests ProfileClaim[]
 
   @@index([slug])
   @@index([approved])
@@ -268,9 +273,15 @@ model Event {
   ticketUrl        String?
   price            String?
   abonos           String?   // Info de abonos
+  instagramUrl     String?   // Enlace Instagram (publicación, perfil)
+  facebookUrl      String?   // Enlace Facebook (evento, página)
+  twitterUrl       String?   // Enlace X/Twitter
+  webUrl           String?   // Web del evento
   capacity         Int?      // Aforo del evento
+  isSoldOut        Boolean   @default(false)  // Sin entradas (SALA, FESTIVAL, ORGANIZADOR, PROMOTOR)
   isApproved       Boolean   @default(false)
   approvedAt       DateTime?
+  createdByNafarrock Boolean @default(false)
   // Límite 1 evento cada 5 días - admin puede eximir
   eventLimitExempt Boolean   @default(false)
   createdAt        DateTime  @default(now())
@@ -344,4 +355,49 @@ model Promoter {
   @@index([slug])
   @@index([isPro])
   @@map("promoters")
+}
+
+// ============================================
+// SOLICITUDES DE RECLAMACIÓN DE PERFILES
+// ============================================
+
+enum ClaimStatus {
+  PENDING_CLAIM
+  APPROVED
+  REJECTED
+}
+
+enum ClaimEntityType {
+  BAND
+  VENUE
+  FESTIVAL
+}
+
+model ProfileClaim {
+  id        String       @id @default(cuid())
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entityType ClaimEntityType
+  entityId  String
+  status    ClaimStatus  @default(PENDING_CLAIM)
+  message   String?      @db.Text
+  processedAt DateTime?
+  processedBy String?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  bandId    String?
+  band      Band?       @relation(fields: [bandId], references: [id], onDelete: Cascade)
+  venueId   String?
+  venue     Venue?      @relation(fields: [venueId], references: [id], onDelete: Cascade)
+  festivalId String?
+  festival  Festival?   @relation(fields: [festivalId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([entityType])
+  @@index([bandId])
+  @@index([venueId])
+  @@index([festivalId])
+  @@map("profile_claims")
 }

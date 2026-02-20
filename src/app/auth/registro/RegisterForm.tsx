@@ -188,10 +188,25 @@ export function RegisterForm() {
             </p>
           </section>
 
+          {needsEntity && (role === "BANDA" || role === "SALA" || role === "FESTIVAL") && (
+            <div className="border-2 border-punk-green/30 bg-punk-green/5 p-4">
+              <p className="font-body text-punk-white/90">
+                ¿Tu perfil ya existe en Nafarrock? Búscalo y reclámalo para gestionarlo tú mismo.
+              </p>
+              <Link
+                href="/auth/reclamar"
+                className="mt-2 inline-block font-punch text-xs uppercase tracking-widest text-punk-green hover:underline"
+              >
+                Buscar y reclamar perfil →
+              </Link>
+            </div>
+          )}
           {needsEntity && (
             <section>
               <h2 className="font-display text-xl tracking-tighter text-punk-green mb-6">
-                Datos de {role === "BANDA" ? "la banda" : role === "SALA" ? "la sala" : "la entidad"}
+                {role === "BANDA" || role === "SALA" || role === "FESTIVAL"
+                  ? "Crear nuevo perfil (si no aparece en la búsqueda)"
+                  : `Datos de ${role === "ORGANIZADOR" ? "el organizador" : "el promotor"}`}
               </h2>
               <div>
                 <label htmlFor="entityName" className={labelClass}>

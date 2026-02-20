@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
+import { ImageGallery } from "@/components/ui/ImageGallery";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
@@ -24,6 +25,7 @@ export function DashboardEventForm({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [imageUrl, setImageUrl] = useState("");
+  const [images, setImages] = useState<string[]>([]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -56,7 +58,13 @@ export function DashboardEventForm({
         description: formData.get("description") || undefined,
         price: formData.get("price") || undefined,
         ticketUrl: formData.get("ticketUrl") || undefined,
+        instagramUrl: formData.get("instagramUrl") || undefined,
+        facebookUrl: formData.get("facebookUrl") || undefined,
+        twitterUrl: formData.get("twitterUrl") || undefined,
+        webUrl: formData.get("webUrl") || undefined,
         imageUrl: imageUrl || undefined,
+        images: images,
+        isSoldOut: (formData.get("isSoldOut") as string) === "on",
         bandIds: bandIds.filter(Boolean),
       }),
     });
@@ -91,7 +99,17 @@ export function DashboardEventForm({
           value={imageUrl}
           onChange={setImageUrl}
           onRemove={() => setImageUrl("")}
-          label="Cartel / Imagen"
+          label="Imagen principal (opcional)"
+        />
+      </div>
+      <div>
+        <ImageGallery
+          folder="events"
+          entityId="new"
+          images={images}
+          onChange={setImages}
+          label="Imágenes adicionales (opcionales, máx. 2)"
+          maxImages={2}
         />
       </div>
       <div>
@@ -177,6 +195,22 @@ export function DashboardEventForm({
           <input id="ticketUrl" name="ticketUrl" type="url" className={inputClass} />
         </div>
       </div>
+      <div>
+        <label className={labelClass}>Redes y enlaces (opcional)</label>
+        <p className="mt-1 font-body text-sm text-punk-white/50">
+          Instagram, Facebook, X (Twitter) o web del evento para enlazar publicaciones.
+        </p>
+        <div className="mt-2 grid gap-4 sm:grid-cols-2">
+          <input id="instagramUrl" name="instagramUrl" type="url" className={inputClass} placeholder="Instagram" />
+          <input id="facebookUrl" name="facebookUrl" type="url" className={inputClass} placeholder="Facebook" />
+          <input id="twitterUrl" name="twitterUrl" type="url" className={inputClass} placeholder="X (Twitter)" />
+          <input id="webUrl" name="webUrl" type="url" className={inputClass} placeholder="Web del evento" />
+        </div>
+      </div>
+      <label className="flex cursor-pointer items-center gap-2">
+        <input type="checkbox" name="isSoldOut" className="accent-punk-red" />
+        <span className={labelClass}>Entradas agotadas (SOLD OUT)</span>
+      </label>
       <button
         type="submit"
         disabled={loading || venues.length === 0}

@@ -93,16 +93,16 @@ export function HeroSection() {
             className="mt-10 flex flex-wrap justify-center gap-4 sm:mt-12 sm:gap-5 lg:justify-start"
           >
             <Link
-              href="/bandas"
+              href="/eventos"
               className="group relative overflow-hidden bg-punk-red px-8 py-4 font-punch text-sm uppercase tracking-widest text-punk-white transition-all duration-300 hover:bg-punk-blood hover:scale-105 hover:shadow-[0_0_30px_rgba(230,0,38,0.5)]"
             >
-              Explorar bandas
+              Explorar eventos
             </Link>
             <Link
-              href="/eventos"
+              href="/bandas"
               className="border-2 border-punk-green bg-transparent px-8 py-4 font-punch text-sm uppercase tracking-widest text-punk-green transition-all duration-300 hover:bg-punk-green hover:text-punk-black hover:scale-105"
             >
-              Ver eventos
+              Ver bandas
             </Link>
             <Link
               href="/salas"

@@ -16,14 +16,18 @@ type Props = { searchParams: Promise<Record<string, string | undefined>> };
 export default async function EventosPage({ searchParams }: Props) {
   const params = await searchParams;
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
-  const fromDate = params.fromDate ? new Date(params.fromDate) : undefined;
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+  let fromDate = params.fromDate ? new Date(params.fromDate) : undefined;
   const toDate = params.toDate ? new Date(params.toDate) : undefined;
+  if (fromDate && fromDate < today) fromDate = today;
   const { items: events, total } = await getEvents({
     search: params.search || undefined,
     type: (params.type as "CONCIERTO" | "FESTIVAL") || undefined,
     fromDate,
     toDate,
     page,
+    includePast: false,
   });
 
   return (
@@ -69,15 +73,22 @@ export default async function EventosPage({ searchParams }: Props) {
                   </p>
                 )}
               </div>
-              <span
-                className={`shrink-0 border-2 px-4 py-2 font-punch text-xs uppercase tracking-widest ${
-                  event.type === "FESTIVAL"
-                    ? "border-punk-red bg-punk-red/20 text-punk-red"
-                    : "border-punk-white/40 bg-punk-black text-punk-white/90"
-                }`}
-              >
-                {event.type === "FESTIVAL" ? "Festival" : "Concierto"}
-              </span>
+              <div className="flex shrink-0 flex-wrap gap-2">
+                <span
+                  className={`border-2 px-4 py-2 font-punch text-xs uppercase tracking-widest ${
+                    event.type === "FESTIVAL"
+                      ? "border-punk-red bg-punk-red/20 text-punk-red"
+                      : "border-punk-white/40 bg-punk-black text-punk-white/90"
+                  }`}
+                >
+                  {event.type === "FESTIVAL" ? "Festival" : "Concierto"}
+                </span>
+                {event.isSoldOut && (
+                  <span className="border-2 border-punk-red bg-punk-red/30 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-red">
+                    SOLD OUT
+                  </span>
+                )}
+              </div>
             </div>
           </Link>
         ))}

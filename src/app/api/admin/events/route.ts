@@ -14,6 +14,13 @@ const createSchema = z.object({
   description: z.string().optional(),
   price: z.string().optional(),
   ticketUrl: z.string().url().optional().or(z.literal("")),
+  instagramUrl: z.string().url().optional().or(z.literal("")),
+  facebookUrl: z.string().url().optional().or(z.literal("")),
+  twitterUrl: z.string().url().optional().or(z.literal("")),
+  webUrl: z.string().url().optional().or(z.literal("")),
+  imageUrl: z.string().optional().nullable(),
+  images: z.array(z.string()).optional().default([]),
+  isSoldOut: z.boolean().optional().default(false),
   bandIds: z.array(z.string()).optional().default([]),
 });
 
@@ -47,8 +54,16 @@ export async function POST(req: Request) {
         description: data.description || null,
         price: data.price || null,
         ticketUrl: data.ticketUrl || null,
+        instagramUrl: data.instagramUrl || null,
+        facebookUrl: data.facebookUrl || null,
+        twitterUrl: data.twitterUrl || null,
+        webUrl: data.webUrl || null,
+        imageUrl: data.imageUrl || null,
+        images: data.images ?? [],
+        isSoldOut: data.isSoldOut ?? false,
         isApproved: true,
         approvedAt: new Date(),
+        createdByNafarrock: true,
         eventLimitExempt: true,
         bands: {
           create: (data.bandIds ?? []).map((bandId, i) => ({

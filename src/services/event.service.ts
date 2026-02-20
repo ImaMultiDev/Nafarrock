@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { startOfToday } from "@/lib/date";
 
 export type EventFilters = {
   type?: "CONCIERTO" | "FESTIVAL";
@@ -8,6 +9,8 @@ export type EventFilters = {
   search?: string;
   page?: number;
   pageSize?: number;
+  /** Si false (por defecto), solo eventos con fecha >= hoy */
+  includePast?: boolean;
 };
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -17,17 +20,25 @@ export async function getEvents(filters: EventFilters = {}) {
 
   if (filters.type) where.type = filters.type;
   if (filters.venueId) where.venueId = filters.venueId;
+
+  // Fechas: por defecto solo futuros/hoy; salvo includePast o si el usuario filtra explícitamente
   if (filters.fromDate || filters.toDate) {
     where.date = {};
     if (filters.fromDate)
       (where.date as Record<string, Date>).gte = filters.fromDate;
     if (filters.toDate)
       (where.date as Record<string, Date>).lte = filters.toDate;
+  } else if (filters.includePast !== true) {
+    (where as { date?: { gte: Date } }).date = { gte: startOfToday() };
   }
+
   if (filters.search) {
+    const term = filters.search.trim();
     where.OR = [
-      { title: { contains: filters.search, mode: "insensitive" } },
-      { description: { contains: filters.search, mode: "insensitive" } },
+      { title: { contains: term, mode: "insensitive" } },
+      { description: { contains: term, mode: "insensitive" } },
+      { venue: { name: { contains: term, mode: "insensitive" } } },
+      { venue: { city: { contains: term, mode: "insensitive" } } },
     ];
   }
 

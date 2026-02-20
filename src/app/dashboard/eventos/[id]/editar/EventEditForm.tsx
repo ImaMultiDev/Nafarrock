@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
+import { ImageGallery } from "@/components/ui/ImageGallery";
 
 const inputClass = "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
 const labelClass = "block font-punch text-xs uppercase tracking-widest text-punk-white/70";
@@ -16,7 +17,13 @@ type Event = {
   description: string | null;
   price: string | null;
   ticketUrl: string | null;
+  instagramUrl: string | null;
+  facebookUrl: string | null;
+  twitterUrl: string | null;
+  webUrl: string | null;
   imageUrl: string | null;
+  images: string[];
+  isSoldOut: boolean;
   venueId: string;
   bands: { band: { id: string } }[];
 };
@@ -36,6 +43,7 @@ export function EventEditForm({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [imageUrl, setImageUrl] = useState(event.imageUrl ?? "");
+  const [images, setImages] = useState<string[]>(event.images ?? []);
 
   const dateLocal = new Date(event.date);
   dateLocal.setMinutes(dateLocal.getMinutes() - dateLocal.getTimezoneOffset());
@@ -64,7 +72,13 @@ export function EventEditForm({
         description: formData.get("description") || null,
         price: formData.get("price") || null,
         ticketUrl: formData.get("ticketUrl") || null,
+        instagramUrl: formData.get("instagramUrl") || null,
+        facebookUrl: formData.get("facebookUrl") || null,
+        twitterUrl: formData.get("twitterUrl") || null,
+        webUrl: formData.get("webUrl") || null,
         imageUrl: imageUrl || null,
+        images: images,
+        isSoldOut: (formData.get("isSoldOut") as string) === "on",
         bandIds: selectedBandIds.filter(Boolean),
       }),
     });
@@ -91,7 +105,10 @@ export function EventEditForm({
         <input id="title" name="title" type="text" required defaultValue={event.title} className={inputClass} />
       </div>
       <div>
-        <ImageUpload folder="events" type="logo" entityId={event.id} value={imageUrl} onChange={setImageUrl} onRemove={() => setImageUrl("")} label="Cartel / Imagen" />
+        <ImageUpload folder="events" type="logo" entityId={event.id} value={imageUrl} onChange={setImageUrl} onRemove={() => setImageUrl("")} label="Imagen principal (opcional)" />
+      </div>
+      <div>
+        <ImageGallery folder="events" entityId={event.id} images={images} onChange={setImages} label="Imágenes adicionales (opcionales, máx. 2)" maxImages={2} />
       </div>
       <div>
         <label htmlFor="type" className={labelClass}>Tipo</label>
@@ -143,6 +160,19 @@ export function EventEditForm({
           <input id="ticketUrl" name="ticketUrl" type="url" defaultValue={event.ticketUrl ?? ""} className={inputClass} />
         </div>
       </div>
+      <div>
+        <label className={labelClass}>Redes y enlaces (opcional)</label>
+        <div className="mt-2 grid gap-4 sm:grid-cols-2">
+          <input id="instagramUrl" name="instagramUrl" type="url" defaultValue={event.instagramUrl ?? ""} className={inputClass} placeholder="Instagram" />
+          <input id="facebookUrl" name="facebookUrl" type="url" defaultValue={event.facebookUrl ?? ""} className={inputClass} placeholder="Facebook" />
+          <input id="twitterUrl" name="twitterUrl" type="url" defaultValue={event.twitterUrl ?? ""} className={inputClass} placeholder="X (Twitter)" />
+          <input id="webUrl" name="webUrl" type="url" defaultValue={event.webUrl ?? ""} className={inputClass} placeholder="Web del evento" />
+        </div>
+      </div>
+      <label className="flex cursor-pointer items-center gap-2">
+        <input type="checkbox" name="isSoldOut" defaultChecked={event.isSoldOut} className="accent-punk-red" />
+        <span className={labelClass}>Entradas agotadas (SOLD OUT)</span>
+      </label>
       <div className="flex gap-4">
         <button type="submit" disabled={loading} className="border-2 border-punk-pink bg-punk-pink px-8 py-3 font-punch text-sm uppercase tracking-widest text-punk-black hover:bg-punk-pink/90 disabled:opacity-50">
           {loading ? "Guardando..." : "Guardar"}

@@ -16,7 +16,13 @@ const updateSchema = z.object({
   description: z.string().optional().nullable(),
   price: z.string().optional().nullable(),
   ticketUrl: z.string().url().optional().nullable().or(z.literal("")),
+  instagramUrl: z.string().url().optional().nullable().or(z.literal("")),
+  facebookUrl: z.string().url().optional().nullable().or(z.literal("")),
+  twitterUrl: z.string().url().optional().nullable().or(z.literal("")),
+  webUrl: z.string().url().optional().nullable().or(z.literal("")),
   imageUrl: z.string().optional().nullable(),
+  images: z.array(z.string()).optional(),
+  isSoldOut: z.boolean().optional(),
   bandIds: z.array(z.string()).optional(),
 });
 
@@ -91,7 +97,13 @@ export async function PATCH(
     if (data.description !== undefined) updateData.description = data.description;
     if (data.price !== undefined) updateData.price = data.price;
     if (data.ticketUrl !== undefined) updateData.ticketUrl = data.ticketUrl || null;
+    if (data.instagramUrl !== undefined) updateData.instagramUrl = data.instagramUrl || null;
+    if (data.facebookUrl !== undefined) updateData.facebookUrl = data.facebookUrl || null;
+    if (data.twitterUrl !== undefined) updateData.twitterUrl = data.twitterUrl || null;
+    if (data.webUrl !== undefined) updateData.webUrl = data.webUrl || null;
     if (data.imageUrl !== undefined) updateData.imageUrl = data.imageUrl;
+    if (data.images !== undefined) updateData.images = data.images;
+    if (data.isSoldOut !== undefined) updateData.isSoldOut = data.isSoldOut;
     if (data.title != null && data.title !== event.title) {
       const d = data.date ? new Date(data.date) : event.date;
       const newSlug = await uniqueSlug(

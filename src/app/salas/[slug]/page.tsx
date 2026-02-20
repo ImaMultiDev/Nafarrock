@@ -75,6 +75,11 @@ export default async function VenuePage({
           <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
             {venue.name}
           </h1>
+          {!venue.userId && venue.createdByNafarrock && (
+            <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-red/90">
+              Perfil creado por Nafarrock
+            </p>
+          )}
           <p className="mt-3 font-body text-punk-white/70">{venue.city}</p>
         {venue.capacity && (
           <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-pink">
@@ -88,31 +93,53 @@ export default async function VenuePage({
           </p>
         )}
 
-        {(venue.address || venue.websiteUrl || venue.mapUrl) && (
+        {(venue.address || venue.websiteUrl || venue.mapUrl || venue.instagramUrl || venue.facebookUrl) && (
           <div className="mt-8 space-y-3">
             {venue.address && (
               <p className="font-body text-punk-white/70">📍 {venue.address}</p>
             )}
-            {venue.websiteUrl && (
-              <a
-                href={venue.websiteUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block border-2 border-punk-pink px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-pink transition-all hover:bg-punk-pink hover:text-punk-black"
-              >
-                Web oficial →
-              </a>
-            )}
-            {venue.mapUrl && (
-              <a
-                href={venue.mapUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="ml-2 inline-block border-2 border-punk-pink px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-pink transition-all hover:bg-punk-pink hover:text-punk-black"
-              >
-                Ver en mapa →
-              </a>
-            )}
+            <div className="flex flex-wrap gap-3">
+              {venue.websiteUrl && (
+                <a
+                  href={venue.websiteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block border-2 border-punk-pink px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-pink transition-all hover:bg-punk-pink hover:text-punk-black"
+                >
+                  Web oficial →
+                </a>
+              )}
+              {venue.mapUrl && (
+                <a
+                  href={venue.mapUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block border-2 border-punk-pink px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-pink transition-all hover:bg-punk-pink hover:text-punk-black"
+                >
+                  Ver en mapa →
+                </a>
+              )}
+              {venue.instagramUrl && (
+                <a
+                  href={venue.instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block border-2 border-punk-pink px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-pink transition-all hover:bg-punk-pink hover:text-punk-black"
+                >
+                  Instagram
+                </a>
+              )}
+              {venue.facebookUrl && (
+                <a
+                  href={venue.facebookUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block border-2 border-punk-pink px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-pink transition-all hover:bg-punk-pink hover:text-punk-black"
+                >
+                  Facebook
+                </a>
+              )}
+            </div>
           </div>
         )}
 

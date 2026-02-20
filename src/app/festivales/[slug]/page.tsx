@@ -64,6 +64,11 @@ export default async function FestivalPage({
           <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
             {festival.name}
           </h1>
+          {!festival.userId && festival.createdByNafarrock && (
+            <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-red/90">
+              Perfil creado por Nafarrock
+            </p>
+          )}
           {festival.location && (
             <p className="mt-2 font-body text-punk-white/70">{festival.location}</p>
           )}
@@ -110,7 +115,7 @@ export default async function FestivalPage({
       {festival.events.length > 0 && (
         <div className="mt-16">
           <h2 className="font-display text-2xl tracking-tighter text-punk-white">
-            Eventos
+            Próximos eventos
           </h2>
           <ul className="mt-6 space-y-3">
             {festival.events.map((evt) => (

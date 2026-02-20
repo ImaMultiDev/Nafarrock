@@ -71,7 +71,7 @@ export default async function AdminBandasPage() {
                   </span>
                 </td>
                 <td className="py-3 font-body text-sm text-punk-white/60">
-                  {b.user?.email ?? "—"}
+                  {b.user?.email ?? <span className="text-punk-red">Nafarrock</span>}
                 </td>
                 <td className="py-3">
                   <div className="flex flex-wrap gap-2">

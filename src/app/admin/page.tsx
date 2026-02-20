@@ -55,6 +55,17 @@ export default function AdminPage() {
             Promotores, bandas, roles
           </p>
         </Link>
+        <Link
+          href="/admin/reclamaciones"
+          className="block border-2 border-punk-acid/50 bg-punk-black p-6 transition-all hover:border-punk-acid hover:shadow-[0_0_30px_rgba(200,255,0,0.2)]"
+        >
+          <h2 className="font-display text-xl tracking-tighter text-punk-acid">
+            Reclamaciones
+          </h2>
+          <p className="mt-2 font-body text-sm text-punk-white/70">
+            Solicitudes de perfiles
+          </p>
+        </Link>
       </div>
     </>
   );

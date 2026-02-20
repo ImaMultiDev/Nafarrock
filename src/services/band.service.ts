@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { startOfToday } from "@/lib/date";
 
 export type BandFilters = {
   genre?: string;
@@ -67,7 +68,16 @@ export async function getBandBySlug(slug: string, approvedOnly = true) {
   return prisma.band.findUnique({
     where: approvedOnly ? { slug, approved: true } : { slug },
     include: {
-      events: { include: { event: true } },
+      events: {
+        where: {
+          event: {
+            isApproved: true,
+            date: { gte: startOfToday() },
+          },
+        },
+        orderBy: { event: { date: "asc" } },
+        include: { event: { include: { venue: true } } },
+      },
       user: { select: { name: true, email: true } },
       members: { orderBy: { order: "asc" } },
     },

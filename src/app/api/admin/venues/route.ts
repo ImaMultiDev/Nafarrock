@@ -51,6 +51,8 @@ export async function POST(req: Request) {
         approved: true,
         approvedAt: new Date(),
         approvedBy: session.user.id,
+        createdByNafarrock: true,
+        userId: null,
       },
     });
 

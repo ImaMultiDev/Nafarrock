@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { startOfToday } from "@/lib/date";
 
 export type FestivalFilters = { search?: string; approved?: boolean; page?: number; pageSize?: number };
 
@@ -39,7 +40,7 @@ export async function getFestivalBySlug(slug: string, approvedOnly = true) {
     include: {
       user: { select: { name: true } },
       events: {
-        where: { isApproved: true },
+        where: { isApproved: true, date: { gte: startOfToday() } },
         orderBy: { date: "asc" },
         include: {
           venue: true,

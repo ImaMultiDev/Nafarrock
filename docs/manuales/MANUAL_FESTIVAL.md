@@ -19,12 +19,14 @@ Nafarrock es la guía de la escena rock en Nafarroa. Como **festival** tienes un
 
 ## Secciones del panel que debes usar
 
-| Sección | Ruta | Descripción |
-|---------|------|-------------|
-| Panel | `/dashboard` | Acceso a todas las opciones |
-| Mi festival | `/dashboard/festival` | Editar perfil del festival |
-| Mis eventos | `/dashboard/eventos` | Crear y gestionar eventos |
-| Mi perfil | `/dashboard/perfil` | Datos personales y estado de aprobación |
+
+| Sección     | Ruta                  | Descripción                             |
+| ----------- | --------------------- | --------------------------------------- |
+| Panel       | `/dashboard`          | Acceso a todas las opciones             |
+| Mi festival | `/dashboard/festival` | Editar perfil del festival              |
+| Mis eventos | `/dashboard/eventos`  | Crear y gestionar eventos               |
+| Mi perfil   | `/dashboard/perfil`   | Datos personales y estado de aprobación |
+
 
 ---
 
@@ -53,3 +55,4 @@ Nafarrock es la guía de la escena rock en Nafarroa. Como **festival** tienes un
 2. **Añade URL de entradas** al crear eventos para que aparezcan en la sección Entradas
 3. **Revisa el estado** de tus eventos (Aprobado / Pendiente) en Mis eventos
 4. **Planifica con antelación** teniendo en cuenta el límite de 1 evento cada 5 días
+

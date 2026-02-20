@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { startOfToday } from "@/lib/date";
 
 export type PromoterFilters = { search?: string; approved?: boolean; page?: number; pageSize?: number };
 
@@ -38,7 +39,7 @@ export async function getPromoterBySlug(slug: string, approvedOnly = true) {
     include: {
       user: { select: { name: true } },
       events: {
-        where: { isApproved: true },
+        where: { isApproved: true, date: { gte: startOfToday() } },
         orderBy: { date: "asc" },
         include: {
           venue: true,

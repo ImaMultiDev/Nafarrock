@@ -1,6 +1,8 @@
 import { getBandBySlug } from "@/services/band.service";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { ImageLightbox } from "@/components/ui/ImageLightbox";
 
@@ -81,6 +83,11 @@ export default async function BandPage({
           <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
             {band.name}
           </h1>
+          {!band.userId && band.createdByNafarrock && (
+            <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-red/90">
+              Perfil creado por Nafarrock
+            </p>
+          )}
           <div className="mt-4 flex flex-wrap gap-2">
             {band.genres.map((g) => (
               <span
@@ -146,6 +153,29 @@ export default async function BandPage({
                   {label}
                 </a>
               ))}
+            </div>
+          )}
+
+          {band.events && band.events.length > 0 && (
+            <div className="mt-16">
+              <h2 className="font-display text-2xl tracking-tighter text-punk-white">
+                Próximos eventos
+              </h2>
+              <ul className="mt-6 space-y-3">
+                {band.events.map((be) => (
+                  <li key={be.id}>
+                    <Link
+                      href={`/eventos/${be.event.slug}`}
+                      className="flex flex-wrap items-center justify-between gap-4 border-2 border-punk-green/50 bg-punk-black p-4 transition-all hover:border-punk-green hover:shadow-[0_0_20px_rgba(0,200,83,0.15)]"
+                    >
+                      <span className="font-display text-punk-white">{be.event.title}</span>
+                      <span className="font-punch text-xs uppercase tracking-widest text-punk-green">
+                        {format(be.event.date, "d MMM yyyy", { locale: es })} · {be.event.venue.name}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
         </div>

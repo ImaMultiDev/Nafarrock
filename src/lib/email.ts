@@ -51,3 +51,47 @@ export async function sendVerificationEmail(
   console.log("[Resend] Email enviado correctamente. ID:", data?.id, "→", to);
   return { success: true };
 }
+
+const CONTACT_EMAIL = "imanol@kaosekaitza.com";
+
+export async function sendContactEmail(
+  fromName: string,
+  fromEmail: string,
+  subject: string,
+  message: string,
+  role?: string,
+  entityName?: string
+): Promise<{ success: boolean; error?: string }> {
+  if (!resend) {
+    console.warn("RESEND_API_KEY no configurado, omitiendo envío de email de contacto");
+    return { success: true };
+  }
+
+  const roleLabel = role ? `Rol: ${role}` : "";
+  const entityLabel = entityName ? `Entidad: ${entityName}` : "";
+
+  const { data, error } = await resend.emails.send({
+    from: FROM_EMAIL,
+    to: CONTACT_EMAIL,
+    replyTo: fromEmail,
+    subject: `[Nafarrock Contacto] ${subject}`,
+    html: `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #e60026;">Mensaje de contacto - Nafarrock</h2>
+        <p><strong>De:</strong> ${fromName} &lt;${fromEmail}&gt;</p>
+        ${roleLabel ? `<p><strong>${roleLabel}</strong></p>` : ""}
+        ${entityLabel ? `<p><strong>${entityLabel}</strong></p>` : ""}
+        <p><strong>Asunto:</strong> ${subject}</p>
+        <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;" />
+        <div style="white-space: pre-wrap;">${message.replace(/\n/g, "<br>")}</div>
+      </div>
+    `,
+  });
+
+  if (error) {
+    console.error("[Resend] Error enviando contacto:", error);
+    return { success: false, error: error.message };
+  }
+  console.log("[Resend] Contacto enviado. ID:", data?.id, "→", CONTACT_EMAIL);
+  return { success: true };
+}

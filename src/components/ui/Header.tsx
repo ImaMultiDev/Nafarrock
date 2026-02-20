@@ -20,11 +20,28 @@ import { SOCIAL_LINKS } from "@/lib/social-links";
 const navLinks = [
   { href: "/", label: "Inicio" },
   { href: "/eventos", label: "Eventos" },
-  { href: "/entradas", label: "Entradas" },
   { href: "/bandas", label: "Bandas" },
-  { href: "/salas", label: "Salas" },
   { href: "/escena", label: "Escena" },
 ];
+
+const MANUAL_ROLES = ["BANDA", "SALA", "FESTIVAL", "PROMOTOR", "ORGANIZADOR", "ADMIN"];
+const ROLE_TO_MANUAL_SLUG: Record<string, string> = {
+  BANDA: "banda",
+  SALA: "sala",
+  FESTIVAL: "festival",
+  PROMOTOR: "promotor",
+  ORGANIZADOR: "organizador",
+  ADMIN: "admin",
+};
+
+function getGuideOrManualLink(session: { user?: { role?: string | null } } | null) {
+  const role = session?.user?.role;
+  if (role && MANUAL_ROLES.includes(role)) {
+    const slug = ROLE_TO_MANUAL_SLUG[role];
+    return { href: `/manual/${slug}`, label: "Manual" };
+  }
+  return { href: "/guia", label: "Guía" };
+}
 
 function SocialIcon({ icon, className }: { icon: string; className?: string }) {
   const iconProps = { className, size: 20 };
@@ -47,9 +64,16 @@ function SocialIcon({ icon, className }: { icon: string; className?: string }) {
 function isActivePath(pathname: string, href: string): boolean {
   if (href === "/") return pathname === "/";
   if (href === "/escena") {
-    return pathname === "/escena" || pathname.startsWith("/promotores") || pathname.startsWith("/organizadores") || pathname.startsWith("/festivales");
+    return pathname === "/escena" || pathname.startsWith("/promotores") || pathname.startsWith("/organizadores") || pathname.startsWith("/festivales") || pathname.startsWith("/salas");
   }
+  if (href === "/guia") return pathname === "/guia";
+  if (href.startsWith("/manual")) return pathname.startsWith("/manual");
   return pathname === href || pathname.startsWith(href + "/");
+}
+
+/** Roles que pueden ver el enlace Contacto (todos excepto USUARIO) */
+function canSeeContact(role?: string | null): boolean {
+  return !!role && role !== "USUARIO";
 }
 
 export function Header() {
@@ -103,7 +127,7 @@ export function Header() {
         </div>
 
         {/* Desktop: nav + redes + auth */}
-        <div className="hidden items-center gap-4 nav:flex">
+        <div className="hidden items-center gap-6 nav:flex">
           {navLinks.map((link) => {
             const active = isActivePath(pathname, link.href);
             return (
@@ -120,6 +144,34 @@ export function Header() {
               </Link>
             );
           })}
+          {(() => {
+            const guideLink = getGuideOrManualLink(session);
+            const active = isActivePath(pathname, guideLink.href);
+            return (
+              <Link
+                href={guideLink.href}
+                className={`relative font-punch text-xs uppercase tracking-widest transition-colors hover:text-punk-green ${
+                  active
+                    ? "text-punk-red after:absolute after:bottom-[-4px] after:left-0 after:right-0 after:h-[2px] after:skew-x-[-12deg] after:bg-punk-red after:content-['']"
+                    : "text-punk-white/80"
+                }`}
+              >
+                {guideLink.label}
+              </Link>
+            );
+          })()}
+          {session && canSeeContact(session.user?.role) && (
+            <Link
+              href="/contacto"
+              className={`relative font-punch text-xs uppercase tracking-widest transition-colors hover:text-punk-green ${
+                pathname === "/contacto"
+                  ? "text-punk-red after:absolute after:bottom-[-4px] after:left-0 after:right-0 after:h-[2px] after:skew-x-[-12deg] after:bg-punk-red after:content-['']"
+                  : "text-punk-white/80"
+              }`}
+            >
+              Contacto
+            </Link>
+          )}
           <div className="ml-4 flex items-center gap-1 border-l border-punk-white/20 pl-4">
             {SOCIAL_LINKS.slice(0, 5).map((social) => (
               <a
@@ -203,6 +255,36 @@ export function Header() {
                 </Link>
               );
             })}
+            {(() => {
+              const guideLink = getGuideOrManualLink(session);
+              const active = isActivePath(pathname, guideLink.href);
+              return (
+                <Link
+                  href={guideLink.href}
+                  onClick={() => setMenuOpen(false)}
+                  className={`rounded px-4 py-3 font-punch text-sm uppercase tracking-widest transition-colors hover:bg-punk-white/10 hover:text-punk-green ${
+                    active
+                      ? "border-l-4 border-punk-red bg-punk-red/10 text-punk-red"
+                      : "text-punk-white/90"
+                  }`}
+                >
+                  {guideLink.label}
+                </Link>
+              );
+            })()}
+            {session && canSeeContact(session.user?.role) && (
+              <Link
+                href="/contacto"
+                onClick={() => setMenuOpen(false)}
+                className={`rounded px-4 py-3 font-punch text-sm uppercase tracking-widest transition-colors hover:bg-punk-white/10 hover:text-punk-green ${
+                  pathname === "/contacto"
+                    ? "border-l-4 border-punk-red bg-punk-red/10 text-punk-red"
+                    : "text-punk-white/90"
+                }`}
+              >
+                Contacto
+              </Link>
+            )}
             {session ? (
               <>
                 <Link

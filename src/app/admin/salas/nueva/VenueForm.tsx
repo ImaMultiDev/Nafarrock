@@ -105,6 +105,20 @@ export function VenueForm() {
         </label>
         <input id="mapUrl" name="mapUrl" type="url" className={inputClass} />
       </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label htmlFor="instagramUrl" className={labelClass}>
+            Instagram
+          </label>
+          <input id="instagramUrl" name="instagramUrl" type="url" className={inputClass} placeholder="https://instagram.com/..." />
+        </div>
+        <div>
+          <label htmlFor="facebookUrl" className={labelClass}>
+            Facebook
+          </label>
+          <input id="facebookUrl" name="facebookUrl" type="url" className={inputClass} placeholder="https://facebook.com/..." />
+        </div>
+      </div>
       <div className="flex gap-4">
         <button
           type="submit"
