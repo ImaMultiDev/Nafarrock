@@ -15,7 +15,11 @@ export default async function DashboardLayout({
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { scheduledDeletionAt: true },
+    select: {
+      scheduledDeletionAt: true,
+      role: true,
+      bandProfile: { select: { id: true } },
+    },
   });
   if (user?.scheduledDeletionAt) {
     if (user.scheduledDeletionAt < new Date()) {
@@ -23,6 +27,10 @@ export default async function DashboardLayout({
     }
     redirect("/auth/login?deleted=pending");
   }
+
+  const canPublishBolos = ["PROMOTOR", "SALA", "FESTIVAL", "ORGANIZADOR"].includes(
+    user?.role ?? ""
+  );
 
   return (
     <PageLayout>
@@ -33,7 +41,15 @@ export default async function DashboardLayout({
         >
           Panel
         </Link>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-4">
+          {user?.bandProfile && (
+            <Link
+              href="/bolos"
+              className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white"
+            >
+              Buscar bolos
+            </Link>
+          )}
           <Link
             href="/dashboard/perfil"
             className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white"
@@ -46,6 +62,14 @@ export default async function DashboardLayout({
           >
             Eventos
           </Link>
+          {canPublishBolos && (
+            <Link
+              href="/dashboard/bolos/nuevo"
+              className="font-punch text-xs uppercase tracking-widest text-punk-green hover:text-punk-green/80"
+            >
+              Publicar anuncio
+            </Link>
+          )}
         </div>
       </div>
       {children}

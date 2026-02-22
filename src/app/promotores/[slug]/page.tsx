@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { ImageLightbox } from "@/components/ui/ImageLightbox";
+import { SocialLinks, type SocialLinkItem } from "@/components/ui/SocialLinks";
 
 export async function generateMetadata({
   params,
@@ -29,13 +30,14 @@ export default async function PromoterPage({
   const promoter = await getPromoterBySlug(slug);
   if (!promoter) notFound();
 
-  const links = [
-    promoter.websiteUrl && { label: "Web", url: promoter.websiteUrl },
+  const links: SocialLinkItem[] = [
+    promoter.websiteUrl && { kind: "web" as const, url: promoter.websiteUrl },
     promoter.contactEmail && {
-      label: "Contacto",
+      kind: "email" as const,
       url: `mailto:${promoter.contactEmail}`,
+      label: "Contacto",
     },
-  ].filter(Boolean) as { label: string; url: string }[];
+  ].filter((x): x is SocialLinkItem => Boolean(x));
 
   return (
     <PageLayout>
@@ -72,18 +74,8 @@ export default async function PromoterPage({
             </p>
           )}
           {links.length > 0 && (
-            <div className="mt-6 flex flex-wrap gap-4">
-              {links.map(({ label, url }) => (
-                <a
-                  key={label}
-                  href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="border-2 border-punk-pink bg-transparent px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-pink transition-all hover:bg-punk-pink hover:text-punk-black"
-                >
-                  {label}
-                </a>
-              ))}
+            <div className="mt-6">
+              <SocialLinks links={links} variant="pink" />
             </div>
           )}
         </div>

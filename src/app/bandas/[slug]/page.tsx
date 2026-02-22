@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { ImageLightbox } from "@/components/ui/ImageLightbox";
+import { SocialLinks, type SocialLinkItem } from "@/components/ui/SocialLinks";
 
 export async function generateMetadata({
   params,
@@ -29,13 +30,14 @@ export default async function BandPage({
   const band = await getBandBySlug(slug);
   if (!band) notFound();
 
-  const links = [
-    band.spotifyUrl && { label: "Spotify", url: band.spotifyUrl },
-    band.bandcampUrl && { label: "Bandcamp", url: band.bandcampUrl },
-    band.instagramUrl && { label: "Instagram", url: band.instagramUrl },
-    band.youtubeUrl && { label: "YouTube", url: band.youtubeUrl },
-    band.webUrl && { label: "Web", url: band.webUrl },
-  ].filter(Boolean) as { label: string; url: string }[];
+  const links: SocialLinkItem[] = [
+    band.spotifyUrl && { kind: "spotify" as const, url: band.spotifyUrl },
+    band.bandcampUrl && { kind: "bandcamp" as const, url: band.bandcampUrl },
+    band.instagramUrl && { kind: "instagram" as const, url: band.instagramUrl },
+    band.facebookUrl && { kind: "facebook" as const, url: band.facebookUrl },
+    band.youtubeUrl && { kind: "youtube" as const, url: band.youtubeUrl },
+    band.webUrl && { kind: "web" as const, url: band.webUrl },
+  ].filter((x): x is SocialLinkItem => Boolean(x));
 
   return (
     <PageLayout>
@@ -126,33 +128,17 @@ export default async function BandPage({
               </ul>
             </div>
           )}
-          <div className="mt-6 flex flex-wrap gap-4">
+          <div className="mt-6">
             <Link
-              href="/promotores"
-              className="border-2 border-punk-pink bg-transparent px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-pink transition-all hover:bg-punk-pink hover:text-punk-black"
+              href="/bolos"
+              className="inline-flex items-center gap-2 border-2 border-punk-green bg-punk-green px-6 py-3 font-punch text-sm uppercase tracking-widest text-punk-black transition-all hover:bg-punk-green/90 hover:shadow-[0_0_24px_rgba(0,200,83,0.25)]"
             >
-              Buscar promotores
-            </Link>
-            <Link
-              href="/organizadores"
-              className="border-2 border-punk-green bg-transparent px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-green transition-all hover:bg-punk-green hover:text-punk-black"
-            >
-              Contactar organizadores
+              Buscar bolos
             </Link>
           </div>
           {links.length > 0 && (
-            <div className="mt-6 flex flex-wrap gap-4">
-              {links.map(({ label, url }) => (
-                <a
-                  key={label}
-                  href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="border-2 border-punk-green bg-transparent px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-green transition-all hover:bg-punk-green hover:text-punk-black"
-                >
-                  {label}
-                </a>
-              ))}
+            <div className="mt-6">
+              <SocialLinks links={links} variant="green" />
             </div>
           )}
 

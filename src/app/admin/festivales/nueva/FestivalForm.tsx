@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ImageUpload } from "@/components/ui/ImageUpload";
+import { ImageGallery } from "@/components/ui/ImageGallery";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-red focus:outline-none";
@@ -11,6 +13,8 @@ export function FestivalForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [logoUrl, setLogoUrl] = useState("");
+  const [images, setImages] = useState<string[]>([]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -32,6 +36,8 @@ export function FestivalForm() {
         websiteUrl: formData.get("websiteUrl") || undefined,
         instagramUrl: formData.get("instagramUrl") || undefined,
         facebookUrl: formData.get("facebookUrl") || undefined,
+        logoUrl: logoUrl || undefined,
+        images,
       }),
     });
 
@@ -63,6 +69,27 @@ export function FestivalForm() {
           Descripción
         </label>
         <textarea id="description" name="description" rows={3} className={inputClass} />
+      </div>
+      <div>
+        <ImageUpload
+          folder="festivals"
+          type="logo"
+          entityId={null}
+          value={logoUrl}
+          onChange={setLogoUrl}
+          onRemove={() => setLogoUrl("")}
+          label="Logo (opcional)"
+        />
+      </div>
+      <div>
+        <ImageGallery
+          folder="festivals"
+          entityId="new"
+          images={images}
+          onChange={setImages}
+          label="Galería (máx. 3)"
+          maxImages={3}
+        />
       </div>
       <div>
         <label htmlFor="location" className={labelClass}>

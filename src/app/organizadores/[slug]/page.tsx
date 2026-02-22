@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { ImageLightbox } from "@/components/ui/ImageLightbox";
+import { SocialLinks, type SocialLinkItem } from "@/components/ui/SocialLinks";
 
 export async function generateMetadata({
   params,
@@ -31,13 +32,14 @@ export default async function OrganizerPage({
   const organizer = await getOrganizerBySlug(slug);
   if (!organizer) notFound();
 
-  const links = [
-    organizer.websiteUrl && { label: "Web", url: organizer.websiteUrl },
+  const links: SocialLinkItem[] = [
+    organizer.websiteUrl && { kind: "web" as const, url: organizer.websiteUrl },
     organizer.contactEmail && {
-      label: "Contacto",
+      kind: "email" as const,
       url: `mailto:${organizer.contactEmail}`,
+      label: "Contacto",
     },
-  ].filter(Boolean) as { label: string; url: string }[];
+  ].filter((x): x is SocialLinkItem => Boolean(x));
 
   return (
     <PageLayout>
@@ -74,18 +76,8 @@ export default async function OrganizerPage({
             </p>
           )}
           {links.length > 0 && (
-            <div className="mt-6 flex flex-wrap gap-4">
-              {links.map(({ label, url }) => (
-                <a
-                  key={label}
-                  href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="border-2 border-punk-green bg-transparent px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-green transition-all hover:bg-punk-green hover:text-punk-black"
-                >
-                  {label}
-                </a>
-              ))}
+            <div className="mt-6">
+              <SocialLinks links={links} variant="green" />
             </div>
           )}
         </div>

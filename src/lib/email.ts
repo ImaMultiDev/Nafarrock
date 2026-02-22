@@ -234,3 +234,42 @@ export async function sendPasswordResetEmail(
   console.log("[Resend] Recuperación enviada. ID:", data?.id, "→", to);
   return { success: true };
 }
+
+export async function sendAnnouncementApplicationEmail(
+  to: string,
+  bandName: string,
+  announcementTitle: string,
+  message: string
+): Promise<{ success: boolean; error?: string }> {
+  if (!resend) {
+    console.warn("RESEND_API_KEY no configurado, omitiendo email de postulación");
+    return { success: true };
+  }
+
+  const { data, error } = await resend.emails.send({
+    from: FROM_EMAIL,
+    to,
+    subject: `Postulación de la banda ${bandName} para el anuncio "${announcementTitle}"`,
+    replyTo: undefined,
+    html: `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #00c853;">NAFARROCK - Postulación recibida</h2>
+        <p>Has recibido una nueva postulación desde Nafarrock:</p>
+        <p><strong>Banda:</strong> ${bandName}</p>
+        <p><strong>Anuncio:</strong> ${announcementTitle}</p>
+        <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;" />
+        <div style="white-space: pre-wrap;">${message.replace(/\n/g, "<br>")}</div>
+        <p style="color: #666; font-size: 12px; margin-top: 24px;">
+          Responde directamente a este email para contactar con la banda.
+        </p>
+      </div>
+    `,
+  });
+
+  if (error) {
+    console.error("[Resend] Error enviando email de postulación:", error);
+    return { success: false, error: error.message };
+  }
+  console.log("[Resend] Postulación enviada. ID:", data?.id, "→", to);
+  return { success: true };
+}

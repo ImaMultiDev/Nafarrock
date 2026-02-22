@@ -6,6 +6,9 @@ type ImageUploadProps = {
   folder: "bands" | "venues" | "events" | "festivals" | "promoters" | "organizers";
   type: "logo" | "image";
   entityId?: string | null;
+  /** Modo reclamación: sube sin auth usando claimId (perfil a reclamar) */
+  claimMode?: boolean;
+  claimId?: string;
   currentImageCount?: number;
   value?: string;
   onChange: (url: string) => void;
@@ -19,6 +22,8 @@ export function ImageUpload({
   folder,
   type,
   entityId,
+  claimMode,
+  claimId,
   currentImageCount = 0,
   value,
   onChange,
@@ -43,10 +48,15 @@ export function ImageUpload({
       formData.set("file", file);
       formData.set("folder", folder);
       formData.set("type", type);
-      if (entityId) formData.set("entityId", entityId);
+      if (claimMode && claimId) {
+        formData.set("claimId", claimId);
+      } else if (entityId) {
+        formData.set("entityId", entityId);
+      }
       formData.set("currentImageCount", String(currentImageCount));
 
-      const res = await fetch("/api/upload", {
+      const uploadUrl = claimMode && claimId ? "/api/upload-claim" : "/api/upload";
+      const res = await fetch(uploadUrl, {
         method: "POST",
         body: formData,
       });

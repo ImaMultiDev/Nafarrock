@@ -30,6 +30,7 @@ export default async function AdminLayout({
           <Link href="/admin/promotores" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Promotores</Link>
           <Link href="/admin/organizadores" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Organizadores</Link>
           <Link href="/admin/festivales" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Festivales</Link>
+          <Link href="/admin/bolos" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Anuncios</Link>
           <Link href="/admin/usuarios" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Usuarios</Link>
         </div>
       </div>

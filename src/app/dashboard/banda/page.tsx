@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { BandForm } from "./BandForm";
 
@@ -55,17 +56,29 @@ export default async function DashboardBandaPage() {
 
   return (
     <>
-      <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
-        MI BANDA
-      </h1>
-      <p className="mt-2 font-body text-punk-white/60">
-        {band.name}
-        {!band.approved && (
-          <span className="ml-2 rounded border border-punk-red/50 bg-punk-red/10 px-2 py-0.5 font-punch text-xs text-punk-red">
-            Pendiente de aprobación
-          </span>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
+            MI BANDA
+          </h1>
+          <p className="mt-2 font-body text-punk-white/60">
+            {band.name}
+            {!band.approved && (
+              <span className="ml-2 rounded border border-punk-red/50 bg-punk-red/10 px-2 py-0.5 font-punch text-xs text-punk-red">
+                Pendiente de aprobación
+              </span>
+            )}
+          </p>
+        </div>
+        {band.approved && (
+          <Link
+            href="/bolos"
+            className="shrink-0 border-2 border-punk-green bg-punk-green px-6 py-3 font-punch text-sm uppercase tracking-widest text-punk-black transition-all hover:bg-punk-green/90"
+          >
+            Buscar bolos
+          </Link>
         )}
-      </p>
+      </div>
       <BandForm band={band} genres={GENRES} />
     </>
   );

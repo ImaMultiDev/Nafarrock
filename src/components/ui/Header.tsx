@@ -21,6 +21,7 @@ const navLinks = [
   { href: "/", label: "Inicio" },
   { href: "/eventos", label: "Eventos" },
   { href: "/bandas", label: "Bandas" },
+  { href: "/bolos", label: "Buscar bolos" },
   { href: "/escena", label: "Escena" },
 ];
 
@@ -63,6 +64,7 @@ function SocialIcon({ icon, className }: { icon: string; className?: string }) {
 
 function isActivePath(pathname: string, href: string): boolean {
   if (href === "/") return pathname === "/";
+  if (href === "/bolos") return pathname === "/bolos" || pathname.startsWith("/bolos/");
   if (href === "/escena") {
     return pathname === "/escena" || pathname.startsWith("/promotores") || pathname.startsWith("/organizadores") || pathname.startsWith("/festivales") || pathname.startsWith("/salas");
   }

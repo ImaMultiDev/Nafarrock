@@ -6,22 +6,14 @@ import { uniqueSlug } from "@/lib/slug";
 
 const createSchema = z.object({
   name: z.string().min(1),
-  slug: z.string().optional(),
-  bio: z.string().optional(),
-  genres: z.array(z.string()).default([]),
+  description: z.string().optional(),
   location: z.string().optional(),
   foundedYear: z.coerce.number().optional(),
   logoUrl: z.string().url().optional().or(z.literal("")),
-  imageUrl: z.string().url().optional().or(z.literal("")),
   images: z.array(z.string().url()).optional().default([]),
-  spotifyUrl: z.string().url().optional().or(z.literal("")),
-  bandcampUrl: z.string().url().optional().or(z.literal("")),
+  websiteUrl: z.string().url().optional().or(z.literal("")),
   instagramUrl: z.string().url().optional().or(z.literal("")),
   facebookUrl: z.string().url().optional().or(z.literal("")),
-  youtubeUrl: z.string().url().optional().or(z.literal("")),
-  webUrl: z.string().url().optional().or(z.literal("")),
-  isActive: z.boolean().default(true),
-  isEmerging: z.boolean().default(false),
 });
 
 export async function POST(req: Request) {
@@ -38,29 +30,22 @@ export async function POST(req: Request) {
     const data = parsed.data;
 
     const slug = await uniqueSlug(
-      (s) => prisma.band.findUnique({ where: { slug: s } }).then(Boolean),
-      data.slug ?? data.name
+      (s) => prisma.festival.findUnique({ where: { slug: s } }).then(Boolean),
+      data.name
     );
 
-    const band = await prisma.band.create({
+    const festival = await prisma.festival.create({
       data: {
         slug,
         name: data.name,
-        bio: data.bio || null,
-        genres: data.genres,
+        description: data.description || null,
         location: data.location || null,
         foundedYear: data.foundedYear || null,
         logoUrl: data.logoUrl || null,
-        imageUrl: data.imageUrl || null,
         images: data.images ?? [],
-        spotifyUrl: data.spotifyUrl || null,
-        bandcampUrl: data.bandcampUrl || null,
+        websiteUrl: data.websiteUrl || null,
         instagramUrl: data.instagramUrl || null,
         facebookUrl: data.facebookUrl || null,
-        youtubeUrl: data.youtubeUrl || null,
-        webUrl: data.webUrl || null,
-        isActive: data.isActive,
-        isEmerging: data.isEmerging,
         approved: true,
         approvedAt: new Date(),
         approvedBy: session.user.id,
@@ -69,14 +54,14 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json(band);
+    return NextResponse.json(festival);
   } catch (e) {
     if (e instanceof Error && e.message === "Unauthorized") {
       return NextResponse.json({ message: "No autorizado" }, { status: 401 });
     }
-    console.error("Admin create band:", e);
+    console.error("Admin create festival:", e);
     return NextResponse.json(
-      { message: "Error al crear la banda" },
+      { message: "Error al crear el festival" },
       { status: 500 }
     );
   }

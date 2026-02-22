@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { ImageLightbox } from "@/components/ui/ImageLightbox";
+import { SocialLinks, type SocialLinkItem } from "@/components/ui/SocialLinks";
 
 export async function generateMetadata({
   params,
@@ -34,12 +35,12 @@ export default async function EventPage({
     ...(event.images ?? []),
   ];
 
-  const links = [
-    event.webUrl && { label: "Web", url: event.webUrl },
-    event.instagramUrl && { label: "Instagram", url: event.instagramUrl },
-    event.facebookUrl && { label: "Facebook", url: event.facebookUrl },
-    event.twitterUrl && { label: "X (Twitter)", url: event.twitterUrl },
-  ].filter(Boolean) as { label: string; url: string }[];
+  const links: SocialLinkItem[] = [
+    event.webUrl && { kind: "web" as const, url: event.webUrl },
+    event.instagramUrl && { kind: "instagram" as const, url: event.instagramUrl },
+    event.facebookUrl && { kind: "facebook" as const, url: event.facebookUrl },
+    event.twitterUrl && { kind: "twitter" as const, url: event.twitterUrl },
+  ].filter((x): x is SocialLinkItem => Boolean(x));
 
   return (
     <PageLayout>
@@ -230,18 +231,8 @@ export default async function EventPage({
             <h2 className="font-punch text-xs uppercase tracking-widest text-punk-red/80">
               Redes y enlaces
             </h2>
-            <div className="mt-3 flex flex-wrap gap-3">
-              {links.map(({ label, url }) => (
-                <a
-                  key={label}
-                  href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="border-2 border-punk-red bg-transparent px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-red transition-all hover:bg-punk-red hover:text-punk-black"
-                >
-                  {label}
-                </a>
-              ))}
+            <div className="mt-3">
+              <SocialLinks links={links} variant="red" />
             </div>
           </div>
         )}

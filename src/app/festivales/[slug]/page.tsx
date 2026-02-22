@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { ImageLightbox } from "@/components/ui/ImageLightbox";
+import { SocialLinks, type SocialLinkItem } from "@/components/ui/SocialLinks";
 
 export async function generateMetadata({
   params,
@@ -29,11 +30,11 @@ export default async function FestivalPage({
   const festival = await getFestivalBySlug(slug);
   if (!festival) notFound();
 
-  const links = [
-    festival.websiteUrl && { label: "Web", url: festival.websiteUrl },
-    festival.instagramUrl && { label: "Instagram", url: festival.instagramUrl },
-    festival.facebookUrl && { label: "Facebook", url: festival.facebookUrl },
-  ].filter(Boolean) as { label: string; url: string }[];
+  const links: SocialLinkItem[] = [
+    festival.websiteUrl && { kind: "web" as const, url: festival.websiteUrl },
+    festival.instagramUrl && { kind: "instagram" as const, url: festival.instagramUrl },
+    festival.facebookUrl && { kind: "facebook" as const, url: festival.facebookUrl },
+  ].filter((x): x is SocialLinkItem => Boolean(x));
 
   return (
     <PageLayout>
@@ -95,18 +96,8 @@ export default async function FestivalPage({
             </div>
           )}
           {links.length > 0 && (
-            <div className="mt-6 flex flex-wrap gap-4">
-              {links.map(({ label, url }) => (
-                <a
-                  key={label}
-                  href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="border-2 border-punk-red bg-transparent px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-red transition-all hover:bg-punk-red hover:text-punk-black"
-                >
-                  {label}
-                </a>
-              ))}
+            <div className="mt-6">
+              <SocialLinks links={links} variant="red" />
             </div>
           )}
         </div>

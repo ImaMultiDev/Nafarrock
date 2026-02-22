@@ -5,12 +5,22 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { PasswordInput } from "@/components/ui/PasswordInput";
+import { ImageUpload } from "@/components/ui/ImageUpload";
+import { ImageGallery } from "@/components/ui/ImageGallery";
 import { isValidEmail, isPasswordValid } from "@/lib/validation";
+
+type EntityImageInfo = {
+  hasImages: boolean;
+  logoUrl?: string | null;
+  imageUrl?: string | null;
+  images: string[];
+};
 
 type ClaimProps = {
   claimType?: "BAND" | "VENUE" | "FESTIVAL";
   claimId?: string;
   claimName?: string;
+  entityImageInfo?: EntityImageInfo | null;
 };
 
 const ROLES = [
@@ -32,9 +42,19 @@ const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
 const labelClass = "block font-punch text-xs uppercase tracking-widest text-punk-white/70";
 
-export function RegisterForm({ claimType, claimId, claimName }: ClaimProps) {
+const claimFolder: Record<"BAND" | "VENUE" | "FESTIVAL", "bands" | "venues" | "festivals"> = {
+  BAND: "bands",
+  VENUE: "venues",
+  FESTIVAL: "festivals",
+};
+
+export function RegisterForm({ claimType, claimId, claimName, entityImageInfo }: ClaimProps) {
   const router = useRouter();
   const isClaimMode = !!claimType && !!claimId && !!claimName;
+  const [claimLogoUrl, setClaimLogoUrl] = useState("");
+  const [claimImageUrl, setClaimImageUrl] = useState("");
+  const [claimImages, setClaimImages] = useState<string[]>([]);
+  const [imageChoice, setImageChoice] = useState<"keep_nafarrock" | "use_mine">("keep_nafarrock");
   const claimToRole: Record<"BAND" | "VENUE" | "FESTIVAL", Role> = {
     BAND: "BANDA",
     VENUE: "SALA",
@@ -77,6 +97,8 @@ export function RegisterForm({ claimType, claimId, claimName }: ClaimProps) {
     let payload: Record<string, unknown>;
 
     if (isClaimMode && claimType && claimId && claimName) {
+      const userHasImages = !!(claimLogoUrl || claimImageUrl || claimImages.length > 0);
+      const needsChoice = entityImageInfo?.hasImages && userHasImages;
       payload = {
         email: formData.get("email"),
         password: formData.get("password"),
@@ -87,6 +109,10 @@ export function RegisterForm({ claimType, claimId, claimName }: ClaimProps) {
         claimType,
         claimId,
         claimName,
+        claimLogoUrl: claimLogoUrl || undefined,
+        claimImageUrl: claimImageUrl || undefined,
+        claimImages,
+        imageChoice: needsChoice ? imageChoice : (userHasImages ? "use_mine" : "keep_nafarrock"),
       };
     } else {
       payload = {
@@ -255,20 +281,101 @@ export function RegisterForm({ claimType, claimId, claimName }: ClaimProps) {
           </section>
 
           {isClaimMode ? (
-            <section className="border-2 border-punk-green/30 bg-punk-green/5 p-6">
-              <label className={labelClass}>
-                Perfil que reclamas
-              </label>
-              <input
-                type="text"
-                value={claimName ?? ""}
-                readOnly
-                className={`${inputClass} cursor-not-allowed bg-punk-black/50`}
-              />
-              <p className="mt-2 font-body text-sm text-punk-white/70">
-                Una vez verificado y vinculado podrán cambiar el nombre.
-              </p>
-            </section>
+            <>
+              <section className="border-2 border-punk-green/30 bg-punk-green/5 p-6">
+                <label className={labelClass}>
+                  Perfil que reclamas
+                </label>
+                <input
+                  type="text"
+                  value={claimName ?? ""}
+                  readOnly
+                  className={`${inputClass} cursor-not-allowed bg-punk-black/50`}
+                />
+                <p className="mt-2 font-body text-sm text-punk-white/70">
+                  Una vez verificado y vinculado podrán cambiar el nombre.
+                </p>
+              </section>
+
+              {claimType && claimId && (
+                <section className="border-2 border-punk-green/30 bg-punk-green/5 p-6 space-y-6">
+                  <h2 className="font-display text-xl tracking-tighter text-punk-green">
+                    Imágenes de tu perfil (opcional)
+                  </h2>
+                  <p className="font-body text-sm text-punk-white/80">
+                    Puedes subir logo e imágenes. Si Nafarrock ya ha añadido imágenes a este perfil, podrás elegir si conservarlas o reemplazarlas por las tuyas.
+                  </p>
+                  <div>
+                    <ImageUpload
+                      folder={claimFolder[claimType]}
+                      type="logo"
+                      claimMode
+                      claimId={claimId}
+                      value={claimLogoUrl}
+                      onChange={setClaimLogoUrl}
+                      onRemove={() => setClaimLogoUrl("")}
+                      label="Logo"
+                    />
+                  </div>
+                  {(claimType === "BAND" || claimType === "VENUE") && (
+                    <div>
+                      <ImageUpload
+                        folder={claimFolder[claimType]}
+                        type="image"
+                        claimMode
+                        claimId={claimId}
+                        currentImageCount={0}
+                        value={claimImageUrl}
+                        onChange={setClaimImageUrl}
+                        onRemove={() => setClaimImageUrl("")}
+                        label="Imagen principal"
+                      />
+                    </div>
+                  )}
+                  <div>
+                    <ImageGallery
+                      folder={claimFolder[claimType]}
+                      entityId={claimId}
+                      claimMode
+                      claimId={claimId}
+                      images={claimImages}
+                      onChange={setClaimImages}
+                      label="Galería (máx. 3)"
+                      maxImages={3}
+                    />
+                  </div>
+                  {entityImageInfo?.hasImages && (claimLogoUrl || claimImageUrl || claimImages.length > 0) && (
+                    <div className="border-t border-punk-white/20 pt-6">
+                      <label className={labelClass}>¿Qué imágenes quieres en tu perfil?</label>
+                      <div className="mt-2 space-y-2">
+                        <label className="flex cursor-pointer items-center gap-2">
+                          <input
+                            type="radio"
+                            name="imageChoice"
+                            value="keep_nafarrock"
+                            checked={imageChoice === "keep_nafarrock"}
+                            onChange={() => setImageChoice("keep_nafarrock")}
+                            className="accent-punk-green"
+                          />
+                          <span className="font-body text-punk-white/90">Conservar las de Nafarrock</span>
+                        </label>
+                        <label className="flex cursor-pointer items-center gap-2">
+                          <input
+                            type="radio"
+                            name="imageChoice"
+                            value="use_mine"
+                            checked={imageChoice === "use_mine"}
+                            onChange={() => setImageChoice("use_mine")}
+                            className="accent-punk-green"
+                          />
+                          <span className="font-body text-punk-white/90">Usar las mías</span>
+                        </label>
+                      </div>
+                    </div>
+                  )}
+                </section>
+              )}
+            </>
           ) : (
             <>
               <section>

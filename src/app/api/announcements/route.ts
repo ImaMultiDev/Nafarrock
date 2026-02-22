@@ -1,0 +1,48 @@
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+
+export async function GET(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const advertiserType = searchParams.get("advertiserType"); // PROMOTER | VENUE | FESTIVAL | ORGANIZER
+    const zone = searchParams.get("zone");
+    const genre = searchParams.get("genre");
+
+    const where = {
+      status: "ACTIVE" as const,
+      isApproved: true,
+      ...(advertiserType && ["PROMOTER", "VENUE", "FESTIVAL", "ORGANIZER"].includes(advertiserType)
+        ? { advertiserType: advertiserType as "PROMOTER" | "VENUE" | "FESTIVAL" | "ORGANIZER" }
+        : {}),
+      ...(zone?.trim() ? { zone: { contains: zone.trim(), mode: "insensitive" as const } } : {}),
+      ...(genre?.trim() ? { genres: { has: genre.trim().toLowerCase() } } : {}),
+    };
+
+    if (advertiserType && ["PROMOTER", "VENUE", "FESTIVAL", "ORGANIZER"].includes(advertiserType)) {
+      where.advertiserType = advertiserType;
+    }
+    if (zone?.trim()) {
+      where.zone = { contains: zone.trim(), mode: "insensitive" };
+    }
+    if (genre?.trim()) {
+      where.genres = { has: genre.trim().toLowerCase() };
+    }
+
+    const announcements = await prisma.announcement.findMany({
+      where,
+      include: {
+        promoter: { select: { id: true, name: true, slug: true } },
+        venue: { select: { id: true, name: true, slug: true, city: true } },
+        festival: { select: { id: true, name: true, slug: true } },
+        organizer: { select: { id: true, name: true, slug: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 50,
+    });
+
+    return NextResponse.json(announcements);
+  } catch (e) {
+    console.error("[GET announcements]", e);
+    return NextResponse.json({ message: "Error al obtener anuncios" }, { status: 500 });
+  }
+}

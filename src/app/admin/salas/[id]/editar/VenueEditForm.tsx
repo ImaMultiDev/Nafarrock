@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ImageUpload } from "@/components/ui/ImageUpload";
+import { ImageGallery } from "@/components/ui/ImageGallery";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
@@ -15,6 +17,9 @@ type Venue = {
   description: string | null;
   foundedYear: number | null;
   capacity: number | null;
+  logoUrl: string | null;
+  imageUrl: string | null;
+  images: string[];
   websiteUrl: string | null;
   mapUrl: string | null;
   instagramUrl: string | null;
@@ -26,6 +31,9 @@ export function VenueEditForm({ venue }: { venue: Venue }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [logoUrl, setLogoUrl] = useState(venue.logoUrl ?? "");
+  const [imageUrl, setImageUrl] = useState(venue.imageUrl ?? "");
+  const [images, setImages] = useState<string[]>(venue.images ?? []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -49,6 +57,9 @@ export function VenueEditForm({ venue }: { venue: Venue }) {
         instagramUrl: formData.get("instagramUrl") || null,
         facebookUrl: formData.get("facebookUrl") || null,
         approved: formData.get("approved") === "on",
+        logoUrl,
+        imageUrl,
+        images,
       }),
     });
 
@@ -84,6 +95,39 @@ export function VenueEditForm({ venue }: { venue: Venue }) {
       <div>
         <label htmlFor="description" className={labelClass}>Descripción</label>
         <textarea id="description" name="description" rows={3} defaultValue={venue.description ?? ""} className={inputClass} />
+      </div>
+      <div>
+        <ImageUpload
+          folder="venues"
+          type="logo"
+          entityId={venue.id}
+          value={logoUrl}
+          onChange={setLogoUrl}
+          onRemove={() => setLogoUrl("")}
+          label="Logo (opcional)"
+        />
+      </div>
+      <div>
+        <ImageUpload
+          folder="venues"
+          type="image"
+          entityId={venue.id}
+          currentImageCount={0}
+          value={imageUrl}
+          onChange={setImageUrl}
+          onRemove={() => setImageUrl("")}
+          label="Imagen principal (opcional)"
+        />
+      </div>
+      <div>
+        <ImageGallery
+          folder="venues"
+          entityId={venue.id}
+          images={images}
+          onChange={setImages}
+          label="Galería (máx. 3)"
+          maxImages={3}
+        />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>

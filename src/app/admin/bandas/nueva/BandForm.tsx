@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ImageUpload } from "@/components/ui/ImageUpload";
+import { ImageGallery } from "@/components/ui/ImageGallery";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
@@ -11,6 +13,9 @@ export function BandForm({ genres }: { genres: string[] }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [logoUrl, setLogoUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [images, setImages] = useState<string[]>([]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,6 +42,9 @@ export function BandForm({ genres }: { genres: string[] }) {
         facebookUrl: formData.get("facebookUrl") || undefined,
         youtubeUrl: formData.get("youtubeUrl") || undefined,
         webUrl: formData.get("webUrl") || undefined,
+        logoUrl: logoUrl || undefined,
+        imageUrl: imageUrl || undefined,
+        images,
       }),
     });
 
@@ -68,6 +76,38 @@ export function BandForm({ genres }: { genres: string[] }) {
           Biografía
         </label>
         <textarea id="bio" name="bio" rows={3} className={inputClass} />
+      </div>
+      <div>
+        <ImageUpload
+          folder="bands"
+          type="logo"
+          entityId={null}
+          value={logoUrl}
+          onChange={setLogoUrl}
+          onRemove={() => setLogoUrl("")}
+          label="Logo (opcional)"
+        />
+      </div>
+      <div>
+        <ImageUpload
+          folder="bands"
+          type="image"
+          entityId={null}
+          value={imageUrl}
+          onChange={setImageUrl}
+          onRemove={() => setImageUrl("")}
+          label="Imagen principal (opcional)"
+        />
+      </div>
+      <div>
+        <ImageGallery
+          folder="bands"
+          entityId="new"
+          images={images}
+          onChange={setImages}
+          label="Galería (máx. 3)"
+          maxImages={3}
+        />
       </div>
       <div>
         <label htmlFor="location" className={labelClass}>

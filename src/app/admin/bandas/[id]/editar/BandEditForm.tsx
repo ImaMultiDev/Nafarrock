@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ImageUpload } from "@/components/ui/ImageUpload";
+import { ImageGallery } from "@/components/ui/ImageGallery";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
@@ -14,6 +16,9 @@ type Band = {
   genres: string[];
   location: string | null;
   foundedYear: number | null;
+  logoUrl: string | null;
+  imageUrl: string | null;
+  images: string[];
   spotifyUrl: string | null;
   bandcampUrl: string | null;
   instagramUrl: string | null;
@@ -27,6 +32,9 @@ export function BandEditForm({ band, genres }: { band: Band; genres: string[] })
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [logoUrl, setLogoUrl] = useState(band.logoUrl ?? "");
+  const [imageUrl, setImageUrl] = useState(band.imageUrl ?? "");
+  const [images, setImages] = useState<string[]>(band.images ?? []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -54,6 +62,9 @@ export function BandEditForm({ band, genres }: { band: Band; genres: string[] })
         youtubeUrl: formData.get("youtubeUrl") || null,
         webUrl: formData.get("webUrl") || null,
         approved: formData.get("approved") === "on",
+        logoUrl,
+        imageUrl,
+        images,
       }),
     });
 
@@ -85,6 +96,39 @@ export function BandEditForm({ band, genres }: { band: Band; genres: string[] })
           Biografía
         </label>
         <textarea id="bio" name="bio" rows={3} defaultValue={band.bio ?? ""} className={inputClass} />
+      </div>
+      <div>
+        <ImageUpload
+          folder="bands"
+          type="logo"
+          entityId={band.id}
+          value={logoUrl}
+          onChange={setLogoUrl}
+          onRemove={() => setLogoUrl("")}
+          label="Logo (opcional)"
+        />
+      </div>
+      <div>
+        <ImageUpload
+          folder="bands"
+          type="image"
+          entityId={band.id}
+          currentImageCount={0}
+          value={imageUrl}
+          onChange={setImageUrl}
+          onRemove={() => setImageUrl("")}
+          label="Imagen principal (opcional)"
+        />
+      </div>
+      <div>
+        <ImageGallery
+          folder="bands"
+          entityId={band.id}
+          images={images}
+          onChange={setImages}
+          label="Galería (máx. 3)"
+          maxImages={3}
+        />
       </div>
       <div>
         <label htmlFor="location" className={labelClass}>

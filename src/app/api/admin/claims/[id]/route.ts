@@ -49,6 +49,17 @@ export async function PATCH(
       return NextResponse.json({ success: true });
     }
 
+    // Aplicar imágenes según elección del reclamante
+    const useClaimImages = claim.imageChoice === "use_mine" && (claim.claimLogoUrl || claim.claimImageUrl || (claim.claimImages?.length ?? 0) > 0);
+    const imageUpdate =
+      useClaimImages
+        ? {
+            ...(claim.claimLogoUrl && { logoUrl: claim.claimLogoUrl }),
+            ...(claim.claimImageUrl && { imageUrl: claim.claimImageUrl }),
+            ...(claim.claimImages && claim.claimImages.length > 0 && { images: claim.claimImages }),
+          }
+        : {};
+
     // Approve: asociar perfil al usuario
     if (claim.bandId) {
       const band = claim.band!;
@@ -64,6 +75,7 @@ export async function PATCH(
             approved: true,
             approvedAt: new Date(),
             approvedBy: session.user.id,
+            ...imageUpdate,
           },
         }),
         prisma.user.update({
@@ -95,6 +107,7 @@ export async function PATCH(
             approved: true,
             approvedAt: new Date(),
             approvedBy: session.user.id,
+            ...imageUpdate,
           },
         }),
         prisma.user.update({
@@ -130,6 +143,8 @@ export async function PATCH(
             approved: true,
             approvedAt: new Date(),
             approvedBy: session.user.id,
+            ...(useClaimImages && claim.claimLogoUrl && { logoUrl: claim.claimLogoUrl }),
+            ...(useClaimImages && claim.claimImages && claim.claimImages.length > 0 && { images: claim.claimImages }),
           },
         }),
         prisma.user.update({

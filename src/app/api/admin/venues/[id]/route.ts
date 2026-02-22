@@ -12,6 +12,9 @@ const updateSchema = z.object({
   description: z.string().optional().nullable(),
   foundedYear: z.coerce.number().optional().nullable(),
   capacity: z.coerce.number().positive().optional().nullable(),
+  logoUrl: z.string().url().optional().nullable().or(z.literal("")),
+  imageUrl: z.string().url().optional().nullable().or(z.literal("")),
+  images: z.array(z.string().url()).optional(),
   websiteUrl: z.string().url().optional().nullable().or(z.literal("")),
   mapUrl: z.string().url().optional().nullable().or(z.literal("")),
   instagramUrl: z.string().url().optional().nullable().or(z.literal("")),
@@ -54,6 +57,9 @@ export async function PATCH(
     if (data.description !== undefined) updateData.description = data.description;
     if (data.foundedYear !== undefined) updateData.foundedYear = data.foundedYear;
     if (data.capacity !== undefined) updateData.capacity = data.capacity;
+    if (data.logoUrl !== undefined) updateData.logoUrl = cleanUrl(data.logoUrl);
+    if (data.imageUrl !== undefined) updateData.imageUrl = cleanUrl(data.imageUrl);
+    if (data.images !== undefined) updateData.images = data.images ?? [];
     if (data.websiteUrl !== undefined) updateData.websiteUrl = cleanUrl(data.websiteUrl);
     if (data.mapUrl !== undefined) updateData.mapUrl = cleanUrl(data.mapUrl);
     if (data.instagramUrl !== undefined) updateData.instagramUrl = cleanUrl(data.instagramUrl);

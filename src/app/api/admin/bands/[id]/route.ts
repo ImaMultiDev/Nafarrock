@@ -11,6 +11,9 @@ const updateSchema = z.object({
   genres: z.array(z.string()).optional(),
   location: z.string().optional().nullable(),
   foundedYear: z.coerce.number().optional().nullable(),
+  logoUrl: z.string().url().optional().nullable().or(z.literal("")),
+  imageUrl: z.string().url().optional().nullable().or(z.literal("")),
+  images: z.array(z.string().url()).optional(),
   spotifyUrl: z.string().url().optional().nullable().or(z.literal("")),
   bandcampUrl: z.string().url().optional().nullable().or(z.literal("")),
   instagramUrl: z.string().url().optional().nullable().or(z.literal("")),
@@ -55,6 +58,9 @@ export async function PATCH(
     if (data.genres != null) updateData.genres = data.genres;
     if (data.location !== undefined) updateData.location = data.location;
     if (data.foundedYear !== undefined) updateData.foundedYear = data.foundedYear;
+    if (data.logoUrl !== undefined) updateData.logoUrl = cleanUrl(data.logoUrl);
+    if (data.imageUrl !== undefined) updateData.imageUrl = cleanUrl(data.imageUrl);
+    if (data.images !== undefined) updateData.images = data.images ?? [];
     if (data.spotifyUrl !== undefined) updateData.spotifyUrl = cleanUrl(data.spotifyUrl);
     if (data.bandcampUrl !== undefined) updateData.bandcampUrl = cleanUrl(data.bandcampUrl);
     if (data.instagramUrl !== undefined) updateData.instagramUrl = cleanUrl(data.instagramUrl);

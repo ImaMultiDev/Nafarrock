@@ -5,6 +5,9 @@ import { ImageUpload } from "./ImageUpload";
 type ImageGalleryProps = {
   folder: "bands" | "venues" | "events" | "festivals" | "promoters" | "organizers";
   entityId: string;
+  /** Modo reclamación: sube sin auth usando claimId */
+  claimMode?: boolean;
+  claimId?: string;
   images: string[];
   onChange: (images: string[]) => void;
   label?: string;
@@ -15,6 +18,8 @@ type ImageGalleryProps = {
 export function ImageGallery({
   folder,
   entityId,
+  claimMode,
+  claimId,
   images,
   onChange,
   label = "Galería",
@@ -57,7 +62,9 @@ export function ImageGallery({
           <ImageUpload
             folder={folder}
             type="image"
-            entityId={entityId}
+            entityId={claimMode ? undefined : entityId}
+            claimMode={claimMode}
+            claimId={claimId}
             currentImageCount={images.length}
             value=""
             onChange={addImage}

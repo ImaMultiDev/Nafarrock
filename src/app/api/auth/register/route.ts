@@ -127,6 +127,10 @@ const claimSchema = baseSchema.extend({
   claimType: z.enum(["BAND", "VENUE", "FESTIVAL"]),
   claimId: z.string().min(1),
   claimName: z.string().min(1),
+  claimLogoUrl: z.string().url().optional().or(z.literal("")),
+  claimImageUrl: z.string().url().optional().or(z.literal("")),
+  claimImages: z.array(z.string().url()).optional().default([]),
+  imageChoice: z.enum(["keep_nafarrock", "use_mine"]).optional(),
 });
 
 export async function POST(req: Request) {
@@ -212,12 +216,20 @@ export async function POST(req: Request) {
         },
       });
 
+      const userHasImages = !!(data.claimLogoUrl || data.claimImageUrl || ((data.claimImages?.length ?? 0) > 0));
+      const imageChoiceValue =
+        data.imageChoice ?? (userHasImages ? "use_mine" : "keep_nafarrock");
+
       await prisma.profileClaim.create({
         data: {
           userId: user.id,
           entityType: claimEntityType,
           entityId: data.claimId,
           status: "PENDING_CLAIM",
+          claimLogoUrl: data.claimLogoUrl || null,
+          claimImageUrl: data.claimImageUrl || null,
+          claimImages: data.claimImages ?? [],
+          imageChoice: imageChoiceValue,
           ...(claimEntityType === "BAND" && { bandId: data.claimId }),
           ...(claimEntityType === "VENUE" && { venueId: data.claimId }),
           ...(claimEntityType === "FESTIVAL" && { festivalId: data.claimId }),

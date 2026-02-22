@@ -131,6 +131,7 @@ model Band {
   events  BandEvent[]
   claimRequests ProfileClaim[]
   members BandMember[]
+  announcementApplications AnnouncementApplication[]
 
   @@index([slug])
   @@index([isActive])
@@ -187,6 +188,7 @@ model Venue {
   user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
   events Event[]
   claimRequests ProfileClaim[]
+  announcements Announcement[]
 
   @@index([slug])
   @@index([city])
@@ -221,6 +223,7 @@ model Festival {
   user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
   events Event[] @relation("FestivalEvents")
   claimRequests ProfileClaim[]
+  announcements Announcement[]
 
   @@index([slug])
   @@index([approved])
@@ -250,6 +253,7 @@ model Organizer {
   userId String  @unique
   user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   events Event[] @relation("OrganizerEvents")
+  announcements Announcement[]
 
   @@index([approved])
   @@index([isPro])
@@ -351,6 +355,7 @@ model Promoter {
   userId String  @unique
   user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   events Event[]
+  announcements Announcement[]
 
   @@index([approved])
   @@index([slug])
@@ -387,6 +392,13 @@ model ProfileClaim {
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
 
+  // Imágenes subidas por el reclamante durante el registro
+  claimLogoUrl  String?
+  claimImageUrl String?
+  claimImages   String[]
+  // "keep_nafarrock" = conservar imágenes de Nafarrock; "use_mine" = usar las del reclamante
+  imageChoice   String?
+
   bandId    String?
   band      Band?       @relation(fields: [bandId], references: [id], onDelete: Cascade)
   venueId   String?
@@ -401,4 +413,91 @@ model ProfileClaim {
   @@index([venueId])
   @@index([festivalId])
   @@map("profile_claims")
+}
+
+// ============================================
+// ANUNCIOS / BOLOS (Buscar bolos)
+// ============================================
+// Anuncios de oportunidades: conciertos, festivales, convocatorias, servicios de promotores
+
+enum AnnouncementAdvertiserType {
+  PROMOTER   // Servicios booking/producción - 1 activo por promotor
+  VENUE      // Convocatorias - 1 cada 7 días
+  FESTIVAL   // Convocatorias - 1 cada 7 días
+  ORGANIZER  // Convocatorias - 1 cada 7 días
+}
+
+enum AnnouncementStatus {
+  PENDING   // Moderación admin
+  ACTIVE
+  EXPIRED
+  REJECTED
+}
+
+model Announcement {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @db.Text
+  zone        String?  // Zona/ciudad
+  genres      String[] // Estilos musicales si aplica
+  status      AnnouncementStatus @default(PENDING)
+  isApproved  Boolean  @default(false)
+  approvedAt  DateTime?
+  approvedBy  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  expiresAt   DateTime? // Opcional: fecha fin de vigencia
+
+  // Tipo y autor (uno de los cuatro)
+  advertiserType AnnouncementAdvertiserType
+  promoterId     String?
+  promoter       Promoter?  @relation(fields: [promoterId], references: [id], onDelete: Cascade)
+  venueId        String?
+  venue          Venue?     @relation(fields: [venueId], references: [id], onDelete: Cascade)
+  festivalId     String?
+  festival       Festival?  @relation(fields: [festivalId], references: [id], onDelete: Cascade)
+  organizerId    String?
+  organizer      Organizer? @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+
+  // Contacto
+  contactEmail String
+  contactInfo  String?  @db.Text // Info adicional de contacto
+  enableApplicationForm Boolean @default(false) // Si true: bandas pueden postularse desde Nafarrock
+
+  // Convocatorias: info para bandas (cache, equipo, técnicos...)
+  cacheInfo       String?  @db.Text
+  equipmentInfo   String?  @db.Text // Si cuentan con equipo
+  technicalInfo   String?  @db.Text // Sonido, luces, técnicos
+  extraInfo       String?  @db.Text // Cualquier info adicional
+
+  // Estructura para futuro PRO/destaque
+  isFeatured Boolean @default(false)
+  expiresFeaturedAt DateTime?
+
+  applications AnnouncementApplication[]
+
+  @@index([status])
+  @@index([advertiserType])
+  @@index([promoterId])
+  @@index([venueId])
+  @@index([festivalId])
+  @@index([organizerId])
+  @@index([zone])
+  @@index([createdAt])
+  @@map("announcements")
+}
+
+model AnnouncementApplication {
+  id             String   @id @default(cuid())
+  announcementId String
+  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  bandId         String
+  band           Band     @relation(fields: [bandId], references: [id], onDelete: Cascade)
+  message        String   @db.Text
+  createdAt      DateTime @default(now())
+
+  @@unique([announcementId, bandId])
+  @@index([announcementId])
+  @@index([bandId])
+  @@map("announcement_applications")
 }

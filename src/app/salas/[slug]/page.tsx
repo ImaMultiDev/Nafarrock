@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { ImageLightbox } from "@/components/ui/ImageLightbox";
+import { SocialLinks, type SocialLinkItem } from "@/components/ui/SocialLinks";
 
 export async function generateMetadata({
   params,
@@ -98,48 +99,17 @@ export default async function VenuePage({
             {venue.address && (
               <p className="font-body text-punk-white/70">📍 {venue.address}</p>
             )}
-            <div className="flex flex-wrap gap-3">
-              {venue.websiteUrl && (
-                <a
-                  href={venue.websiteUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block border-2 border-punk-pink px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-pink transition-all hover:bg-punk-pink hover:text-punk-black"
-                >
-                  Web oficial →
-                </a>
-              )}
-              {venue.mapUrl && (
-                <a
-                  href={venue.mapUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block border-2 border-punk-pink px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-pink transition-all hover:bg-punk-pink hover:text-punk-black"
-                >
-                  Ver en mapa →
-                </a>
-              )}
-              {venue.instagramUrl && (
-                <a
-                  href={venue.instagramUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block border-2 border-punk-pink px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-pink transition-all hover:bg-punk-pink hover:text-punk-black"
-                >
-                  Instagram
-                </a>
-              )}
-              {venue.facebookUrl && (
-                <a
-                  href={venue.facebookUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block border-2 border-punk-pink px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-pink transition-all hover:bg-punk-pink hover:text-punk-black"
-                >
-                  Facebook
-                </a>
-              )}
-            </div>
+            {(() => {
+              const links: SocialLinkItem[] = [
+                venue.websiteUrl && { kind: "web" as const, url: venue.websiteUrl, label: "Web oficial" },
+                venue.mapUrl && { kind: "map" as const, url: venue.mapUrl, label: "Ver en mapa" },
+                venue.instagramUrl && { kind: "instagram" as const, url: venue.instagramUrl },
+                venue.facebookUrl && { kind: "facebook" as const, url: venue.facebookUrl },
+              ].filter((x): x is SocialLinkItem => Boolean(x));
+              return links.length > 0 ? (
+                <SocialLinks links={links} variant="pink" />
+              ) : null;
+            })()}
           </div>
         )}
 
