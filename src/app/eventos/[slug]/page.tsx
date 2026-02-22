@@ -36,11 +36,11 @@ export default async function EventPage({
   ];
 
   const links: SocialLinkItem[] = [
-    event.webUrl && { kind: "web" as const, url: event.webUrl },
-    event.instagramUrl && { kind: "instagram" as const, url: event.instagramUrl },
-    event.facebookUrl && { kind: "facebook" as const, url: event.facebookUrl },
-    event.twitterUrl && { kind: "twitter" as const, url: event.twitterUrl },
-  ].filter((x): x is SocialLinkItem => Boolean(x));
+    ...(event.webUrl ? [{ kind: "web" as const, url: event.webUrl }] : []),
+    ...(event.instagramUrl ? [{ kind: "instagram" as const, url: event.instagramUrl }] : []),
+    ...(event.facebookUrl ? [{ kind: "facebook" as const, url: event.facebookUrl }] : []),
+    ...(event.twitterUrl ? [{ kind: "twitter" as const, url: event.twitterUrl }] : []),
+  ];
 
   return (
     <PageLayout>

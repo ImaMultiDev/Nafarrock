@@ -33,13 +33,11 @@ export default async function OrganizerPage({
   if (!organizer) notFound();
 
   const links: SocialLinkItem[] = [
-    organizer.websiteUrl && { kind: "web" as const, url: organizer.websiteUrl },
-    organizer.contactEmail && {
-      kind: "email" as const,
-      url: `mailto:${organizer.contactEmail}`,
-      label: "Contacto",
-    },
-  ].filter((x): x is SocialLinkItem => Boolean(x));
+    ...(organizer.websiteUrl ? [{ kind: "web" as const, url: organizer.websiteUrl }] : []),
+    ...(organizer.contactEmail
+      ? [{ kind: "email" as const, url: `mailto:${organizer.contactEmail}`, label: "Contacto" }]
+      : []),
+  ];
 
   return (
     <PageLayout>

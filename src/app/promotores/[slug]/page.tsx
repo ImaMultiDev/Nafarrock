@@ -31,13 +31,11 @@ export default async function PromoterPage({
   if (!promoter) notFound();
 
   const links: SocialLinkItem[] = [
-    promoter.websiteUrl && { kind: "web" as const, url: promoter.websiteUrl },
-    promoter.contactEmail && {
-      kind: "email" as const,
-      url: `mailto:${promoter.contactEmail}`,
-      label: "Contacto",
-    },
-  ].filter((x): x is SocialLinkItem => Boolean(x));
+    ...(promoter.websiteUrl ? [{ kind: "web" as const, url: promoter.websiteUrl }] : []),
+    ...(promoter.contactEmail
+      ? [{ kind: "email" as const, url: `mailto:${promoter.contactEmail}`, label: "Contacto" }]
+      : []),
+  ];
 
   return (
     <PageLayout>

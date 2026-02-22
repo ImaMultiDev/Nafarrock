@@ -31,13 +31,13 @@ export default async function BandPage({
   if (!band) notFound();
 
   const links: SocialLinkItem[] = [
-    band.spotifyUrl && { kind: "spotify" as const, url: band.spotifyUrl },
-    band.bandcampUrl && { kind: "bandcamp" as const, url: band.bandcampUrl },
-    band.instagramUrl && { kind: "instagram" as const, url: band.instagramUrl },
-    band.facebookUrl && { kind: "facebook" as const, url: band.facebookUrl },
-    band.youtubeUrl && { kind: "youtube" as const, url: band.youtubeUrl },
-    band.webUrl && { kind: "web" as const, url: band.webUrl },
-  ].filter((x): x is SocialLinkItem => Boolean(x));
+    ...(band.spotifyUrl ? [{ kind: "spotify" as const, url: band.spotifyUrl }] : []),
+    ...(band.bandcampUrl ? [{ kind: "bandcamp" as const, url: band.bandcampUrl }] : []),
+    ...(band.instagramUrl ? [{ kind: "instagram" as const, url: band.instagramUrl }] : []),
+    ...(band.facebookUrl ? [{ kind: "facebook" as const, url: band.facebookUrl }] : []),
+    ...(band.youtubeUrl ? [{ kind: "youtube" as const, url: band.youtubeUrl }] : []),
+    ...(band.webUrl ? [{ kind: "web" as const, url: band.webUrl }] : []),
+  ];
 
   return (
     <PageLayout>

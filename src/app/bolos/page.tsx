@@ -20,7 +20,9 @@ export default function BolosPage() {
         </p>
       </div>
 
-      <BolosFilters />
+      <Suspense fallback={<div className="h-16 animate-pulse rounded border-2 border-punk-green/30 bg-punk-black" />}>
+        <BolosFilters />
+      </Suspense>
 
       <Suspense fallback={<div className="mt-8 font-body text-punk-white/60">Cargando anuncios...</div>}>
         <BolosList />

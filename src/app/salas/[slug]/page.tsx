@@ -101,11 +101,11 @@ export default async function VenuePage({
             )}
             {(() => {
               const links: SocialLinkItem[] = [
-                venue.websiteUrl && { kind: "web" as const, url: venue.websiteUrl, label: "Web oficial" },
-                venue.mapUrl && { kind: "map" as const, url: venue.mapUrl, label: "Ver en mapa" },
-                venue.instagramUrl && { kind: "instagram" as const, url: venue.instagramUrl },
-                venue.facebookUrl && { kind: "facebook" as const, url: venue.facebookUrl },
-              ].filter((x): x is SocialLinkItem => Boolean(x));
+                ...(venue.websiteUrl ? [{ kind: "web" as const, url: venue.websiteUrl, label: "Web oficial" }] : []),
+                ...(venue.mapUrl ? [{ kind: "map" as const, url: venue.mapUrl, label: "Ver en mapa" }] : []),
+                ...(venue.instagramUrl ? [{ kind: "instagram" as const, url: venue.instagramUrl }] : []),
+                ...(venue.facebookUrl ? [{ kind: "facebook" as const, url: venue.facebookUrl }] : []),
+              ];
               return links.length > 0 ? (
                 <SocialLinks links={links} variant="pink" />
               ) : null;

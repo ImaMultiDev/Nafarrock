@@ -31,10 +31,10 @@ export default async function FestivalPage({
   if (!festival) notFound();
 
   const links: SocialLinkItem[] = [
-    festival.websiteUrl && { kind: "web" as const, url: festival.websiteUrl },
-    festival.instagramUrl && { kind: "instagram" as const, url: festival.instagramUrl },
-    festival.facebookUrl && { kind: "facebook" as const, url: festival.facebookUrl },
-  ].filter((x): x is SocialLinkItem => Boolean(x));
+    ...(festival.websiteUrl ? [{ kind: "web" as const, url: festival.websiteUrl }] : []),
+    ...(festival.instagramUrl ? [{ kind: "instagram" as const, url: festival.instagramUrl }] : []),
+    ...(festival.facebookUrl ? [{ kind: "facebook" as const, url: festival.facebookUrl }] : []),
+  ];
 
   return (
     <PageLayout>
