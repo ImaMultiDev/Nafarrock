@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ProfileForm } from "./ProfileForm";
 import { ChangePasswordForm } from "./ChangePasswordForm";
 import { DeleteAccountSection } from "./DeleteAccountSection";
+import { DashboardSection } from "@/components/dashboard/DashboardSection";
 
 export default async function PerfilPage() {
   const session = await getServerSession(authOptions);
@@ -57,31 +58,27 @@ export default async function PerfilPage() {
 
   return (
     <>
-      <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
-        MI PERFIL
-      </h1>
-      <p className="mt-2 font-body text-punk-white/60">
-        Gestiona tus datos personales y el estado de tu entidad
-      </p>
+      <div className="mb-8">
+        <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
+          Mi perfil
+        </h1>
+        <p className="mt-2 font-body text-punk-white/60">
+          Gestiona tus datos personales y el estado de tu entidad
+        </p>
+      </div>
 
-      <div className="mt-10 space-y-10">
-        <section className="max-w-2xl">
-          <h2 className="font-display text-2xl text-punk-pink">
-            Datos personales
-          </h2>
+      <div className="space-y-8">
+        <DashboardSection title="Datos personales" accent="pink">
           <ProfileForm
             firstName={user.firstName ?? ""}
             lastName={user.lastName ?? ""}
             email={user.email}
           />
-        </section>
+        </DashboardSection>
 
         {entity && (
-          <section>
-            <h2 className="font-display text-2xl text-punk-pink">
-              Estado de aprobación
-            </h2>
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-4 border-2 border-punk-white/10 bg-punk-black/50 p-6">
+          <DashboardSection title="Estado de aprobación" accent="pink">
+            <div className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-punk-white/10 bg-punk-black/40 p-6">
               <div>
                 <p className="font-punch text-xs uppercase tracking-widest text-punk-white/60">
                   {entityType}
@@ -110,7 +107,7 @@ export default async function PerfilPage() {
                 </Link>
               )}
             </div>
-          </section>
+          </DashboardSection>
         )}
 
         {!entity && session.user?.role !== "USUARIO" && (
@@ -120,25 +117,19 @@ export default async function PerfilPage() {
           </p>
         )}
 
-        <section className="max-w-2xl">
-          <h2 className="font-display text-2xl text-punk-pink">
-            Cambiar contraseña
-          </h2>
+        <DashboardSection title="Cambiar contraseña" accent="pink">
           <ChangePasswordForm hasPassword={!!user.password} />
-        </section>
+        </DashboardSection>
 
-        <section className="max-w-2xl">
-          <h2 className="font-display text-2xl text-punk-red">
-            Zona de riesgo
-          </h2>
-          <p className="mt-2 font-body text-punk-white/60">
+        <DashboardSection title="Zona de riesgo" accent="red">
+          <p className="mb-4 font-body text-punk-white/60">
             Borrar tu cuenta eliminará todos tus datos de forma permanente.
           </p>
           <DeleteAccountSection
             hasPassword={!!user.password}
             isAdmin={user.role === "ADMIN"}
           />
-        </section>
+        </DashboardSection>
       </div>
     </>
   );

@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { AnnouncementForm } from "./AnnouncementForm";
+import { DashboardSection } from "@/components/dashboard/DashboardSection";
 
 const GENRES = ["punk", "rock urbano", "grunge", "hardcore", "indie", "alternativo", "metal"];
 
@@ -44,28 +45,32 @@ export default async function NuevoBoloPage() {
 
   if (!advertiser) {
     return (
-      <div>
-        <h1 className="font-display text-4xl tracking-tighter text-punk-white">
-          Publicar anuncio
-        </h1>
-        <p className="mt-6 font-body text-punk-white/60">
+      <>
+        <div className="mb-8">
+          <h1 className="font-display text-4xl tracking-tighter text-punk-white">
+            Publicar anuncio
+          </h1>
+        </div>
+        <p className="font-body text-punk-white/60">
           Solo promotores, salas, festivales y organizadores pueden publicar anuncios.
         </p>
-      </div>
+      </>
     );
   }
 
   const profile = advertiser.profile as { approved?: boolean; contactEmail?: string; city?: string; location?: string };
   if (!profile.approved) {
     return (
-      <div>
-        <h1 className="font-display text-4xl tracking-tighter text-punk-white">
-          Publicar anuncio
-        </h1>
-        <p className="mt-6 font-body text-punk-white/60">
+      <>
+        <div className="mb-8">
+          <h1 className="font-display text-4xl tracking-tighter text-punk-white">
+            Publicar anuncio
+          </h1>
+        </div>
+        <p className="font-body text-punk-white/60">
           Tu perfil debe estar aprobado para publicar anuncios.
         </p>
-      </div>
+      </>
     );
   }
 
@@ -76,18 +81,22 @@ export default async function NuevoBoloPage() {
 
   return (
     <>
-      <h1 className="font-display text-4xl tracking-tighter text-punk-white">
-        Publicar anuncio
-      </h1>
-      <p className="mt-2 font-body text-punk-white/60">
-        Crea un anuncio para que las bandas encuentren oportunidades.
-      </p>
-      <AnnouncementForm
-        advertiserType={advertiser.type}
-        defaultContactEmail={defaultContact}
-        defaultZone={defaultZone}
-        genres={GENRES}
-      />
+      <div className="mb-8">
+        <h1 className="font-display text-4xl tracking-tighter text-punk-white">
+          Publicar anuncio
+        </h1>
+        <p className="mt-2 font-body text-punk-white/60">
+          Crea un anuncio para que las bandas encuentren oportunidades.
+        </p>
+      </div>
+      <DashboardSection accent="green">
+        <AnnouncementForm
+          advertiserType={advertiser.type}
+          defaultContactEmail={defaultContact}
+          defaultZone={defaultZone}
+          genres={GENRES}
+        />
+      </DashboardSection>
     </>
   );
 }

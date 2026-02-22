@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { canUserCreateEvent } from "@/lib/validated-event";
 import { DashboardEventForm } from "./DashboardEventForm";
 import { DeleteEventButton } from "@/components/dashboard/DeleteEventButton";
+import { DashboardSection } from "@/components/dashboard/DashboardSection";
 import Link from "next/link";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -46,39 +47,35 @@ export default async function DashboardEventosPage() {
 
   return (
     <>
-      <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
-        MIS EVENTOS
-      </h1>
-      <p className="mt-2 font-body text-punk-white/60">
-        {canCreate
-          ? "Crea eventos y espera la aprobación del administrador."
-          : !check.ok
-            ? check.message
-            : "Listado de tus eventos."}
-      </p>
+      <div className="mb-8">
+        <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
+          Mis eventos
+        </h1>
+        <p className="mt-2 font-body text-punk-white/60">
+          {canCreate
+            ? "Crea eventos y espera la aprobación del administrador."
+            : !check.ok
+              ? check.message
+              : "Listado de tus eventos."}
+        </p>
+      </div>
 
       {canCreate && (
-        <div className="mt-10">
-          <h2 className="font-display text-2xl text-punk-pink">
-            Crear evento
-          </h2>
+        <DashboardSection title="Crear evento" accent="red">
           <DashboardEventForm
             venues={venuesForForm}
             bands={bands}
             defaultVenueId={userVenue?.id}
           />
-        </div>
+        </DashboardSection>
       )}
 
-      <div className="mt-16">
-        <h2 className="font-display text-2xl text-punk-white">
-          Tus eventos ({myEvents.length})
-        </h2>
-        <div className="mt-6 space-y-3">
+      <DashboardSection title={`Tus eventos (${myEvents.length})`} accent="red">
+        <div className="space-y-3">
           {myEvents.map((e) => (
             <div
               key={e.id}
-              className="flex flex-wrap items-center justify-between gap-4 border-2 border-punk-white/10 bg-punk-black/50 p-4"
+              className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-punk-white/10 bg-punk-black/40 p-4 transition-colors hover:border-punk-white/20"
             >
               <div className="min-w-0 flex-1">
                 <Link
@@ -118,11 +115,11 @@ export default async function DashboardEventosPage() {
           ))}
         </div>
         {myEvents.length === 0 && (
-          <p className="mt-6 font-body text-punk-white/50">
+          <p className="py-8 font-body text-center text-punk-white/50">
             No has creado ningún evento aún.
           </p>
         )}
-      </div>
+      </DashboardSection>
     </>
   );
 }

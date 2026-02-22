@@ -1,9 +1,9 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { BandForm } from "./BandForm";
+import { DashboardSection } from "@/components/dashboard/DashboardSection";
 
 const GENRES = [
   "punk",
@@ -33,45 +33,47 @@ export default async function DashboardBandaPage() {
 
   if (!band) {
     return (
-      <div>
-        <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
-          MI BANDA
-        </h1>
+      <>
+        <div className="mb-8">
+          <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
+            Mi banda
+          </h1>
+        </div>
         {pendingClaim?.band ? (
-          <div className="mt-6 border-2 border-punk-green/50 bg-punk-green/10 p-6">
+          <div className="rounded-xl border-2 border-punk-green/50 bg-punk-green/10 p-6">
             <p className="font-body text-punk-white/90">
               Pendiente de aprobación: has reclamado el perfil de &quot;{pendingClaim.band.name}&quot;.
               El administrador está revisando tu solicitud. Recibirás un email cuando se apruebe.
             </p>
           </div>
         ) : (
-          <p className="mt-6 font-body text-punk-white/60">
+          <p className="font-body text-punk-white/60">
             No tienes una banda asociada. Regístrate como banda para crear tu
             perfil.
           </p>
         )}
-      </div>
+      </>
     );
   }
 
   return (
     <>
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
-            MI BANDA
-          </h1>
-          <p className="mt-2 font-body text-punk-white/60">
-            {band.name}
-            {!band.approved && (
-              <span className="ml-2 rounded border border-punk-red/50 bg-punk-red/10 px-2 py-0.5 font-punch text-xs text-punk-red">
-                Pendiente de aprobación
-              </span>
-            )}
-          </p>
-        </div>
+      <div className="mb-8">
+        <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
+          Mi banda
+        </h1>
+        <p className="mt-2 font-body text-punk-white/60">
+          {band.name}
+          {!band.approved && (
+            <span className="ml-2 rounded border border-punk-red/50 bg-punk-red/10 px-2 py-0.5 font-punch text-xs text-punk-red">
+              Pendiente de aprobación
+            </span>
+          )}
+        </p>
       </div>
-      <BandForm band={band} genres={GENRES} />
+      <DashboardSection accent="green">
+        <BandForm band={band} genres={GENRES} />
+      </DashboardSection>
     </>
   );
 }

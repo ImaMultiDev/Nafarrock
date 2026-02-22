@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { EventEditForm } from "./EventEditForm";
+import { DashboardSection } from "@/components/dashboard/DashboardSection";
 
 export default async function EditarEventoDashboardPage({
   params,
@@ -52,11 +53,15 @@ export default async function EditarEventoDashboardPage({
 
   return (
     <>
-      <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
-        Editar evento
-      </h1>
-      <p className="mt-2 font-body text-punk-white/60">{event.title}</p>
-      <EventEditForm event={event} venues={venuesForForm} bands={bands} />
+      <div className="mb-8">
+        <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
+          Editar evento
+        </h1>
+        <p className="mt-2 font-body text-punk-white/60">{event.title}</p>
+      </div>
+      <DashboardSection accent="red">
+        <EventEditForm event={event} venues={venuesForForm} bands={bands} />
+      </DashboardSection>
     </>
   );
 }
