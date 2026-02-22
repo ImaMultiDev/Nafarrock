@@ -8,25 +8,19 @@ export async function GET(req: Request) {
     const zone = searchParams.get("zone");
     const genre = searchParams.get("genre");
 
+    const validTypes = ["PROMOTER", "VENUE", "FESTIVAL", "ORGANIZER"] as const;
+    const advertiserTypeFilter =
+      advertiserType && validTypes.includes(advertiserType as (typeof validTypes)[number])
+        ? (advertiserType as (typeof validTypes)[number])
+        : undefined;
+
     const where = {
       status: "ACTIVE" as const,
       isApproved: true,
-      ...(advertiserType && ["PROMOTER", "VENUE", "FESTIVAL", "ORGANIZER"].includes(advertiserType)
-        ? { advertiserType: advertiserType as "PROMOTER" | "VENUE" | "FESTIVAL" | "ORGANIZER" }
-        : {}),
+      ...(advertiserTypeFilter ? { advertiserType: advertiserTypeFilter } : {}),
       ...(zone?.trim() ? { zone: { contains: zone.trim(), mode: "insensitive" as const } } : {}),
       ...(genre?.trim() ? { genres: { has: genre.trim().toLowerCase() } } : {}),
     };
-
-    if (advertiserType && ["PROMOTER", "VENUE", "FESTIVAL", "ORGANIZER"].includes(advertiserType)) {
-      where.advertiserType = advertiserType;
-    }
-    if (zone?.trim()) {
-      where.zone = { contains: zone.trim(), mode: "insensitive" };
-    }
-    if (genre?.trim()) {
-      where.genres = { has: genre.trim().toLowerCase() };
-    }
 
     const announcements = await prisma.announcement.findMany({
       where,
