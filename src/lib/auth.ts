@@ -39,7 +39,7 @@ export const authOptions: NextAuthOptions = {
         if (!user?.password) return null;
         const valid = await compare(credentials.password, user.password);
         if (!valid) return null;
-        if (!user.emailVerified) {
+        if (!user.emailVerified && user.role !== "ADMIN") {
           throw new Error("EmailNotVerified");
         }
         if (user.scheduledDeletionAt) {
