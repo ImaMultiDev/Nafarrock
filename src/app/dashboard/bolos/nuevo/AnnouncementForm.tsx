@@ -64,7 +64,7 @@ export function AnnouncementForm({
       return;
     }
 
-    router.push("/bolos");
+    router.push("/dashboard");
     router.refresh();
   };
 
@@ -254,7 +254,7 @@ export function AnnouncementForm({
           {loading ? "Publicando..." : "Publicar anuncio"}
         </button>
         <Link
-          href="/bolos"
+          href="/dashboard"
           className="border-2 border-punk-white/30 px-8 py-3 font-punch text-sm uppercase tracking-widest text-punk-white/70 hover:border-punk-white"
         >
           Cancelar

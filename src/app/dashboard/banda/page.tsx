@@ -70,14 +70,6 @@ export default async function DashboardBandaPage() {
             )}
           </p>
         </div>
-        {band.approved && (
-          <Link
-            href="/bolos"
-            className="shrink-0 border-2 border-punk-green bg-punk-green px-6 py-3 font-punch text-sm uppercase tracking-widest text-punk-black transition-all hover:bg-punk-green/90"
-          >
-            Buscar bolos
-          </Link>
-        )}
       </div>
       <BandForm band={band} genres={GENRES} />
     </>

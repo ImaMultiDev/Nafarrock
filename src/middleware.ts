@@ -10,6 +10,18 @@ export async function middleware(req: NextRequest) {
 
   const isAdmin = req.nextUrl.pathname.startsWith("/admin");
   const isDashboard = req.nextUrl.pathname.startsWith("/dashboard");
+  const isBolos = req.nextUrl.pathname === "/bolos" || req.nextUrl.pathname.startsWith("/bolos/");
+
+  if (isBolos) {
+    if (!token) {
+      const url = new URL("/auth/login", req.url);
+      url.searchParams.set("callbackUrl", req.nextUrl.pathname);
+      return NextResponse.redirect(url);
+    }
+    if (token.role !== "BANDA") {
+      return NextResponse.redirect(new URL("/dashboard", req.url));
+    }
+  }
 
   if (isAdmin || isDashboard) {
     if (!token) {
@@ -26,5 +38,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/dashboard/:path*"],
+  matcher: ["/admin/:path*", "/dashboard/:path*", "/bolos", "/bolos/:path*"],
 };

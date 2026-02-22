@@ -42,14 +42,6 @@ export default async function DashboardLayout({
           Panel
         </Link>
         <div className="flex flex-wrap gap-4">
-          {user?.bandProfile && (
-            <Link
-              href="/bolos"
-              className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white"
-            >
-              Buscar bolos
-            </Link>
-          )}
           <Link
             href="/dashboard/perfil"
             className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white"

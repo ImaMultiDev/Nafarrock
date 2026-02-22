@@ -128,14 +128,6 @@ export default async function BandPage({
               </ul>
             </div>
           )}
-          <div className="mt-6">
-            <Link
-              href="/bolos"
-              className="inline-flex items-center gap-2 border-2 border-punk-green bg-punk-green px-6 py-3 font-punch text-sm uppercase tracking-widest text-punk-black transition-all hover:bg-punk-green/90 hover:shadow-[0_0_24px_rgba(0,200,83,0.25)]"
-            >
-              Buscar bolos
-            </Link>
-          </div>
           {links.length > 0 && (
             <div className="mt-6">
               <SocialLinks links={links} variant="green" />

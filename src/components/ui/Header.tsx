@@ -21,7 +21,6 @@ const navLinks = [
   { href: "/", label: "Inicio" },
   { href: "/eventos", label: "Eventos" },
   { href: "/bandas", label: "Bandas" },
-  { href: "/bolos", label: "Buscar bolos" },
   { href: "/escena", label: "Escena" },
 ];
 
@@ -65,6 +64,7 @@ function SocialIcon({ icon, className }: { icon: string; className?: string }) {
 function isActivePath(pathname: string, href: string): boolean {
   if (href === "/") return pathname === "/";
   if (href === "/bolos") return pathname === "/bolos" || pathname.startsWith("/bolos/");
+  if (href === "/bolos-nav") return pathname === "/bolos" || pathname.startsWith("/bolos/");
   if (href === "/escena") {
     return pathname === "/escena" || pathname.startsWith("/promotores") || pathname.startsWith("/organizadores") || pathname.startsWith("/festivales") || pathname.startsWith("/salas");
   }
@@ -146,6 +146,18 @@ export function Header() {
               </Link>
             );
           })}
+          {session?.user?.role === "BANDA" && (
+            <Link
+              href="/bolos"
+              className={`relative shrink-0 rounded border-2 px-3 py-1.5 font-punch text-xs uppercase tracking-widest transition-colors ${
+                isActivePath(pathname, "/bolos-nav")
+                  ? "border-punk-green bg-punk-green text-punk-black after:absolute after:bottom-[-4px] after:left-0 after:right-0 after:h-[2px] after:bg-punk-green after:content-['']"
+                  : "border-punk-green text-punk-green hover:bg-punk-green hover:text-punk-black"
+              }`}
+            >
+              Bolos
+            </Link>
+          )}
           {(() => {
             const guideLink = getGuideOrManualLink(session);
             const active = isActivePath(pathname, guideLink.href);
@@ -265,6 +277,19 @@ export function Header() {
                 </Link>
               );
             })}
+            {session?.user?.role === "BANDA" && (
+              <Link
+                href="/bolos"
+                onClick={() => setMenuOpen(false)}
+                className={`rounded px-4 py-3 font-punch text-sm uppercase tracking-widest transition-colors ${
+                  isActivePath(pathname, "/bolos-nav")
+                    ? "border-l-4 border-punk-green bg-punk-green/20 text-punk-green"
+                    : "border-l-4 border-transparent text-punk-green hover:bg-punk-green/10"
+                }`}
+              >
+                Bolos
+              </Link>
+            )}
             {(() => {
               const guideLink = getGuideOrManualLink(session);
               const active = isActivePath(pathname, guideLink.href);
