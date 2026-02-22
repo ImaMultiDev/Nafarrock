@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { uniqueSlug } from "@/lib/slug";
 import { sendVerificationEmail } from "@/lib/email";
+import { isValidEmail, isPasswordValid, isValidUrl } from "@/lib/validation";
 
 const ROLES = ["USUARIO", "BANDA", "SALA", "FESTIVAL", "ORGANIZADOR", "PROMOTOR"] as const;
 
@@ -13,9 +14,23 @@ const memberSchema = z.object({
   instrument: z.string().min(1),
 });
 
+const optionalUrl = z
+  .string()
+  .optional()
+  .refine((v) => !v || v.trim() === "" || isValidUrl(v), "Introduce una URL válida (ej. https://...)");
+const optionalUrlStrict = z
+  .string()
+  .optional()
+  .refine((v) => !v || v.trim() === "" || /^https?:\/\/.+/i.test(v), "Introduce una URL válida");
+
 const baseSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6, "Mínimo 6 caracteres"),
+  email: z
+    .string()
+    .refine(isValidEmail, "Introduce un email válido"),
+  password: z
+    .string()
+    .min(8, "Mínimo 8 caracteres")
+    .refine(isPasswordValid, "Contraseña: mínimo 8 caracteres, mayúscula, minúscula, número y carácter especial"),
   firstName: z.string().min(1, "Nombre requerido"),
   lastName: z.string().min(1, "Apellidos requeridos"),
   phone: z.string().optional(),
@@ -30,12 +45,12 @@ const bandSchema = baseSchema.extend({
   bio: z.string().optional(),
   genres: z.array(z.string()).default([]),
   members: z.array(memberSchema).optional().default([]),
-  spotifyUrl: z.string().url().optional().or(z.literal("")),
-  bandcampUrl: z.string().url().optional().or(z.literal("")),
-  instagramUrl: z.string().url().optional().or(z.literal("")),
-  facebookUrl: z.string().url().optional().or(z.literal("")),
-  youtubeUrl: z.string().url().optional().or(z.literal("")),
-  webUrl: z.string().url().optional().or(z.literal("")),
+  spotifyUrl: optionalUrl,
+  bandcampUrl: optionalUrl,
+  instagramUrl: optionalUrl,
+  facebookUrl: optionalUrl,
+  youtubeUrl: optionalUrl,
+  webUrl: optionalUrl,
 });
 
 const venueSchema = baseSchema.extend({
@@ -46,10 +61,10 @@ const venueSchema = baseSchema.extend({
   description: z.string().optional(),
   foundedYear: z.coerce.number().min(1900).max(new Date().getFullYear()).optional(),
   capacity: z.coerce.number().positive().optional(),
-  websiteUrl: z.string().url().optional().or(z.literal("")),
-  mapUrl: z.string().url().optional().or(z.literal("")),
-  instagramUrl: z.string().url().optional().or(z.literal("")),
-  facebookUrl: z.string().url().optional().or(z.literal("")),
+  websiteUrl: optionalUrlStrict,
+  mapUrl: optionalUrlStrict,
+  instagramUrl: optionalUrl,
+  facebookUrl: optionalUrl,
 });
 
 const festivalSchema = baseSchema.extend({
@@ -58,23 +73,23 @@ const festivalSchema = baseSchema.extend({
   location: z.string().optional(),
   foundedYear: z.coerce.number().min(1900).max(new Date().getFullYear()).optional(),
   description: z.string().optional(),
-  websiteUrl: z.string().url().optional().or(z.literal("")),
-  instagramUrl: z.string().url().optional().or(z.literal("")),
-  facebookUrl: z.string().url().optional().or(z.literal("")),
+  websiteUrl: optionalUrlStrict,
+  instagramUrl: optionalUrl,
+  facebookUrl: optionalUrl,
 });
 
 const organizerSchema = baseSchema.extend({
   role: z.literal("ORGANIZADOR"),
   entityName: z.string().min(1, "Nombre del organizador requerido"),
   description: z.string().optional(),
-  websiteUrl: z.string().url().optional().or(z.literal("")),
+  websiteUrl: optionalUrlStrict,
 });
 
 const promoterSchema = baseSchema.extend({
   role: z.literal("PROMOTOR"),
   entityName: z.string().min(1, "Nombre del promotor requerido"),
   description: z.string().optional(),
-  websiteUrl: z.string().url().optional().or(z.literal("")),
+  websiteUrl: optionalUrlStrict,
 });
 
 const userOnlySchema = baseSchema.extend({
@@ -107,10 +122,115 @@ async function createAndSendVerificationToken(
   return { skipVerification: false };
 }
 
+const claimSchema = baseSchema.extend({
+  role: z.enum(["BANDA", "SALA", "FESTIVAL"]),
+  claimType: z.enum(["BAND", "VENUE", "FESTIVAL"]),
+  claimId: z.string().min(1),
+  claimName: z.string().min(1),
+});
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
     const role = body.role ?? "USUARIO";
+
+    // Modo reclamación: registrarse para reclamar un perfil existente
+    if (body.claimType && body.claimId && body.claimName) {
+      const parsed = claimSchema.safeParse(body);
+      if (!parsed.success) {
+        const first = parsed.error.errors[0];
+        return NextResponse.json(
+          { message: first?.message ?? "Datos inválidos", errors: parsed.error.flatten() },
+          { status: 400 }
+        );
+      }
+      const data = parsed.data;
+
+      const existing = await prisma.user.findUnique({ where: { email: data.email } });
+      if (existing) {
+        return NextResponse.json(
+          { message: "Ya existe una cuenta con este email" },
+          { status: 409 }
+        );
+      }
+
+      const claimEntityType = data.claimType as "BAND" | "VENUE" | "FESTIVAL";
+      if (claimEntityType === "BAND") {
+        const band = await prisma.band.findUnique({ where: { id: data.claimId } });
+        if (!band) return NextResponse.json({ message: "Banda no encontrada" }, { status: 404 });
+        if (band.userId)
+          return NextResponse.json({ message: "Este perfil ya tiene propietario" }, { status: 400 });
+        const pendingClaim = await prisma.profileClaim.findFirst({
+          where: { bandId: data.claimId, status: "PENDING_CLAIM" },
+        });
+        if (pendingClaim)
+          return NextResponse.json(
+            { message: "Ya existe una solicitud pendiente para este perfil" },
+            { status: 400 }
+          );
+      } else if (claimEntityType === "VENUE") {
+        const venue = await prisma.venue.findUnique({ where: { id: data.claimId } });
+        if (!venue) return NextResponse.json({ message: "Sala no encontrada" }, { status: 404 });
+        if (venue.userId)
+          return NextResponse.json({ message: "Este perfil ya tiene propietario" }, { status: 400 });
+        const pendingClaim = await prisma.profileClaim.findFirst({
+          where: { venueId: data.claimId, status: "PENDING_CLAIM" },
+        });
+        if (pendingClaim)
+          return NextResponse.json(
+            { message: "Ya existe una solicitud pendiente para este perfil" },
+            { status: 400 }
+          );
+      } else if (claimEntityType === "FESTIVAL") {
+        const festival = await prisma.festival.findUnique({ where: { id: data.claimId } });
+        if (!festival) return NextResponse.json({ message: "Festival no encontrado" }, { status: 404 });
+        if (festival.userId)
+          return NextResponse.json({ message: "Este perfil ya tiene propietario" }, { status: 400 });
+        const pendingClaim = await prisma.profileClaim.findFirst({
+          where: { festivalId: data.claimId, status: "PENDING_CLAIM" },
+        });
+        if (pendingClaim)
+          return NextResponse.json(
+            { message: "Ya existe una solicitud pendiente para este perfil" },
+            { status: 400 }
+          );
+      }
+
+      const hashedPassword = await hash(data.password, 12);
+      const name = `${data.firstName} ${data.lastName}`.trim();
+
+      const userRole = claimEntityType === "BAND" ? "BANDA" : claimEntityType === "VENUE" ? "SALA" : "FESTIVAL";
+      const user = await prisma.user.create({
+        data: {
+          email: data.email,
+          password: hashedPassword,
+          name,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          phone: data.phone || null,
+          role: userRole,
+        },
+      });
+
+      await prisma.profileClaim.create({
+        data: {
+          userId: user.id,
+          entityType: claimEntityType,
+          entityId: data.claimId,
+          status: "PENDING_CLAIM",
+          ...(claimEntityType === "BAND" && { bandId: data.claimId }),
+          ...(claimEntityType === "VENUE" && { venueId: data.claimId }),
+          ...(claimEntityType === "FESTIVAL" && { festivalId: data.claimId }),
+        },
+      });
+
+      const { skipVerification } = await createAndSendVerificationToken(data.email, name);
+      return NextResponse.json({
+        success: true,
+        requiresVerification: !skipVerification,
+        email: data.email,
+      });
+    }
 
     let parsed: z.SafeParseReturnType<unknown, unknown>;
     switch (role) {

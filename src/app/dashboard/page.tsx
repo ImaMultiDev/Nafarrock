@@ -2,10 +2,20 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { prisma } from "@/lib/prisma";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
-  if (!session) redirect("/auth/login");
+  if (!session?.user?.id) redirect("/auth/login");
+
+  const pendingClaim = await prisma.profileClaim.findFirst({
+    where: { userId: session.user.id, status: "PENDING_CLAIM" },
+    include: { band: true, venue: true, festival: true },
+  });
+
+  const claimEntityName = pendingClaim
+    ? (pendingClaim.band?.name ?? pendingClaim.venue?.name ?? pendingClaim.festival?.name ?? "perfil")
+    : null;
 
   return (
     <>
@@ -15,6 +25,21 @@ export default async function DashboardPage() {
       <p className="mt-2 font-body text-punk-white/60">
         Hola, {session.user?.name ?? session.user?.email}
       </p>
+
+      {pendingClaim && (
+        <div className="mt-8 border-2 border-punk-green/50 bg-punk-green/10 p-6">
+          <h2 className="font-display text-xl tracking-tighter text-punk-green">
+            Pendiente de aprobación
+          </h2>
+          <p className="mt-2 font-body text-punk-white/90">
+            Has reclamado el perfil de &quot;{claimEntityName}&quot;. Tu solicitud está en revisión.
+            Recibirás un email cuando el administrador verifique tu reclamación.
+          </p>
+          <p className="mt-2 font-body text-sm text-punk-white/60">
+            Si tienes dudas, puedes contactar con Nafarrock desde la sección Contacto (visible tras la aprobación).
+          </p>
+        </div>
+      )}
 
       <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <Link

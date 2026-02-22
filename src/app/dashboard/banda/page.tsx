@@ -23,16 +23,32 @@ export default async function DashboardBandaPage() {
     include: { members: { orderBy: { order: "asc" } } },
   });
 
+  const pendingClaim = !band
+    ? await prisma.profileClaim.findFirst({
+        where: { userId: session.user.id, bandId: { not: null }, status: "PENDING_CLAIM" },
+        include: { band: true },
+      })
+    : null;
+
   if (!band) {
     return (
       <div>
         <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
           MI BANDA
         </h1>
-        <p className="mt-6 font-body text-punk-white/60">
-          No tienes una banda asociada. Regístrate como banda para crear tu
-          perfil.
-        </p>
+        {pendingClaim?.band ? (
+          <div className="mt-6 border-2 border-punk-green/50 bg-punk-green/10 p-6">
+            <p className="font-body text-punk-white/90">
+              Pendiente de aprobación: has reclamado el perfil de &quot;{pendingClaim.band.name}&quot;.
+              El administrador está revisando tu solicitud. Recibirás un email cuando se apruebe.
+            </p>
+          </div>
+        ) : (
+          <p className="mt-6 font-body text-punk-white/60">
+            No tienes una banda asociada. Regístrate como banda para crear tu
+            perfil.
+          </p>
+        )}
       </div>
     );
   }

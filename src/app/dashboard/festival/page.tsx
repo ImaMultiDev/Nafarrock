@@ -12,15 +12,31 @@ export default async function DashboardFestivalPage() {
     where: { userId: session.user.id },
   });
 
+  const pendingClaim = !festival
+    ? await prisma.profileClaim.findFirst({
+        where: { userId: session.user.id, festivalId: { not: null }, status: "PENDING_CLAIM" },
+        include: { festival: true },
+      })
+    : null;
+
   if (!festival) {
     return (
       <div>
         <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
           MI FESTIVAL
         </h1>
-        <p className="mt-6 font-body text-punk-white/60">
-          No tienes un festival asociado.
-        </p>
+        {pendingClaim?.festival ? (
+          <div className="mt-6 border-2 border-punk-green/50 bg-punk-green/10 p-6">
+            <p className="font-body text-punk-white/90">
+              Pendiente de aprobación: has reclamado el perfil de &quot;{pendingClaim.festival.name}&quot;.
+              El administrador está revisando tu solicitud. Recibirás un email cuando se apruebe.
+            </p>
+          </div>
+        ) : (
+          <p className="mt-6 font-body text-punk-white/60">
+            No tienes un festival asociado.
+          </p>
+        )}
       </div>
     );
   }

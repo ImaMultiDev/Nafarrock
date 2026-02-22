@@ -56,6 +56,9 @@ function VerificarEmailContent() {
         <p className="mt-4 font-body text-sm text-punk-white/50">
           El enlace expira en 24 horas. Si no lo ves, revisa la carpeta de spam.
         </p>
+        <p className="mt-2 font-body text-sm text-punk-white/50">
+          Si estás reclamando un perfil, tras verificar verás &quot;Pendiente de aprobación&quot; hasta que el administrador revise tu solicitud.
+        </p>
 
         {email && (
           <div className="mt-10 space-y-4">

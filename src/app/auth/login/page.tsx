@@ -5,6 +5,7 @@ import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { PageLayout } from "@/components/ui/PageLayout";
+import { PasswordInput } from "@/components/ui/PasswordInput";
 
 function LoginForm() {
   const searchParams = useSearchParams();
@@ -18,6 +19,7 @@ function LoginForm() {
   }, [searchParams]);
 
   const verified = searchParams.get("verified") === "1";
+  const reset = searchParams.get("reset") === "1";
   const urlError = searchParams.get("error");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -57,6 +59,14 @@ function LoginForm() {
           <div className="mt-6 border-2 border-punk-green bg-punk-green/10 p-4">
             <p className="font-body text-punk-green">
               ✓ Email verificado. Ya puedes iniciar sesión.
+            </p>
+          </div>
+        )}
+
+        {reset && (
+          <div className="mt-6 border-2 border-punk-green bg-punk-green/10 p-4">
+            <p className="font-body text-punk-green">
+              ✓ Contraseña restablecida. Ya puedes iniciar sesión.
             </p>
           </div>
         )}
@@ -114,15 +124,24 @@ function LoginForm() {
             />
           </div>
           <div>
-            <label htmlFor="password" className={labelClass}>Contraseña</label>
-            <input
+            <PasswordInput
               id="password"
-              type="password"
+              name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              label="Contraseña"
               required
-              className={inputClass}
+              showStrength={false}
+              autoComplete="current-password"
             />
+          </div>
+          <div className="text-right">
+            <Link
+              href="/auth/recuperar"
+              className="font-body text-sm text-punk-white/60 hover:text-punk-green"
+            >
+              ¿Olvidaste tu contraseña?
+            </Link>
           </div>
           <button
             type="submit"
@@ -136,6 +155,12 @@ function LoginForm() {
           ¿No tienes cuenta?{" "}
           <Link href="/auth/registro" className="font-punch uppercase tracking-widest text-punk-green hover:text-punk-green/80">
             Regístrate
+          </Link>
+        </p>
+        <p className="mt-4 text-center font-body text-sm text-punk-white/60">
+          ¿Tu banda, sala o festival ya está en Nafarrock?{" "}
+          <Link href="/auth/reclamar" className="font-punch uppercase tracking-widest text-punk-green hover:text-punk-green/80">
+            Reclamar perfil
           </Link>
         </p>
       </div>

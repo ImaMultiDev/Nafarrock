@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 type SearchResult = {
@@ -13,26 +12,20 @@ type SearchResult = {
   genres?: string[];
 };
 
-const TYPES = [
-  { value: "BAND", label: "Banda" },
-  { value: "VENUE", label: "Sala" },
-  { value: "FESTIVAL", label: "Festival" },
-] as const;
+const TYPE_LABELS: Record<string, string> = {
+  BAND: "Banda",
+  VENUE: "Sala",
+  FESTIVAL: "Festival",
+};
 
-export function ClaimSearchForm() {
-  const router = useRouter();
-  const [type, setType] = useState<"BAND" | "VENUE" | "FESTIVAL">("BAND");
+export function ClaimSearchForm({ type }: { type: "BAND" | "VENUE" | "FESTIVAL" }) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
-  const [claiming, setClaiming] = useState<string | null>(null);
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState<string | null>(null);
 
   const search = useCallback(async () => {
     if (!query.trim()) return;
     setLoading(true);
-    setError(null);
     try {
       const res = await fetch(
         `/api/profiles/search?type=${type}&q=${encodeURIComponent(query.trim())}`
@@ -46,62 +39,27 @@ export function ClaimSearchForm() {
     }
   }, [type, query]);
 
-  const handleClaim = async (entityId: string, entityName: string) => {
-    setClaiming(entityId);
-    setError(null);
-    try {
-      const res = await fetch("/api/claims", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          entityType: type,
-          entityId,
-          message: message.trim() || undefined,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.message ?? "Error al enviar la solicitud");
-        return;
-      }
-      router.refresh();
-      setMessage("");
-      setResults((r) => r.filter((x) => x.id !== entityId));
-      alert(`Solicitud enviada. El administrador revisará tu reclamación de "${entityName}".`);
-    } catch {
-      setError("Error de conexión");
-    } finally {
-      setClaiming(null);
-    }
+  const getClaimRegistroUrl = (item: SearchResult) => {
+    const params = new URLSearchParams({
+      claim: type,
+      claimId: item.id,
+      claimName: item.name,
+    });
+    return `/auth/registro?${params.toString()}`;
   };
+
+  const profileUrl =
+    type === "BAND"
+      ? (slug: string) => `/bandas/${slug}`
+      : type === "VENUE"
+        ? (slug: string) => `/salas/${slug}`
+        : (slug: string) => `/festivales/${slug}`;
 
   return (
     <div className="mt-10 max-w-2xl space-y-6">
       <div>
         <label className="block font-punch text-xs uppercase tracking-widest text-punk-white/70">
-          Tipo de perfil
-        </label>
-        <div className="mt-2 flex gap-2">
-          {TYPES.map((t) => (
-            <button
-              key={t.value}
-              type="button"
-              onClick={() => setType(t.value)}
-              className={`border-2 px-4 py-2 font-punch text-xs uppercase tracking-widest transition-colors ${
-                type === t.value
-                  ? "border-punk-green bg-punk-green/10 text-punk-green"
-                  : "border-punk-white/20 text-punk-white/70 hover:border-punk-white/40"
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <label className="block font-punch text-xs uppercase tracking-widest text-punk-white/70">
-          Buscar por nombre
+          Buscar {TYPE_LABELS[type]} por nombre
         </label>
         <div className="mt-2 flex gap-2">
           <input
@@ -113,8 +71,8 @@ export function ClaimSearchForm() {
               type === "BAND"
                 ? "Ej: Los Punks"
                 : type === "VENUE"
-                ? "Ej: Sala Totem"
-                : "Ej: Nafarroa Rock"
+                  ? "Ej: Sala Totem"
+                  : "Ej: Nafarroa Rock"
             }
             className="flex-1 border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-red focus:outline-none"
           />
@@ -128,12 +86,6 @@ export function ClaimSearchForm() {
           </button>
         </div>
       </div>
-
-      {error && (
-        <div className="border-2 border-punk-red bg-punk-red/10 p-4">
-          <p className="font-body text-punk-red">{error}</p>
-        </div>
-      )}
 
       {results.length > 0 && (
         <div>
@@ -155,13 +107,7 @@ export function ClaimSearchForm() {
                     </p>
                   </div>
                   <Link
-                    href={
-                      type === "BAND"
-                        ? `/bandas/${item.slug}`
-                        : type === "VENUE"
-                        ? `/salas/${item.slug}`
-                        : `/festivales/${item.slug}`
-                    }
+                    href={profileUrl(item.slug)}
                     target="_blank"
                     className="font-punch text-xs uppercase tracking-widest text-punk-white/60 hover:text-punk-green"
                   >
@@ -171,23 +117,12 @@ export function ClaimSearchForm() {
                 <p className="mt-2 font-body text-sm text-punk-red/90">
                   Este perfil ya existe y fue creado por Nafarrock
                 </p>
-                <div className="mt-3 flex flex-wrap items-end gap-3">
-                  <input
-                    type="text"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Mensaje opcional para el administrador"
-                    className="flex-1 min-w-[200px] border-2 border-punk-white/20 bg-punk-black px-3 py-2 font-body text-sm text-punk-white placeholder:text-punk-white/40 focus:border-punk-red focus:outline-none"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => handleClaim(item.id, item.name)}
-                    disabled={!!claiming}
-                    className="border-2 border-punk-green bg-punk-green px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-black transition-all hover:bg-punk-green/90 disabled:opacity-50"
-                  >
-                    {claiming === item.id ? "Enviando…" : "Reclamar este perfil"}
-                  </button>
-                </div>
+                <Link
+                  href={getClaimRegistroUrl(item)}
+                  className="mt-3 inline-block border-2 border-punk-green bg-punk-green px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-black transition-all hover:bg-punk-green/90"
+                >
+                  Reclamar este perfil
+                </Link>
               </div>
             ))}
           </div>
@@ -198,7 +133,7 @@ export function ClaimSearchForm() {
         <p className="font-body text-punk-white/60">
           No se encontraron perfiles.{" "}
           <Link href="/auth/registro" className="text-punk-green hover:underline">
-            Crea un nuevo perfil
+            Crear un nuevo perfil
           </Link>
           .
         </p>

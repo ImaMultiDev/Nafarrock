@@ -95,3 +95,142 @@ export async function sendContactEmail(
   console.log("[Resend] Contacto enviado. ID:", data?.id, "→", CONTACT_EMAIL);
   return { success: true };
 }
+
+const baseUrl = () => process.env.NEXTAUTH_URL || "https://nafarrock.com";
+
+export async function sendClaimApprovedEmail(
+  to: string,
+  entityName: string,
+  entityType: string
+): Promise<{ success: boolean; error?: string }> {
+  if (!resend) {
+    console.warn("RESEND_API_KEY no configurado, omitiendo email de reclamación aprobada");
+    return { success: true };
+  }
+
+  const entityLabel =
+    entityType === "BAND"
+      ? "banda"
+      : entityType === "VENUE"
+        ? "sala/recinto"
+        : "festival";
+
+  const { data, error } = await resend.emails.send({
+    from: FROM_EMAIL,
+    to,
+    subject: "Reclamación aprobada - Nafarrock",
+    html: `
+      <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto;">
+        <h2 style="color: #00c853;">NAFARROCK</h2>
+        <p>¡Buenas noticias!</p>
+        <p>La reclamación del perfil de la ${entityLabel} <strong>"${entityName}"</strong> ha sido aprobada.</p>
+        <p>Tu cuenta ha sido vinculada correctamente al perfil. Ya puedes acceder a tu panel y gestionar toda la información del perfil.</p>
+        <p style="margin: 24px 0;">
+          <a href="${baseUrl()}/dashboard" style="background: #e60026; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
+            Acceder al panel
+          </a>
+        </p>
+        <p style="color: #666; font-size: 12px;">
+          — Equipo Nafarrock
+        </p>
+      </div>
+    `,
+  });
+
+  if (error) {
+    console.error("[Resend] Error enviando email reclamación aprobada:", error);
+    return { success: false, error: error.message };
+  }
+  console.log("[Resend] Reclamación aprobada enviada. ID:", data?.id, "→", to);
+  return { success: true };
+}
+
+const entityTypeLabel = (t: string) =>
+  t === "BAND" ? "banda" : t === "VENUE" ? "sala/recinto" : "festival";
+
+export async function sendClaimRejectedEmail(
+  to: string,
+  entityName: string,
+  entityType: string
+): Promise<{ success: boolean; error?: string }> {
+  if (!resend) {
+    console.warn("RESEND_API_KEY no configurado, omitiendo email de reclamación rechazada");
+    return { success: true };
+  }
+
+  const contactUrl = `${baseUrl()}/contacto`;
+  const tipo = entityTypeLabel(entityType);
+
+  const { data, error } = await resend.emails.send({
+    from: FROM_EMAIL,
+    to,
+    subject: "Reclamación de perfil - Nafarrock",
+    html: `
+      <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto;">
+        <h2 style="color: #e60026;">NAFARROCK</h2>
+        <p>Hola,</p>
+        <p>La reclamación del perfil de la ${tipo} <strong>"${entityName}"</strong> no ha podido ser aceptada por incumplimiento de algún factor necesario para la comprobación de la autoridad de dicho perfil.</p>
+        <p>Si deseas reclamar y obtener el perfil de la ${tipo} "${entityName}", ponte en contacto con Nafarrock a través del siguiente enlace:</p>
+        <p style="margin: 24px 0;">
+          <a href="${contactUrl}" style="background: #00c853; color: #000; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
+            Formulario de contacto
+          </a>
+        </p>
+        <p style="color: #666; font-size: 12px;">
+          — Equipo Nafarrock
+        </p>
+      </div>
+    `,
+  });
+
+  if (error) {
+    console.error("[Resend] Error enviando email reclamación rechazada:", error);
+    return { success: false, error: error.message };
+  }
+  console.log("[Resend] Reclamación rechazada enviada. ID:", data?.id, "→", to);
+  return { success: true };
+}
+
+export async function sendPasswordResetEmail(
+  to: string,
+  token: string
+): Promise<{ success: boolean; error?: string }> {
+  if (!resend) {
+    console.warn("RESEND_API_KEY no configurado, omitiendo email de recuperación");
+    return { success: true };
+  }
+
+  const base = process.env.NEXTAUTH_URL || "https://nafarrock.com";
+  const resetUrl = `${base}/auth/restablecer?token=${token}`;
+
+  const { data, error } = await resend.emails.send({
+    from: FROM_EMAIL,
+    to,
+    subject: "Recuperar contraseña - Nafarrock",
+    html: `
+      <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto;">
+        <h2 style="color: #e60026;">NAFARROCK</h2>
+        <p>Hemos recibido una solicitud para restablecer la contraseña de tu cuenta.</p>
+        <p>Haz clic en el siguiente enlace para crear una nueva contraseña:</p>
+        <p style="margin: 24px 0;">
+          <a href="${resetUrl}" style="background: #00c853; color: #000; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
+            Restablecer contraseña
+          </a>
+        </p>
+        <p style="color: #666; font-size: 14px;">
+          Si no solicitaste este cambio, ignora este mensaje. Tu contraseña no se modificará.
+        </p>
+        <p style="color: #666; font-size: 12px; margin-top: 32px;">
+          Este enlace expira en 1 hora.
+        </p>
+      </div>
+    `,
+  });
+
+  if (error) {
+    console.error("[Resend] Error enviando email recuperación:", error);
+    return { success: false, error: error.message };
+  }
+  console.log("[Resend] Recuperación enviada. ID:", data?.id, "→", to);
+  return { success: true };
+}

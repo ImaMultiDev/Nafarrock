@@ -203,12 +203,20 @@ export function Header() {
               </button>
             </div>
           ) : (
-            <Link
-              href="/auth/login"
-              className="ml-2 border-2 border-punk-red bg-punk-red px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white transition-colors hover:bg-transparent hover:text-punk-red"
-            >
-              Entrar
-            </Link>
+            <div className="ml-2 flex items-center gap-2">
+              <Link
+                href="/auth/reclamar"
+                className="border-2 border-punk-white/40 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white/80 transition-colors hover:border-punk-green hover:text-punk-green"
+              >
+                Reclamar
+              </Link>
+              <Link
+                href="/auth/login"
+                className="border-2 border-punk-red bg-punk-red px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white transition-colors hover:bg-transparent hover:text-punk-red"
+              >
+                Entrar
+              </Link>
+            </div>
           )}
         </div>
 
@@ -306,13 +314,22 @@ export function Header() {
                 </button>
               </>
             ) : (
-              <Link
-                href="/auth/login"
-                onClick={() => setMenuOpen(false)}
-                className="mt-2 rounded border-2 border-punk-red px-4 py-3 text-center font-punch text-xs uppercase tracking-widest text-punk-red hover:bg-punk-red hover:text-punk-white"
-              >
-                Entrar
-              </Link>
+              <div className="mt-2 flex flex-col gap-2">
+                <Link
+                  href="/auth/reclamar"
+                  onClick={() => setMenuOpen(false)}
+                  className="rounded border-2 border-punk-white/40 px-4 py-3 text-center font-punch text-xs uppercase tracking-widest text-punk-white/80 hover:border-punk-green hover:text-punk-green"
+                >
+                  Reclamar perfil
+                </Link>
+                <Link
+                  href="/auth/login"
+                  onClick={() => setMenuOpen(false)}
+                  className="rounded border-2 border-punk-red px-4 py-3 text-center font-punch text-xs uppercase tracking-widest text-punk-red hover:bg-punk-red hover:text-punk-white"
+                >
+                  Entrar
+                </Link>
+              </div>
             )}
           </nav>
 

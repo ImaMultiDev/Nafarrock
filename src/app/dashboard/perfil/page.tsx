@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { ProfileForm } from "./ProfileForm";
+import { ChangePasswordForm } from "./ChangePasswordForm";
+import { DeleteAccountSection } from "./DeleteAccountSection";
 
 export default async function PerfilPage() {
   const session = await getServerSession(authOptions);
@@ -117,6 +119,26 @@ export default async function PerfilPage() {
             entidad y ver el estado de aprobación.
           </p>
         )}
+
+        <section className="max-w-2xl">
+          <h2 className="font-display text-2xl text-punk-pink">
+            Cambiar contraseña
+          </h2>
+          <ChangePasswordForm hasPassword={!!user.password} />
+        </section>
+
+        <section className="max-w-2xl">
+          <h2 className="font-display text-2xl text-punk-red">
+            Zona de riesgo
+          </h2>
+          <p className="mt-2 font-body text-punk-white/60">
+            Borrar tu cuenta eliminará todos tus datos de forma permanente.
+          </p>
+          <DeleteAccountSection
+            hasPassword={!!user.password}
+            isAdmin={user.role === "ADMIN"}
+          />
+        </section>
       </div>
     </>
   );

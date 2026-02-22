@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
+import { sendClaimApprovedEmail, sendClaimRejectedEmail } from "@/lib/email";
 import { z } from "zod";
 
 const bodySchema = z.object({
@@ -31,6 +32,9 @@ export async function PATCH(
     }
 
     if (action === "reject") {
+      const entityName = claim.band?.name ?? claim.venue?.name ?? claim.festival?.name ?? "perfil";
+      const entityType = claim.entityType;
+
       await prisma.profileClaim.update({
         where: { id },
         data: {
@@ -39,6 +43,9 @@ export async function PATCH(
           processedBy: session.user.id,
         },
       });
+
+      await sendClaimRejectedEmail(claim.user.email, entityName, entityType);
+
       return NextResponse.json({ success: true });
     }
 
@@ -72,6 +79,8 @@ export async function PATCH(
           },
         }),
       ]);
+
+      await sendClaimApprovedEmail(claim.user.email, band.name, "BAND");
     } else if (claim.venueId) {
       const venue = claim.venue!;
       if (venue.userId) {
@@ -105,6 +114,8 @@ export async function PATCH(
           },
         }),
       ]);
+
+      await sendClaimApprovedEmail(claim.user.email, venue.name, "VENUE");
     } else if (claim.festivalId) {
       const festival = claim.festival!;
       if (festival.userId) {
@@ -138,6 +149,8 @@ export async function PATCH(
           },
         }),
       ]);
+
+      await sendClaimApprovedEmail(claim.user.email, festival.name, "FESTIVAL");
     }
 
     return NextResponse.json({ success: true });

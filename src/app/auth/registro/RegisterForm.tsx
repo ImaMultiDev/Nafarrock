@@ -4,6 +4,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { PageLayout } from "@/components/ui/PageLayout";
+import { PasswordInput } from "@/components/ui/PasswordInput";
+import { isValidEmail, isPasswordValid } from "@/lib/validation";
+
+type ClaimProps = {
+  claimType?: "BAND" | "VENUE" | "FESTIVAL";
+  claimId?: string;
+  claimName?: string;
+};
 
 const ROLES = [
   { value: "USUARIO", label: "Usuario", desc: "Cuenta básica" },
@@ -24,11 +32,19 @@ const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
 const labelClass = "block font-punch text-xs uppercase tracking-widest text-punk-white/70";
 
-export function RegisterForm() {
+export function RegisterForm({ claimType, claimId, claimName }: ClaimProps) {
   const router = useRouter();
+  const isClaimMode = !!claimType && !!claimId && !!claimName;
+  const claimToRole: Record<"BAND" | "VENUE" | "FESTIVAL", Role> = {
+    BAND: "BANDA",
+    VENUE: "SALA",
+    FESTIVAL: "FESTIVAL",
+  };
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [role, setRole] = useState<Role>("USUARIO");
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [role, setRole] = useState<Role>(claimType ? claimToRole[claimType] : "USUARIO");
   const [members, setMembers] = useState<Member[]>([]);
 
   const addMember = () => setMembers((m) => [...m, { name: "", instrument: "" }]);
@@ -39,61 +55,92 @@ export function RegisterForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
-    setLoading(true);
+
     const form = e.currentTarget;
     const formData = new FormData(form);
-
-    const payload: Record<string, unknown> = {
-      email: formData.get("email"),
-      password: formData.get("password"),
-      firstName: formData.get("firstName"),
-      lastName: formData.get("lastName"),
-      phone: formData.get("phone") || undefined,
-      role,
-    };
-
-    if (role !== "USUARIO") {
-      payload.entityName = formData.get("entityName");
+    const emailVal = String(formData.get("email") ?? "").trim();
+    if (!isValidEmail(emailVal)) {
+      setError("Introduce un email válido");
+      return;
+    }
+    if (!isPasswordValid(password)) {
+      setError("La contraseña no cumple los requisitos: mínimo 8 caracteres, mayúscula, minúscula, número y carácter especial");
+      return;
+    }
+    if (password !== passwordConfirm) {
+      setError("Las contraseñas no coinciden");
+      return;
     }
 
-    if (role === "BANDA") {
-      payload.location = formData.get("location") || undefined;
-      payload.foundedYear = formData.get("foundedYear") ? Number(formData.get("foundedYear")) : undefined;
-      payload.bio = formData.get("bio") || undefined;
-      payload.genres = formData.getAll("genres");
-      payload.spotifyUrl = formData.get("spotifyUrl") || undefined;
-      payload.bandcampUrl = formData.get("bandcampUrl") || undefined;
-      payload.instagramUrl = formData.get("instagramUrl") || undefined;
-      payload.facebookUrl = formData.get("facebookUrl") || undefined;
-      payload.youtubeUrl = formData.get("youtubeUrl") || undefined;
-      payload.webUrl = formData.get("webUrl") || undefined;
-      payload.members = members.filter((m) => m.name.trim() && m.instrument.trim());
-    }
+    setLoading(true);
 
-    if (role === "SALA") {
-      payload.city = formData.get("city");
-      payload.address = formData.get("address") || undefined;
-      payload.description = formData.get("description") || undefined;
-      payload.foundedYear = formData.get("foundedYear") ? Number(formData.get("foundedYear")) : undefined;
-      payload.capacity = formData.get("capacity") ? Number(formData.get("capacity")) : undefined;
-      payload.websiteUrl = formData.get("websiteUrl") || undefined;
-      payload.mapUrl = formData.get("mapUrl") || undefined;
-      payload.instagramUrl = formData.get("instagramUrl") || undefined;
-      payload.facebookUrl = formData.get("facebookUrl") || undefined;
-    }
+    let payload: Record<string, unknown>;
 
-    if (role === "FESTIVAL") {
-      payload.location = formData.get("location") || undefined;
-      payload.foundedYear = formData.get("foundedYear") ? Number(formData.get("foundedYear")) : undefined;
-      payload.description = formData.get("description") || undefined;
-      payload.websiteUrl = formData.get("websiteUrl") || undefined;
-      payload.instagramUrl = formData.get("instagramUrl") || undefined;
-      payload.facebookUrl = formData.get("facebookUrl") || undefined;
-    }
+    if (isClaimMode && claimType && claimId && claimName) {
+      payload = {
+        email: formData.get("email"),
+        password: formData.get("password"),
+        firstName: formData.get("firstName"),
+        lastName: formData.get("lastName"),
+        phone: formData.get("phone") || undefined,
+        role: claimToRole[claimType],
+        claimType,
+        claimId,
+        claimName,
+      };
+    } else {
+      payload = {
+        email: formData.get("email"),
+        password: formData.get("password"),
+        firstName: formData.get("firstName"),
+        lastName: formData.get("lastName"),
+        phone: formData.get("phone") || undefined,
+        role,
+      };
 
-    if (role === "ORGANIZADOR" || role === "PROMOTOR") {
-      payload.description = formData.get("description") || undefined;
-      payload.websiteUrl = formData.get("websiteUrl") || undefined;
+      if (role !== "USUARIO") {
+        payload.entityName = formData.get("entityName");
+      }
+
+      if (role === "BANDA") {
+        payload.location = formData.get("location") || undefined;
+        payload.foundedYear = formData.get("foundedYear") ? Number(formData.get("foundedYear")) : undefined;
+        payload.bio = formData.get("bio") || undefined;
+        payload.genres = formData.getAll("genres");
+        payload.spotifyUrl = formData.get("spotifyUrl") || undefined;
+        payload.bandcampUrl = formData.get("bandcampUrl") || undefined;
+        payload.instagramUrl = formData.get("instagramUrl") || undefined;
+        payload.facebookUrl = formData.get("facebookUrl") || undefined;
+        payload.youtubeUrl = formData.get("youtubeUrl") || undefined;
+        payload.webUrl = formData.get("webUrl") || undefined;
+        payload.members = members.filter((m) => m.name.trim() && m.instrument.trim());
+      }
+
+      if (role === "SALA") {
+        payload.city = formData.get("city");
+        payload.address = formData.get("address") || undefined;
+        payload.description = formData.get("description") || undefined;
+        payload.foundedYear = formData.get("foundedYear") ? Number(formData.get("foundedYear")) : undefined;
+        payload.capacity = formData.get("capacity") ? Number(formData.get("capacity")) : undefined;
+        payload.websiteUrl = formData.get("websiteUrl") || undefined;
+        payload.mapUrl = formData.get("mapUrl") || undefined;
+        payload.instagramUrl = formData.get("instagramUrl") || undefined;
+        payload.facebookUrl = formData.get("facebookUrl") || undefined;
+      }
+
+      if (role === "FESTIVAL") {
+        payload.location = formData.get("location") || undefined;
+        payload.foundedYear = formData.get("foundedYear") ? Number(formData.get("foundedYear")) : undefined;
+        payload.description = formData.get("description") || undefined;
+        payload.websiteUrl = formData.get("websiteUrl") || undefined;
+        payload.instagramUrl = formData.get("instagramUrl") || undefined;
+        payload.facebookUrl = formData.get("facebookUrl") || undefined;
+      }
+
+      if (role === "ORGANIZADOR" || role === "PROMOTOR") {
+        payload.description = formData.get("description") || undefined;
+        payload.websiteUrl = formData.get("websiteUrl") || undefined;
+      }
     }
 
     const res = await fetch("/api/auth/register", {
@@ -119,12 +166,32 @@ export function RegisterForm() {
   return (
     <PageLayout>
       <div className="mx-auto max-w-xl">
-        <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl">
-          REGISTRARSE
-        </h1>
-        <p className="mt-3 font-body text-punk-white/60">
-          Crea tu cuenta como usuario o registra tu banda, sala, festival, promotor u organizador.
-        </p>
+        {isClaimMode ? (
+          <>
+            <Link
+              href="/auth/reclamar"
+              className="font-punch text-xs uppercase tracking-widest text-punk-green hover:text-punk-green/80"
+            >
+              ← Volver a buscar perfil
+            </Link>
+            <h1 className="mt-6 font-display text-5xl tracking-tighter text-punk-white sm:text-6xl">
+              REGISTRARSE PARA RECLAMAR
+            </h1>
+            <p className="mt-3 font-body text-punk-white/60">
+              Introduce tus datos para vincular tu cuenta al perfil de &quot;{claimName}&quot;.
+              Una vez verificado el email, el administrador revisará tu solicitud.
+            </p>
+          </>
+        ) : (
+          <>
+            <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl">
+              REGISTRARSE
+            </h1>
+            <p className="mt-3 font-body text-punk-white/60">
+              Crea tu cuenta como usuario o registra tu banda, sala, festival, promotor u organizador.
+            </p>
+          </>
+        )}
 
         <form onSubmit={handleSubmit} className="mt-10 space-y-8">
           {error && (
@@ -147,11 +214,39 @@ export function RegisterForm() {
             </div>
             <div className="mt-6">
               <label htmlFor="email" className={labelClass}>Email *</label>
-              <input id="email" name="email" type="email" required className={inputClass} />
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                className={inputClass}
+                placeholder="ejemplo@correo.com"
+              />
             </div>
             <div className="mt-6">
-              <label htmlFor="password" className={labelClass}>Contraseña * (mín. 6 caracteres)</label>
-              <input id="password" name="password" type="password" required minLength={6} className={inputClass} />
+              <PasswordInput
+                id="password"
+                name="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                label="Contraseña *"
+                required
+                minLength={8}
+                showStrength
+                autoComplete="new-password"
+              />
+            </div>
+            <div className="mt-6">
+              <PasswordInput
+                id="passwordConfirm"
+                name="passwordConfirm"
+                value={passwordConfirm}
+                onChange={(e) => setPasswordConfirm(e.target.value)}
+                label="Repetir contraseña *"
+                required
+                minLength={8}
+                autoComplete="new-password"
+              />
             </div>
             <div className="mt-6">
               <label htmlFor="phone" className={labelClass}>Teléfono (opcional, solo visible para admin)</label>
@@ -159,49 +254,68 @@ export function RegisterForm() {
             </div>
           </section>
 
-          <section>
-            <label className={labelClass}>Tipo de cuenta</label>
-            <div className="mt-2 flex flex-wrap gap-3">
-              {ROLES.map((r) => (
-                <label
-                  key={r.value}
-                  className={`flex cursor-pointer items-center gap-2 border-2 px-4 py-2 transition-colors ${
-                    role === r.value
-                      ? "border-punk-green bg-punk-green/10 text-punk-green"
-                      : "border-punk-white/20 hover:border-punk-white/40 text-punk-white/80"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="role"
-                    value={r.value}
-                    checked={role === r.value}
-                    onChange={() => setRole(r.value)}
-                    className="sr-only"
-                  />
-                  <span className="font-punch text-xs uppercase">{r.label}</span>
-                </label>
-              ))}
-            </div>
-            <p className="mt-2 font-body text-xs text-punk-white/50">
-              {ROLES.find((r) => r.value === role)?.desc}
-            </p>
-          </section>
-
-          {needsEntity && (role === "BANDA" || role === "SALA" || role === "FESTIVAL") && (
-            <div className="border-2 border-punk-green/30 bg-punk-green/5 p-4">
-              <p className="font-body text-punk-white/90">
-                ¿Tu perfil ya existe en Nafarrock? Búscalo y reclámalo para gestionarlo tú mismo.
+          {isClaimMode ? (
+            <section className="border-2 border-punk-green/30 bg-punk-green/5 p-6">
+              <label className={labelClass}>
+                Perfil que reclamas
+              </label>
+              <input
+                type="text"
+                value={claimName ?? ""}
+                readOnly
+                className={`${inputClass} cursor-not-allowed bg-punk-black/50`}
+              />
+              <p className="mt-2 font-body text-sm text-punk-white/70">
+                Una vez verificado y vinculado podrán cambiar el nombre.
               </p>
-              <Link
-                href="/auth/reclamar"
-                className="mt-2 inline-block font-punch text-xs uppercase tracking-widest text-punk-green hover:underline"
-              >
-                Buscar y reclamar perfil →
-              </Link>
-            </div>
+            </section>
+          ) : (
+            <>
+              <section>
+                <label className={labelClass}>Tipo de cuenta</label>
+                <div className="mt-2 flex flex-wrap gap-3">
+                  {ROLES.map((r) => (
+                    <label
+                      key={r.value}
+                      className={`flex cursor-pointer items-center gap-2 border-2 px-4 py-2 transition-colors ${
+                        role === r.value
+                          ? "border-punk-green bg-punk-green/10 text-punk-green"
+                          : "border-punk-white/20 hover:border-punk-white/40 text-punk-white/80"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="role"
+                        value={r.value}
+                        checked={role === r.value}
+                        onChange={() => setRole(r.value)}
+                        className="sr-only"
+                      />
+                      <span className="font-punch text-xs uppercase">{r.label}</span>
+                    </label>
+                  ))}
+                </div>
+                <p className="mt-2 font-body text-xs text-punk-white/50">
+                  {ROLES.find((r) => r.value === role)?.desc}
+                </p>
+              </section>
+
+              {needsEntity && (role === "BANDA" || role === "SALA" || role === "FESTIVAL") && (
+                <div className="border-2 border-punk-green/30 bg-punk-green/5 p-4">
+                  <p className="font-body text-punk-white/90">
+                    ¿Tu perfil ya existe en Nafarrock? Búscalo y reclámalo para gestionarlo tú mismo.
+                  </p>
+                  <Link
+                    href="/auth/reclamar"
+                    className="mt-2 inline-block font-punch text-xs uppercase tracking-widest text-punk-green hover:underline"
+                  >
+                    Buscar y reclamar perfil →
+                  </Link>
+                </div>
+              )}
+            </>
           )}
-          {needsEntity && (
+          {needsEntity && !isClaimMode && (
             <section>
               <h2 className="font-display text-xl tracking-tighter text-punk-green mb-6">
                 {role === "BANDA" || role === "SALA" || role === "FESTIVAL"
@@ -393,10 +507,12 @@ export function RegisterForm() {
               disabled={loading}
               className="w-full border-2 border-punk-green bg-punk-green px-8 py-4 font-punch text-sm uppercase tracking-widest text-punk-black transition-all hover:bg-punk-green/90 disabled:opacity-50 sm:w-auto"
             >
-              {loading ? "Registrando..." : "Registrarse"}
+              {loading ? "Registrando..." : isClaimMode ? "Registrarse y enviar solicitud" : "Registrarse"}
             </button>
             <p className="font-body text-sm text-punk-white/60">
-              Después del registro podrás iniciar sesión y completar tu perfil con logo e imágenes.
+              {isClaimMode
+                ? "Recibirás un email de verificación. Tras verificar, tu solicitud pasará a revisión del administrador."
+                : "Después del registro podrás iniciar sesión y completar tu perfil con logo e imágenes."}
             </p>
           </div>
         </form>
