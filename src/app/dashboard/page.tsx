@@ -4,9 +4,14 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 
-export default async function DashboardPage() {
+type Props = { searchParams: Promise<Record<string, string | undefined>> };
+
+export default async function DashboardPage({ searchParams }: Props) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/auth/login");
+
+  const params = await searchParams;
+  const deletionCancelled = params.deletionCancelled === "1";
 
   const pendingClaim = await prisma.profileClaim.findFirst({
     where: { userId: session.user.id, status: "PENDING_CLAIM" },
@@ -25,6 +30,14 @@ export default async function DashboardPage() {
       <p className="mt-2 font-body text-punk-white/60">
         Hola, {session.user?.name ?? session.user?.email}
       </p>
+
+      {deletionCancelled && (
+        <div className="mt-8 border-2 border-punk-green bg-punk-green/10 p-6">
+          <p className="font-body text-punk-green">
+            ✓ Eliminación cancelada. Tu cuenta sigue activa.
+          </p>
+        </div>
+      )}
 
       {pendingClaim && (
         <div className="mt-8 border-2 border-punk-green/50 bg-punk-green/10 p-6">

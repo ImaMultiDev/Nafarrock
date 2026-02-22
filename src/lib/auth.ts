@@ -25,12 +25,29 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.email || !credentials?.password) return null;
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            image: true,
+            role: true,
+            password: true,
+            emailVerified: true,
+            scheduledDeletionAt: true,
+          },
         });
         if (!user?.password) return null;
         const valid = await compare(credentials.password, user.password);
         if (!valid) return null;
         if (!user.emailVerified) {
           throw new Error("EmailNotVerified");
+        }
+        if (user.scheduledDeletionAt) {
+          if (user.scheduledDeletionAt < new Date()) {
+            await prisma.user.delete({ where: { id: user.id } });
+            throw new Error("AccountDeleted");
+          }
+          throw new Error(`PendingDeletion|${user.scheduledDeletionAt.toISOString()}`);
         }
         return {
           id: user.id,

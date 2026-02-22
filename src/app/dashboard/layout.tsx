@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { PageLayout } from "@/components/ui/PageLayout";
+import { prisma } from "@/lib/prisma";
 
 export default async function DashboardLayout({
   children,
@@ -10,7 +11,18 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const session = await getServerSession(authOptions);
-  if (!session) redirect("/auth/login");
+  if (!session?.user?.id) redirect("/auth/login");
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { scheduledDeletionAt: true },
+  });
+  if (user?.scheduledDeletionAt) {
+    if (user.scheduledDeletionAt < new Date()) {
+      await prisma.user.delete({ where: { id: session.user.id } });
+    }
+    redirect("/auth/login?deleted=pending");
+  }
 
   return (
     <PageLayout>

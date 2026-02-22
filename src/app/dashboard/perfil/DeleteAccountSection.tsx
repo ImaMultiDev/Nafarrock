@@ -53,7 +53,16 @@ export function DeleteAccountSection({
         setError(data.message ?? "Error al borrar la cuenta");
         return;
       }
-      await signOut({ callbackUrl: "/" });
+      const scheduledAt = data.scheduledAt
+        ? new Date(data.scheduledAt).toLocaleDateString("es-ES", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          })
+        : "";
+      await signOut({
+        callbackUrl: `/auth/login?deleted=scheduled&date=${encodeURIComponent(scheduledAt)}`,
+      });
     } catch {
       setError("Error de conexión");
     } finally {
@@ -72,9 +81,14 @@ export function DeleteAccountSection({
           Borrar cuenta
         </button>
       ) : (
-        <form onSubmit={handleDelete} className="max-w-xl space-y-4 border-2 border-punk-red/30 bg-punk-red/5 p-6">
+        <form
+          onSubmit={handleDelete}
+          className="max-w-xl space-y-4 border-2 border-punk-red/30 bg-punk-red/5 p-6"
+        >
           <p className="font-body text-punk-white/90">
-            Esta acción es irreversible. Se eliminarán todos tus datos y perfiles asociados.
+            Tu cuenta se eliminará de forma permanente después de 7 días. Si
+            inicias sesión antes de esa fecha, la eliminación se cancelará y
+            tu cuenta seguirá existiendo.
           </p>
           {error && (
             <div className="border-2 border-punk-red bg-punk-red/10 p-4">
@@ -82,8 +96,11 @@ export function DeleteAccountSection({
             </div>
           )}
           <div>
-            <label htmlFor="confirmDelete" className="block font-punch text-xs uppercase tracking-widest text-punk-white/70">
-              Escribe BORRAR CUENTA para confirmar *
+            <label
+              htmlFor="confirmDelete"
+              className="block font-punch text-xs uppercase tracking-widest text-punk-white/70"
+            >
+              Escribe <b>BORRAR CUENTA</b> para confirmar *
             </label>
             <input
               id="confirmDelete"

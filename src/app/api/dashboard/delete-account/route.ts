@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { compare } from "bcryptjs";
 
+const GRACE_DAYS = 7;
+
 export async function DELETE(req: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -54,11 +56,19 @@ export async function DELETE(req: Request) {
       }
     }
 
-    await prisma.user.delete({
+    const scheduledAt = new Date();
+    scheduledAt.setDate(scheduledAt.getDate() + GRACE_DAYS);
+
+    await prisma.user.update({
       where: { id: session.user.id },
+      data: { scheduledDeletionAt: scheduledAt },
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({
+      success: true,
+      scheduledAt: scheduledAt.toISOString(),
+      graceDays: GRACE_DAYS,
+    });
   } catch (e) {
     console.error("[delete-account]", e);
     return NextResponse.json(

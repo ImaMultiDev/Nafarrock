@@ -36,6 +36,7 @@ model User {
   phone         String?   // Solo visible para admin
   image         String?
   role          UserRole  @default(USUARIO)
+  scheduledDeletionAt DateTime?  // Cuenta programada para borrado; plazo para recuperar
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
