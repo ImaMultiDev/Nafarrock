@@ -467,6 +467,7 @@ enum AnnouncementAdvertiserType {
   FESTIVAL    // Convocatorias - 1 cada 7 días
   ASSOCIATION // Convocatorias - 1 cada 7 días (asociaciones/sociedades)
   ORGANIZER   // Convocatorias - 1 cada 7 días
+  NAFARROCK   // Anuncios creados por el admin (sin anunciante concreto)
 }
 
 enum AnnouncementStatus {
@@ -486,6 +487,7 @@ model Announcement {
   isApproved  Boolean  @default(false)
   approvedAt  DateTime?
   approvedBy  String?
+  createdByNafarrock Boolean @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   expiresAt   DateTime? // Opcional: fecha fin de vigencia

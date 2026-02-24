@@ -12,32 +12,44 @@ export default async function AdminBolosPage() {
       venue: { select: { name: true, slug: true } },
       festival: { select: { name: true, slug: true } },
       organizer: { select: { name: true, slug: true } },
+      association: { select: { name: true, slug: true } },
     },
   });
 
   const pending = announcements.filter((a) => !a.isApproved && a.status === "PENDING");
 
   function advertiserName(a: (typeof announcements)[0]): string {
-    return a.promoter?.name ?? a.venue?.name ?? a.festival?.name ?? a.organizer?.name ?? "";
+    if (a.createdByNafarrock || a.advertiserType === "NAFARROCK") return "Nafarrock";
+    return a.promoter?.name ?? a.venue?.name ?? a.festival?.name ?? a.organizer?.name ?? a.association?.name ?? "";
   }
 
   function advertiserType(a: (typeof announcements)[0]): string {
+    if (a.createdByNafarrock || a.advertiserType === "NAFARROCK") return "Nafarrock";
     if (a.promoter) return "Promotor";
     if (a.venue) return "Sala";
     if (a.festival) return "Festival";
     if (a.organizer) return "Organizador";
+    if (a.association) return "Asociación";
     return "";
   }
 
   return (
     <>
-      <div>
-        <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl">
-          ANUNCIOS / BOLOS
-        </h1>
-        <p className="mt-2 font-body text-punk-white/60">
-          {announcements.length} anuncios · {pending.length} pendientes de aprobar
-        </p>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl">
+            ANUNCIOS / BOLOS
+          </h1>
+          <p className="mt-2 font-body text-punk-white/60">
+            {announcements.length} anuncios · {pending.length} pendientes de aprobar
+          </p>
+        </div>
+        <Link
+          href="/admin/bolos/nuevo"
+          className="border-2 border-punk-green bg-punk-green px-6 py-3 font-punch text-sm uppercase tracking-widest text-punk-white transition-all hover:bg-punk-green/90"
+        >
+          Crear anuncio
+        </Link>
       </div>
 
       <div className="mt-10 overflow-x-auto">

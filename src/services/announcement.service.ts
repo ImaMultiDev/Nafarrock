@@ -8,6 +8,7 @@ export async function getAnnouncementById(id: string) {
       venue: { select: { id: true, name: true, slug: true, city: true } },
       festival: { select: { id: true, name: true, slug: true } },
       organizer: { select: { id: true, name: true, slug: true } },
+      association: { select: { id: true, name: true, slug: true } },
     },
   });
 }

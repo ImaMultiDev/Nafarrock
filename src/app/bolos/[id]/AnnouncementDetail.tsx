@@ -14,6 +14,7 @@ type Announcement = {
   genres: string[];
   createdAt: Date;
   advertiserType: string;
+  createdByNafarrock?: boolean;
   contactEmail: string;
   contactInfo: string | null;
   enableApplicationForm: boolean;
@@ -25,18 +26,22 @@ type Announcement = {
   venue: { id: string; name: string; slug: string; city: string } | null;
   festival: { id: string; name: string; slug: string } | null;
   organizer: { id: string; name: string; slug: string } | null;
+  association?: { id: string; name: string; slug: string } | null;
 };
 
 function advertiserLabel(a: Announcement): string {
+  if (a.createdByNafarrock || a.advertiserType === "NAFARROCK") return "Nafarrock";
   if (a.promoter) return "Promotor";
   if (a.venue) return "Sala / Recinto";
   if (a.festival) return "Festival";
   if (a.organizer) return "Organizador";
+  if (a.association) return "Asociación";
   return "";
 }
 
 function advertiserName(a: Announcement): string {
-  return a.promoter?.name ?? a.venue?.name ?? a.festival?.name ?? a.organizer?.name ?? "";
+  if (a.createdByNafarrock || a.advertiserType === "NAFARROCK") return "Nafarrock";
+  return a.promoter?.name ?? a.venue?.name ?? a.festival?.name ?? a.organizer?.name ?? a.association?.name ?? "";
 }
 
 export function AnnouncementDetail({ announcement }: { announcement: Announcement }) {
@@ -54,6 +59,11 @@ export function AnnouncementDetail({ announcement }: { announcement: Announcemen
         <h1 className="font-display text-3xl tracking-tighter text-punk-white sm:text-4xl">
           {a.title}
         </h1>
+        {(a.createdByNafarrock || a.advertiserType === "NAFARROCK") && (
+          <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-red/90">
+            ANUNCIO PUBLICADO POR NAFARROCK
+          </p>
+        )}
         <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-green/80">
           {advertiserLabel(a)} · {advertiserName(a)}
           {a.zone && ` · ${a.zone}`}
