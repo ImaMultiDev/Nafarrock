@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Bebas_Neue, Space_Mono } from "next/font/google";
+import NextTopLoader from "nextjs-toploader";
 import { Providers } from "@/components/providers/Providers";
 import { Header } from "@/components/ui/Header";
 import { BandVerificationBanner } from "@/components/BandVerificationBanner";
@@ -53,6 +54,7 @@ export default function RootLayout({
   return (
     <html lang="es" className={`${inter.variable} ${bebas.variable} ${spaceMono.variable}`}>
       <body className="font-body min-h-screen overflow-x-hidden bg-punk-black">
+        <NextTopLoader color="#E60026" height={3} showSpinner={false} />
         <div className="noise-overlay" aria-hidden />
         <Providers>
           <Header />
