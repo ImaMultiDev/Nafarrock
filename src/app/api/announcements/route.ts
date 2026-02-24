@@ -8,7 +8,7 @@ export async function GET(req: Request) {
     const zone = searchParams.get("zone");
     const genre = searchParams.get("genre");
 
-    const validTypes = ["PROMOTER", "VENUE", "FESTIVAL", "ORGANIZER"] as const;
+    const validTypes = ["PROMOTER", "VENUE", "FESTIVAL", "ORGANIZER", "NAFARROCK"] as const;
     const advertiserTypeFilter =
       advertiserType && validTypes.includes(advertiserType as (typeof validTypes)[number])
         ? (advertiserType as (typeof validTypes)[number])

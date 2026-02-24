@@ -18,7 +18,8 @@ export async function middleware(req: NextRequest) {
       url.searchParams.set("callbackUrl", req.nextUrl.pathname);
       return NextResponse.redirect(url);
     }
-    if (token.role !== "BANDA") {
+    // BANDA puede publicar y ver bolos; ADMIN puede ver todos los anuncios
+    if (token.role !== "BANDA" && token.role !== "ADMIN") {
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }
   }

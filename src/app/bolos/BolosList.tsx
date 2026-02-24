@@ -23,6 +23,7 @@ type AnnouncementWithRelations = {
 };
 
 function advertiserLabel(a: AnnouncementWithRelations): string {
+  if (a.advertiserType === "NAFARROCK") return "Nafarrock";
   if (a.promoter) return "Promotor";
   if (a.venue) return "Sala / Recinto";
   if (a.festival) return "Festival";
@@ -31,6 +32,7 @@ function advertiserLabel(a: AnnouncementWithRelations): string {
 }
 
 function advertiserName(a: AnnouncementWithRelations): string {
+  if (a.advertiserType === "NAFARROCK") return "Nafarrock";
   return a.promoter?.name ?? a.venue?.name ?? a.festival?.name ?? a.organizer?.name ?? "";
 }
 

@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 const ADVERTISER_TYPES = [
   { value: "", label: "Todos los anunciantes" },
+  { value: "NAFARROCK", label: "Nafarrock" },
   { value: "PROMOTER", label: "Promotores" },
   { value: "VENUE", label: "Salas / Recintos" },
   { value: "FESTIVAL", label: "Festivales" },

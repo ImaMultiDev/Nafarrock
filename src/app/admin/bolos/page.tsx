@@ -44,12 +44,20 @@ export default async function AdminBolosPage() {
             {announcements.length} anuncios · {pending.length} pendientes de aprobar
           </p>
         </div>
-        <Link
-          href="/admin/bolos/nuevo"
-          className="border-2 border-punk-green bg-punk-green px-6 py-3 font-punch text-sm uppercase tracking-widest text-punk-white transition-all hover:bg-punk-green/90"
-        >
-          Crear anuncio
-        </Link>
+        <div className="flex flex-wrap gap-3">
+          <Link
+            href="/bolos"
+            className="border-2 border-punk-white/30 px-6 py-3 font-punch text-sm uppercase tracking-widest text-punk-white transition-all hover:border-punk-green hover:text-punk-green"
+          >
+            Ver página Bolos
+          </Link>
+          <Link
+            href="/admin/bolos/nuevo"
+            className="border-2 border-punk-green bg-punk-green px-6 py-3 font-punch text-sm uppercase tracking-widest text-punk-white transition-all hover:bg-punk-green/90"
+          >
+            Crear anuncio
+          </Link>
+        </div>
       </div>
 
       <div className="mt-10 overflow-x-auto">
