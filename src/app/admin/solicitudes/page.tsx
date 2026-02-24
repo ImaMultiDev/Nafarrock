@@ -2,6 +2,7 @@ import Link from "next/link";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { ApproveButton } from "@/components/admin/ApproveButton";
+import { RejectFlow } from "@/components/admin/RejectFlow";
 
 type PendingItem = {
   id: string;
@@ -179,11 +180,15 @@ export default async function AdminSolicitudesPage() {
                     {item.email ?? "—"}
                   </td>
                   <td className="py-3">
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <ApproveButton
                         entity={item.type as "band" | "venue" | "festival" | "association" | "promoter" | "organizer"}
                         id={item.id}
                         approved={false}
+                      />
+                      <RejectFlow
+                        entity={item.type as "band" | "venue" | "festival" | "association" | "promoter" | "organizer"}
+                        id={item.id}
                       />
                       <Link
                         href={item.editUrl}

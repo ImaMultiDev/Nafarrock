@@ -227,18 +227,35 @@ export function Header() {
               </Link>
             )}
           <div className="ml-4 flex items-center gap-1 border-l border-punk-white/20 pl-4">
-            {SOCIAL_LINKS.slice(0, 5).map((social) => (
-              <a
-                key={social.name}
-                href={social.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-punk-white/30 text-punk-white/80 transition-colors hover:border-punk-green hover:text-punk-green"
-                aria-label={social.name}
-              >
-                <SocialIcon icon={social.icon} />
-              </a>
-            ))}
+            {SOCIAL_LINKS.map((social) => {
+              const isInternal = "internal" in social && social.internal;
+              const className =
+                "flex h-9 w-9 items-center justify-center rounded-full border border-punk-white/30 text-punk-white/80 transition-colors hover:border-punk-green hover:text-punk-green";
+              if (isInternal) {
+                return (
+                  <Link
+                    key={social.name}
+                    href={social.href}
+                    className={className}
+                    aria-label={social.name}
+                  >
+                    <SocialIcon icon={social.icon} />
+                  </Link>
+                );
+              }
+              return (
+                <a
+                  key={social.name}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={className}
+                  aria-label={social.name}
+                >
+                  <SocialIcon icon={social.icon} />
+                </a>
+              );
+            })}
           </div>
           {session ? (
             <div className="ml-2 flex items-center gap-2">
@@ -427,19 +444,37 @@ export function Header() {
                 Redes
               </p>
               <div className="flex flex-col gap-2">
-                {SOCIAL_LINKS.map((social) => (
-                  <a
-                    key={social.name}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => setMenuOpen(false)}
-                    className="flex items-center gap-3 rounded px-4 py-3 text-punk-white/80 transition-colors hover:bg-punk-white/5 hover:text-punk-green"
-                  >
-                    <SocialIcon icon={social.icon} className="shrink-0" />
-                    <span>{social.name}</span>
-                  </a>
-                ))}
+                {SOCIAL_LINKS.map((social) => {
+                  const isInternal = "internal" in social && social.internal;
+                  const className =
+                    "flex items-center gap-3 rounded px-4 py-3 text-punk-white/80 transition-colors hover:bg-punk-white/5 hover:text-punk-green";
+                  if (isInternal) {
+                    return (
+                      <Link
+                        key={social.name}
+                        href={social.href}
+                        onClick={() => setMenuOpen(false)}
+                        className={className}
+                      >
+                        <SocialIcon icon={social.icon} className="shrink-0" />
+                        <span>{social.name}</span>
+                      </Link>
+                    );
+                  }
+                  return (
+                    <a
+                      key={social.name}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setMenuOpen(false)}
+                      className={className}
+                    >
+                      <SocialIcon icon={social.icon} className="shrink-0" />
+                      <span>{social.name}</span>
+                    </a>
+                  );
+                })}
               </div>
             </div>
           </div>,

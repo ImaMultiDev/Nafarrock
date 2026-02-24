@@ -6,6 +6,7 @@ import { z } from "zod";
 
 const bodySchema = z.object({
   action: z.enum(["approve", "reject"]),
+  reason: z.string().max(2000).optional(),
 });
 
 export async function PATCH(
@@ -20,7 +21,7 @@ export async function PATCH(
     if (!parsed.success) {
       return NextResponse.json({ message: "Acción inválida" }, { status: 400 });
     }
-    const { action } = parsed.data;
+    const { action, reason } = parsed.data;
 
     const claim = await prisma.profileClaim.findUnique({
       where: { id },
@@ -44,7 +45,9 @@ export async function PATCH(
         },
       });
 
-      await sendClaimRejectedEmail(claim.user.email, entityName, entityType);
+      if (reason && reason.trim()) {
+        await sendClaimRejectedEmail(claim.user.email, entityName, entityType, reason.trim());
+      }
 
       return NextResponse.json({ success: true });
     }

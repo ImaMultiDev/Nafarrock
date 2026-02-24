@@ -52,7 +52,7 @@ export async function sendVerificationEmail(
   return { success: true };
 }
 
-const CONTACT_EMAIL = "imanol@kaosekaitza.com";
+const CONTACT_EMAIL = "central@nafarrock.com";
 
 export async function sendContactEmail(
   fromName: string,
@@ -146,12 +146,63 @@ export async function sendClaimApprovedEmail(
 }
 
 const entityTypeLabel = (t: string) =>
-  t === "BAND" ? "banda" : t === "VENUE" ? "sala/recinto" : "festival";
+  t === "BAND" ? "banda" : t === "VENUE" ? "sala/recinto" : t === "FESTIVAL" ? "festival" : t === "ASOCIACION" ? "asociación" : "perfil";
 
+/** Email cuando se rechaza una solicitud de perfil (banda, sala, etc.) */
+export async function sendRequestRejectedEmail(
+  to: string,
+  entityName: string,
+  entityType: string,
+  reason?: string
+): Promise<{ success: boolean; error?: string }> {
+  if (!resend) {
+    console.warn("RESEND_API_KEY no configurado, omitiendo email de solicitud rechazada");
+    return { success: true };
+  }
+
+  const tipo = entityTypeLabel(entityType);
+  const contactUrl = `${baseUrl()}/contacto`;
+  const subject = reason ? "Solicitud Rechazada - Motivo" : "Solicitud Rechazada - Nafarrock";
+
+  const reasonBlock = reason
+    ? `<p><strong>Motivo:</strong></p><div style="white-space: pre-wrap; background: #f5f5f5; padding: 12px; border-radius: 4px; margin: 12px 0;">${reason.replace(/\n/g, "<br>")}</div>`
+    : "";
+
+  const { data, error } = await resend.emails.send({
+    from: FROM_EMAIL,
+    to,
+    subject,
+    html: `
+      <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto;">
+        <h2 style="color: #e60026;">NAFARROCK</h2>
+        <p>Hola,</p>
+        <p>Tu solicitud de perfil de ${tipo} <strong>"${entityName}"</strong> no ha podido ser aceptada.</p>
+        ${reasonBlock}
+        <p>Si tienes dudas o deseas más información, ponte en contacto con Nafarrock:</p>
+        <p style="margin: 24px 0;">
+          <a href="${contactUrl}" style="background: #00c853; color: #000; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
+            Formulario de contacto
+          </a>
+        </p>
+        <p style="color: #666; font-size: 12px;">— Equipo Nafarrock</p>
+      </div>
+    `,
+  });
+
+  if (error) {
+    console.error("[Resend] Error enviando email solicitud rechazada:", error);
+    return { success: false, error: error.message };
+  }
+  console.log("[Resend] Solicitud rechazada enviada. ID:", data?.id, "→", to);
+  return { success: true };
+}
+
+/** Email cuando se rechaza una reclamación de perfil (con motivo opcional) */
 export async function sendClaimRejectedEmail(
   to: string,
   entityName: string,
-  entityType: string
+  entityType: string,
+  reason?: string
 ): Promise<{ success: boolean; error?: string }> {
   if (!resend) {
     console.warn("RESEND_API_KEY no configurado, omitiendo email de reclamación rechazada");
@@ -160,25 +211,29 @@ export async function sendClaimRejectedEmail(
 
   const contactUrl = `${baseUrl()}/contacto`;
   const tipo = entityTypeLabel(entityType);
+  const subject = reason ? "Reclamación Rechazada - Motivo" : "Reclamación Rechazada - Nafarrock";
+
+  const reasonBlock = reason
+    ? `<p><strong>Motivo:</strong></p><div style="white-space: pre-wrap; background: #f5f5f5; padding: 12px; border-radius: 4px; margin: 12px 0;">${reason.replace(/\n/g, "<br>")}</div>`
+    : "";
 
   const { data, error } = await resend.emails.send({
     from: FROM_EMAIL,
     to,
-    subject: "Reclamación de perfil - Nafarrock",
+    subject,
     html: `
       <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto;">
         <h2 style="color: #e60026;">NAFARROCK</h2>
         <p>Hola,</p>
-        <p>La reclamación del perfil de la ${tipo} <strong>"${entityName}"</strong> no ha podido ser aceptada por incumplimiento de algún factor necesario para la comprobación de la autoridad de dicho perfil.</p>
-        <p>Si deseas reclamar y obtener el perfil de la ${tipo} "${entityName}", ponte en contacto con Nafarrock a través del siguiente enlace:</p>
+        <p>La reclamación del perfil de la ${tipo} <strong>"${entityName}"</strong> no ha podido ser aceptada.</p>
+        ${reasonBlock}
+        <p>Si deseas más información, ponte en contacto con Nafarrock:</p>
         <p style="margin: 24px 0;">
           <a href="${contactUrl}" style="background: #00c853; color: #000; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
             Formulario de contacto
           </a>
         </p>
-        <p style="color: #666; font-size: 12px;">
-          — Equipo Nafarrock
-        </p>
+        <p style="color: #666; font-size: 12px;">— Equipo Nafarrock</p>
       </div>
     `,
   });

@@ -1,5 +1,6 @@
 /**
  * Enlaces a redes sociales - actualizar con URLs reales
+ * Correo: enlace interno al formulario de contacto (según rol)
  */
 export const SOCIAL_LINKS = [
   {
@@ -18,13 +19,9 @@ export const SOCIAL_LINKS = [
     icon: "youtube" as const,
   },
   {
-    name: "Spotify",
-    href: "https://open.spotify.com",
-    icon: "spotify" as const,
-  },
-  {
     name: "Correo",
-    href: "mailto:info@nafarrock.com",
+    href: "/contacto",
     icon: "mail" as const,
+    internal: true,
   },
 ];
