@@ -9,7 +9,7 @@ import {
 } from "@/lib/cloudinary";
 import { z } from "zod";
 
-const CLAIM_FOLDERS = ["bands", "venues", "festivals"] as const;
+const CLAIM_FOLDERS = ["bands", "venues", "festivals", "asociaciones"] as const;
 
 const schema = z.object({
   folder: z.enum(CLAIM_FOLDERS),
@@ -64,6 +64,10 @@ export async function POST(req: Request) {
       const venue = await prisma.venue.findUnique({ where: { id: parsed.data.claimId } });
       if (!venue) return NextResponse.json({ message: "Perfil no encontrado" }, { status: 404 });
       if (venue.userId) return NextResponse.json({ message: "Este perfil ya tiene propietario" }, { status: 400 });
+    } else if (parsed.data.folder === "asociaciones") {
+      const asociacion = await prisma.asociacion.findUnique({ where: { id: parsed.data.claimId } });
+      if (!asociacion) return NextResponse.json({ message: "Perfil no encontrado" }, { status: 404 });
+      if (asociacion.userId) return NextResponse.json({ message: "Este perfil ya tiene propietario" }, { status: 400 });
     } else {
       const festival = await prisma.festival.findUnique({ where: { id: parsed.data.claimId } });
       if (!festival) return NextResponse.json({ message: "Perfil no encontrado" }, { status: 404 });

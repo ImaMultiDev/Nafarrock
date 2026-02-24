@@ -17,6 +17,7 @@ const FOLDERS: UploadFolder[] = [
   "festivals",
   "promoters",
   "organizers",
+  "asociaciones",
 ];
 
 const schema = z.object({
