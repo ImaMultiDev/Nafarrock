@@ -83,7 +83,7 @@ function EmailIcon({ className }: { className?: string }) {
 
 type SocialLinksProps = {
   links: SocialLinkItem[];
-  variant?: "green" | "pink" | "red";
+  variant?: "green" | "pink" | "red" | "yellow";
   /** Mostrar texto junto al icono (por defecto true para mejor UX) */
   showLabels?: boolean;
   className?: string;
@@ -93,6 +93,7 @@ const variantStyles = {
   green: "border-punk-green text-punk-green hover:bg-punk-green hover:text-punk-black",
   pink: "border-punk-pink text-punk-pink hover:bg-punk-pink hover:text-punk-black",
   red: "border-punk-red text-punk-red hover:bg-punk-red hover:text-punk-black",
+  yellow: "border-punk-yellow text-punk-yellow hover:bg-punk-yellow hover:text-punk-black",
 };
 
 const kindLabels: Record<SocialLinkKind, string> = {

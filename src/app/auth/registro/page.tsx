@@ -19,7 +19,7 @@ type EntityImageInfo = {
 
 export default async function RegistroPage({ searchParams }: Props) {
   const params = await searchParams;
-  const claimType = params.claim as "BAND" | "VENUE" | "FESTIVAL" | undefined;
+  const claimType = params.claim as "BAND" | "VENUE" | "FESTIVAL" | "ASOCIACION" | undefined;
   const claimId = params.claimId;
   const claimName = params.claimName;
 
@@ -51,6 +51,15 @@ export default async function RegistroPage({ searchParams }: Props) {
       if (festival) {
         const hasImages = !!(festival.logoUrl || ((festival.images?.length ?? 0) > 0));
         entityImageInfo = { hasImages, logoUrl: festival.logoUrl, images: festival.images ?? [] };
+      }
+    } else if (claimType === "ASOCIACION") {
+      const asoc = await prisma.asociacion.findUnique({
+        where: { id: claimId },
+        select: { logoUrl: true, images: true },
+      });
+      if (asoc) {
+        const hasImages = !!(asoc.logoUrl || ((asoc.images?.length ?? 0) > 0));
+        entityImageInfo = { hasImages, logoUrl: asoc.logoUrl, images: asoc.images ?? [] };
       }
     }
   }

@@ -54,7 +54,9 @@ export default async function EventosPage({ searchParams }: Props) {
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               <div className="shrink-0 border-2 border-punk-red/50 bg-punk-red/10 px-6 py-3 text-center">
                 <span className="block font-display text-3xl leading-none text-punk-red">
-                  {format(event.date, "dd", { locale: es })}
+                  {event.endDate
+                    ? `${format(event.date, "d", { locale: es })}-${format(event.endDate, "d", { locale: es })}`
+                    : format(event.date, "dd", { locale: es })}
                 </span>
                 <span className="block font-punch text-xs uppercase tracking-widest text-punk-white/70">
                   {format(event.date, "MMM", { locale: es })}
@@ -65,7 +67,7 @@ export default async function EventosPage({ searchParams }: Props) {
                   {event.title}
                 </h2>
                 <p className="mt-1 font-body text-punk-white/70">
-                  {event.venue.name} · {event.venue.city}
+                  {event.venue ? `${event.venue.name} · ${event.venue.city}` : "Lugar por confirmar"}
                 </p>
                 {event.bands.length > 0 && (
                   <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-green/80">

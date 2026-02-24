@@ -1,6 +1,6 @@
 import { prisma } from "./prisma";
 
-const CONTACT_ALLOWED_ROLES = ["ADMIN", "BANDA", "SALA", "FESTIVAL", "ORGANIZADOR", "PROMOTOR"] as const;
+const CONTACT_ALLOWED_ROLES = ["ADMIN", "BANDA", "SALA", "FESTIVAL", "ASOCIACION", "ORGANIZADOR", "PROMOTOR"] as const;
 
 export type ContactAccessResult =
   | { canAccess: true; userName?: string; userEmail: string; role: string; entityName?: string }
@@ -17,6 +17,7 @@ export async function canUserAccessContact(userId: string): Promise<ContactAcces
       bandProfile: true,
       venueProfile: true,
       festivalProfile: true,
+      associationProfile: true,
       organizerProfile: true,
       promoterProfile: true,
     },
@@ -26,7 +27,7 @@ export async function canUserAccessContact(userId: string): Promise<ContactAcces
 
   const role = user.role as string;
   if (!CONTACT_ALLOWED_ROLES.includes(role as (typeof CONTACT_ALLOWED_ROLES)[number])) {
-    return { canAccess: false, reason: "Solo cuentas de banda, sala, festival, organizador o promotor aprobadas pueden contactar." };
+    return { canAccess: false, reason: "Solo cuentas de banda, sala, festival, asociación, organizador o promotor aprobadas pueden contactar." };
   }
 
   // ADMIN siempre puede
@@ -43,6 +44,7 @@ export async function canUserAccessContact(userId: string): Promise<ContactAcces
     user.bandProfile ??
     user.venueProfile ??
     user.festivalProfile ??
+    user.associationProfile ??
     user.organizerProfile ??
     user.promoterProfile;
 

@@ -18,6 +18,7 @@ export default async function NuevoBoloPage() {
       promoterProfile: { select: { id: true, name: true, contactEmail: true, approved: true } },
       venueProfile: { select: { id: true, name: true, city: true, approved: true } },
       festivalProfile: { select: { id: true, name: true, location: true, approved: true } },
+      associationProfile: { select: { id: true, name: true, location: true, approved: true } },
       organizerProfile: { select: { id: true, name: true, contactEmail: true, approved: true } },
     },
   });
@@ -37,7 +38,11 @@ export default async function NuevoBoloPage() {
           ? user.festivalProfile
             ? { type: "FESTIVAL" as const, profile: user.festivalProfile }
             : null
-          : user.role === "ORGANIZADOR"
+          : user.role === "ASOCIACION"
+            ? user.associationProfile
+              ? { type: "ASSOCIATION" as const, profile: user.associationProfile }
+              : null
+            : user.role === "ORGANIZADOR"
             ? user.organizerProfile
               ? { type: "ORGANIZER" as const, profile: user.organizerProfile }
               : null
@@ -52,7 +57,7 @@ export default async function NuevoBoloPage() {
           </h1>
         </div>
         <p className="font-body text-punk-white/60">
-          Solo promotores, salas, festivales y organizadores pueden publicar anuncios.
+          Solo promotores, salas, festivales, asociaciones y organizadores pueden publicar anuncios.
         </p>
       </>
     );

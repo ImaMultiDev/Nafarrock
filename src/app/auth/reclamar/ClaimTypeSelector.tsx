@@ -5,18 +5,19 @@ import { useRouter, useSearchParams } from "next/navigation";
 const TYPES = [
   { value: "BAND" as const, label: "BANDA" },
   { value: "FESTIVAL" as const, label: "FESTIVAL" },
+  { value: "ASOCIACION" as const, label: "ASOCIACIÓN / SOCIEDAD" },
   { value: "VENUE" as const, label: "SALA/RECINTO" },
 ];
 
 export function ClaimTypeSelector({
   selectedType,
 }: {
-  selectedType?: "BAND" | "VENUE" | "FESTIVAL";
+  selectedType?: "BAND" | "VENUE" | "FESTIVAL" | "ASOCIACION";
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const handleSelect = (value: "BAND" | "VENUE" | "FESTIVAL") => {
+  const handleSelect = (value: "BAND" | "VENUE" | "FESTIVAL" | "ASOCIACION") => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("type", value);
     router.push(`/auth/reclamar?${params.toString()}`);

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 type Props = {
-  entity: "band" | "venue" | "event" | "promoter" | "organizer" | "festival";
+  entity: "band" | "venue" | "event" | "promoter" | "organizer" | "festival" | "association";
   id: string;
   approved: boolean;
 };
@@ -16,7 +16,7 @@ export function ApproveButton({ entity, id, approved }: Props) {
   const handleClick = async () => {
     setLoading(true);
     try {
-      const paths: Record<string, string> = { band: "bands", venue: "venues", event: "events", promoter: "promoters", organizer: "organizers", festival: "festivals" };
+      const paths: Record<string, string> = { band: "bands", venue: "venues", event: "events", promoter: "promoters", organizer: "organizers", festival: "festivals", association: "associations" };
       // Eventos usan isApproved, el resto usa approved
       const body = entity === "event" ? { isApproved: !approved } : { approved: !approved };
       const res = await fetch(`/api/admin/${paths[entity]}/${id}`, {

@@ -1,6 +1,10 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import { getPromoterBySlug } from "@/services/promoter.service";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { canViewRestrictedEscena } from "@/lib/escena-visibility";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { PageLayout } from "@/components/ui/PageLayout";
@@ -26,6 +30,11 @@ export default async function PromoterPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  const session = await getServerSession(authOptions);
+  if (!canViewRestrictedEscena(session)) {
+    redirect("/auth/acceso-escena");
+  }
+
   const { slug } = await params;
   const promoter = await getPromoterBySlug(slug);
   if (!promoter) notFound();
@@ -93,7 +102,7 @@ export default async function PromoterPage({
                 >
                   <span className="font-display text-punk-white">{evt.title}</span>
                   <span className="font-punch text-xs uppercase tracking-widest text-punk-pink">
-                    {format(evt.date, "d MMM yyyy", { locale: es })} · {evt.venue.name}
+                    {format(evt.date, "d MMM yyyy", { locale: es })} · {evt.venue?.name ?? "Por confirmar"}
                   </span>
                 </Link>
               </li>

@@ -17,7 +17,7 @@ type EntityImageInfo = {
 };
 
 type ClaimProps = {
-  claimType?: "BAND" | "VENUE" | "FESTIVAL";
+  claimType?: "BAND" | "VENUE" | "FESTIVAL" | "ASOCIACION";
   claimId?: string;
   claimName?: string;
   entityImageInfo?: EntityImageInfo | null;
@@ -28,6 +28,7 @@ const ROLES = [
   { value: "BANDA", label: "Banda", desc: "Requiere aprobación del admin" },
   { value: "SALA", label: "Sala / Espacio", desc: "Requiere aprobación" },
   { value: "FESTIVAL", label: "Festival", desc: "Requiere aprobación" },
+  { value: "ASOCIACION", label: "Asociación / Sociedad", desc: "Requiere aprobación" },
   { value: "ORGANIZADOR", label: "Organizador de eventos", desc: "Requiere aprobación" },
   { value: "PROMOTOR", label: "Promotor", desc: "Requiere aprobación" },
 ] as const;
@@ -42,10 +43,11 @@ const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
 const labelClass = "block font-punch text-xs uppercase tracking-widest text-punk-white/70";
 
-const claimFolder: Record<"BAND" | "VENUE" | "FESTIVAL", "bands" | "venues" | "festivals"> = {
+const claimFolder: Record<"BAND" | "VENUE" | "FESTIVAL" | "ASOCIACION", "bands" | "venues" | "festivals" | "asociaciones"> = {
   BAND: "bands",
   VENUE: "venues",
   FESTIVAL: "festivals",
+  ASOCIACION: "asociaciones",
 };
 
 export function RegisterForm({ claimType, claimId, claimName, entityImageInfo }: ClaimProps) {
@@ -55,10 +57,11 @@ export function RegisterForm({ claimType, claimId, claimName, entityImageInfo }:
   const [claimImageUrl, setClaimImageUrl] = useState("");
   const [claimImages, setClaimImages] = useState<string[]>([]);
   const [imageChoice, setImageChoice] = useState<"keep_nafarrock" | "use_mine">("keep_nafarrock");
-  const claimToRole: Record<"BAND" | "VENUE" | "FESTIVAL", Role> = {
+  const claimToRole: Record<"BAND" | "VENUE" | "FESTIVAL" | "ASOCIACION", Role> = {
     BAND: "BANDA",
     VENUE: "SALA",
     FESTIVAL: "FESTIVAL",
+    ASOCIACION: "ASOCIACION",
   };
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -154,7 +157,7 @@ export function RegisterForm({ claimType, claimId, claimName, entityImageInfo }:
         payload.facebookUrl = formData.get("facebookUrl") || undefined;
       }
 
-      if (role === "FESTIVAL") {
+      if (role === "FESTIVAL" || role === "ASOCIACION") {
         payload.location = formData.get("location") || undefined;
         payload.foundedYear = formData.get("foundedYear") ? Number(formData.get("foundedYear")) : undefined;
         payload.description = formData.get("description") || undefined;
@@ -407,7 +410,7 @@ export function RegisterForm({ claimType, claimId, claimName, entityImageInfo }:
                 </p>
               </section>
 
-              {needsEntity && (role === "BANDA" || role === "SALA" || role === "FESTIVAL") && (
+              {needsEntity && (role === "BANDA" || role === "SALA" || role === "FESTIVAL" || role === "ASOCIACION") && (
                 <div className="border-2 border-punk-green/30 bg-punk-green/5 p-4">
                   <p className="font-body text-punk-white/90">
                     ¿Tu perfil ya existe en Nafarrock? Búscalo y reclámalo para gestionarlo tú mismo.
@@ -425,13 +428,13 @@ export function RegisterForm({ claimType, claimId, claimName, entityImageInfo }:
           {needsEntity && !isClaimMode && (
             <section>
               <h2 className="font-display text-xl tracking-tighter text-punk-green mb-6">
-                {role === "BANDA" || role === "SALA" || role === "FESTIVAL"
+                {role === "BANDA" || role === "SALA" || role === "FESTIVAL" || role === "ASOCIACION"
                   ? "Crear nuevo perfil (si no aparece en la búsqueda)"
                   : `Datos de ${role === "ORGANIZADOR" ? "el organizador" : "el promotor"}`}
               </h2>
               <div>
                 <label htmlFor="entityName" className={labelClass}>
-                  Nombre {role === "BANDA" ? "de la banda" : role === "SALA" ? "de la sala" : role === "FESTIVAL" ? "del festival" : ""} *
+                  Nombre {role === "BANDA" ? "de la banda" : role === "SALA" ? "de la sala" : role === "FESTIVAL" ? "del festival" : role === "ASOCIACION" ? "de la asociación/sociedad" : ""} *
                 </label>
                 <input id="entityName" name="entityName" type="text" required className={inputClass} />
               </div>
@@ -562,7 +565,7 @@ export function RegisterForm({ claimType, claimId, claimName, entityImageInfo }:
                 </>
               )}
 
-              {role === "FESTIVAL" && (
+              {(role === "FESTIVAL" || role === "ASOCIACION") && (
                 <>
                   <div className="mt-6">
                     <label htmlFor="location" className={labelClass}>Localidad</label>

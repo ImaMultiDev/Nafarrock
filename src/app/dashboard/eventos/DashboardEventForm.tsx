@@ -26,6 +26,7 @@ export function DashboardEventForm({
   const [error, setError] = useState<string | null>(null);
   const [imageUrl, setImageUrl] = useState("");
   const [images, setImages] = useState<string[]>([]);
+  const [isMultiDay, setIsMultiDay] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,6 +44,18 @@ export function DashboardEventForm({
       return;
     }
 
+    const endDateStr = formData.get("endDate") as string;
+    let endDate: string | undefined;
+    if (isMultiDay && endDateStr) {
+      const end = new Date(endDateStr);
+      if (isNaN(end.getTime()) || end < date) {
+        setError("La fecha de fin debe ser posterior a la de inicio");
+        setLoading(false);
+        return;
+      }
+      endDate = end.toISOString();
+    }
+
     const res = await fetch("/api/dashboard/events", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -50,9 +63,7 @@ export function DashboardEventForm({
         title: formData.get("title"),
         type: formData.get("type"),
         date: date.toISOString(),
-        endDate: formData.get("endDate")
-          ? new Date(formData.get("endDate") as string).toISOString()
-          : undefined,
+        endDate,
         venueId: formData.get("venueId"),
         doorsOpen: formData.get("doorsOpen") || undefined,
         description: formData.get("description") || undefined,
@@ -121,32 +132,75 @@ export function DashboardEventForm({
           <option value="FESTIVAL">Festival</option>
         </select>
       </div>
+      <div>
+        <label className={labelClass}>Duración del evento</label>
+        <div className="mt-2 flex gap-6">
+          <label className="flex cursor-pointer items-center gap-2">
+            <input type="radio" name="duration" checked={!isMultiDay} onChange={() => setIsMultiDay(false)} className="accent-punk-red" />
+            <span className="font-body text-punk-white/90">Un día</span>
+          </label>
+          <label className="flex cursor-pointer items-center gap-2">
+            <input type="radio" name="duration" checked={isMultiDay} onChange={() => setIsMultiDay(true)} className="accent-punk-red" />
+            <span className="font-body text-punk-white/90">Varios días</span>
+          </label>
+        </div>
+      </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="date" className={labelClass}>
-            Fecha *
+            {isMultiDay ? "Fecha de inicio *" : "Fecha y hora *"}
           </label>
-          <input id="date" name="date" type="datetime-local" required className={inputClass} />
+          <input
+            id="date"
+            name="date"
+            type="datetime-local"
+            required
+            min={new Date().toISOString().slice(0, 16)}
+            className={inputClass}
+          />
         </div>
+        {isMultiDay ? (
+          <div>
+            <label htmlFor="endDate" className={labelClass}>
+              Fecha de fin *
+            </label>
+            <input
+              id="endDate"
+              name="endDate"
+              type="datetime-local"
+              required={isMultiDay}
+              min={new Date().toISOString().slice(0, 16)}
+              className={inputClass}
+            />
+          </div>
+        ) : (
+          <div>
+            <label htmlFor="doorsOpen" className={labelClass}>
+              Puertas
+            </label>
+            <input id="doorsOpen" name="doorsOpen" type="text" className={inputClass} placeholder="20:00" />
+          </div>
+        )}
+      </div>
+      {isMultiDay && (
         <div>
           <label htmlFor="doorsOpen" className={labelClass}>
-            Puertas
+            Puertas (opcional)
           </label>
-          <input id="doorsOpen" name="doorsOpen" type="text" className={inputClass} placeholder="20:00" />
+          <input id="doorsOpen" name="doorsOpen" type="text" className={inputClass} placeholder="18:00 cada día" />
         </div>
-      </div>
+      )}
       <div>
         <label htmlFor="venueId" className={labelClass}>
-          Sala *
+          Sala (opcional)
         </label>
         <select
           id="venueId"
           name="venueId"
-          required
           className={inputClass}
           defaultValue={defaultVenueId ?? ""}
         >
-          <option value="">Selecciona sala</option>
+          <option value="">Sin sala / Por confirmar</option>
           {venues.map((v) => (
             <option key={v.id} value={v.id}>
               {v.name}
@@ -154,8 +208,8 @@ export function DashboardEventForm({
           ))}
         </select>
         {venues.length === 0 && (
-          <p className="mt-2 font-body text-sm text-punk-white/70">
-            No hay salas aprobadas aún. Debe existir al menos una sala en la plataforma para poder crear eventos. Ponte en contacto con el administrador si necesitas registrar una.
+          <p className="mt-2 font-body text-sm text-punk-white/50">
+            No hay salas aprobadas. Puedes crear el evento sin sala.
           </p>
         )}
       </div>
@@ -213,7 +267,7 @@ export function DashboardEventForm({
       </label>
       <button
         type="submit"
-        disabled={loading || venues.length === 0}
+        disabled={loading}
         className="border-2 border-punk-pink bg-punk-pink px-8 py-3 font-punch text-sm uppercase tracking-widest text-punk-black transition-all hover:bg-punk-pink/90 disabled:opacity-50"
       >
         {loading ? "Creando..." : "Crear evento"}

@@ -3,14 +3,20 @@ import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin";
 import { z } from "zod";
 import { uniqueSlug } from "@/lib/slug";
+import { startOfToday } from "@/lib/date";
 
 const updateSchema = z.object({
   title: z.string().min(1).optional(),
   slug: z.string().optional(),
   type: z.enum(["CONCIERTO", "FESTIVAL"]).optional(),
-  date: z.string().datetime().or(z.coerce.date()).optional(),
-  endDate: z.string().datetime().optional().nullable().or(z.coerce.date().optional().nullable()),
-  venueId: z.string().optional(),
+  date: z
+    .union([z.string(), z.coerce.date()])
+    .optional()
+    .refine((d) => !d || new Date(d) >= startOfToday(), {
+      message: "La fecha del evento no puede ser anterior a hoy",
+    }),
+  endDate: z.union([z.string(), z.coerce.date()]).optional().nullable().or(z.literal("")),
+  venueId: z.string().optional().nullable().or(z.literal("")),
   doorsOpen: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
   price: z.string().optional().nullable(),
@@ -36,8 +42,10 @@ export async function PATCH(
     const body = await req.json();
     const parsed = updateSchema.safeParse(body);
     if (!parsed.success) {
+      const flat = parsed.error.flatten();
+      const firstMsg = Object.values(flat.fieldErrors).flat()[0] ?? flat.formErrors[0] ?? "Datos inválidos";
       return NextResponse.json(
-        { message: "Datos inválidos", errors: parsed.error.flatten() },
+        { message: firstMsg, errors: flat },
         { status: 400 }
       );
     }
@@ -51,9 +59,22 @@ export async function PATCH(
     const updateData: Record<string, unknown> = {};
     if (data.title != null) updateData.title = data.title;
     if (data.type != null) updateData.type = data.type;
-    if (data.date != null) updateData.date = new Date(data.date);
-    if (data.endDate !== undefined) updateData.endDate = data.endDate ? new Date(data.endDate) : null;
-    if (data.venueId != null) updateData.venueId = data.venueId;
+    const newDate = data.date != null ? new Date(data.date) : null;
+    const newEndDate = data.endDate !== undefined
+      ? (data.endDate && data.endDate !== "" ? new Date(data.endDate) : null)
+      : undefined;
+    if (newEndDate !== undefined && newEndDate) {
+      const refDate = newDate ?? event.date;
+      if (newEndDate < refDate) {
+        return NextResponse.json(
+          { message: "La fecha de fin debe ser posterior a la de inicio" },
+          { status: 400 }
+        );
+      }
+    }
+    if (newDate != null) updateData.date = newDate;
+    if (newEndDate !== undefined) updateData.endDate = newEndDate;
+    if (data.venueId !== undefined) updateData.venueId = (data.venueId && data.venueId.trim()) ? data.venueId : null;
     if (data.doorsOpen !== undefined) updateData.doorsOpen = data.doorsOpen;
     if (data.description !== undefined) updateData.description = data.description;
     if (data.price !== undefined) updateData.price = data.price;

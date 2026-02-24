@@ -17,7 +17,7 @@ export async function generateMetadata({
   if (!event) return {};
   return {
     title: event.title,
-    description: event.description ?? `${event.title} en ${event.venue.name}`,
+    description: event.description ?? (event.venue ? `${event.title} en ${event.venue.name}` : event.title),
   };
 }
 
@@ -76,11 +76,17 @@ export default async function EventPage({
             </h1>
             {event.createdByNafarrock && (
               <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-red/90">
-                Evento registrado por Nafarrock
+                EVENTO PUBLICADO POR NAFARROCK
               </p>
             )}
             <p className="mt-4 font-body text-lg text-punk-white/70">
-              {format(event.date, "EEEE d 'de' MMMM, yyyy", { locale: es })}
+              {event.endDate ? (
+                <>
+                  Del {format(event.date, "d 'de' MMMM", { locale: es })} al {format(event.endDate, "d 'de' MMMM, yyyy", { locale: es })}
+                </>
+              ) : (
+                format(event.date, "EEEE d 'de' MMMM, yyyy", { locale: es })
+              )}
               {event.doorsOpen && ` · Puertas: ${event.doorsOpen}`}
             </p>
           </div>
@@ -164,36 +170,38 @@ export default async function EventPage({
         )}
 
         {/* Lugar */}
-        <div className="mt-12 border-l-4 border-punk-red bg-punk-black/50 p-6">
-          <h2 className="font-punch text-xs uppercase tracking-widest text-punk-red/80">
-            Lugar
-          </h2>
-          <p className="mt-2 font-display text-xl text-punk-white">
-            {event.venue.name}
-          </p>
-          {event.venue.address && (
-            <p className="font-body text-punk-white/70">{event.venue.address}</p>
-          )}
-          <p className="font-body text-punk-white/70">{event.venue.city}</p>
-          <div className="mt-4 flex flex-wrap gap-3">
-            <Link
-              href={`/salas/${event.venue.slug}`}
-              className="inline-block border-2 border-punk-red px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-red transition-all hover:bg-punk-red hover:text-punk-black"
-            >
-              Ver sala →
-            </Link>
-            {event.venue.mapUrl && (
-              <a
-                href={event.venue.mapUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block border-2 border-punk-white/40 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white/80 transition-all hover:border-punk-green hover:text-punk-green"
-              >
-                Ver en mapa →
-              </a>
+        {event.venue && (
+          <div className="mt-12 border-l-4 border-punk-red bg-punk-black/50 p-6">
+            <h2 className="font-punch text-xs uppercase tracking-widest text-punk-red/80">
+              Lugar
+            </h2>
+            <p className="mt-2 font-display text-xl text-punk-white">
+              {event.venue.name}
+            </p>
+            {event.venue.address && (
+              <p className="font-body text-punk-white/70">{event.venue.address}</p>
             )}
+            <p className="font-body text-punk-white/70">{event.venue.city}</p>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <Link
+                href={`/salas/${event.venue.slug}`}
+                className="inline-block border-2 border-punk-red px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-red transition-all hover:bg-punk-red hover:text-punk-black"
+              >
+                Ver sala →
+              </Link>
+              {event.venue.mapUrl && (
+                <a
+                  href={event.venue.mapUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block border-2 border-punk-white/40 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white/80 transition-all hover:border-punk-green hover:text-punk-green"
+                >
+                  Ver en mapa →
+                </a>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Promotor / Festival / Organizador */}
         {(event.festival || event.promoter || event.organizer) && (

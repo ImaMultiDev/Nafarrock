@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
 const querySchema = z.object({
-  type: z.enum(["BAND", "VENUE", "FESTIVAL"]),
+  type: z.enum(["BAND", "VENUE", "FESTIVAL", "ASOCIACION"]),
   q: z.string().min(1).max(100),
 });
 
@@ -64,6 +64,22 @@ export async function GET(req: Request) {
         orderBy: { name: "asc" },
       });
       return NextResponse.json({ type: "FESTIVAL", items: festivals });
+    }
+    if (type === "ASOCIACION") {
+      const asociaciones = await prisma.asociacion.findMany({
+        where: {
+          userId: null,
+          OR: [
+            { name: { contains: q, mode: "insensitive" } },
+            { location: { contains: q, mode: "insensitive" } },
+          ],
+          approved: true,
+        },
+        select: { id: true, name: true, slug: true, location: true },
+        take: 10,
+        orderBy: { name: "asc" },
+      });
+      return NextResponse.json({ type: "ASOCIACION", items: asociaciones });
     }
     return NextResponse.json({ type, items: [] });
   } catch (e) {

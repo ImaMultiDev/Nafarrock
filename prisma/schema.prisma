@@ -20,6 +20,7 @@ enum UserRole {
   BANDA       // Registro de banda
   SALA        // Registro de sala/espacio
   FESTIVAL    // Organizador de festival
+  ASOCIACION  // Asociaciones y sociedades (igual que festival)
   ORGANIZADOR // Organizador de eventos
   PROMOTOR    // Crear y gestionar eventos
   USUARIO     // Usuario registrado sin rol especial
@@ -47,6 +48,7 @@ model User {
   venueProfile     Venue?      // Si es rol SALA
   organizerProfile Organizer? // Si es rol ORGANIZADOR
   festivalProfile  Festival?   // Si es rol FESTIVAL
+  associationProfile Asociacion? // Si es rol ASOCIACION
   eventsCreated    Event[]    @relation("EventCreator")
   profileClaims    ProfileClaim[]
 
@@ -231,6 +233,39 @@ model Festival {
 }
 
 // ============================================
+// ASOCIACIONES Y SOCIEDADES
+// ============================================
+
+model Asociacion {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String?  @db.Text
+  location    String?
+  foundedYear Int?
+  logoUrl     String?
+  images      String[]
+  websiteUrl  String?
+  instagramUrl String?
+  facebookUrl  String?
+  approved    Boolean  @default(false)
+  approvedAt  DateTime?
+  approvedBy  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdByNafarrock Boolean @default(false)
+  userId String? @unique
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  events Event[] @relation("AssociationEvents")
+  claimRequests ProfileClaim[]
+  announcements Announcement[]
+
+  @@index([slug])
+  @@index([approved])
+  @@map("asociaciones")
+}
+
+// ============================================
 // ORGANIZADORES DE EVENTOS
 // ============================================
 
@@ -292,14 +327,16 @@ model Event {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
-  venueId          String
-  venue            Venue     @relation(fields: [venueId], references: [id], onDelete: Restrict)
+  venueId          String?
+  venue            Venue?    @relation(fields: [venueId], references: [id], onDelete: SetNull)
   promoterId       String?
   promoter         Promoter? @relation(fields: [promoterId], references: [id], onDelete: SetNull)
   organizerId      String?
   organizer        Organizer? @relation("OrganizerEvents", fields: [organizerId], references: [id], onDelete: SetNull)
   festivalId       String?
   festival         Festival? @relation("FestivalEvents", fields: [festivalId], references: [id], onDelete: SetNull)
+  associationId    String?
+  association      Asociacion? @relation("AssociationEvents", fields: [associationId], references: [id], onDelete: SetNull)
   createdByUserId  String?
   createdByUser     User?     @relation("EventCreator", fields: [createdByUserId], references: [id], onDelete: SetNull)
   bands             BandEvent[]
@@ -377,6 +414,7 @@ enum ClaimEntityType {
   BAND
   VENUE
   FESTIVAL
+  ASOCIACION
 }
 
 model ProfileClaim {
@@ -405,6 +443,8 @@ model ProfileClaim {
   venue     Venue?      @relation(fields: [venueId], references: [id], onDelete: Cascade)
   festivalId String?
   festival  Festival?   @relation(fields: [festivalId], references: [id], onDelete: Cascade)
+  associationId String?
+  association Asociacion? @relation(fields: [associationId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([status])
@@ -412,6 +452,7 @@ model ProfileClaim {
   @@index([bandId])
   @@index([venueId])
   @@index([festivalId])
+  @@index([associationId])
   @@map("profile_claims")
 }
 
@@ -421,10 +462,11 @@ model ProfileClaim {
 // Anuncios de oportunidades: conciertos, festivales, convocatorias, servicios de promotores
 
 enum AnnouncementAdvertiserType {
-  PROMOTER   // Servicios booking/producción - 1 activo por promotor
-  VENUE      // Convocatorias - 1 cada 7 días
-  FESTIVAL   // Convocatorias - 1 cada 7 días
-  ORGANIZER  // Convocatorias - 1 cada 7 días
+  PROMOTER    // Servicios booking/producción - 1 activo por promotor
+  VENUE       // Convocatorias - 1 cada 7 días
+  FESTIVAL    // Convocatorias - 1 cada 7 días
+  ASSOCIATION // Convocatorias - 1 cada 7 días (asociaciones/sociedades)
+  ORGANIZER   // Convocatorias - 1 cada 7 días
 }
 
 enum AnnouncementStatus {
@@ -456,6 +498,8 @@ model Announcement {
   venue          Venue?     @relation(fields: [venueId], references: [id], onDelete: Cascade)
   festivalId     String?
   festival       Festival?  @relation(fields: [festivalId], references: [id], onDelete: Cascade)
+  associationId  String?
+  association    Asociacion? @relation(fields: [associationId], references: [id], onDelete: Cascade)
   organizerId    String?
   organizer      Organizer? @relation(fields: [organizerId], references: [id], onDelete: Cascade)
 
@@ -481,6 +525,7 @@ model Announcement {
   @@index([promoterId])
   @@index([venueId])
   @@index([festivalId])
+  @@index([associationId])
   @@index([organizerId])
   @@index([zone])
   @@index([createdAt])

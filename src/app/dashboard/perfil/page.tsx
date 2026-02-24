@@ -18,6 +18,7 @@ export default async function PerfilPage() {
       bandProfile: true,
       venueProfile: true,
       festivalProfile: true,
+      associationProfile: true,
       organizerProfile: true,
       promoterProfile: true,
     },
@@ -29,6 +30,7 @@ export default async function PerfilPage() {
     user.bandProfile ??
     user.venueProfile ??
     user.festivalProfile ??
+    user.associationProfile ??
     user.organizerProfile ??
     user.promoterProfile;
 
@@ -38,11 +40,13 @@ export default async function PerfilPage() {
       ? "Sala"
       : user.festivalProfile
         ? "Festival"
-        : user.organizerProfile
-          ? "Organizador"
-          : user.promoterProfile
-            ? "Promotor"
-            : null;
+        : user.associationProfile
+          ? "Asociación"
+          : user.organizerProfile
+            ? "Organizador"
+            : user.promoterProfile
+              ? "Promotor"
+              : null;
 
   const entityEditLink = user.bandProfile
     ? "/dashboard/banda"
@@ -50,11 +54,13 @@ export default async function PerfilPage() {
       ? "/dashboard/sala"
       : user.festivalProfile
         ? "/dashboard/festival"
-        : user.organizerProfile
-          ? "/dashboard/organizador"
-          : user.promoterProfile
-            ? "/dashboard/promotor"
-            : null;
+        : user.associationProfile
+          ? "/dashboard/asociacion"
+          : user.organizerProfile
+            ? "/dashboard/organizador"
+            : user.promoterProfile
+              ? "/dashboard/promotor"
+              : null;
 
   return (
     <>

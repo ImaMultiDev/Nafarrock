@@ -78,7 +78,7 @@ export default async function VenuePage({
           </h1>
           {!venue.userId && venue.createdByNafarrock && (
             <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-red/90">
-              Perfil creado por Nafarrock
+              SALA REGISTRADA POR NAFARROCK
             </p>
           )}
           <p className="mt-3 font-body text-punk-white/70">{venue.city}</p>

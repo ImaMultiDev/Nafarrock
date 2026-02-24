@@ -7,7 +7,7 @@ import { uniqueSlug } from "@/lib/slug";
 import { sendVerificationEmail } from "@/lib/email";
 import { isValidEmail, isPasswordValid, isValidUrl } from "@/lib/validation";
 
-const ROLES = ["USUARIO", "BANDA", "SALA", "FESTIVAL", "ORGANIZADOR", "PROMOTOR"] as const;
+const ROLES = ["USUARIO", "BANDA", "SALA", "FESTIVAL", "ASOCIACION", "ORGANIZADOR", "PROMOTOR"] as const;
 
 const memberSchema = z.object({
   name: z.string().min(1),
@@ -78,6 +78,17 @@ const festivalSchema = baseSchema.extend({
   facebookUrl: optionalUrl,
 });
 
+const asociacionSchema = baseSchema.extend({
+  role: z.literal("ASOCIACION"),
+  entityName: z.string().min(1, "Nombre de la asociación requerido"),
+  location: z.string().optional(),
+  foundedYear: z.coerce.number().min(1900).max(new Date().getFullYear()).optional(),
+  description: z.string().optional(),
+  websiteUrl: optionalUrlStrict,
+  instagramUrl: optionalUrl,
+  facebookUrl: optionalUrl,
+});
+
 const organizerSchema = baseSchema.extend({
   role: z.literal("ORGANIZADOR"),
   entityName: z.string().min(1, "Nombre del organizador requerido"),
@@ -123,8 +134,8 @@ async function createAndSendVerificationToken(
 }
 
 const claimSchema = baseSchema.extend({
-  role: z.enum(["BANDA", "SALA", "FESTIVAL"]),
-  claimType: z.enum(["BAND", "VENUE", "FESTIVAL"]),
+  role: z.enum(["BANDA", "SALA", "FESTIVAL", "ASOCIACION"]),
+  claimType: z.enum(["BAND", "VENUE", "FESTIVAL", "ASOCIACION"]),
   claimId: z.string().min(1),
   claimName: z.string().min(1),
   claimLogoUrl: z.string().url().optional().or(z.literal("")),
@@ -158,7 +169,7 @@ export async function POST(req: Request) {
         );
       }
 
-      const claimEntityType = data.claimType as "BAND" | "VENUE" | "FESTIVAL";
+      const claimEntityType = data.claimType as "BAND" | "VENUE" | "FESTIVAL" | "ASOCIACION";
       if (claimEntityType === "BAND") {
         const band = await prisma.band.findUnique({ where: { id: data.claimId } });
         if (!band) return NextResponse.json({ message: "Banda no encontrada" }, { status: 404 });
@@ -198,12 +209,25 @@ export async function POST(req: Request) {
             { message: "Ya existe una solicitud pendiente para este perfil" },
             { status: 400 }
           );
+      } else if (claimEntityType === "ASOCIACION") {
+        const asoc = await prisma.asociacion.findUnique({ where: { id: data.claimId } });
+        if (!asoc) return NextResponse.json({ message: "Asociación no encontrada" }, { status: 404 });
+        if (asoc.userId)
+          return NextResponse.json({ message: "Este perfil ya tiene propietario" }, { status: 400 });
+        const pendingClaim = await prisma.profileClaim.findFirst({
+          where: { associationId: data.claimId, status: "PENDING_CLAIM" },
+        });
+        if (pendingClaim)
+          return NextResponse.json(
+            { message: "Ya existe una solicitud pendiente para este perfil" },
+            { status: 400 }
+          );
       }
 
       const hashedPassword = await hash(data.password, 12);
       const name = `${data.firstName} ${data.lastName}`.trim();
 
-      const userRole = claimEntityType === "BAND" ? "BANDA" : claimEntityType === "VENUE" ? "SALA" : "FESTIVAL";
+      const userRole = claimEntityType === "BAND" ? "BANDA" : claimEntityType === "VENUE" ? "SALA" : claimEntityType === "ASOCIACION" ? "ASOCIACION" : "FESTIVAL";
       const user = await prisma.user.create({
         data: {
           email: data.email,
@@ -233,6 +257,7 @@ export async function POST(req: Request) {
           ...(claimEntityType === "BAND" && { bandId: data.claimId }),
           ...(claimEntityType === "VENUE" && { venueId: data.claimId }),
           ...(claimEntityType === "FESTIVAL" && { festivalId: data.claimId }),
+          ...(claimEntityType === "ASOCIACION" && { associationId: data.claimId }),
         },
       });
 
@@ -254,6 +279,9 @@ export async function POST(req: Request) {
         break;
       case "FESTIVAL":
         parsed = festivalSchema.safeParse(body);
+        break;
+      case "ASOCIACION":
+        parsed = asociacionSchema.safeParse(body);
         break;
       case "ORGANIZADOR":
         parsed = organizerSchema.safeParse(body);
@@ -384,6 +412,26 @@ export async function POST(req: Request) {
         entityName
       );
       await prisma.festival.create({
+        data: {
+          slug,
+          name: entityName,
+          description: d.description || null,
+          location: d.location || null,
+          foundedYear: d.foundedYear || null,
+          websiteUrl: cleanUrl(d.websiteUrl),
+          instagramUrl: cleanUrl(d.instagramUrl),
+          facebookUrl: cleanUrl(d.facebookUrl),
+          approved: false,
+          userId: user.id,
+        },
+      });
+    } else if (data.role === "ASOCIACION") {
+      const d = data as z.infer<typeof asociacionSchema>;
+      const slug = await uniqueSlug(
+        (s) => prisma.asociacion.findUnique({ where: { slug: s } }).then(Boolean),
+        entityName
+      );
+      await prisma.asociacion.create({
         data: {
           slug,
           name: entityName,

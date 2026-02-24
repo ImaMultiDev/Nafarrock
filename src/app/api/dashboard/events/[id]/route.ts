@@ -4,14 +4,20 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { uniqueSlug } from "@/lib/slug";
 import { canUserCreateEvent } from "@/lib/validated-event";
+import { startOfToday } from "@/lib/date";
 import { z } from "zod";
 
 const updateSchema = z.object({
   title: z.string().min(1).optional(),
   type: z.enum(["CONCIERTO", "FESTIVAL"]).optional(),
-  date: z.union([z.string(), z.coerce.date()]).optional(),
+  date: z
+    .union([z.string(), z.coerce.date()])
+    .optional()
+    .refine((d) => !d || new Date(d) >= startOfToday(), {
+      message: "La fecha del evento no puede ser anterior a hoy",
+    }),
   endDate: z.union([z.string(), z.coerce.date()]).optional().nullable(),
-  venueId: z.string().optional(),
+  venueId: z.string().optional().nullable().or(z.literal("")),
   doorsOpen: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
   price: z.string().optional().nullable(),
@@ -52,8 +58,10 @@ export async function PATCH(
     const body = await req.json();
     const parsed = updateSchema.safeParse(body);
     if (!parsed.success) {
+      const flat = parsed.error.flatten();
+      const firstMsg = Object.values(flat.fieldErrors).flat()[0] ?? flat.formErrors[0] ?? "Datos inválidos";
       return NextResponse.json(
-        { message: "Datos inválidos", errors: parsed.error.flatten() },
+        { message: firstMsg, errors: flat },
         { status: 400 }
       );
     }
@@ -68,30 +76,47 @@ export async function PATCH(
     const updateData: Record<string, unknown> = {};
     if (data.title != null) updateData.title = data.title;
     if (data.type != null) updateData.type = data.type;
-    if (data.date != null) {
-      const eventDate = new Date(data.date);
-      const check = await canUserCreateEvent(session.user.id, eventDate, id);
+    const newDate = data.date != null ? new Date(data.date) : null;
+    const newEndDate = data.endDate !== undefined
+      ? (data.endDate ? new Date(data.endDate) : null)
+      : undefined;
+    if (newEndDate !== undefined && newEndDate) {
+      const refDate = newDate ?? event.date;
+      if (newEndDate < refDate) {
+        return NextResponse.json(
+          { message: "La fecha de fin debe ser posterior a la de inicio" },
+          { status: 400 }
+        );
+      }
+    }
+    if (newDate != null) {
+      const check = await canUserCreateEvent(session.user.id, newDate, id);
       if (!check.ok) {
         return NextResponse.json({ message: check.message }, { status: 403 });
       }
-      updateData.date = eventDate;
+      updateData.date = newDate;
     }
-    if (data.endDate !== undefined) updateData.endDate = data.endDate ? new Date(data.endDate) : null;
-    if (data.venueId != null) {
-      if (role === "SALA") {
-        const myVenue = user?.venueProfile;
-        if (!myVenue || myVenue.id !== data.venueId) {
-          return NextResponse.json(
-            { message: "Como sala, solo puedes usar tu propia sala." },
-            { status: 403 }
-          );
+    if (newEndDate !== undefined) updateData.endDate = newEndDate;
+    if (data.venueId !== undefined) {
+      const venueId = (data.venueId && data.venueId.trim()) ? data.venueId : null;
+      if (venueId) {
+        if (role === "SALA") {
+          const myVenue = user?.venueProfile;
+          if (!myVenue || myVenue.id !== venueId) {
+            return NextResponse.json(
+              { message: "Como sala, solo puedes usar tu propia sala." },
+              { status: 403 }
+            );
+          }
         }
+        const venue = await prisma.venue.findUnique({ where: { id: venueId } });
+        if (!venue || !venue.approved) {
+          return NextResponse.json({ message: "Sala inválida" }, { status: 400 });
+        }
+        updateData.venueId = venueId;
+      } else {
+        updateData.venueId = null;
       }
-      const venue = await prisma.venue.findUnique({ where: { id: data.venueId } });
-      if (!venue || !venue.approved) {
-        return NextResponse.json({ message: "Sala inválida" }, { status: 400 });
-      }
-      updateData.venueId = data.venueId;
     }
     if (data.doorsOpen !== undefined) updateData.doorsOpen = data.doorsOpen;
     if (data.description !== undefined) updateData.description = data.description;

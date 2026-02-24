@@ -1,7 +1,11 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import { getPromoters } from "@/services/promoter.service";
 import Link from "next/link";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { Pagination } from "@/components/ui/Pagination";
+import { canViewRestrictedEscena } from "@/lib/escena-visibility";
 
 export const metadata = {
   title: "Promotores",
@@ -11,6 +15,11 @@ export const metadata = {
 type Props = { searchParams: Promise<Record<string, string | undefined>> };
 
 export default async function PromotoresPage({ searchParams }: Props) {
+  const session = await getServerSession(authOptions);
+  if (!canViewRestrictedEscena(session)) {
+    redirect("/auth/acceso-escena");
+  }
+
   const params = await searchParams;
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
   const { items: promoters, total } = await getPromoters({ page }, true);

@@ -17,6 +17,11 @@ export default async function DashboardEventosPage() {
   const check = await canUserCreateEvent(session.user.id, new Date());
   const canCreate = check.ok;
 
+  const isAdmin = session.user?.role === "ADMIN";
+  const eventFilter = isAdmin
+    ? { createdByUserId: null }
+    : { createdByUserId: session.user.id };
+
   const [venues, bands, myEvents] = await Promise.all([
     prisma.venue.findMany({
       orderBy: { name: "asc" },
@@ -27,7 +32,7 @@ export default async function DashboardEventosPage() {
       where: { approved: true },
     }),
     prisma.event.findMany({
-      where: { createdByUserId: session.user.id },
+      where: eventFilter,
       orderBy: { date: "desc" },
       include: {
         venue: true,
@@ -52,15 +57,17 @@ export default async function DashboardEventosPage() {
           Mis eventos
         </h1>
         <p className="mt-2 font-body text-punk-white/60">
-          {canCreate
-            ? "Crea eventos y espera la aprobación del administrador."
-            : !check.ok
-              ? check.message
-              : "Listado de tus eventos."}
+          {isAdmin
+            ? "Eventos creados por Nafarrock (sin propietario)."
+            : canCreate
+              ? "Crea eventos y espera la aprobación del administrador."
+              : !check.ok
+                ? check.message
+                : "Listado de tus eventos."}
         </p>
       </div>
 
-      {canCreate && (
+      {canCreate && !isAdmin && (
         <DashboardSection title="Crear evento" accent="red">
           <DashboardEventForm
             venues={venuesForForm}
@@ -70,7 +77,10 @@ export default async function DashboardEventosPage() {
         </DashboardSection>
       )}
 
-      <DashboardSection title={`Tus eventos (${myEvents.length})`} accent="red">
+      <DashboardSection
+        title={isAdmin ? `Eventos Nafarrock (${myEvents.length})` : `Tus eventos (${myEvents.length})`}
+        accent="red"
+      >
         <div className="space-y-3">
           {myEvents.map((e) => (
             <div
@@ -85,7 +95,7 @@ export default async function DashboardEventosPage() {
                   {e.title}
                 </Link>
                 <p className="mt-1 font-body text-sm text-punk-white/60">
-                  {format(e.date, "d MMM yyyy", { locale: es })} · {e.venue.name}
+                  {format(e.date, "d MMM yyyy", { locale: es })} · {e.venue?.name ?? "—"}
                 </p>
                 {e.bands.length > 0 && (
                   <p className="mt-1 font-punch text-xs text-punk-green/80">
@@ -116,7 +126,9 @@ export default async function DashboardEventosPage() {
         </div>
         {myEvents.length === 0 && (
           <p className="py-8 font-body text-center text-punk-white/50">
-            No has creado ningún evento aún.
+            {isAdmin
+              ? "No hay eventos creados por Nafarrock. Créalos desde Administración."
+              : "No has creado ningún evento aún."}
           </p>
         )}
       </DashboardSection>

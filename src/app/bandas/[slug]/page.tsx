@@ -87,7 +87,7 @@ export default async function BandPage({
           </h1>
           {!band.userId && band.createdByNafarrock && (
             <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-red/90">
-              Perfil creado por Nafarrock
+              BANDA REGISTRADA POR NAFARROCK
             </p>
           )}
           <div className="mt-4 flex flex-wrap gap-2">
@@ -148,7 +148,7 @@ export default async function BandPage({
                     >
                       <span className="font-display text-punk-white">{be.event.title}</span>
                       <span className="font-punch text-xs uppercase tracking-widest text-punk-green">
-                        {format(be.event.date, "d MMM yyyy", { locale: es })} · {be.event.venue.name}
+                        {format(be.event.date, "d MMM yyyy", { locale: es })} · {be.event.venue?.name ?? "Por confirmar"}
                       </span>
                     </Link>
                   </li>

@@ -16,9 +16,10 @@ const TYPE_LABELS: Record<string, string> = {
   BAND: "Banda",
   VENUE: "Sala",
   FESTIVAL: "Festival",
+  ASOCIACION: "Asociación / Sociedad",
 };
 
-export function ClaimSearchForm({ type }: { type: "BAND" | "VENUE" | "FESTIVAL" }) {
+export function ClaimSearchForm({ type }: { type: "BAND" | "VENUE" | "FESTIVAL" | "ASOCIACION" }) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
@@ -53,7 +54,9 @@ export function ClaimSearchForm({ type }: { type: "BAND" | "VENUE" | "FESTIVAL" 
       ? (slug: string) => `/bandas/${slug}`
       : type === "VENUE"
         ? (slug: string) => `/salas/${slug}`
-        : (slug: string) => `/festivales/${slug}`;
+        : type === "ASOCIACION"
+          ? (slug: string) => `/asociaciones/${slug}`
+          : (slug: string) => `/festivales/${slug}`;
 
   return (
     <div className="mt-10 max-w-2xl space-y-6">
@@ -72,7 +75,9 @@ export function ClaimSearchForm({ type }: { type: "BAND" | "VENUE" | "FESTIVAL" 
                 ? "Ej: Los Punks"
                 : type === "VENUE"
                   ? "Ej: Sala Totem"
-                  : "Ej: Nafarroa Rock"
+                  : type === "ASOCIACION"
+                    ? "Ej: Asociación Rock"
+                    : "Ej: Nafarroa Rock"
             }
             className="flex-1 border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-red focus:outline-none"
           />

@@ -11,6 +11,7 @@ import {
   Megaphone,
   Building2,
   PartyPopper,
+  Users,
   Sparkles,
   Shield,
   ArrowRight,
@@ -24,6 +25,7 @@ const CARD_ACCENTS = {
   banda: "from-punk-green/20 to-punk-green/5 border-punk-green/40 hover:border-punk-green hover:shadow-[0_0_24px_rgba(0,200,83,0.15)]",
   sala: "from-punk-pink/20 to-punk-pink/5 border-punk-pink/40 hover:border-punk-pink hover:shadow-[0_0_24px_rgba(255,0,110,0.15)]",
   festival: "from-punk-red/20 to-punk-red/5 border-punk-red/40 hover:border-punk-red hover:shadow-[0_0_24px_rgba(230,0,38,0.15)]",
+  asociacion: "from-punk-yellow/20 to-punk-yellow/5 border-punk-yellow/40 hover:border-punk-yellow hover:shadow-[0_0_24px_rgba(255,214,10,0.15)]",
   promotor: "from-punk-pink/20 to-punk-pink/5 border-punk-pink/40 hover:border-punk-pink hover:shadow-[0_0_24px_rgba(255,0,110,0.15)]",
   organizador: "from-punk-yellow/20 to-punk-yellow/5 border-punk-yellow/40 hover:border-punk-yellow hover:shadow-[0_0_24px_rgba(255,214,10,0.15)]",
   eventos: "from-punk-red/20 to-punk-red/5 border-punk-red/40 hover:border-punk-red hover:shadow-[0_0_24px_rgba(230,0,38,0.15)]",
@@ -41,9 +43,23 @@ export default async function DashboardPage({ searchParams }: Props) {
     include: { band: true, venue: true, festival: true },
   });
 
-  const claimEntityName = pendingClaim
-    ? (pendingClaim.band?.name ?? pendingClaim.venue?.name ?? pendingClaim.festival?.name ?? "perfil")
-    : null;
+  let claimEntityName: string | null = null;
+  if (pendingClaim) {
+    claimEntityName =
+      pendingClaim.band?.name ??
+      pendingClaim.venue?.name ??
+      pendingClaim.festival?.name ??
+      null;
+    if (!claimEntityName && pendingClaim.entityType === "ASOCIACION") {
+      const asocId = (pendingClaim as { associationId?: string }).associationId ?? pendingClaim.entityId;
+      const asoc = asocId
+        ? await prisma.asociacion.findUnique({ where: { id: asocId }, select: { name: true } })
+        : null;
+      claimEntityName = asoc?.name ?? "perfil";
+    } else if (!claimEntityName) {
+      claimEntityName = "perfil";
+    }
+  }
 
   return (
     <>
@@ -150,7 +166,25 @@ export default async function DashboardPage({ searchParams }: Props) {
           </Link>
         )}
 
-        {(session.user?.role === "ORGANIZADOR" || session.user?.role === "ADMIN") && (
+        {session.user?.role === "ASOCIACION" && (
+          <Link
+            href="/dashboard/asociacion"
+            className={`group flex flex-col rounded-xl border-2 bg-gradient-to-br p-6 transition-all duration-200 ${CARD_ACCENTS.asociacion}`}
+          >
+            <Users size={28} className="text-punk-yellow/80" />
+            <h2 className="mt-4 font-display text-lg font-semibold text-punk-white">
+              Mi asociación
+            </h2>
+            <p className="mt-2 flex-1 text-sm text-punk-white/60">
+              Editar perfil, logo, redes
+            </p>
+            <span className="mt-4 inline-flex items-center gap-2 font-punch text-xs uppercase tracking-widest text-punk-yellow opacity-0 transition-opacity group-hover:opacity-100">
+              Acceder <ArrowRight size={14} />
+            </span>
+          </Link>
+        )}
+
+        {session.user?.role === "ORGANIZADOR" && (
           <Link
             href="/dashboard/organizador"
             className={`group flex flex-col rounded-xl border-2 bg-gradient-to-br p-6 transition-all duration-200 ${CARD_ACCENTS.organizador}`}
@@ -168,7 +202,7 @@ export default async function DashboardPage({ searchParams }: Props) {
           </Link>
         )}
 
-        {(session.user?.role === "PROMOTOR" || session.user?.role === "ADMIN") && (
+        {session.user?.role === "PROMOTOR" && (
           <Link
             href="/dashboard/promotor"
             className={`group flex flex-col rounded-xl border-2 bg-gradient-to-br p-6 transition-all duration-200 ${CARD_ACCENTS.promotor}`}
@@ -206,6 +240,7 @@ export default async function DashboardPage({ searchParams }: Props) {
 
         {(session.user?.role === "SALA" ||
           session.user?.role === "FESTIVAL" ||
+          session.user?.role === "ASOCIACION" ||
           session.user?.role === "ORGANIZADOR" ||
           session.user?.role === "PROMOTOR" ||
           session.user?.role === "ADMIN") && (

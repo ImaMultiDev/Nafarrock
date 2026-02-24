@@ -24,11 +24,12 @@ const navLinks = [
   { href: "/escena", label: "Escena" },
 ];
 
-const MANUAL_ROLES = ["BANDA", "SALA", "FESTIVAL", "PROMOTOR", "ORGANIZADOR", "ADMIN"];
+const MANUAL_ROLES = ["BANDA", "SALA", "FESTIVAL", "ASOCIACION", "PROMOTOR", "ORGANIZADOR", "ADMIN"];
 const ROLE_TO_MANUAL_SLUG: Record<string, string> = {
   BANDA: "banda",
   SALA: "sala",
   FESTIVAL: "festival",
+  ASOCIACION: "asociacion",
   PROMOTOR: "promotor",
   ORGANIZADOR: "organizador",
   ADMIN: "admin",
@@ -66,7 +67,7 @@ function isActivePath(pathname: string, href: string): boolean {
   if (href === "/bolos") return pathname === "/bolos" || pathname.startsWith("/bolos/");
   if (href === "/bolos-nav") return pathname === "/bolos" || pathname.startsWith("/bolos/");
   if (href === "/escena") {
-    return pathname === "/escena" || pathname.startsWith("/promotores") || pathname.startsWith("/organizadores") || pathname.startsWith("/festivales") || pathname.startsWith("/salas");
+    return pathname === "/escena" || pathname.startsWith("/promotores") || pathname.startsWith("/organizadores") || pathname.startsWith("/festivales") || pathname.startsWith("/asociaciones") || pathname.startsWith("/salas");
   }
   if (href === "/guia") return pathname === "/guia";
   if (href.startsWith("/manual")) return pathname.startsWith("/manual");

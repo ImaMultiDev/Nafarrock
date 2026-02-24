@@ -9,7 +9,7 @@ const inputClass =
 const labelClass = "block font-punch text-xs uppercase tracking-widest text-punk-white/70";
 
 type Props = {
-  advertiserType: "PROMOTER" | "VENUE" | "FESTIVAL" | "ORGANIZER";
+  advertiserType: "PROMOTER" | "VENUE" | "FESTIVAL" | "ASSOCIATION" | "ORGANIZER";
   defaultContactEmail: string;
   defaultZone: string;
   genres: string[];

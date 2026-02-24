@@ -1,6 +1,6 @@
 import { prisma } from "./prisma";
 
-const EVENT_CREATOR_ROLES = ["SALA", "FESTIVAL", "ORGANIZADOR", "PROMOTOR"] as const;
+const EVENT_CREATOR_ROLES = ["SALA", "FESTIVAL", "ASOCIACION", "ORGANIZADOR", "PROMOTOR"] as const;
 const DAYS_BETWEEN_EVENTS = 5;
 
 export type CanCreateEventResult =
@@ -23,6 +23,7 @@ export async function canUserCreateEvent(
     include: {
       venueProfile: true,
       festivalProfile: true,
+      associationProfile: true,
       organizerProfile: true,
       promoterProfile: true,
     },
@@ -35,13 +36,14 @@ export async function canUserCreateEvent(
     return {
       ok: false,
       reason: "no_role",
-      message: "Tu tipo de cuenta no puede crear eventos. Regístrate como sala, festival, organizador o promotor.",
+      message: "Tu tipo de cuenta no puede crear eventos. Regístrate como sala, festival, asociación, organizador o promotor.",
     };
   }
 
   const entity =
     user.venueProfile ??
     user.festivalProfile ??
+    user.associationProfile ??
     user.organizerProfile ??
     user.promoterProfile;
 
@@ -96,12 +98,14 @@ export async function getEventCreatorIds(userId: string): Promise<{
   promoterId?: string;
   organizerId?: string;
   festivalId?: string;
+  associationId?: string;
 }> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
     include: {
       venueProfile: true,
       festivalProfile: true,
+      associationProfile: true,
       organizerProfile: true,
       promoterProfile: true,
     },
@@ -115,6 +119,7 @@ export async function getEventCreatorIds(userId: string): Promise<{
     promoterId?: string;
     organizerId?: string;
     festivalId?: string;
+    associationId?: string;
   } = {};
 
   if (role === "SALA" && user.venueProfile?.approved) {
@@ -128,6 +133,9 @@ export async function getEventCreatorIds(userId: string): Promise<{
   }
   if (role === "FESTIVAL" && user.festivalProfile?.approved) {
     result.festivalId = user.festivalProfile.id;
+  }
+  if (role === "ASOCIACION" && user.associationProfile?.approved) {
+    result.associationId = user.associationProfile.id;
   }
 
   return result;

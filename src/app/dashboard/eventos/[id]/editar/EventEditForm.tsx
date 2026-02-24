@@ -13,6 +13,7 @@ type Event = {
   title: string;
   type: string;
   date: Date;
+  endDate: Date | null;
   doorsOpen: string | null;
   description: string | null;
   price: string | null;
@@ -24,7 +25,7 @@ type Event = {
   imageUrl: string | null;
   images: string[];
   isSoldOut: boolean;
-  venueId: string;
+  venueId: string | null;
   bands: { band: { id: string } }[];
 };
 type Venue = { id: string; name: string };
@@ -44,10 +45,21 @@ export function EventEditForm({
   const [error, setError] = useState<string | null>(null);
   const [imageUrl, setImageUrl] = useState(event.imageUrl ?? "");
   const [images, setImages] = useState<string[]>(event.images ?? []);
+  const [isMultiDay, setIsMultiDay] = useState(!!event.endDate);
 
   const dateLocal = new Date(event.date);
   dateLocal.setMinutes(dateLocal.getMinutes() - dateLocal.getTimezoneOffset());
   const dateStr = dateLocal.toISOString().slice(0, 16);
+
+  const endDateLocal = event.endDate ? new Date(event.endDate) : null;
+  const endDateStr = endDateLocal
+    ? (() => {
+        const d = new Date(endDateLocal);
+        d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+        return d.toISOString().slice(0, 16);
+      })()
+    : "";
+
   const bandIds = event.bands.map((be) => be.band.id);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -58,6 +70,13 @@ export function EventEditForm({
     const formData = new FormData(form);
     const selectedBandIds = formData.getAll("bandIds") as string[];
     const date = new Date(formData.get("date") as string);
+    const endDateVal = formData.get("endDate") as string;
+    const endDate = isMultiDay && endDateVal ? new Date(endDateVal).toISOString() : null;
+    if (isMultiDay && endDateVal && new Date(endDateVal) < date) {
+      setError("La fecha de fin debe ser posterior a la de inicio");
+      setLoading(false);
+      return;
+    }
 
     const res = await fetch(`/api/dashboard/events/${event.id}`, {
       method: "PATCH",
@@ -66,7 +85,7 @@ export function EventEditForm({
         title: formData.get("title"),
         type: formData.get("type"),
         date: date.toISOString(),
-        endDate: formData.get("endDate") ? new Date(formData.get("endDate") as string).toISOString() : null,
+        endDate,
         venueId: formData.get("venueId"),
         doorsOpen: formData.get("doorsOpen") || null,
         description: formData.get("description") || null,
@@ -117,19 +136,46 @@ export function EventEditForm({
           <option value="FESTIVAL">Festival</option>
         </select>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label htmlFor="date" className={labelClass}>Fecha *</label>
-          <input id="date" name="date" type="datetime-local" required defaultValue={dateStr} className={inputClass} />
-        </div>
-        <div>
-          <label htmlFor="doorsOpen" className={labelClass}>Puertas</label>
-          <input id="doorsOpen" name="doorsOpen" type="text" defaultValue={event.doorsOpen ?? ""} className={inputClass} placeholder="20:00" />
+      <div>
+        <label className={labelClass}>Duración del evento</label>
+        <div className="mt-2 flex gap-6">
+          <label className="flex cursor-pointer items-center gap-2">
+            <input type="radio" name="duration" checked={!isMultiDay} onChange={() => setIsMultiDay(false)} className="accent-punk-red" />
+            <span className="font-body text-punk-white/90">Un día</span>
+          </label>
+          <label className="flex cursor-pointer items-center gap-2">
+            <input type="radio" name="duration" checked={isMultiDay} onChange={() => setIsMultiDay(true)} className="accent-punk-red" />
+            <span className="font-body text-punk-white/90">Varios días</span>
+          </label>
         </div>
       </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label htmlFor="date" className={labelClass}>{isMultiDay ? "Fecha de inicio *" : "Fecha y hora *"}</label>
+          <input id="date" name="date" type="datetime-local" required defaultValue={dateStr} min={new Date().toISOString().slice(0, 16)} className={inputClass} />
+        </div>
+        {isMultiDay ? (
+          <div>
+            <label htmlFor="endDate" className={labelClass}>Fecha de fin *</label>
+            <input id="endDate" name="endDate" type="datetime-local" required={isMultiDay} defaultValue={endDateStr} min={new Date().toISOString().slice(0, 16)} className={inputClass} />
+          </div>
+        ) : (
+          <div>
+            <label htmlFor="doorsOpen" className={labelClass}>Puertas</label>
+            <input id="doorsOpen" name="doorsOpen" type="text" defaultValue={event.doorsOpen ?? ""} className={inputClass} placeholder="20:00" />
+          </div>
+        )}
+      </div>
+      {isMultiDay && (
+        <div>
+          <label htmlFor="doorsOpen" className={labelClass}>Puertas (opcional)</label>
+          <input id="doorsOpen" name="doorsOpen" type="text" defaultValue={event.doorsOpen ?? ""} className={inputClass} placeholder="18:00 cada día" />
+        </div>
+      )}
       <div>
-        <label htmlFor="venueId" className={labelClass}>Sala *</label>
-        <select id="venueId" name="venueId" required defaultValue={event.venueId} className={inputClass}>
+        <label htmlFor="venueId" className={labelClass}>Sala (opcional)</label>
+        <select id="venueId" name="venueId" defaultValue={event.venueId ?? ""} className={inputClass}>
+          <option value="">Sin sala / Por confirmar</option>
           {venues.map((v) => (
             <option key={v.id} value={v.id}>{v.name}</option>
           ))}

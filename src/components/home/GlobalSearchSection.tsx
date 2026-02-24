@@ -2,11 +2,23 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { canViewRestrictedEscena } from "@/lib/escena-visibility";
 import { Search } from "lucide-react";
 
 export function GlobalSearchSection() {
   const [query, setQuery] = useState("");
   const router = useRouter();
+  const { data: session } = useSession();
+  const showRestricted = canViewRestrictedEscena(session ?? null);
+
+  const searchHint = showRestricted
+    ? "Bandas · Eventos · Salas · Festivales · Promotores · Organizadores"
+    : "Bandas · Eventos · Salas · Festivales";
+
+  const labelText = showRestricted
+    ? "Buscar bandas, eventos, salas, festivales, promotores, organizadores"
+    : "Buscar bandas, eventos, salas y festivales";
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,7 +31,7 @@ export function GlobalSearchSection() {
       <div className="mx-auto max-w-2xl">
         <form onSubmit={handleSubmit} className="relative">
           <label htmlFor="global-search" className="sr-only">
-            Buscar bandas, eventos, salas, festivales, promotores, organizadores
+            {labelText}
           </label>
           <input
             id="global-search"
@@ -41,7 +53,7 @@ export function GlobalSearchSection() {
           </button>
         </form>
         <p className="mt-2 text-center font-body text-xs text-punk-white/50">
-          Bandas · Eventos · Salas · Festivales · Promotores · Organizadores
+          {searchHint}
         </p>
       </div>
     </section>

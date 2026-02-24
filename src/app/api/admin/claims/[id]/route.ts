@@ -24,7 +24,7 @@ export async function PATCH(
 
     const claim = await prisma.profileClaim.findUnique({
       where: { id },
-      include: { user: true, band: true, venue: true, festival: true },
+      include: { user: true, band: true, venue: true, festival: true, association: true },
     });
     if (!claim) return NextResponse.json({ message: "Solicitud no encontrada" }, { status: 404 });
     if (claim.status !== "PENDING_CLAIM") {
@@ -32,7 +32,7 @@ export async function PATCH(
     }
 
     if (action === "reject") {
-      const entityName = claim.band?.name ?? claim.venue?.name ?? claim.festival?.name ?? "perfil";
+      const entityName = claim.band?.name ?? claim.venue?.name ?? claim.festival?.name ?? claim.association?.name ?? "perfil";
       const entityType = claim.entityType;
 
       await prisma.profileClaim.update({
@@ -166,6 +166,43 @@ export async function PATCH(
       ]);
 
       await sendClaimApprovedEmail(claim.user.email, festival.name, "FESTIVAL");
+    } else if (claim.associationId) {
+      const association = claim.association!;
+      if (association.userId) {
+        return NextResponse.json({ message: "La asociación ya tiene propietario" }, { status: 400 });
+      }
+      await prisma.$transaction([
+        prisma.asociacion.update({
+          where: { id: association.id },
+          data: {
+            userId: claim.userId,
+            createdByNafarrock: false,
+            approved: true,
+            approvedAt: new Date(),
+            approvedBy: session.user.id,
+            ...(useClaimImages && claim.claimLogoUrl && { logoUrl: claim.claimLogoUrl }),
+            ...(useClaimImages && claim.claimImages && claim.claimImages.length > 0 && { images: claim.claimImages }),
+          },
+        }),
+        prisma.user.update({
+          where: { id: claim.userId },
+          data: { role: "ASOCIACION" },
+        }),
+        prisma.event.updateMany({
+          where: { associationId: association.id, createdByUserId: null },
+          data: { createdByUserId: claim.userId, createdByNafarrock: false },
+        }),
+        prisma.profileClaim.update({
+          where: { id },
+          data: {
+            status: "APPROVED",
+            processedAt: new Date(),
+            processedBy: session.user.id,
+          },
+        }),
+      ]);
+
+      await sendClaimApprovedEmail(claim.user.email, association.name, "ASOCIACION");
     }
 
     return NextResponse.json({ success: true });

@@ -18,7 +18,7 @@ const createSchema = z.object({
   equipmentInfo: z.string().optional(),
   technicalInfo: z.string().optional(),
   extraInfo: z.string().optional(),
-  advertiserType: z.enum(["PROMOTER", "VENUE", "FESTIVAL", "ORGANIZER"]),
+  advertiserType: z.enum(["PROMOTER", "VENUE", "FESTIVAL", "ASSOCIATION", "ORGANIZER"]),
 });
 
 export async function POST(req: Request) {
@@ -158,6 +158,50 @@ export async function POST(req: Request) {
           genres: data.genres,
           advertiserType: "FESTIVAL",
           festivalId: festival.id,
+          contactEmail: data.contactEmail,
+          contactInfo: data.contactInfo || null,
+          enableApplicationForm: data.enableApplicationForm ?? false,
+          cacheInfo: data.cacheInfo || null,
+          equipmentInfo: data.equipmentInfo || null,
+          technicalInfo: data.technicalInfo || null,
+          extraInfo: data.extraInfo || null,
+          status: "PENDING",
+        },
+      });
+      return NextResponse.json(ann);
+    }
+
+    if (data.advertiserType === "ASSOCIATION") {
+      const association = await prisma.asociacion.findFirst({
+        where: { userId: session.user.id },
+      });
+      if (!association) {
+        return NextResponse.json({ message: "No tienes perfil de asociación" }, { status: 403 });
+      }
+      if (!association.approved) {
+        return NextResponse.json({ message: "Tu perfil debe estar aprobado" }, { status: 403 });
+      }
+      const recent = await prisma.announcement.findFirst({
+        where: {
+          associationId: association.id,
+          createdAt: { gte: cooldownDate },
+        },
+      });
+      if (recent) {
+        return NextResponse.json(
+          { message: `Debes esperar ${CONVOCATORIA_COOLDOWN_DAYS} días entre anuncios` },
+          { status: 400 }
+        );
+      }
+
+      const ann = await prisma.announcement.create({
+        data: {
+          title: data.title,
+          description: data.description,
+          zone: data.zone || association.location,
+          genres: data.genres,
+          advertiserType: "ASSOCIATION",
+          associationId: association.id,
           contactEmail: data.contactEmail,
           contactInfo: data.contactInfo || null,
           enableApplicationForm: data.enableApplicationForm ?? false,

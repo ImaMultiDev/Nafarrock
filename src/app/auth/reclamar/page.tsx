@@ -14,7 +14,7 @@ type Props = {
 
 export default async function ReclamarPage({ searchParams }: Props) {
   const params = await searchParams;
-  const type = (params.type as "BAND" | "VENUE" | "FESTIVAL") || undefined;
+  const type = (params.type as "BAND" | "VENUE" | "FESTIVAL" | "ASOCIACION") || undefined;
 
   return (
     <PageLayout>
@@ -28,7 +28,7 @@ export default async function ReclamarPage({ searchParams }: Props) {
         RECLAMAR
       </h1>
       <p className="mt-3 max-w-xl font-body text-punk-white/60">
-        Si tu banda, sala o festival ya aparece en Nafarrock (creado por el equipo),
+        Si tu banda, sala, festival o asociación ya aparece en Nafarrock (creado por el equipo),
         puedes reclamarlo para gestionarlo tú mismo.
       </p>
 

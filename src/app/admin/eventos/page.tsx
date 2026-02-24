@@ -2,8 +2,13 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { isValid } from "date-fns";
 import { ApproveButton } from "@/components/admin/ApproveButton";
 import { DeleteButton } from "@/components/admin/DeleteButton";
+
+function safeFormatDate(d: Date): string {
+  return isValid(d) ? format(d, "d MMM yyyy", { locale: es }) : "—";
+}
 
 export default async function AdminEventosPage() {
   const events = await prisma.event.findMany({
@@ -49,11 +54,11 @@ export default async function AdminEventosPage() {
                 {e.title}
               </Link>
               <p className="mt-1 font-body text-sm text-punk-white/60">
-                {format(e.date, "d MMM yyyy", { locale: es })} · {e.venue.name}
+                {safeFormatDate(e.date)} · {e.venue?.name ?? "—"}
               </p>
               {e.bands.length > 0 && (
                 <p className="mt-1 font-punch text-xs text-punk-green/80">
-                  {e.bands.map((be) => be.band.name).join(" + ")}
+                  {e.bands.map((be) => be.band?.name ?? "—").filter(Boolean).join(" + ")}
                 </p>
               )}
             </div>

@@ -4,14 +4,18 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { uniqueSlug } from "@/lib/slug";
 import { canUserCreateEvent } from "@/lib/validated-event";
+import { startOfToday } from "@/lib/date";
 import { z } from "zod";
 
 const createSchema = z.object({
   title: z.string().min(1),
   type: z.enum(["CONCIERTO", "FESTIVAL"]),
-  date: z.union([z.string(), z.coerce.date()]),
+  date: z.union([z.string(), z.coerce.date()]).refine(
+    (d) => new Date(d) >= startOfToday(),
+    { message: "La fecha del evento no puede ser anterior a hoy" }
+  ),
   endDate: z.union([z.string(), z.coerce.date()]).optional(),
-  venueId: z.string().min(1),
+  venueId: z.string().optional().nullable().or(z.literal("")),
   doorsOpen: z.string().optional(),
   description: z.string().optional(),
   price: z.string().optional(),
@@ -36,14 +40,23 @@ export async function POST(req: Request) {
     const body = await req.json();
     const parsed = createSchema.safeParse(body);
     if (!parsed.success) {
+      const flat = parsed.error.flatten();
+      const firstMsg = Object.values(flat.fieldErrors).flat()[0] ?? flat.formErrors[0] ?? "Datos inválidos";
       return NextResponse.json(
-        { message: "Datos inválidos", errors: parsed.error.flatten() },
+        { message: firstMsg, errors: flat },
         { status: 400 }
       );
     }
     const data = parsed.data;
 
     const eventDate = new Date(data.date);
+    const eventEndDate = data.endDate ? new Date(data.endDate) : null;
+    if (eventEndDate && eventEndDate < eventDate) {
+      return NextResponse.json(
+        { message: "La fecha de fin debe ser posterior a la de inicio" },
+        { status: 400 }
+      );
+    }
     const check = await canUserCreateEvent(session.user.id, eventDate);
     if (!check.ok) {
       return NextResponse.json({ message: check.message }, { status: 403 });
@@ -56,14 +69,17 @@ export async function POST(req: Request) {
         promoterProfile: true,
         organizerProfile: true,
         festivalProfile: true,
+        associationProfile: true,
       },
     });
 
     const role = user?.role as string;
 
-    if (role === "SALA") {
+    const venueId = (data.venueId && data.venueId.trim()) ? data.venueId : null;
+
+    if (role === "SALA" && venueId) {
       const myVenue = user?.venueProfile;
-      if (!myVenue || myVenue.id !== data.venueId) {
+      if (!myVenue || myVenue.id !== venueId) {
         return NextResponse.json(
           { message: "Como sala, solo puedes crear eventos en tu propia sala." },
           { status: 403 }
@@ -71,14 +87,16 @@ export async function POST(req: Request) {
       }
     }
 
-    const venue = await prisma.venue.findUnique({
-      where: { id: data.venueId },
-    });
-    if (!venue || !venue.approved) {
-      return NextResponse.json(
-        { message: "La sala seleccionada no existe o no está aprobada." },
-        { status: 400 }
-      );
+    if (venueId) {
+      const venue = await prisma.venue.findUnique({
+        where: { id: venueId },
+      });
+      if (!venue || !venue.approved) {
+        return NextResponse.json(
+          { message: "La sala seleccionada no existe o no está aprobada." },
+          { status: 400 }
+        );
+      }
     }
 
     const slug = await uniqueSlug(
@@ -92,8 +110,8 @@ export async function POST(req: Request) {
         title: data.title,
         type: data.type,
         date: eventDate,
-        endDate: data.endDate ? new Date(data.endDate) : null,
-        venueId: data.venueId,
+        endDate: eventEndDate,
+        venueId,
         doorsOpen: data.doorsOpen || null,
         description: data.description || null,
         price: data.price || null,
@@ -110,6 +128,7 @@ export async function POST(req: Request) {
         promoterId: role === "PROMOTOR" ? user?.promoterProfile?.id : undefined,
         organizerId: role === "ORGANIZADOR" ? user?.organizerProfile?.id : undefined,
         festivalId: role === "FESTIVAL" ? user?.festivalProfile?.id : undefined,
+        associationId: role === "ASOCIACION" ? user?.associationProfile?.id : undefined,
         bands: {
           create: (data.bandIds ?? []).map((bandId, i) => ({
             bandId,

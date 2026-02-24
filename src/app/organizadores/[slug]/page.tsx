@@ -1,6 +1,10 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import { getOrganizerBySlug } from "@/services/organizer.service";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { canViewRestrictedEscena } from "@/lib/escena-visibility";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { PageLayout } from "@/components/ui/PageLayout";
@@ -28,6 +32,11 @@ export default async function OrganizerPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  const session = await getServerSession(authOptions);
+  if (!canViewRestrictedEscena(session)) {
+    redirect("/auth/acceso-escena");
+  }
+
   const { slug } = await params;
   const organizer = await getOrganizerBySlug(slug);
   if (!organizer) notFound();
@@ -98,7 +107,7 @@ export default async function OrganizerPage({
                   </span>
                   <span className="font-punch text-xs uppercase tracking-widest text-punk-green">
                     {format(evt.date, "d MMM yyyy", { locale: es })} ·{" "}
-                    {evt.venue.name}
+                    {evt.venue?.name ?? "Por confirmar"}
                   </span>
                 </Link>
               </li>

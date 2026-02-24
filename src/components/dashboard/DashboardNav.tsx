@@ -10,6 +10,7 @@ import {
   Megaphone,
   Building2,
   PartyPopper,
+  Users,
   Sparkles,
   FilePlus,
 } from "lucide-react";
@@ -17,7 +18,7 @@ import {
 export type NavItem = {
   href: string;
   label: string;
-  icon: "dashboard" | "perfil" | "eventos" | "banda" | "sala" | "festival" | "promotor" | "organizador" | "anuncio";
+  icon: "dashboard" | "perfil" | "eventos" | "banda" | "sala" | "festival" | "asociacion" | "promotor" | "organizador" | "anuncio";
   accent?: "green" | "pink" | "red" | "yellow";
 };
 
@@ -28,6 +29,7 @@ const ICONS = {
   banda: Music2,
   sala: Building2,
   festival: PartyPopper,
+  asociacion: Users,
   promotor: Megaphone,
   organizador: Sparkles,
   anuncio: FilePlus,

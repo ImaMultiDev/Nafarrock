@@ -1,24 +1,35 @@
 import Link from "next/link";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { getPromoters } from "@/services/promoter.service";
 import { getOrganizers } from "@/services/organizer.service";
 import { getFestivals } from "@/services/festival.service";
+import { getAssociations } from "@/services/association.service";
 import { getVenues } from "@/services/venue.service";
 import { PageLayout } from "@/components/ui/PageLayout";
+import { canViewRestrictedEscena } from "@/lib/escena-visibility";
 
 export const metadata = {
   title: "Escena",
   description: "Salas, promotores, organizadores y festivales de la escena rock nafarroa",
 };
 
+// Tipos visibles solo para bandas, salas, festivales y perfiles de la escena
+const RESTRICTED_TIPOS = ["promotor", "organizador", "asociacion"];
+
 export default async function EscenaPage() {
-  const [promotersRes, organizersRes, festivalsRes, venuesRes] = await Promise.all([
-    getPromoters({ pageSize: 1 }, true),
-    getOrganizers({ pageSize: 1 }, true),
+  const session = await getServerSession(authOptions);
+  const showRestricted = canViewRestrictedEscena(session);
+
+  const [promotersRes, organizersRes, festivalsRes, associationsRes, venuesRes] = await Promise.all([
+    showRestricted ? getPromoters({ pageSize: 1 }, true) : { total: 0 },
+    showRestricted ? getOrganizers({ pageSize: 1 }, true) : { total: 0 },
     getFestivals({ pageSize: 1 }, true),
+    showRestricted ? getAssociations({ pageSize: 1 }, true) : { total: 0 },
     getVenues({ pageSize: 1 }),
   ]);
 
-  const escenaItems = [
+  const allItems = [
     {
       tipo: "sala",
       label: "Salas / Recintos",
@@ -51,7 +62,19 @@ export default async function EscenaPage() {
       color: "punk-red",
       desc: "Festivales de la escena",
     },
+    {
+      tipo: "asociacion",
+      label: "Asociaciones y Sociedades",
+      href: "/asociaciones",
+      count: associationsRes.total,
+      color: "punk-yellow",
+      desc: "Asociaciones y sociedades culturales",
+    },
   ];
+
+  const escenaItems = showRestricted
+    ? allItems
+    : allItems.filter((item) => !RESTRICTED_TIPOS.includes(item.tipo));
 
   return (
     <PageLayout>
@@ -60,7 +83,9 @@ export default async function EscenaPage() {
           ESCENA
         </h1>
         <p className="mt-3 max-w-xl font-body text-punk-white/60 sm:mt-4">
-          Salas, promotores, organizadores y festivales que hacen posible la escena rock nafarroa.
+          {showRestricted
+            ? "Salas, promotores, organizadores, festivales y asociaciones que hacen posible la escena rock nafarroa."
+            : "Salas y festivales de la escena rock nafarroa."}
         </p>
       </div>
 
@@ -76,6 +101,8 @@ export default async function EscenaPage() {
                 ? "border-punk-green hover:shadow-[0_0_40px_rgba(0,200,83,0.2)]"
                 : item.color === "punk-red"
                 ? "border-punk-red hover:shadow-[0_0_40px_rgba(230,0,38,0.2)]"
+                : item.color === "punk-yellow"
+                ? "border-punk-yellow hover:shadow-[0_0_40px_rgba(255,214,10,0.2)]"
                 : "border-punk-acid hover:shadow-[0_0_40px_rgba(200,255,0,0.2)]"
             }`}
           >
@@ -87,6 +114,8 @@ export default async function EscenaPage() {
                   ? "text-punk-green"
                   : item.color === "punk-red"
                   ? "text-punk-red"
+                  : item.color === "punk-yellow"
+                  ? "text-punk-yellow"
                   : "text-punk-acid"
               }`}
             >
@@ -106,6 +135,8 @@ export default async function EscenaPage() {
                     ? "text-punk-green"
                     : item.color === "punk-red"
                     ? "text-punk-red"
+                    : item.color === "punk-yellow"
+                    ? "text-punk-yellow"
                     : "text-punk-acid"
                 }`}
               >

@@ -67,7 +67,7 @@ export default async function FestivalPage({
           </h1>
           {!festival.userId && festival.createdByNafarrock && (
             <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-red/90">
-              Perfil creado por Nafarrock
+              FESTIVAL REGISTRADO POR NAFARROCK
             </p>
           )}
           {festival.location && (
@@ -117,7 +117,7 @@ export default async function FestivalPage({
                 >
                   <span className="font-display text-punk-white">{evt.title}</span>
                   <span className="font-punch text-xs uppercase tracking-widest text-punk-red">
-                    {format(evt.date, "d MMM yyyy", { locale: es })} · {evt.venue.name}
+                    {format(evt.date, "d MMM yyyy", { locale: es })} · {evt.venue?.name ?? "Por confirmar"}
                   </span>
                 </Link>
               </li>
