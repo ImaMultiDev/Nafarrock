@@ -80,6 +80,13 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
+        if (token.role === "BANDA" && token.id) {
+          const band = await prisma.band.findUnique({
+            where: { userId: token.id as string },
+            select: { approved: true },
+          });
+          session.user.bandApproved = band?.approved ?? false;
+        }
       }
       return session;
     },

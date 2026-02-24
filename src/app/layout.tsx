@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Bebas_Neue, Space_Mono } from "next/font/google";
 import { Providers } from "@/components/providers/Providers";
 import { Header } from "@/components/ui/Header";
+import { BandVerificationBanner } from "@/components/BandVerificationBanner";
 import { FooterSection } from "@/components/home/FooterSection";
 import "./globals.css";
 
@@ -55,6 +56,7 @@ export default function RootLayout({
         <div className="noise-overlay" aria-hidden />
         <Providers>
           <Header />
+          <BandVerificationBanner />
           {children}
           <FooterSection />
         </Providers>
