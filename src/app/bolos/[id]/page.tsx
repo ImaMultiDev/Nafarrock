@@ -1,4 +1,6 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import Link from "next/link";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { getAnnouncementById } from "@/services/announcement.service";
@@ -24,6 +26,12 @@ export default async function AnnouncementPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const session = await getServerSession(authOptions);
+  const effectiveRole = session?.user?.effectiveRole ?? session?.user?.role;
+  const isAdmin = session?.user?.role === "ADMIN";
+  const canSeeBolos = effectiveRole === "BANDA" || isAdmin;
+  if (!canSeeBolos) redirect("/bolos");
+
   const announcement = await getAnnouncementById(id);
   if (!announcement) notFound();
 

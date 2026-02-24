@@ -105,10 +105,10 @@ export function HeroSection() {
               Ver bandas
             </Link>
             <Link
-              href="/salas"
+              href="/bolos"
               className="border-2 border-punk-white/40 bg-transparent px-8 py-4 font-punch text-sm uppercase tracking-widest text-punk-white/90 transition-all duration-300 hover:border-punk-white hover:bg-punk-white/10 hover:text-punk-white"
             >
-              Salas
+              VER BOLOS
             </Link>
           </motion.div>
         </motion.div>

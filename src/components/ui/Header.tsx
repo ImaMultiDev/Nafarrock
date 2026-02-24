@@ -74,9 +74,9 @@ function isActivePath(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(href + "/");
 }
 
-/** Roles que pueden ver el enlace Contacto (todos excepto USUARIO) */
-function canSeeContact(role?: string | null): boolean {
-  return !!role && role !== "USUARIO";
+/** Roles que pueden ver el enlace Contacto (usa effectiveRole: sin aprobar = USUARIO) */
+function canSeeContact(effectiveRole?: string | null): boolean {
+  return !!effectiveRole && effectiveRole !== "USUARIO";
 }
 
 export function Header() {
@@ -147,7 +147,7 @@ export function Header() {
               </Link>
             );
           })}
-          {session?.user?.role === "BANDA" && (
+          {session && (
             <Link
               href="/bolos"
               className={`relative shrink-0 rounded border-2 px-3 py-1.5 font-punch text-xs uppercase tracking-widest transition-colors ${
@@ -175,7 +175,7 @@ export function Header() {
               </Link>
             );
           })()}
-          {session && canSeeContact(session.user?.role) && (
+          {session && canSeeContact(session.user?.effectiveRole ?? session.user?.role) && (
             <Link
               href="/contacto"
               className={`relative font-punch text-xs uppercase tracking-widest transition-colors hover:text-punk-green ${
@@ -278,7 +278,7 @@ export function Header() {
                 </Link>
               );
             })}
-            {session?.user?.role === "BANDA" && (
+            {session && (
               <Link
                 href="/bolos"
                 onClick={() => setMenuOpen(false)}
@@ -308,7 +308,7 @@ export function Header() {
                 </Link>
               );
             })()}
-            {session && canSeeContact(session.user?.role) && (
+            {session && canSeeContact(session.user?.effectiveRole ?? session.user?.role) && (
               <Link
                 href="/contacto"
                 onClick={() => setMenuOpen(false)}

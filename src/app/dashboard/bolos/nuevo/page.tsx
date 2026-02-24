@@ -10,6 +10,10 @@ const GENRES = ["punk", "rock urbano", "grunge", "hardcore", "indie", "alternati
 export default async function NuevoBoloPage() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/auth/login");
+  const effectiveRole = session.user?.effectiveRole ?? session.user?.role;
+  if (effectiveRole === "USUARIO" || !["PROMOTOR", "SALA", "FESTIVAL", "ASOCIACION", "ORGANIZADOR", "ADMIN"].includes(effectiveRole ?? "")) {
+    redirect("/dashboard");
+  }
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },

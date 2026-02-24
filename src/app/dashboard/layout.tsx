@@ -29,7 +29,7 @@ export default async function DashboardLayout({
     redirect("/auth/login?deleted=pending");
   }
 
-  const role = user?.role ?? "";
+  const role = (session.user?.effectiveRole as string) ?? user?.role ?? "";
   const canPublishBolos = ["PROMOTOR", "SALA", "FESTIVAL", "ASOCIACION", "ORGANIZADOR"].includes(role);
 
   const navItems: NavItem[] = [

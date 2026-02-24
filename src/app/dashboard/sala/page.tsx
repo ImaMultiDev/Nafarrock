@@ -9,6 +9,7 @@ import { DashboardSection } from "@/components/dashboard/DashboardSection";
 export default async function DashboardSalaPage() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/auth/login");
+  if ((session.user?.effectiveRole ?? session.user?.role) === "USUARIO") redirect("/dashboard");
 
   const isAdmin = session.user?.role === "ADMIN";
 

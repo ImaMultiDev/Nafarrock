@@ -14,6 +14,9 @@ declare module "next-auth" {
       image?: string | null;
       role?: string;
       bandApproved?: boolean;
+      profileApproved?: boolean;
+      /** Rol efectivo para permisos: USUARIO si el perfil no está aprobado */
+      effectiveRole?: string;
     };
   }
 }
@@ -22,5 +25,7 @@ declare module "next-auth/jwt" {
   interface JWT {
     role?: string;
     id?: string;
+    profileApproved?: boolean;
+    effectiveRole?: string;
   }
 }

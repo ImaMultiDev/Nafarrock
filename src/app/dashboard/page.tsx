@@ -112,7 +112,7 @@ export default async function DashboardPage({ searchParams }: Props) {
           </span>
         </Link>
 
-        {session.user?.role === "ADMIN" && (
+        {(session.user?.effectiveRole ?? session.user?.role) === "ADMIN" && (
           <Link
             href="/admin"
             className={`group flex flex-col rounded-xl border-2 bg-gradient-to-br p-6 transition-all duration-200 ${CARD_ACCENTS.admin}`}
@@ -130,7 +130,7 @@ export default async function DashboardPage({ searchParams }: Props) {
           </Link>
         )}
 
-        {(session.user?.role === "BANDA" || session.user?.role === "ADMIN") && (
+        {((session.user?.effectiveRole ?? session.user?.role) === "BANDA" || (session.user?.effectiveRole ?? session.user?.role) === "ADMIN") && (
           <Link
             href="/dashboard/banda"
             className={`group flex flex-col rounded-xl border-2 bg-gradient-to-br p-6 transition-all duration-200 ${CARD_ACCENTS.banda}`}
@@ -148,7 +148,7 @@ export default async function DashboardPage({ searchParams }: Props) {
           </Link>
         )}
 
-        {(session.user?.role === "FESTIVAL" || session.user?.role === "ADMIN") && (
+        {((session.user?.effectiveRole ?? session.user?.role) === "FESTIVAL" || (session.user?.effectiveRole ?? session.user?.role) === "ADMIN") && (
           <Link
             href="/dashboard/festival"
             className={`group flex flex-col rounded-xl border-2 bg-gradient-to-br p-6 transition-all duration-200 ${CARD_ACCENTS.festival}`}
@@ -166,7 +166,7 @@ export default async function DashboardPage({ searchParams }: Props) {
           </Link>
         )}
 
-        {session.user?.role === "ASOCIACION" && (
+        {(session.user?.effectiveRole ?? session.user?.role) === "ASOCIACION" && (
           <Link
             href="/dashboard/asociacion"
             className={`group flex flex-col rounded-xl border-2 bg-gradient-to-br p-6 transition-all duration-200 ${CARD_ACCENTS.asociacion}`}
@@ -184,7 +184,7 @@ export default async function DashboardPage({ searchParams }: Props) {
           </Link>
         )}
 
-        {session.user?.role === "ORGANIZADOR" && (
+        {(session.user?.effectiveRole ?? session.user?.role) === "ORGANIZADOR" && (
           <Link
             href="/dashboard/organizador"
             className={`group flex flex-col rounded-xl border-2 bg-gradient-to-br p-6 transition-all duration-200 ${CARD_ACCENTS.organizador}`}
@@ -220,7 +220,7 @@ export default async function DashboardPage({ searchParams }: Props) {
           </Link>
         )}
 
-        {(session.user?.role === "SALA" || session.user?.role === "ADMIN") && (
+        {((session.user?.effectiveRole ?? session.user?.role) === "SALA" || (session.user?.effectiveRole ?? session.user?.role) === "ADMIN") && (
           <Link
             href="/dashboard/sala"
             className={`group flex flex-col rounded-xl border-2 bg-gradient-to-br p-6 transition-all duration-200 ${CARD_ACCENTS.sala}`}
@@ -238,12 +238,12 @@ export default async function DashboardPage({ searchParams }: Props) {
           </Link>
         )}
 
-        {(session.user?.role === "SALA" ||
-          session.user?.role === "FESTIVAL" ||
-          session.user?.role === "ASOCIACION" ||
-          session.user?.role === "ORGANIZADOR" ||
-          session.user?.role === "PROMOTOR" ||
-          session.user?.role === "ADMIN") && (
+        {((session.user?.effectiveRole ?? session.user?.role) === "SALA" ||
+          (session.user?.effectiveRole ?? session.user?.role) === "FESTIVAL" ||
+          (session.user?.effectiveRole ?? session.user?.role) === "ASOCIACION" ||
+          (session.user?.effectiveRole ?? session.user?.role) === "ORGANIZADOR" ||
+          (session.user?.effectiveRole ?? session.user?.role) === "PROMOTOR" ||
+          (session.user?.effectiveRole ?? session.user?.role) === "ADMIN") && (
           <Link
             href="/dashboard/eventos"
             className={`group flex flex-col rounded-xl border-2 bg-gradient-to-br p-6 transition-all duration-200 ${CARD_ACCENTS.eventos}`}
@@ -261,7 +261,7 @@ export default async function DashboardPage({ searchParams }: Props) {
           </Link>
         )}
 
-        {session.user?.role === "USUARIO" && (
+        {(session.user?.effectiveRole ?? session.user?.role) === "USUARIO" && (
           <div className="col-span-full rounded-xl border-2 border-punk-white/10 bg-punk-black/40 p-8">
             <p className="font-body text-punk-white/50">
               Regístrate como banda, sala o promotor para más opciones.

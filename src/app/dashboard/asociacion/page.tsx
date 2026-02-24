@@ -8,7 +8,8 @@ import { DashboardSection } from "@/components/dashboard/DashboardSection";
 export default async function DashboardAsociacionPage() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/auth/login");
-  if (session.user?.role === "ADMIN") redirect("/dashboard");
+  if ((session.user?.effectiveRole ?? session.user?.role) === "ADMIN") redirect("/dashboard");
+  if ((session.user?.effectiveRole ?? session.user?.role) === "USUARIO") redirect("/dashboard");
 
   const association = await prisma.asociacion.findFirst({
     where: { userId: session.user.id },

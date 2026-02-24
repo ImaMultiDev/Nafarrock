@@ -13,6 +13,8 @@ import { es } from "date-fns/locale";
 export default async function DashboardEventosPage() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/auth/login");
+  const effectiveRole = session.user?.effectiveRole ?? session.user?.role;
+  if (effectiveRole === "USUARIO") redirect("/dashboard");
 
   const check = await canUserCreateEvent(session.user.id, new Date());
   const canCreate = check.ok;

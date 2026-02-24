@@ -8,6 +8,7 @@ import { DashboardSection } from "@/components/dashboard/DashboardSection";
 export default async function DashboardPromotorPage() {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/auth/login");
+  if ((session.user?.effectiveRole ?? session.user?.role) === "USUARIO") redirect("/dashboard");
 
   const promoter = await prisma.promoter.findFirst({
     where: { userId: session.user.id },

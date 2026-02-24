@@ -2,7 +2,7 @@ import type { Session } from "next-auth";
 
 /**
  * Roles que pueden ver promotores, organizadores y asociaciones.
- * Usuarios normales (USUARIO) y anónimos no tienen acceso.
+ * Usa effectiveRole: roles sin aprobar = USUARIO (sin acceso).
  */
 const RESTRICTED_ESCENA_VIEWER_ROLES = [
   "ADMIN",
@@ -15,6 +15,6 @@ const RESTRICTED_ESCENA_VIEWER_ROLES = [
 ] as const;
 
 export function canViewRestrictedEscena(session: Session | null): boolean {
-  const role = session?.user?.role;
+  const role = session?.user?.effectiveRole ?? session?.user?.role;
   return !!role && RESTRICTED_ESCENA_VIEWER_ROLES.includes(role as (typeof RESTRICTED_ESCENA_VIEWER_ROLES)[number]);
 }
