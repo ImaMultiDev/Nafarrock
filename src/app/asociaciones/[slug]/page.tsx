@@ -118,7 +118,7 @@ export default async function AsociacionPage({
             Próximos eventos
           </h2>
           <ul className="mt-6 space-y-3">
-            {association.events.map((evt: { id: string; slug: string; title: string; date: Date; venue: { name: string } }) => (
+            {association.events.map((evt) => (
               <li key={evt.id}>
                 <Link
                   href={`/eventos/${evt.slug}`}
