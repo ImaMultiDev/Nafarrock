@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getOrganizers } from "@/services/organizer.service";
 import Link from "next/link";
 import { PageLayout } from "@/components/ui/PageLayout";
+import { EscenaBackNav } from "@/components/escena/EscenaBackNav";
 import { Pagination } from "@/components/ui/Pagination";
 import { canViewRestrictedEscena } from "@/lib/escena-visibility";
 
@@ -26,6 +27,7 @@ export default async function OrganizadoresPage({ searchParams }: Props) {
 
   return (
     <PageLayout>
+      <EscenaBackNav />
       <div className="mb-10 sm:mb-16">
         <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl lg:text-7xl">
           ORGANIZADORES
@@ -75,10 +77,10 @@ export default async function OrganizadoresPage({ searchParams }: Props) {
             Aún no hay organizadores registrados. Pronto habrá contenido. Mientras tanto, explora eventos y promotores.
           </p>
           <Link
-            href="/"
+            href="/escena"
             className="mt-4 inline-block font-punch text-sm uppercase tracking-widest text-punk-green transition-colors hover:text-punk-green/80"
           >
-            ← Volver al inicio
+            ← Volver a Escena
           </Link>
         </div>
       )}

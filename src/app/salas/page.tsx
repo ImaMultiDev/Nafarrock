@@ -1,6 +1,7 @@
 import { getVenues } from "@/services/venue.service";
 import Link from "next/link";
 import { PageLayout } from "@/components/ui/PageLayout";
+import { EscenaBackNav } from "@/components/escena/EscenaBackNav";
 import { SalasFilters } from "@/components/buscador/SalasFilters";
 import { Pagination } from "@/components/ui/Pagination";
 
@@ -95,8 +96,8 @@ export default async function SalasPage({ searchParams }: Props) {
           <p className="font-body text-punk-white/60">
             Aún no hay salas registradas. Pronto habrá contenido. Mientras tanto, explora eventos y bandas.
           </p>
-          <Link href="/" className="mt-4 inline-block font-punch text-sm uppercase tracking-widest text-punk-pink hover:text-punk-pink/80 transition-colors">
-            ← Volver al inicio
+          <Link href="/escena" className="mt-4 inline-block font-punch text-sm uppercase tracking-widest text-punk-pink hover:text-punk-pink/80 transition-colors">
+            ← Volver a Escena
           </Link>
         </div>
       )}

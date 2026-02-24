@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getAssociations } from "@/services/association.service";
 import Link from "next/link";
 import { PageLayout } from "@/components/ui/PageLayout";
+import { EscenaBackNav } from "@/components/escena/EscenaBackNav";
 import { Pagination } from "@/components/ui/Pagination";
 import { canViewRestrictedEscena } from "@/lib/escena-visibility";
 
@@ -26,6 +27,7 @@ export default async function AsociacionesPage({ searchParams }: Props) {
 
   return (
     <PageLayout>
+      <EscenaBackNav />
       <div className="mb-10 sm:mb-16">
         <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl lg:text-7xl">
           ASOCIACIONES Y SOCIEDADES

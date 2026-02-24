@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getPromoters } from "@/services/promoter.service";
 import Link from "next/link";
 import { PageLayout } from "@/components/ui/PageLayout";
+import { EscenaBackNav } from "@/components/escena/EscenaBackNav";
 import { Pagination } from "@/components/ui/Pagination";
 import { canViewRestrictedEscena } from "@/lib/escena-visibility";
 
@@ -74,8 +75,8 @@ export default async function PromotoresPage({ searchParams }: Props) {
           <p className="font-body text-punk-white/60">
             Aún no hay promotores registrados. Pronto habrá contenido. Mientras tanto, explora eventos y organizadores.
           </p>
-          <Link href="/" className="mt-4 inline-block font-punch text-sm uppercase tracking-widest text-punk-pink hover:text-punk-pink/80">
-            ← Volver al inicio
+          <Link href="/escena" className="mt-4 inline-block font-punch text-sm uppercase tracking-widest text-punk-pink hover:text-punk-pink/80">
+            ← Volver a Escena
           </Link>
         </div>
       )}
