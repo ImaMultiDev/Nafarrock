@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { AdminBackNav } from "@/components/admin/AdminBackNav";
+import { AdminPendingBanners } from "@/components/admin/AdminPendingBanners";
 
 export default async function AdminLayout({
   children,
@@ -20,6 +21,8 @@ export default async function AdminLayout({
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <AdminBackNav />
         <div className="flex flex-wrap gap-4">
+          <Link href="/admin/solicitudes" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Solicitudes</Link>
+          <Link href="/admin/reclamaciones" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Reclamaciones</Link>
           <Link href="/admin/bandas" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Bandas</Link>
           <Link href="/admin/salas" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Salas</Link>
           <Link href="/admin/eventos" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Eventos</Link>
@@ -31,6 +34,7 @@ export default async function AdminLayout({
           <Link href="/admin/usuarios" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Usuarios</Link>
         </div>
       </div>
+      <AdminPendingBanners />
       {children}
     </PageLayout>
   );

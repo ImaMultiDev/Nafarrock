@@ -67,6 +67,17 @@ export default function AdminPage() {
           </p>
         </Link>
         <Link
+          href="/admin/solicitudes"
+          className="block border-2 border-punk-yellow/50 bg-punk-black p-6 transition-all hover:border-punk-yellow hover:shadow-[0_0_30px_rgba(255,214,10,0.2)]"
+        >
+          <h2 className="font-display text-xl tracking-tighter text-punk-yellow">
+            Solicitudes
+          </h2>
+          <p className="mt-2 font-body text-sm text-punk-white/70">
+            Perfiles pendientes de aprobación
+          </p>
+        </Link>
+        <Link
           href="/admin/reclamaciones"
           className="block border-2 border-punk-acid/50 bg-punk-black p-6 transition-all hover:border-punk-acid hover:shadow-[0_0_30px_rgba(200,255,0,0.2)]"
         >
@@ -74,7 +85,7 @@ export default function AdminPage() {
             Reclamaciones
           </h2>
           <p className="mt-2 font-body text-sm text-punk-white/70">
-            Solicitudes de perfiles
+            Solicitudes de reclamación de perfiles
           </p>
         </Link>
       </div>

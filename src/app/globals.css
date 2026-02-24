@@ -15,6 +15,28 @@
   --punk-green: #00C853;
   --punk-pink: #ff006e;
   --punk-white: #f8f8f8;
+
+  /* Partículas nav (Eventos/Bolos) - ajusta aquí */
+  --nav-particle-radius: 8px;
+  /* radio de la órbita (tamaño) */
+  --nav-particle-size: 3px;
+  /* tamaño de cada partícula */
+  --nav-particle-duration: 5s;
+  /* velocidad (menor = más rápido) */
+  --nav-particle-scale-x: 1.75;
+  /* elipse: ancho (1 = círculo) */
+  --nav-particle-scale-y: 0.6;
+  /* elipse: alto (1 = círculo) */
+  --nav-particle-spacing: 48deg;
+  /* separación entre partículas (estela: ~12-18deg) */
+}
+
+/* Mobile: elipse más amplia para las partículas del logo */
+@media (max-width: 1023px) {
+  :root {
+    --nav-particle-scale-x: 1.9;
+    --nav-particle-scale-y: 0.65;
+  }
 }
 
 /* Guitarra de fondo en hero - oscurecida para legibilidad */
@@ -282,9 +304,114 @@
   }
 }
 
+/* ============================================
+   Partículas orbitando en logo NAFARROCK
+   CONTROLES (ajusta estos valores en globals.css):
+   ============================================ */
+
+/* Brillo neón en NAFARROCK del navbar */
+.nav-logo-nafar {
+  color: var(--punk-red);
+  text-shadow: 0 0 8px var(--punk-red), 0 0 16px rgba(230, 0, 38, 0.6), 0 0 24px rgba(230, 0, 38, 0.4);
+}
+
+.nav-logo-rock {
+  color: var(--punk-green);
+  text-shadow: 0 0 8px var(--punk-green), 0 0 16px rgba(0, 200, 83, 0.6), 0 0 24px rgba(0, 200, 83, 0.4);
+}
+
+/* Variante logo: órbita más grande (NAFARROCK es más grande que los enlaces) */
+.nav-particles--logo {
+  --nav-particle-radius: 14px;
+  --nav-particle-size: 4px;
+}
+
+/* --- POSICIÓN del centro de la órbita ---
+   left/top: centro respecto al enlace (50% = centro, 0% = inicio, 100% = final)
+   Ej: left: 50%; top: 50% → centrado
+       left: 100%; top: 50% → a la derecha del texto
+       left: 50%; top: 0% → encima del texto
+   Ajuste fino: translate(-50%, -50%) centra el punto 1x1; cambia a ej. translate(-50%, -60%) para subir
+*/
+.nav-particles {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 2px;
+  height: 1px;
+  opacity: 0.5;
+  margin-left: 0px;
+  margin-top: -0.5px;
+  /* VELOCIDAD: --nav-particle-duration en :root */
+  animation: nav-orbit var(--nav-particle-duration) linear infinite;
+  pointer-events: none;
+}
+
+.nav-particles .nav-particle {
+  position: absolute;
+  /* TAMAÑO: --nav-particle-size en :root */
+  width: var(--nav-particle-size);
+  height: var(--nav-particle-size);
+  /* Elipse: 50% = círculo. Valores distintos = elipse (ej: 30% 70%, 40% 60%) */
+  border-radius: 50%;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+}
+
+/* Estela + contrascala: partículas circulares aunque la órbita sea elíptica */
+.nav-particles .nav-particle-1 {
+  background: var(--punk-red);
+  box-shadow: 0 0 6px var(--punk-red), 0 0 12px rgba(230, 0, 38, 0.6);
+  transform: rotate(calc(0.5 * var(--nav-particle-spacing))) translateY(calc(-2.5 * var(--nav-particle-radius))) scaleX(calc(1 / var(--nav-particle-scale-x))) scaleY(calc(1 / var(--nav-particle-scale-y)));
+  z-index: 3;
+}
+
+.nav-particles .nav-particle-2 {
+  background: var(--punk-green);
+  box-shadow: 0 0 4px var(--punk-green);
+  transform: rotate(calc(1 * var(--nav-particle-spacing))) translateY(calc(-2.5 * var(--nav-particle-radius))) scaleX(calc(1 / var(--nav-particle-scale-x))) scaleY(calc(1 / var(--nav-particle-scale-y)));
+  z-index: 2;
+}
+
+.nav-particles .nav-particle-3 {
+  background: var(--punk-white);
+  box-shadow: 0 0 4px var(--punk-white);
+  transform: rotate(calc(1.5 * var(--nav-particle-spacing))) translateY(calc(-2.5 * var(--nav-particle-radius))) scaleX(calc(1 / var(--nav-particle-scale-x))) scaleY(calc(1 / var(--nav-particle-scale-y)));
+  z-index: 1;
+}
+
+/* --- ANIMACIÓN: --nav-particle-scale-x/y en :root
+   rotate: 360deg = horario, -360deg = antihorario
+*/
+@keyframes nav-orbit {
+  from {
+    transform: scaleX(var(--nav-particle-scale-x)) scaleY(var(--nav-particle-scale-y)) rotate(0deg);
+  }
+
+  to {
+    transform: scaleX(var(--nav-particle-scale-x)) scaleY(var(--nav-particle-scale-y)) rotate(360deg);
+  }
+}
+
+/* Eventos y Bolos: resalte sutil con brillo neón acorde al color */
+.nav-link-special {
+  display: inline-flex;
+  align-items: center;
+  text-shadow: 0 0 6px currentColor, 0 0 12px currentColor;
+}
+
+.nav-link-special.text-punk-red {
+  text-shadow: 0 0 6px var(--punk-red), 0 0 12px rgba(230, 0, 38, 0.5);
+}
+
+.nav-link-special:hover,
+.nav-link-special:focus-visible {
+  text-shadow: 0 0 8px var(--punk-green), 0 0 16px rgba(0, 200, 83, 0.5);
+}
+
 /* Icono calendario rojo en filtros de eventos (Chrome/Edge/Safari) */
 .eventos-date-input::-webkit-calendar-picker-indicator {
-  filter: brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%)
-    hue-rotate(346deg) brightness(104%) contrast(97%);
+  filter: brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%);
   cursor: pointer;
 }
