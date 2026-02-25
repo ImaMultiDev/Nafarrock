@@ -45,10 +45,10 @@ export default async function BolosPage() {
           <p className="mt-4 font-body text-punk-white/80">
             Registra tu banda y escribe a{" "}
             <a
-              href="mailto:central@nafarrock.com"
+              href="mailto:harremanak@nafarrock.com"
               className="font-semibold text-punk-green hover:underline"
             >
-              central@nafarrock.com
+              harremanak@nafarrock.com
             </a>{" "}
             para que podamos comprobar y confirmar tu petición cuanto antes.
           </p>

@@ -42,10 +42,10 @@ export default async function ContactoPage() {
         Usa este formulario para ponerte en contacto con el administrador de Nafarrock.
         Los mensajes se envían a{" "}
         <a
-          href="mailto:central@nafarrock.com"
+          href="mailto:harremanak@nafarrock.com"
           className="text-punk-green hover:underline"
         >
-          central@nafarrock.com
+          harremanak@nafarrock.com
         </a>
         .
       </p>

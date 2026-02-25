@@ -10,7 +10,7 @@ const FROM_EMAIL =
 export async function sendVerificationEmail(
   to: string,
   token: string,
-  name?: string
+  name?: string,
 ): Promise<{ success: boolean; error?: string }> {
   if (!resend) {
     console.warn("RESEND_API_KEY no configurado, omitiendo envío de email");
@@ -52,7 +52,7 @@ export async function sendVerificationEmail(
   return { success: true };
 }
 
-const CONTACT_EMAIL = "central@nafarrock.com";
+const CONTACT_EMAIL = "harremanak@nafarrock.com";
 
 export async function sendContactEmail(
   fromName: string,
@@ -60,10 +60,12 @@ export async function sendContactEmail(
   subject: string,
   message: string,
   role?: string,
-  entityName?: string
+  entityName?: string,
 ): Promise<{ success: boolean; error?: string }> {
   if (!resend) {
-    console.warn("RESEND_API_KEY no configurado, omitiendo envío de email de contacto");
+    console.warn(
+      "RESEND_API_KEY no configurado, omitiendo envío de email de contacto",
+    );
     return { success: true };
   }
 
@@ -101,10 +103,12 @@ const baseUrl = () => process.env.NEXTAUTH_URL || "https://nafarrock.com";
 export async function sendClaimApprovedEmail(
   to: string,
   entityName: string,
-  entityType: string
+  entityType: string,
 ): Promise<{ success: boolean; error?: string }> {
   if (!resend) {
-    console.warn("RESEND_API_KEY no configurado, omitiendo email de reclamación aprobada");
+    console.warn(
+      "RESEND_API_KEY no configurado, omitiendo email de reclamación aprobada",
+    );
     return { success: true };
   }
 
@@ -146,23 +150,35 @@ export async function sendClaimApprovedEmail(
 }
 
 const entityTypeLabel = (t: string) =>
-  t === "BAND" ? "banda" : t === "VENUE" ? "sala/recinto" : t === "FESTIVAL" ? "festival" : t === "ASOCIACION" ? "asociación" : "perfil";
+  t === "BAND"
+    ? "banda"
+    : t === "VENUE"
+      ? "sala/recinto"
+      : t === "FESTIVAL"
+        ? "festival"
+        : t === "ASOCIACION"
+          ? "asociación"
+          : "perfil";
 
 /** Email cuando se rechaza una solicitud de perfil (banda, sala, etc.) */
 export async function sendRequestRejectedEmail(
   to: string,
   entityName: string,
   entityType: string,
-  reason?: string
+  reason?: string,
 ): Promise<{ success: boolean; error?: string }> {
   if (!resend) {
-    console.warn("RESEND_API_KEY no configurado, omitiendo email de solicitud rechazada");
+    console.warn(
+      "RESEND_API_KEY no configurado, omitiendo email de solicitud rechazada",
+    );
     return { success: true };
   }
 
   const tipo = entityTypeLabel(entityType);
   const contactUrl = `${baseUrl()}/contacto`;
-  const subject = reason ? "Solicitud Rechazada - Motivo" : "Solicitud Rechazada - Nafarrock";
+  const subject = reason
+    ? "Solicitud Rechazada - Motivo"
+    : "Solicitud Rechazada - Nafarrock";
 
   const reasonBlock = reason
     ? `<p><strong>Motivo:</strong></p><div style="white-space: pre-wrap; background: #f5f5f5; padding: 12px; border-radius: 4px; margin: 12px 0;">${reason.replace(/\n/g, "<br>")}</div>`
@@ -202,16 +218,20 @@ export async function sendClaimRejectedEmail(
   to: string,
   entityName: string,
   entityType: string,
-  reason?: string
+  reason?: string,
 ): Promise<{ success: boolean; error?: string }> {
   if (!resend) {
-    console.warn("RESEND_API_KEY no configurado, omitiendo email de reclamación rechazada");
+    console.warn(
+      "RESEND_API_KEY no configurado, omitiendo email de reclamación rechazada",
+    );
     return { success: true };
   }
 
   const contactUrl = `${baseUrl()}/contacto`;
   const tipo = entityTypeLabel(entityType);
-  const subject = reason ? "Reclamación Rechazada - Motivo" : "Reclamación Rechazada - Nafarrock";
+  const subject = reason
+    ? "Reclamación Rechazada - Motivo"
+    : "Reclamación Rechazada - Nafarrock";
 
   const reasonBlock = reason
     ? `<p><strong>Motivo:</strong></p><div style="white-space: pre-wrap; background: #f5f5f5; padding: 12px; border-radius: 4px; margin: 12px 0;">${reason.replace(/\n/g, "<br>")}</div>`
@@ -239,7 +259,10 @@ export async function sendClaimRejectedEmail(
   });
 
   if (error) {
-    console.error("[Resend] Error enviando email reclamación rechazada:", error);
+    console.error(
+      "[Resend] Error enviando email reclamación rechazada:",
+      error,
+    );
     return { success: false, error: error.message };
   }
   console.log("[Resend] Reclamación rechazada enviada. ID:", data?.id, "→", to);
@@ -248,10 +271,12 @@ export async function sendClaimRejectedEmail(
 
 export async function sendPasswordResetEmail(
   to: string,
-  token: string
+  token: string,
 ): Promise<{ success: boolean; error?: string }> {
   if (!resend) {
-    console.warn("RESEND_API_KEY no configurado, omitiendo email de recuperación");
+    console.warn(
+      "RESEND_API_KEY no configurado, omitiendo email de recuperación",
+    );
     return { success: true };
   }
 
@@ -294,10 +319,12 @@ export async function sendAnnouncementApplicationEmail(
   to: string,
   bandName: string,
   announcementTitle: string,
-  message: string
+  message: string,
 ): Promise<{ success: boolean; error?: string }> {
   if (!resend) {
-    console.warn("RESEND_API_KEY no configurado, omitiendo email de postulación");
+    console.warn(
+      "RESEND_API_KEY no configurado, omitiendo email de postulación",
+    );
     return { success: true };
   }
 

@@ -20,10 +20,10 @@ export function BandVerificationBanner() {
       <p className="text-center font-body text-sm text-punk-white/90">
         Tu perfil está en proceso de verificación. Para agilizar el proceso, escribe a{" "}
         <a
-          href="mailto:central@nafarrock.com"
+          href="mailto:harremanak@nafarrock.com"
           className="font-semibold text-punk-yellow hover:underline"
         >
-          central@nafarrock.com
+          harremanak@nafarrock.com
         </a>{" "}
         para que podamos comprobar y confirmar tu petición cuanto antes.
       </p>
