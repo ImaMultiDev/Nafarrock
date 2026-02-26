@@ -22,12 +22,20 @@ export default async function AdminBandasPage() {
             {bands.length} bandas · {pending.length} pendientes de aprobar
           </p>
         </div>
-        <Link
-          href="/admin/bandas/nueva"
-          className="border-2 border-punk-green bg-punk-green px-6 py-3 font-punch text-sm uppercase tracking-widest text-punk-black transition-all hover:bg-punk-green/90"
-        >
-          Registrar banda
-        </Link>
+        <div className="flex flex-wrap gap-3">
+          <Link
+            href="/admin/bandas/nueva"
+            className="border-2 border-punk-green bg-punk-green px-6 py-3 font-punch text-sm uppercase tracking-widest text-punk-black transition-all hover:bg-punk-green/90"
+          >
+            Registrar banda
+          </Link>
+          <Link
+            href="/admin/importacion-bandas"
+            className="border-2 border-punk-white/30 px-6 py-3 font-punch text-sm uppercase tracking-widest text-punk-white/70 hover:border-punk-green hover:text-punk-green"
+          >
+            Importar CSV
+          </Link>
+        </div>
       </div>
 
       <div className="mt-10 overflow-x-auto">
