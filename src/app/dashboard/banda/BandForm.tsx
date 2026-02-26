@@ -10,6 +10,12 @@ const inputClass =
 const labelClass = "block font-punch text-xs uppercase tracking-widest text-punk-white/70";
 
 type Member = { name: string; instrument: string };
+const BAND_STATUS_OPTIONS = [
+  { value: "ACTIVE", label: "Activa" },
+  { value: "PAUSED", label: "En pausa" },
+  { value: "INACTIVE", label: "Inactiva" },
+] as const;
+
 type Band = {
   id: string;
   name: string;
@@ -17,12 +23,14 @@ type Band = {
   genres: string[];
   location: string | null;
   foundedYear: number | null;
+  status: string | null;
   spotifyUrl: string | null;
   bandcampUrl: string | null;
   instagramUrl: string | null;
   facebookUrl: string | null;
   youtubeUrl: string | null;
   webUrl: string | null;
+  merchUrl: string | null;
   logoUrl: string | null;
   images: string[];
   members?: { name: string; instrument: string; order: number }[];
@@ -62,12 +70,14 @@ export function BandForm({ band, genres }: { band: Band; genres: string[] }) {
         genres: selectedGenres,
         location: formData.get("location") || null,
         foundedYear: formData.get("foundedYear") ? Number(formData.get("foundedYear")) : null,
+        status: formData.get("status") || "ACTIVE",
         spotifyUrl: formData.get("spotifyUrl") || null,
         bandcampUrl: formData.get("bandcampUrl") || null,
         instagramUrl: formData.get("instagramUrl") || null,
         facebookUrl: formData.get("facebookUrl") || null,
         youtubeUrl: formData.get("youtubeUrl") || null,
         webUrl: formData.get("webUrl") || null,
+        merchUrl: formData.get("merchUrl") || null,
         logoUrl: logoUrl || null,
         images,
         members: members
@@ -113,6 +123,14 @@ export function BandForm({ band, genres }: { band: Band; genres: string[] }) {
       <div>
         <label htmlFor="foundedYear" className={labelClass}>Año fundación</label>
         <input id="foundedYear" name="foundedYear" type="number" min={1900} defaultValue={band.foundedYear ?? ""} className={inputClass} />
+      </div>
+      <div>
+        <label htmlFor="status" className={labelClass}>Estado de la banda</label>
+        <select id="status" name="status" defaultValue={band.status ?? "ACTIVE"} className={inputClass}>
+          {BAND_STATUS_OPTIONS.map((o) => (
+            <option key={o.value} value={o.value}>{o.label}</option>
+          ))}
+        </select>
       </div>
       <div>
         <label className={labelClass}>Miembros</label>
@@ -173,6 +191,10 @@ export function BandForm({ band, genres }: { band: Band; genres: string[] }) {
       <div className="grid gap-6 sm:grid-cols-2">
         <div><label htmlFor="youtubeUrl" className={labelClass}>YouTube</label><input id="youtubeUrl" name="youtubeUrl" type="url" defaultValue={band.youtubeUrl ?? ""} className={inputClass} /></div>
         <div><label htmlFor="webUrl" className={labelClass}>Web</label><input id="webUrl" name="webUrl" type="url" defaultValue={band.webUrl ?? ""} className={inputClass} /></div>
+      </div>
+      <div>
+        <label htmlFor="merchUrl" className={labelClass}>Tienda / Merch</label>
+        <input id="merchUrl" name="merchUrl" type="url" placeholder="https://..." defaultValue={band.merchUrl ?? ""} className={inputClass} />
       </div>
       <button type="submit" disabled={loading} className="border-2 border-punk-pink bg-punk-pink px-8 py-3 font-punch text-sm uppercase tracking-widest text-punk-black hover:bg-punk-pink/90 disabled:opacity-50">
         {loading ? "Guardando..." : "Guardar"}

@@ -182,6 +182,7 @@ export function RegisterForm({
         payload.foundedYear = formData.get("foundedYear")
           ? Number(formData.get("foundedYear"))
           : undefined;
+        payload.status = (formData.get("status") as string) || "ACTIVE";
         payload.bio = formData.get("bio") || undefined;
         payload.genres = formData.getAll("genres");
         payload.spotifyUrl = formData.get("spotifyUrl") || undefined;
@@ -190,6 +191,7 @@ export function RegisterForm({
         payload.facebookUrl = formData.get("facebookUrl") || undefined;
         payload.youtubeUrl = formData.get("youtubeUrl") || undefined;
         payload.webUrl = formData.get("webUrl") || undefined;
+        payload.merchUrl = formData.get("merchUrl") || undefined;
         payload.members = members.filter(
           (m) => m.name.trim() && m.instrument.trim(),
         );
@@ -590,6 +592,16 @@ export function RegisterForm({
                     />
                   </div>
                   <div className="mt-6">
+                    <label htmlFor="status" className={labelClass}>
+                      Estado de la banda
+                    </label>
+                    <select id="status" name="status" defaultValue="ACTIVE" className={inputClass}>
+                      <option value="ACTIVE">Activa</option>
+                      <option value="PAUSED">En pausa</option>
+                      <option value="INACTIVE">Inactiva</option>
+                    </select>
+                  </div>
+                  <div className="mt-6">
                     <label className={labelClass}>Géneros</label>
                     <div className="mt-2 flex flex-wrap gap-2">
                       {GENRES.map((g) => (
@@ -728,6 +740,18 @@ export function RegisterForm({
                         name="webUrl"
                         type="url"
                         className={inputClass}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="merchUrl" className={labelClass}>
+                        Tienda / Merch
+                      </label>
+                      <input
+                        id="merchUrl"
+                        name="merchUrl"
+                        type="url"
+                        className={inputClass}
+                        placeholder="https://..."
                       />
                     </div>
                   </div>

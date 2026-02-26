@@ -16,6 +16,7 @@ type Band = {
   genres: string[];
   location: string | null;
   foundedYear: number | null;
+  status: string | null;
   logoUrl: string | null;
   imageUrl: string | null;
   images: string[];
@@ -25,6 +26,7 @@ type Band = {
   facebookUrl: string | null;
   youtubeUrl: string | null;
   webUrl: string | null;
+  merchUrl: string | null;
   approved: boolean;
 };
 
@@ -55,12 +57,14 @@ export function BandEditForm({ band, genres }: { band: Band; genres: string[] })
         foundedYear: formData.get("foundedYear")
           ? Number(formData.get("foundedYear"))
           : null,
+        status: formData.get("status") || "ACTIVE",
         spotifyUrl: formData.get("spotifyUrl") || null,
         bandcampUrl: formData.get("bandcampUrl") || null,
         instagramUrl: formData.get("instagramUrl") || null,
         facebookUrl: formData.get("facebookUrl") || null,
         youtubeUrl: formData.get("youtubeUrl") || null,
         webUrl: formData.get("webUrl") || null,
+        merchUrl: formData.get("merchUrl") || null,
         approved: formData.get("approved") === "on",
         logoUrl,
         imageUrl,
@@ -151,6 +155,16 @@ export function BandEditForm({ band, genres }: { band: Band; genres: string[] })
         />
       </div>
       <div>
+        <label htmlFor="status" className={labelClass}>
+          Estado de la banda
+        </label>
+        <select id="status" name="status" defaultValue={band.status ?? "ACTIVE"} className={inputClass}>
+          <option value="ACTIVE">Activa</option>
+          <option value="PAUSED">En pausa</option>
+          <option value="INACTIVE">Inactiva</option>
+        </select>
+      </div>
+      <div>
         <label className={labelClass}>Géneros</label>
         <div className="mt-2 flex flex-wrap gap-2">
           {genres.map((g) => (
@@ -202,6 +216,12 @@ export function BandEditForm({ band, genres }: { band: Band; genres: string[] })
             Web
           </label>
           <input id="webUrl" name="webUrl" type="url" defaultValue={band.webUrl ?? ""} className={inputClass} />
+        </div>
+        <div>
+          <label htmlFor="merchUrl" className={labelClass}>
+            Tienda / Merch
+          </label>
+          <input id="merchUrl" name="merchUrl" type="url" defaultValue={band.merchUrl ?? ""} className={inputClass} placeholder="https://..." />
         </div>
       </div>
       <div className="flex gap-4">

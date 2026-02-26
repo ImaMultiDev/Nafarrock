@@ -1,6 +1,6 @@
 "use client";
 
-import { Globe, MapPin, Mail } from "lucide-react";
+import { Globe, MapPin, Mail, ShoppingBag } from "lucide-react";
 
 export type SocialLinkKind =
   | "instagram"
@@ -11,7 +11,8 @@ export type SocialLinkKind =
   | "web"
   | "twitter"
   | "map"
-  | "email";
+  | "email"
+  | "merch";
 
 export type SocialLinkItem = {
   kind: SocialLinkKind;
@@ -81,6 +82,10 @@ function EmailIcon({ className }: { className?: string }) {
   return <Mail className={className} size={iconSize} strokeWidth={2} />;
 }
 
+function MerchIcon({ className }: { className?: string }) {
+  return <ShoppingBag className={className} size={iconSize} strokeWidth={2} />;
+}
+
 type SocialLinksProps = {
   links: SocialLinkItem[];
   variant?: "green" | "pink" | "red" | "yellow";
@@ -106,6 +111,7 @@ const kindLabels: Record<SocialLinkKind, string> = {
   twitter: "X",
   map: "Mapa",
   email: "Contacto",
+  merch: "Tienda",
 };
 
 export function SocialLinks({ links, variant = "green", showLabels = true, className = "" }: SocialLinksProps) {
@@ -137,6 +143,7 @@ export function SocialLinks({ links, variant = "green", showLabels = true, class
             {kind === "twitter" && <TwitterXIcon />}
             {kind === "map" && <MapIcon />}
             {kind === "email" && <EmailIcon />}
+            {kind === "merch" && <MerchIcon />}
             {showLabels && (
               <span className="font-punch text-xs uppercase tracking-widest">{ariaLabel}</span>
             )}

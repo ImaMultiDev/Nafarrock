@@ -42,6 +42,7 @@ const bandSchema = baseSchema.extend({
   entityName: z.string().min(1, "Nombre de la banda requerido"),
   location: z.string().optional(),
   foundedYear: z.coerce.number().min(1900).max(new Date().getFullYear()).optional(),
+  status: z.enum(["ACTIVE", "INACTIVE", "PAUSED"]).optional().default("ACTIVE"),
   bio: z.string().optional(),
   genres: z.array(z.string()).default([]),
   members: z.array(memberSchema).optional().default([]),
@@ -51,6 +52,7 @@ const bandSchema = baseSchema.extend({
   facebookUrl: optionalUrl,
   youtubeUrl: optionalUrl,
   webUrl: optionalUrl,
+  merchUrl: optionalUrl,
 });
 
 const venueSchema = baseSchema.extend({
@@ -365,12 +367,14 @@ export async function POST(req: Request) {
           genres: d.genres ?? [],
           location: d.location || null,
           foundedYear: d.foundedYear || null,
+          status: d.status || "ACTIVE",
           spotifyUrl: cleanUrl(d.spotifyUrl),
           bandcampUrl: cleanUrl(d.bandcampUrl),
           instagramUrl: cleanUrl(d.instagramUrl),
           facebookUrl: cleanUrl(d.facebookUrl),
           youtubeUrl: cleanUrl(d.youtubeUrl),
           webUrl: cleanUrl(d.webUrl),
+          merchUrl: cleanUrl(d.merchUrl),
           approved: false,
           userId: user.id,
           members: {

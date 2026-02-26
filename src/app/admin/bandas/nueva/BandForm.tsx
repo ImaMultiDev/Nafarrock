@@ -36,12 +36,14 @@ export function BandForm({ genres }: { genres: string[] }) {
         foundedYear: formData.get("foundedYear")
           ? Number(formData.get("foundedYear"))
           : undefined,
+        status: formData.get("status") || "ACTIVE",
         spotifyUrl: formData.get("spotifyUrl") || undefined,
         bandcampUrl: formData.get("bandcampUrl") || undefined,
         instagramUrl: formData.get("instagramUrl") || undefined,
         facebookUrl: formData.get("facebookUrl") || undefined,
         youtubeUrl: formData.get("youtubeUrl") || undefined,
         webUrl: formData.get("webUrl") || undefined,
+        merchUrl: formData.get("merchUrl") || undefined,
         logoUrl: logoUrl || undefined,
         imageUrl: imageUrl || undefined,
         images,
@@ -129,6 +131,16 @@ export function BandForm({ genres }: { genres: string[] }) {
         />
       </div>
       <div>
+        <label htmlFor="status" className={labelClass}>
+          Estado de la banda
+        </label>
+        <select id="status" name="status" defaultValue="ACTIVE" className={inputClass}>
+          <option value="ACTIVE">Activa</option>
+          <option value="PAUSED">En pausa</option>
+          <option value="INACTIVE">Inactiva</option>
+        </select>
+      </div>
+      <div>
         <label className={labelClass}>Géneros</label>
         <div className="mt-2 flex flex-wrap gap-2">
           {genres.map((g) => (
@@ -163,6 +175,12 @@ export function BandForm({ genres }: { genres: string[] }) {
             Web
           </label>
           <input id="webUrl" name="webUrl" type="url" className={inputClass} />
+        </div>
+        <div>
+          <label htmlFor="merchUrl" className={labelClass}>
+            Tienda / Merch
+          </label>
+          <input id="merchUrl" name="merchUrl" type="url" className={inputClass} placeholder="https://..." />
         </div>
       </div>
       <div className="flex gap-4">

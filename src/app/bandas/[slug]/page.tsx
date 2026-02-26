@@ -37,7 +37,15 @@ export default async function BandPage({
     ...(band.facebookUrl ? [{ kind: "facebook" as const, url: band.facebookUrl }] : []),
     ...(band.youtubeUrl ? [{ kind: "youtube" as const, url: band.youtubeUrl }] : []),
     ...(band.webUrl ? [{ kind: "web" as const, url: band.webUrl }] : []),
+    ...(band.merchUrl ? [{ kind: "merch" as const, url: band.merchUrl }] : []),
   ];
+
+  const statusLabel =
+    band.status === "INACTIVE"
+      ? "Inactiva"
+      : band.status === "PAUSED"
+        ? "En pausa"
+        : "Activa";
 
   return (
     <PageLayout>
@@ -91,6 +99,17 @@ export default async function BandPage({
             </p>
           )}
           <div className="mt-4 flex flex-wrap gap-2">
+            <span
+              className={`border px-3 py-1 font-punch text-xs uppercase tracking-widest ${
+                statusLabel === "Activa"
+                  ? "border-punk-green/50 bg-punk-green/10 text-punk-green"
+                  : statusLabel === "En pausa"
+                    ? "border-punk-yellow/50 bg-punk-yellow/10 text-punk-yellow"
+                    : "border-punk-white/30 bg-punk-white/10 text-punk-white/70"
+              }`}
+            >
+              {statusLabel}
+            </span>
             {band.genres.map((g) => (
               <span
                 key={g}
@@ -99,11 +118,6 @@ export default async function BandPage({
                 {g}
               </span>
             ))}
-            {band.isEmerging && (
-              <span className="border border-punk-red/50 bg-punk-red/10 px-3 py-1 font-punch text-xs uppercase tracking-widest text-punk-red">
-                Emergente
-              </span>
-            )}
           </div>
           {band.location && (
             <p className="mt-2 font-body text-punk-white/70">📍 {band.location}</p>

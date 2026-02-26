@@ -2,8 +2,9 @@
  * Seed inicial para Nafarrock
  * Datos de ejemplo: bandas, salas, eventos
  *
- * Admin: usa ADMIN_EMAIL y ADMIN_PASSWORD del .env si existen.
- * Si no, crea admin@nafarrock.local / admin123
+ * IMPORTANTE: ADMIN_EMAIL y ADMIN_PASSWORD son OBLIGATORIOS.
+ * Define estas variables en .env (local) o en Vercel (producción).
+ * Nunca incluyas credenciales reales en el código.
  */
 import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
@@ -11,15 +12,29 @@ import { hash } from "bcryptjs";
 
 const prisma = new PrismaClient();
 
+function requireEnv(name: string): string {
+  const value = process.env[name];
+  if (!value?.trim()) {
+    throw new Error(
+      `Variable de entorno ${name} es obligatoria. Define ${name} en .env o en Vercel.`,
+    );
+  }
+  return value.trim();
+}
+
 async function main() {
-  const adminEmail = process.env.ADMIN_EMAIL ?? "admin@nafarrock.local";
-  const adminPasswordPlain = process.env.ADMIN_PASSWORD ?? "admin123";
+  const adminEmail = requireEnv("ADMIN_EMAIL");
+  const adminPasswordPlain = requireEnv("ADMIN_PASSWORD");
   const adminPassword = await hash(adminPasswordPlain, 12);
 
-  console.log("Creando admin:", adminEmail, process.env.ADMIN_EMAIL ? "(desde .env)" : "(por defecto)");
+  console.log("Creando/actualizando admin:", adminEmail);
   const admin = await prisma.user.upsert({
     where: { email: adminEmail },
-    update: { role: "ADMIN", password: adminPassword, emailVerified: new Date() },
+    update: {
+      role: "ADMIN",
+      password: adminPassword,
+      emailVerified: new Date(),
+    },
     create: {
       email: adminEmail,
       password: adminPassword,
@@ -44,12 +59,16 @@ async function main() {
     },
   });
 
-  let band1 = await prisma.band.findUnique({ where: { slug: "banda-ejemplo" } });
-  if (!band1) {
+  let band1 = await prisma.band.findUnique({
+    where: { slug: "banda-ejemplo" },
+  });
+  const seedBandaEmail = process.env.SEED_BANDA_EMAIL;
+  const seedBandaPassword = process.env.SEED_BANDA_PASSWORD;
+  if (!band1 && seedBandaEmail && seedBandaPassword) {
     const userBanda = await prisma.user.create({
       data: {
-        email: "banda@nafarrock.local",
-        password: await hash("banda123", 12),
+        email: seedBandaEmail,
+        password: await hash(seedBandaPassword, 12),
         name: "Banda Ejemplo",
         role: "BANDA",
         emailVerified: new Date(),
@@ -74,7 +93,7 @@ async function main() {
   const existingEvent = await prisma.event.findUnique({
     where: { slug: "concierto-ejemplo-2025" },
   });
-  if (!existingEvent) {
+  if (!existingEvent && band1) {
     await prisma.event.create({
       data: {
         slug: "concierto-ejemplo-2025",
@@ -87,7 +106,7 @@ async function main() {
         isApproved: true,
         approvedAt: new Date(),
         bands: {
-          create: [{ bandId: band1!.id, order: 0, isHeadliner: true }],
+          create: [{ bandId: band1.id, order: 0, isHeadliner: true }],
         },
       },
     });

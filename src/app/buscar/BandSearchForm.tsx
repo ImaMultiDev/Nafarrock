@@ -10,7 +10,6 @@ type Props = {
   defaultGenre?: string;
   defaultLocation?: string;
   defaultActive?: string;
-  defaultEmerging?: string;
 };
 
 export default function BandSearchForm({
@@ -18,7 +17,6 @@ export default function BandSearchForm({
   defaultGenre = "",
   defaultLocation = "",
   defaultActive = "",
-  defaultEmerging = "",
 }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -28,13 +26,11 @@ export default function BandSearchForm({
       e.preventDefault();
       const form = e.currentTarget;
       const formData = new FormData(form);
-      const emerging = (form.querySelector('input[name="emerging"]') as HTMLInputElement)?.checked;
       const params = new URLSearchParams(searchParams);
       params.set("search", (formData.get("search") as string) || "");
       params.set("genre", (formData.get("genre") as string) || "");
       params.set("location", (formData.get("location") as string) || "");
       params.set("active", (formData.get("active") as string) || "");
-      params.set("emerging", emerging ? "true" : "");
       router.push(`/buscar?${params.toString()}`);
     },
     [router, searchParams]
@@ -127,16 +123,6 @@ export default function BandSearchForm({
               <span className="font-body text-sm text-punk-white/70">Inactivas</span>
             </label>
           </div>
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              name="emerging"
-              value="true"
-              defaultChecked={defaultEmerging === "true"}
-              className="accent-punk-acid"
-            />
-            <span className="font-body text-sm text-punk-white/70">Solo emergentes</span>
-          </label>
         </div>
       </div>
       <div className="mt-6">

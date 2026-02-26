@@ -20,6 +20,8 @@ const updateSchema = z.object({
   facebookUrl: z.string().url().optional().nullable().or(z.literal("")),
   youtubeUrl: z.string().url().optional().nullable().or(z.literal("")),
   webUrl: z.string().url().optional().nullable().or(z.literal("")),
+  merchUrl: z.string().url().optional().nullable().or(z.literal("")),
+  status: z.enum(["ACTIVE", "INACTIVE", "PAUSED"]).optional(),
   isActive: z.boolean().optional(),
   isEmerging: z.boolean().optional(),
   approved: z.boolean().optional(),
@@ -67,6 +69,8 @@ export async function PATCH(
     if (data.facebookUrl !== undefined) updateData.facebookUrl = cleanUrl(data.facebookUrl);
     if (data.youtubeUrl !== undefined) updateData.youtubeUrl = cleanUrl(data.youtubeUrl);
     if (data.webUrl !== undefined) updateData.webUrl = cleanUrl(data.webUrl);
+    if (data.merchUrl !== undefined) updateData.merchUrl = cleanUrl(data.merchUrl);
+    if (data.status !== undefined) updateData.status = data.status;
     if (data.isActive != null) updateData.isActive = data.isActive;
     if (data.isEmerging != null) updateData.isEmerging = data.isEmerging;
     if (data.approved != null) {

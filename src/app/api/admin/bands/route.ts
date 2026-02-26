@@ -20,6 +20,8 @@ const createSchema = z.object({
   facebookUrl: z.string().url().optional().or(z.literal("")),
   youtubeUrl: z.string().url().optional().or(z.literal("")),
   webUrl: z.string().url().optional().or(z.literal("")),
+  merchUrl: z.string().url().optional().or(z.literal("")),
+  status: z.enum(["ACTIVE", "INACTIVE", "PAUSED"]).optional().default("ACTIVE"),
   isActive: z.boolean().default(true),
   isEmerging: z.boolean().default(false),
 });
@@ -59,6 +61,8 @@ export async function POST(req: Request) {
         facebookUrl: data.facebookUrl || null,
         youtubeUrl: data.youtubeUrl || null,
         webUrl: data.webUrl || null,
+        merchUrl: data.merchUrl || null,
+        status: data.status || "ACTIVE",
         isActive: data.isActive,
         isEmerging: data.isEmerging,
         approved: true,

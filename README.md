@@ -92,6 +92,8 @@ cp .env.example .env
 | `DATABASE_URL` | Conexión PostgreSQL (Railway, Supabase, local) |
 | `NEXTAUTH_URL` | `http://localhost:3000` en desarrollo |
 | `NEXTAUTH_SECRET` | `openssl rand -base64 32` |
+| `ADMIN_EMAIL` | **Obligatorio para seed** — email del admin |
+| `ADMIN_PASSWORD` | **Obligatorio para seed** — contraseña del admin |
 | `RESEND_API_KEY` | Para verificación de email |
 | `CLOUDINARY_*` | Cloud, upload preset, API key/secret |
 
@@ -115,6 +117,18 @@ npm run dev
 ```
 
 Abre [http://localhost:3000](http://localhost:3000).
+
+---
+
+## Despliegue en Vercel
+
+El build ejecuta el seed automáticamente. **Si cambias `ADMIN_EMAIL` o `ADMIN_PASSWORD` en Vercel:**
+
+1. Haz un nuevo deploy (push o redeploy manual).
+2. El seed actualizará el admin en la base de datos con las nuevas credenciales.
+3. Inicia sesión con el **nuevo** email y contraseña.
+
+> **Importante:** Las credenciales viven en la base de datos. Cambiar solo las variables de entorno no actualiza la BD hasta que se ejecute el seed (en cada build).
 
 ---
 

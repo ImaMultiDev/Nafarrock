@@ -8,7 +8,7 @@ const links = [
   {
     href: "/bandas",
     title: "BANDAS",
-    desc: "Históricas y emergentes de Nafarroa",
+    desc: "De la escena nafarroa",
     color: "punk-green",
     delay: 0,
     size: "large",

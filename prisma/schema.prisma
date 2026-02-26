@@ -110,6 +110,7 @@ model Band {
   foundedYear Int?
   isActive    Boolean  @default(true)
   isEmerging  Boolean  @default(false)
+  status      String?  // ACTIVE | INACTIVE | PAUSED
   imageUrl    String?  // Imagen principal
   logoUrl     String?
   images      String[] // Max 3 imágenes en Cloudinary
@@ -120,6 +121,7 @@ model Band {
   facebookUrl  String?
   youtubeUrl   String?
   webUrl       String?
+  merchUrl     String?  // Tienda / merchandising
   // Aprobación
   approved    Boolean  @default(false)
   approvedAt  DateTime?

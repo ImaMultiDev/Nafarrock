@@ -17,12 +17,14 @@ const updateSchema = z.object({
   genres: z.array(z.string()).optional(),
   location: z.string().optional().nullable(),
   foundedYear: z.coerce.number().optional().nullable(),
+  status: z.enum(["ACTIVE", "INACTIVE", "PAUSED"]).optional(),
   spotifyUrl: z.string().url().optional().nullable().or(z.literal("")),
   bandcampUrl: z.string().url().optional().nullable().or(z.literal("")),
   instagramUrl: z.string().url().optional().nullable().or(z.literal("")),
   facebookUrl: z.string().url().optional().nullable().or(z.literal("")),
   youtubeUrl: z.string().url().optional().nullable().or(z.literal("")),
   webUrl: z.string().url().optional().nullable().or(z.literal("")),
+  merchUrl: z.string().url().optional().nullable().or(z.literal("")),
   logoUrl: z.string().optional().nullable(),
   imageUrl: z.string().optional().nullable(),
   images: z.array(z.string()).optional(),
@@ -64,12 +66,14 @@ export async function PATCH(req: Request) {
     if (data.genres != null) updateData.genres = data.genres;
     if (data.location !== undefined) updateData.location = data.location;
     if (data.foundedYear !== undefined) updateData.foundedYear = data.foundedYear;
+    if (data.status !== undefined) updateData.status = data.status;
     if (data.spotifyUrl !== undefined) updateData.spotifyUrl = cleanUrl(data.spotifyUrl);
     if (data.bandcampUrl !== undefined) updateData.bandcampUrl = cleanUrl(data.bandcampUrl);
     if (data.instagramUrl !== undefined) updateData.instagramUrl = cleanUrl(data.instagramUrl);
     if (data.facebookUrl !== undefined) updateData.facebookUrl = cleanUrl(data.facebookUrl);
     if (data.youtubeUrl !== undefined) updateData.youtubeUrl = cleanUrl(data.youtubeUrl);
     if (data.webUrl !== undefined) updateData.webUrl = cleanUrl(data.webUrl);
+    if (data.merchUrl !== undefined) updateData.merchUrl = cleanUrl(data.merchUrl);
     if (data.logoUrl !== undefined) updateData.logoUrl = data.logoUrl;
     if (data.imageUrl !== undefined) updateData.imageUrl = data.imageUrl;
     if (data.images !== undefined) updateData.images = data.images;

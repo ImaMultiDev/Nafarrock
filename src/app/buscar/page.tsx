@@ -28,7 +28,6 @@ export default async function BuscarPage({ searchParams }: SearchParams) {
   const genre = params.genre ?? "";
   const location = params.location ?? "";
   const active = params.active;
-  const emerging = params.emerging;
 
   const [bandsResult, events, venues, festivals, promoters, organizers] = await Promise.all([
     getBands({
@@ -36,7 +35,6 @@ export default async function BuscarPage({ searchParams }: SearchParams) {
       genre: genre || undefined,
       location: location || undefined,
       isActive: active === "true" ? true : active === "false" ? false : undefined,
-      isEmerging: emerging === "true" ? true : undefined,
       page: 1,
       pageSize: 9,
     }),
@@ -54,7 +52,7 @@ export default async function BuscarPage({ searchParams }: SearchParams) {
           BUSCAR
         </h1>
         <p className="mt-3 max-w-xl font-body text-punk-white/60 sm:mt-4">
-          Filtra por género, localidad, activo/inactivo, emergente.
+          Filtra por género, localidad y estado activo/inactivo.
         </p>
       </div>
 
@@ -68,7 +66,6 @@ export default async function BuscarPage({ searchParams }: SearchParams) {
           defaultGenre={genre}
           defaultLocation={location}
           defaultActive={active}
-          defaultEmerging={emerging}
         />
       </Suspense>
 

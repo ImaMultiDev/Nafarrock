@@ -27,8 +27,7 @@ El admin se crea en la tabla `users` con `role = ADMIN`. Opciones:
 npm run db:seed
 ```
 
-- **Por defecto**: crea `admin@nafarrock.local` / `admin123`
-- **Con .env**: define `ADMIN_EMAIL` y `ADMIN_PASSWORD` en `.env` (o en Vercel) y ejecuta el seed. Usará tus credenciales.
+- **Obligatorio**: define `ADMIN_EMAIL` y `ADMIN_PASSWORD` en `.env` (o en Vercel). El seed falla si no están definidas.
 
 Si el email ya existe (p. ej. te registraste antes), el seed lo promueve a ADMIN y actualiza la contraseña.
 

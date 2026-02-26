@@ -6,7 +6,7 @@ import { Pagination } from "@/components/ui/Pagination";
 
 export const metadata = {
   title: "Bandas",
-  description: "Bandas nafarroas históricas y emergentes",
+  description: "Bandas nafarroas de la escena",
 };
 
 type Props = { searchParams: Promise<Record<string, string | undefined>> };
@@ -18,7 +18,6 @@ export default async function BandasPage({ searchParams }: Props) {
     search: params.search || undefined,
     genre: params.genre || undefined,
     location: params.location || undefined,
-    isEmerging: params.emerging === "1" ? true : undefined,
     page,
   });
 
@@ -29,7 +28,7 @@ export default async function BandasPage({ searchParams }: Props) {
           BANDAS
         </h1>
         <p className="mt-3 max-w-xl font-body text-punk-white/60 sm:mt-4">
-          Históricas y emergentes de Nafarroa. {total} {total === 1 ? "banda" : "bandas"} en la escena.
+          {total} {total === 1 ? "banda" : "bandas"} en la escena.
         </p>
       </div>
 
@@ -70,11 +69,6 @@ export default async function BandasPage({ searchParams }: Props) {
                 </span>
               ))}
             </div>
-            {band.isEmerging && (
-              <span className="mt-2 inline-block font-punch text-xs uppercase tracking-widest text-punk-red">
-                Emergente
-              </span>
-            )}
           </Link>
         ))}
       </div>
@@ -88,7 +82,6 @@ export default async function BandasPage({ searchParams }: Props) {
               search: params.search,
               genre: params.genre,
               location: params.location,
-              emerging: params.emerging,
             }).filter((entry): entry is [string, string] => {
           const v = entry[1];
           return v != null && v !== "";
