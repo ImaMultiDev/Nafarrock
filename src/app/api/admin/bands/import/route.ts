@@ -11,7 +11,11 @@ const importSchema = z.array(
     biografia: z.string().optional(),
     logo_url: z.string().url().optional().or(z.literal("")),
     imagen_url: z.string().url().optional().or(z.literal("")),
-    localidad: z.string().optional(),
+    localidad: z
+      .enum(["Nafarroa", "Araba", "Bizkaia", "Gipuzkoa"])
+      .optional()
+      .or(z.literal(""))
+      .transform((v) => (v && v.trim() ? v : null)),
     año_fundacion: z.number().optional(),
     estado: z.enum(["ACTIVE", "PAUSED", "INACTIVE"]).optional(),
     generos: z.array(z.string()),

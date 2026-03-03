@@ -3,13 +3,14 @@ import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin";
 import { z } from "zod";
 import { uniqueSlug } from "@/lib/slug";
+import { bandLocationSchema } from "@/lib/band-locations";
 
 const updateSchema = z.object({
   name: z.string().min(1).optional(),
   slug: z.string().optional(),
   bio: z.string().optional().nullable(),
   genres: z.array(z.string()).optional(),
-  location: z.string().optional().nullable(),
+  location: bandLocationSchema,
   foundedYear: z.coerce.number().optional().nullable(),
   logoUrl: z.string().url().optional().nullable().or(z.literal("")),
   imageUrl: z.string().url().optional().nullable().or(z.literal("")),

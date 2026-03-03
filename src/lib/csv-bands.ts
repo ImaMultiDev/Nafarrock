@@ -5,6 +5,7 @@
 
 import { parse } from "csv-parse/sync";
 import { z } from "zod";
+import { BAND_LOCATIONS } from "./band-locations";
 
 export const GENRES = [
   "punk",
@@ -36,7 +37,17 @@ const rowSchema = z.object({
   biografia: z.string().optional().default(""),
   logo_url: urlSchema,
   imagen_url: urlSchema,
-  localidad: z.string().optional().default(""),
+  localidad: z
+    .string()
+    .optional()
+    .default("")
+    .transform((v) => (v?.trim() ? v : null))
+    .refine(
+      (v) => v === null || BAND_LOCATIONS.includes(v as (typeof BAND_LOCATIONS)[number]),
+      (v) => ({
+        message: `Localidad inválida: "${v}". Válidas: ${BAND_LOCATIONS.join(", ")}`,
+      })
+    ),
   año_fundacion: z
     .string()
     .optional()
@@ -217,6 +228,6 @@ export function parseCSVBands(buffer: Buffer): CSVValidationResult {
 export function getCSVTemplate(): string {
   const headers = EXPECTED_HEADERS.join(",");
   const example =
-    "Ejemplo Banda,\"Biografía de ejemplo.\",https://res.cloudinary.com/xxx/logo.png,https://res.cloudinary.com/xxx/img.png,Pamplona,2015,activa,\"punk, rock urbano\",https://open.spotify.com/...,https://instagram.com/...,https://youtube.com/...,https://web.com,https://tienda.com";
+    "Ejemplo Banda,\"Biografía de ejemplo.\",https://res.cloudinary.com/xxx/logo.png,https://res.cloudinary.com/xxx/img.png,Nafarroa,2015,activa,\"punk, rock urbano\",https://open.spotify.com/...,https://instagram.com/...,https://youtube.com/...,https://web.com,https://tienda.com";
   return `${headers}\n${example}`;
 }

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { startOfToday } from "@/lib/date";
+import { isValidBandLocation } from "@/lib/band-locations";
 
 export type BandFilters = {
   genre?: string;
@@ -24,8 +25,8 @@ export async function getBands(filters: BandFilters = {}) {
   if (filters.genre) {
     where.genres = { has: filters.genre };
   }
-  if (filters.location) {
-    where.location = { contains: filters.location, mode: "insensitive" };
+  if (filters.location && isValidBandLocation(filters.location)) {
+    where.location = filters.location;
   }
   if (typeof filters.isActive === "boolean") {
     where.isActive = filters.isActive;

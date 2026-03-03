@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { uniqueSlug } from "@/lib/slug";
 import { z } from "zod";
+import { bandLocationSchema } from "@/lib/band-locations";
 
 const memberSchema = z.object({
   name: z.string().min(1),
@@ -15,7 +16,7 @@ const updateSchema = z.object({
   name: z.string().min(1).optional(),
   bio: z.string().optional().nullable(),
   genres: z.array(z.string()).optional(),
-  location: z.string().optional().nullable(),
+  location: bandLocationSchema,
   foundedYear: z.coerce.number().optional().nullable(),
   status: z.enum(["ACTIVE", "INACTIVE", "PAUSED"]).optional(),
   spotifyUrl: z.string().url().optional().nullable().or(z.literal("")),

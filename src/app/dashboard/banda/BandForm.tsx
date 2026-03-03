@@ -117,8 +117,14 @@ export function BandForm({ band, genres }: { band: Band; genres: string[] }) {
         <textarea id="bio" name="bio" rows={3} defaultValue={band.bio ?? ""} className={inputClass} />
       </div>
       <div>
-        <label htmlFor="location" className={labelClass}>Localidad</label>
-        <input id="location" name="location" type="text" defaultValue={band.location ?? ""} className={inputClass} />
+        <label htmlFor="location" className={labelClass}>Territorio</label>
+        <select id="location" name="location" defaultValue={band.location ?? ""} className={inputClass}>
+          <option value="">—</option>
+          <option value="Nafarroa">Nafarroa</option>
+          <option value="Araba">Araba</option>
+          <option value="Bizkaia">Bizkaia</option>
+          <option value="Gipuzkoa">Gipuzkoa</option>
+        </select>
       </div>
       <div>
         <label htmlFor="foundedYear" className={labelClass}>Año fundación</label>

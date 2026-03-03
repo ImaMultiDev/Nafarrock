@@ -37,10 +37,15 @@ const baseSchema = z.object({
   role: z.enum(ROLES).default("USUARIO"),
 });
 
+const BAND_LOCATIONS = ["Nafarroa", "Araba", "Bizkaia", "Gipuzkoa"] as const;
+
 const bandSchema = baseSchema.extend({
   role: z.literal("BANDA"),
   entityName: z.string().min(1, "Nombre de la banda requerido"),
-  location: z.string().optional(),
+  location: z
+    .union([z.enum(BAND_LOCATIONS), z.literal("")])
+    .optional()
+    .transform((v) => (v && v.trim() ? v : undefined)),
   foundedYear: z.coerce.number().min(1900).max(new Date().getFullYear()).optional(),
   status: z.enum(["ACTIVE", "INACTIVE", "PAUSED"]).optional().default("ACTIVE"),
   bio: z.string().optional(),

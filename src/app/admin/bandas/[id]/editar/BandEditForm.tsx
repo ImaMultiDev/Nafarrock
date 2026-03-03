@@ -136,9 +136,15 @@ export function BandEditForm({ band, genres }: { band: Band; genres: string[] })
       </div>
       <div>
         <label htmlFor="location" className={labelClass}>
-          Localidad
+          Territorio
         </label>
-        <input id="location" name="location" type="text" defaultValue={band.location ?? ""} className={inputClass} />
+        <select id="location" name="location" defaultValue={band.location ?? ""} className={inputClass}>
+          <option value="">—</option>
+          <option value="Nafarroa">Nafarroa</option>
+          <option value="Araba">Araba</option>
+          <option value="Bizkaia">Bizkaia</option>
+          <option value="Gipuzkoa">Gipuzkoa</option>
+        </select>
       </div>
       <div>
         <label htmlFor="foundedYear" className={labelClass}>

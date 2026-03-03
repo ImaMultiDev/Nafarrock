@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
+import { BAND_LOCATIONS } from "@/lib/band-locations";
 
 const GENRES = ["punk", "rock urbano", "grunge", "hardcore", "indie", "alternativo", "metal"];
 
@@ -76,16 +77,19 @@ export default function BandSearchForm({
         </div>
         <div>
           <label htmlFor="location" className="block font-punch text-xs uppercase tracking-widest text-punk-white/70">
-            Localidad
+            Territorio
           </label>
-          <input
+          <select
             id="location"
             name="location"
-            type="text"
             defaultValue={defaultLocation}
-            placeholder="Pamplona, Tudela..."
-            className="mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-acid focus:outline-none"
-          />
+            className="mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white focus:border-punk-acid focus:outline-none"
+          >
+            <option value="">Todos</option>
+            {BAND_LOCATIONS.map((loc) => (
+              <option key={loc} value={loc}>{loc}</option>
+            ))}
+          </select>
         </div>
         <div className="flex flex-col gap-2">
           <label className="block font-punch text-xs uppercase tracking-widest text-punk-white/70">

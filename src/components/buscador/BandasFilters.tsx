@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
+import { BAND_LOCATIONS } from "@/lib/band-locations";
 
 const GENRES = ["punk", "rock urbano", "grunge", "hardcore", "indie", "alternativo", "metal"];
 
@@ -58,16 +59,19 @@ export function BandasFilters() {
       </div>
       <div>
         <label htmlFor="bandas-location" className="block font-punch text-xs uppercase tracking-widest text-punk-white/70">
-          Localidad
+          Territorio
         </label>
-        <input
+        <select
           id="bandas-location"
           name="location"
-          type="text"
           defaultValue={searchParams.get("location") ?? ""}
-          placeholder="Pamplona..."
-          className="mt-1 w-32 border-2 border-punk-white/20 bg-punk-black px-4 py-2 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none"
-        />
+          className="mt-1 w-36 border-2 border-punk-white/20 bg-punk-black px-4 py-2 font-body text-punk-white focus:border-punk-green focus:outline-none"
+        >
+          <option value="">Todos</option>
+          {BAND_LOCATIONS.map((loc) => (
+            <option key={loc} value={loc}>{loc}</option>
+          ))}
+        </select>
       </div>
       <label className="flex items-center gap-2">
         <input type="checkbox" name="emerging" defaultChecked={searchParams.get("emerging") === "1"} className="accent-punk-green" />
