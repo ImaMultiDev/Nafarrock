@@ -46,7 +46,7 @@ export default async function EventosPage({ searchParams }: Props) {
             {event.imageUrl && (
               <>
                 <div
-                  className="absolute inset-0 opacity-[0.15] bg-[length:auto_100%] bg-[position:right_center] bg-no-repeat md:bg-cover md:bg-[position:center_top]"
+                  className="absolute inset-0 opacity-[0.15] bg-cover bg-[position:center_top]"
                   style={{ backgroundImage: `url(${event.imageUrl})` }}
                 />
                 <div
@@ -72,7 +72,7 @@ export default async function EventosPage({ searchParams }: Props) {
                   {event.title}
                 </h2>
                 <p className="mt-1 font-body text-punk-white/70">
-                  {event.venue ? `${event.venue.name} · ${event.venue.city}` : "Lugar por confirmar"}
+                  {event.venue ? `${event.venue.name} · ${event.venue.city}` : ""}
                 </p>
                 {event.bands.length > 0 && (
                   <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-green/80">
