@@ -61,15 +61,27 @@ export function ImageUpload({
         body: formData,
       });
 
-      const data = await res.json();
+      let data: { url?: string; message?: string };
+      try {
+        const text = await res.text();
+        data = text ? JSON.parse(text) : {};
+      } catch {
+        data = {};
+      }
 
       if (!res.ok) {
-        throw new Error(data.message ?? "Error al subir");
+        const msg = data.message ?? (res.status === 413 ? "Archivo demasiado grande" : "Error al subir");
+        throw new Error(msg);
+      }
+
+      if (!data.url) {
+        throw new Error("Error al subir");
       }
 
       onChange(data.url);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al subir");
+      const msg = err instanceof Error ? err.message : "Error al subir";
+      setError(msg.startsWith("Unexpected") || msg.includes("is not valid JSON") ? "Error al subir la imagen" : msg);
     } finally {
       setUploading(false);
       e.target.value = "";
