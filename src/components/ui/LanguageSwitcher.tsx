@@ -1,27 +1,33 @@
 "use client";
 
 import { useLocale } from "next-intl";
-import { useRouter, usePathname } from "@/i18n/navigation";
-import { useTransition } from "react";
+import { usePathname } from "@/i18n/navigation";
+import { useState } from "react";
 
 const LOCALE_COOKIE = "NEXT_LOCALE";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 año
 
+function buildLocalizedUrl(pathname: string, newLocale: "es" | "eu"): string {
+  const isAdminOrDashboard =
+    pathname.startsWith("/admin") || pathname.startsWith("/dashboard");
+  const basePath = isAdminOrDashboard ? "/" : pathname;
+  // Castellano (default): sin prefijo. Euskera: prefijo /eu
+  if (newLocale === "es") return basePath || "/";
+  return basePath === "/" ? "/eu" : `/eu${basePath}`;
+}
+
 export function LanguageSwitcher() {
   const locale = useLocale();
-  const router = useRouter();
   const pathname = usePathname();
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
 
   const setLocale = (newLocale: "es" | "eu") => {
+    if (locale === newLocale) return;
     document.cookie = `${LOCALE_COOKIE}=${newLocale};path=/;max-age=${COOKIE_MAX_AGE};SameSite=Lax`;
-    startTransition(() => {
-      // Admin y dashboard no tienen versión localizada: ir a inicio
-      const isAdminOrDashboard =
-        pathname.startsWith("/admin") || pathname.startsWith("/dashboard");
-      const targetPath = isAdminOrDashboard ? "/" : pathname;
-      router.replace(targetPath, { locale: newLocale });
-    });
+    setIsPending(true);
+    // Recarga completa para que el layout raíz cargue los mensajes del nuevo locale
+    const url = buildLocalizedUrl(pathname, newLocale);
+    window.location.href = url;
   };
 
   return (
