@@ -1,49 +1,52 @@
 "use client";
 
-import Link from "next/link";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 const EDITORIAL_MVP_MODE = true;
-
-const links = [
-  {
-    href: "/bandas",
-    title: "BANDAS",
-    desc: "De la escena nafarroa",
-    color: "punk-green",
-    delay: 0,
-    size: "large",
-  },
-  {
-    href: "/eventos",
-    title: "EVENTOS",
-    desc: "Conciertos y agenda",
-    color: "punk-red",
-    delay: 0.1,
-    size: "small",
-  },
-  {
-    href: "/escena",
-    title: "ESCENA",
-    desc: EDITORIAL_MVP_MODE ? "Salas y festivales" : "Salas, promotores, organizadores, festivales",
-    color: "punk-acid",
-    delay: 0.2,
-    size: "small",
-  },
-  {
-    href: "/guia",
-    title: "GUÍA",
-    desc: "Qué es Nafarrock",
-    color: "punk-pink",
-    delay: 0.3,
-    size: "large",
-  },
-];
 
 export function ExploreSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const t = useTranslations("home.explore");
+  const tSection = useTranslations("home.exploreSection");
+
+  const links = [
+    {
+      href: "/bandas",
+      titleKey: "bands.title" as const,
+      descKey: "bands.desc" as const,
+      color: "punk-green",
+      delay: 0,
+      size: "large",
+    },
+    {
+      href: "/eventos",
+      titleKey: "events.title" as const,
+      descKey: "events.desc" as const,
+      color: "punk-red",
+      delay: 0.1,
+      size: "small",
+    },
+    {
+      href: "/escena",
+      titleKey: "scene.title" as const,
+      descKey: EDITORIAL_MVP_MODE ? "scene.desc" : "scene.descFull",
+      color: "punk-acid",
+      delay: 0.2,
+      size: "small",
+    },
+    {
+      href: "/guia",
+      titleKey: "guide.title" as const,
+      descKey: "guide.desc" as const,
+      color: "punk-pink",
+      delay: 0.3,
+      size: "large",
+    },
+  ];
 
   return (
     <section
@@ -73,11 +76,10 @@ export function ExploreSection() {
           className="mb-10 sm:mb-16"
         >
           <h2 className="font-display text-5xl tracking-tighter text-punk-white sm:text-7xl">
-            EXPLORA
+            {tSection("title")}
           </h2>
           <p className="mt-3 max-w-xl font-body text-punk-white/60 sm:mt-4">
-            Entra en la escena. Bandas que han moldeado el sonido nafarroa.
-            Eventos que no te puedes perder.
+            {tSection("subtitle")}
           </p>
         </motion.div>
 
@@ -121,10 +123,10 @@ export function ExploreSection() {
                         : "text-punk-acid"
                     }`}
                   >
-                    {item.title}
+                    {t(item.titleKey)}
                   </h3>
                   <p className="mt-4 font-body text-sm text-punk-white/70 group-hover:text-punk-white/90">
-                    {item.desc}
+                    {t(item.descKey)}
                   </p>
                   <span
                     className={`mt-6 inline-block font-punch text-xs uppercase tracking-widest transition-all group-hover:translate-x-2 ${
@@ -137,7 +139,7 @@ export function ExploreSection() {
                         : "text-punk-acid"
                     }`}
                   >
-                    Entrar →
+                    {t("enter")}
                   </span>
                 </motion.div>
 

@@ -1,12 +1,15 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 const EDITORIAL_MVP_MODE = true;
 
 export function HeroSection() {
+  const t = useTranslations("home");
+  const tActions = useTranslations("common.actions");
   return (
     <section className="relative min-h-0 overflow-hidden bg-punk-black sm:min-h-hero-cap">
       {/* Grid sutil de fondo */}
@@ -57,7 +60,7 @@ export function HeroSection() {
             transition={{ delay: 0.3, duration: 0.5 }}
             className="font-punch mb-6 text-xs uppercase tracking-[0.35em] text-punk-green sm:mb-8 sm:text-sm sm:tracking-[0.4em]"
           >
-            Nafarroa · Punk · Rock · Alternativo
+            {t("tagline")}
           </motion.p>
 
           {/* Título NAFARROCK con glitch - más grande en mobile, más pequeño por debajo de 300px */}
@@ -80,11 +83,17 @@ export function HeroSection() {
             transition={{ delay: 0.6, duration: 0.8 }}
             className="mx-auto mt-8 max-w-2xl font-body text-base leading-relaxed text-punk-white/80 sm:mt-10 sm:text-lg lg:mx-0 lg:text-left lg:text-xl"
           >
-            El radar cultural del punk rock, rock urbano y escena alternativa
-            nafarroa. <span className="font-bold text-punk-green">Bandas</span>,{" "}
-            <span className="font-bold text-punk-red">eventos</span>,{" "}
-            <span className="font-bold text-punk-pink">salas</span> y
-            festivales. Memoria cultural y escena viva.
+            {t.rich("subtitle", {
+              green: (chunks) => (
+                <span className="font-bold text-punk-green">{chunks}</span>
+              ),
+              red: (chunks) => (
+                <span className="font-bold text-punk-red">{chunks}</span>
+              ),
+              pink: (chunks) => (
+                <span className="font-bold text-punk-pink">{chunks}</span>
+              ),
+            })}
           </motion.p>
 
           {/* CTA buttons - centrados en mobile */}
@@ -98,20 +107,20 @@ export function HeroSection() {
               href="/eventos"
               className="group relative overflow-hidden bg-punk-red px-8 py-4 font-punch text-sm uppercase tracking-widest text-punk-white transition-all duration-300 hover:bg-punk-blood hover:scale-105 hover:shadow-[0_0_30px_rgba(230,0,38,0.5)]"
             >
-              Explorar eventos
+              {t("cta.exploreEvents")}
             </Link>
             <Link
               href="/bandas"
               className="border-2 border-punk-green bg-transparent px-8 py-4 font-punch text-sm uppercase tracking-widest text-punk-green transition-all duration-300 hover:bg-punk-green hover:text-punk-black hover:scale-105"
             >
-              Ver bandas
+              {t("cta.viewBands")}
             </Link>
             {!EDITORIAL_MVP_MODE && (
               <Link
                 href="/bolos"
                 className="border-2 border-punk-white/40 bg-transparent px-8 py-4 font-punch text-sm uppercase tracking-widest text-punk-white/90 transition-all duration-300 hover:border-punk-white hover:bg-punk-white/10 hover:text-punk-white"
               >
-                VER BOLOS
+                {t("cta.verBolos")}
               </Link>
             )}
           </motion.div>
@@ -130,7 +139,7 @@ export function HeroSection() {
               className="flex flex-col items-center gap-2"
             >
               <span className="font-punch text-xs uppercase tracking-widest text-punk-white/50">
-                Explorar
+                {tActions("explore")}
               </span>
               <div className="h-10 w-6 rounded-full border-2 border-punk-white/30 p-1">
                 <motion.div

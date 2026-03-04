@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Bebas_Neue, Space_Mono } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages, getLocale } from "next-intl/server";
 import { Providers } from "@/components/providers/Providers";
 import { Header } from "@/components/ui/Header";
 import { BandVerificationBanner } from "@/components/BandVerificationBanner";
@@ -46,22 +48,27 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="es" className={`${inter.variable} ${bebas.variable} ${spaceMono.variable}`}>
+    <html lang={locale} className={`${inter.variable} ${bebas.variable} ${spaceMono.variable}`}>
       <body className="font-body min-h-screen overflow-x-hidden bg-punk-black">
         <NextTopLoader color="#E60026" height={3} showSpinner={false} />
         <div className="noise-overlay" aria-hidden />
-        <Providers>
-          <Header />
-          <BandVerificationBanner />
-          {children}
-          <FooterSection />
-        </Providers>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <Providers>
+            <Header />
+            <BandVerificationBanner />
+            {children}
+            <FooterSection />
+          </Providers>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

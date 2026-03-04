@@ -1,6 +1,7 @@
 import { getBandBySlug } from "@/services/band.service";
 import { notFound } from "next/navigation";
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { PageLayout } from "@/components/ui/PageLayout";
@@ -40,12 +41,13 @@ export default async function BandPage({
     ...(band.merchUrl ? [{ kind: "merch" as const, url: band.merchUrl }] : []),
   ];
 
+  const t = await getTranslations("bandDetail");
   const statusLabel =
     band.status === "INACTIVE"
-      ? "Inactiva"
+      ? t("status.inactive")
       : band.status === "PAUSED"
-        ? "En pausa"
-        : "Activa";
+        ? t("status.paused")
+        : t("status.active");
 
   return (
     <PageLayout>
@@ -53,7 +55,7 @@ export default async function BandPage({
         href="/bandas"
         className="font-punch text-xs uppercase tracking-widest text-punk-green transition-colors hover:text-punk-green/80"
       >
-        ← Volver a bandas
+        ← {t("backToBands")}
       </Link>
 
       <div className="mt-8 flex flex-col gap-8 md:flex-row">

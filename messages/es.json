@@ -1,0 +1,204 @@
+{
+  "common": {
+    "nav": {
+      "home": "Inicio",
+      "events": "Eventos",
+      "bands": "Bandas",
+      "scene": "Escena",
+      "guide": "Guía",
+      "manual": "Manual",
+      "contact": "Contacto",
+      "panel": "Panel",
+      "logout": "Salir",
+      "login": "Entrar",
+      "claim": "Reclamar",
+      "claimProfile": "Reclamar perfil",
+      "bolos": "Bolos"
+    },
+    "actions": {
+      "search": "Buscar",
+      "back": "Volver",
+      "backToHome": "Volver al inicio",
+      "backToBands": "Volver a bandas",
+      "enter": "Entrar",
+      "explore": "Explorar"
+    },
+    "logoAlt": "Nafarrock - Guía del rock en Nafarroa",
+    "menuOpen": "Abrir menú",
+    "menuClose": "Cerrar menú",
+    "social": {
+      "networks": "Redes",
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "youtube": "YouTube",
+      "email": "Correo"
+    }
+  },
+  "home": {
+    "tagline": "Nafarroa · Punk · Rock · Alternativo",
+    "subtitle": "El radar cultural del punk rock, rock urbano y escena alternativa nafarroa. <green>Bandas</green>, <red>eventos</red>, <pink>salas</pink> y festivales. Memoria cultural y escena viva.",
+    "cta": {
+      "exploreEvents": "Explorar eventos",
+      "viewBands": "Ver bandas",
+      "verBolos": "VER BOLOS"
+    },
+    "explore": {
+      "bands": {
+        "title": "BANDAS",
+        "desc": "De la escena nafarroa"
+      },
+      "events": {
+        "title": "EVENTOS",
+        "desc": "Conciertos y agenda"
+      },
+      "scene": {
+        "title": "ESCENA",
+        "desc": "Salas y festivales",
+        "descFull": "Salas, promotores, organizadores, festivales"
+      },
+      "guide": {
+        "title": "GUÍA",
+        "desc": "Qué es Nafarrock"
+      },
+      "enter": "Entrar →"
+    },
+    "exploreSection": {
+      "title": "EXPLORA",
+      "subtitle": "Entra en la escena. Bandas que han moldeado el sonido nafarroa. Eventos que no te puedes perder."
+    },
+    "manifesto": {
+      "philosophy": "La filosofía",
+      "line1": "Nafarrock es un radar cultural.",
+      "line2": "Memoria de la escena.",
+      "line3": "Agenda viva.",
+      "line4": "Herramienta de visibilidad.",
+      "line5": "Comunidad.",
+      "tagline": "Auténtico. No corporativo. Técnicamente profesional."
+    },
+    "footer": {
+      "platform": "Plataforma de la escena rock nafarroa",
+      "copyright": "© {year} Nafarrock · Punk · Rock · Nafarroa"
+    }
+  },
+  "search": {
+    "placeholder": "Buscar bandas, eventos, salas, escena...",
+    "hint": "Bandas · Eventos · Salas · Festivales",
+    "hintFull": "Bandas · Eventos · Salas · Festivales · Promotores · Organizadores",
+    "label": "Buscar bandas, eventos, salas y festivales",
+    "labelFull": "Buscar bandas, eventos, salas, festivales, promotores, organizadores"
+  },
+  "bands": {
+    "title": "BANDAS",
+    "count": "{count} banda en la escena.",
+    "count_other": "{count} bandas en la escena.",
+    "empty": "Aún no hay bandas registradas. Pronto habrá contenido. Mientras tanto, explora eventos y salas.",
+    "metadata": {
+      "title": "Bandas",
+      "description": "Bandas nafarroas de la escena"
+    }
+  },
+  "events": {
+    "title": "EVENTOS",
+    "subtitle": "Conciertos y festivales. {count} evento en la escena nafarroa.",
+    "subtitle_other": "Conciertos y festivales. {count} eventos en la escena nafarroa.",
+    "metadata": {
+      "title": "Eventos",
+      "description": "Conciertos y festivales en Nafarroa"
+    }
+  },
+  "scene": {
+    "title": "ESCENA",
+    "subtitle": "Salas y festivales de la escena rock nafarroa.",
+    "subtitleFull": "Salas, promotores, organizadores, festivales y asociaciones que hacen posible la escena rock nafarroa.",
+    "venues": {
+      "label": "Salas / Recintos",
+      "desc": "Espacios donde suena la escena"
+    },
+    "promoters": {
+      "label": "Promotores",
+      "desc": "Promoción de conciertos y eventos"
+    },
+    "organizers": {
+      "label": "Organizadores",
+      "desc": "Organización de eventos puntuales"
+    },
+    "festivals": {
+      "label": "Festivales",
+      "desc": "Festivales de la escena"
+    },
+    "associations": {
+      "label": "Asociaciones y Sociedades",
+      "desc": "Asociaciones y sociedades culturales"
+    },
+    "metadata": {
+      "title": "Escena",
+      "description": "Salas, promotores, organizadores y festivales de la escena rock nafarroa"
+    }
+  },
+  "guide": {
+    "title": "GUÍA",
+    "subtitle": "Qué es Nafarrock",
+    "essential": {
+      "title": "Lo esencial",
+      "p1": "Nafarrock es una plataforma cultural centrada en la escena rock: punk, hardcore, metal, indie y derivados en Euskal Herria y Navarra.",
+      "p2": "No somos un directorio institucional ni una agenda cultural genérica. Estamos aquí para dar visibilidad, foco y voz a lo que ocurre en la escena."
+    },
+    "core": {
+      "title": "El núcleo",
+      "intro": "Lo que nos mueve son tres cosas:",
+      "events": "Los eventos: conciertos y festivales. Que sepas qué hay y dónde.",
+      "bands": "Las bandas: quiénes suenan, quiénes tocan, quiénes molan.",
+      "scene": "La escena viva: promotores, organizadores, festivales y salas que hacen posible que todo esto ocurra."
+    },
+    "purpose": {
+      "title": "Para qué sirve Nafarrock",
+      "visibility": "Visibilizar lo que sucede: conciertos, bandas, espacios.",
+      "connect": "Conectar a la escena: público, bandas, espacios, promotores.",
+      "voice": "Servir de altavoz cultural: rock, punk, metal y lo que venga."
+    },
+    "where": {
+      "title": "Dónde estamos",
+      "p": "Nos centramos en Euskal Herria y Navarra. Es el territorio donde vive la escena que queremos apoyar."
+    },
+    "start": {
+      "title": "Cómo empezar",
+      "p": "Entra en Eventos para ver conciertos y festivales. Explora Bandas para descubrir quién toca. Y pasa por la Escena para ver salas, promotores, organizadores y festivales."
+    },
+    "footer": "Plataforma cultural · Escena rock · Euskal Herria · Navarra",
+    "metadata": {
+      "title": "Guía",
+      "description": "Qué es Nafarrock: visibilidad, conciertos y bandas de la escena rock en Euskal Herria y Navarra"
+    }
+  },
+  "contact": {
+    "title": "Contacto",
+    "intro": "Usa este formulario para ponerte en contacto con el administrador de Nafarrock. Los mensajes se envían a harremanak@nafarrock.com.",
+    "errorHint": "Si crees que es un error, inicia sesión con la cuenta correcta o contacta por otro medio.",
+    "metadata": {
+      "title": "Contacto",
+      "description": "Formulario de contacto con el administrador de Nafarrock"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "ENTRAR",
+      "subtitle": "Accede a tu cuenta de Nafarrock",
+      "emailVerified": "✓ Email verificado. Ya puedes iniciar sesión.",
+      "errorCredentials": "Email o contraseña incorrectos",
+      "errorVerify": "Debes verificar tu email antes de iniciar sesión. Revisa tu bandeja de entrada o spam.",
+      "errorConnection": "Error de conexión"
+    }
+  },
+  "bandDetail": {
+    "backToBands": "← Volver a bandas",
+    "status": {
+      "active": "Activa",
+      "inactive": "Inactiva",
+      "paused": "En pausa"
+    }
+  },
+  "language": {
+    "es": "Castellano",
+    "eu": "Euskara"
+  }
+}

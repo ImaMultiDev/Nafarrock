@@ -1,12 +1,16 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
+import NextLink from "next/link";
+import { Link } from "@/i18n/navigation";
 
 export function FooterSection() {
   const { data: session } = useSession();
+  const t = useTranslations("home.footer");
+  const tNav = useTranslations("common.nav");
   return (
     <footer className="relative overflow-hidden border-t-2 border-punk-green bg-punk-black py-10 px-4 sm:py-12 sm:px-12 lg:py-14 lg:px-20 max-[299px]:px-3 max-[299px]:py-8">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,200,83,0.03)_0%,transparent_70%)]" />
@@ -35,7 +39,7 @@ export function FooterSection() {
               </span>
             </Link>
             <p className="mt-2 font-body text-sm text-punk-white/60">
-              Plataforma de la escena rock nafarroa
+              {t("platform")}
             </p>
           </motion.div>
 
@@ -50,32 +54,32 @@ export function FooterSection() {
               href="/bandas"
               className="font-punch text-xs uppercase tracking-widest text-punk-white/70 transition-colors hover:text-punk-green"
             >
-              Bandas
+              {tNav("bands")}
             </Link>
             <Link
               href="/eventos"
               className="font-punch text-xs uppercase tracking-widest text-punk-white/70 transition-colors hover:text-punk-green"
             >
-              Eventos
+              {tNav("events")}
             </Link>
             <Link
               href="/escena"
               className="font-punch text-xs uppercase tracking-widest text-punk-white/70 transition-colors hover:text-punk-green"
             >
-              Escena
+              {tNav("scene")}
             </Link>
             <Link
               href="/guia"
               className="font-punch text-xs uppercase tracking-widest text-punk-white/70 transition-colors hover:text-punk-green"
             >
-              Guía
+              {tNav("guide")}
             </Link>
             {session && (
               <Link
                 href="/contacto"
                 className="font-punch text-xs uppercase tracking-widest text-punk-white/70 transition-colors hover:text-punk-green"
               >
-                Contacto
+                {tNav("contact")}
               </Link>
             )}
           </motion.div>
@@ -89,7 +93,7 @@ export function FooterSection() {
           className="mt-12 border-t border-punk-white/10 pt-8 text-center"
         >
           <p className="font-body text-xs text-punk-white/40">
-            © {new Date().getFullYear()} Nafarrock · Punk · Rock · Nafarroa
+            {t("copyright", { year: new Date().getFullYear() })}
           </p>
         </motion.div>
       </div>

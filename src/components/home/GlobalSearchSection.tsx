@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 import { canViewRestrictedEscena } from "@/lib/escena-visibility";
 import { Search } from "lucide-react";
 
@@ -11,14 +12,11 @@ export function GlobalSearchSection() {
   const router = useRouter();
   const { data: session } = useSession();
   const showRestricted = canViewRestrictedEscena(session ?? null);
+  const t = useTranslations("search");
+  const tActions = useTranslations("common.actions");
 
-  const searchHint = showRestricted
-    ? "Bandas · Eventos · Salas · Festivales · Promotores · Organizadores"
-    : "Bandas · Eventos · Salas · Festivales";
-
-  const labelText = showRestricted
-    ? "Buscar bandas, eventos, salas, festivales, promotores, organizadores"
-    : "Buscar bandas, eventos, salas y festivales";
+  const searchHint = showRestricted ? t("hintFull") : t("hint");
+  const labelText = showRestricted ? t("labelFull") : t("label");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +36,7 @@ export function GlobalSearchSection() {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Buscar bandas, eventos, salas, escena..."
+            placeholder={t("placeholder")}
             className="w-full border-2 border-punk-white/20 bg-punk-black/80 px-5 py-4 pl-12 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none"
           />
           <Search
@@ -49,7 +47,7 @@ export function GlobalSearchSection() {
             type="submit"
             className="absolute right-2 top-1/2 -translate-y-1/2 border-2 border-punk-green bg-punk-green px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-black transition-colors hover:bg-transparent hover:text-punk-green"
           >
-            Buscar
+            {tActions("search")}
           </button>
         </form>
         <p className="mt-2 text-center font-body text-xs text-punk-white/50">

@@ -1,0 +1,204 @@
+{
+  "common": {
+    "nav": {
+      "home": "Hasiera",
+      "events": "Ekitaldiak",
+      "bands": "Taldeak",
+      "scene": "Eskena",
+      "guide": "Gida",
+      "manual": "Eskuliburua",
+      "contact": "Kontaktua",
+      "panel": "Panela",
+      "logout": "Irten",
+      "login": "Sartu",
+      "claim": "Eskatu",
+      "claimProfile": "Eskatu profila",
+      "bolos": "Bolos"
+    },
+    "actions": {
+      "search": "Bilatu",
+      "back": "Itzuli",
+      "backToHome": "Itzuli hasierara",
+      "backToBands": "Itzuli taldeetara",
+      "enter": "Sartu",
+      "explore": "Arakatu"
+    },
+    "logoAlt": "Nafarrock - Nafarroako rock gida",
+    "menuOpen": "Ireki menua",
+    "menuClose": "Itxi menua",
+    "social": {
+      "networks": "Sareak",
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "youtube": "YouTube",
+      "email": "Posta"
+    }
+  },
+  "home": {
+    "tagline": "Nafarroa · Punk · Rock · Alternatiboa",
+    "subtitle": "Punk rock, rock urbano eta eskena alternatibo nafarroarraren radar kulturala. <green>Taldeak</green>, <red>ekitaldiak</red>, <pink>aretoak</pink> eta jaialdiak. Memoria kulturala eta eskena bizia.",
+    "cta": {
+      "exploreEvents": "Arakatu ekitaldiak",
+      "viewBands": "Ikusi taldeak",
+      "verBolos": "IKUSI BOLOS"
+    },
+    "explore": {
+      "bands": {
+        "title": "TALDEAK",
+        "desc": "Nafarroako eskenatik"
+      },
+      "events": {
+        "title": "EKITALDIAK",
+        "desc": "Kontzertuak eta agenda"
+      },
+      "scene": {
+        "title": "ESKENA",
+        "desc": "Aretoak eta jaialdiak",
+        "descFull": "Aretoak, sustatzaileak, antolatzaileak, jaialdiak"
+      },
+      "guide": {
+        "title": "GIDA",
+        "desc": "Zer da Nafarrock"
+      },
+      "enter": "Sartu →"
+    },
+    "exploreSection": {
+      "title": "ARAKATU",
+      "subtitle": "Sartu eskenan. Nafarroako soinua eratu duten taldeak. Ez galdu behar dituzun ekitaldiak."
+    },
+    "manifesto": {
+      "philosophy": "Filosofia",
+      "line1": "Nafarrock radar kultural bat da.",
+      "line2": "Eskenaren memoria.",
+      "line3": "Agenda bizia.",
+      "line4": "Ikusgarritasun tresna.",
+      "line5": "Komunitatea.",
+      "tagline": "Benetakoa. Ez korporatiboa. Teknikoki profesionala."
+    },
+    "footer": {
+      "platform": "Nafarroako rock eskenaren plataforma",
+      "copyright": "© {year} Nafarrock · Punk · Rock · Nafarroa"
+    }
+  },
+  "search": {
+    "placeholder": "Bilatu taldeak, ekitaldiak, aretoak, eskena...",
+    "hint": "Taldeak · Ekitaldiak · Aretoak · Jaialdiak",
+    "hintFull": "Taldeak · Ekitaldiak · Aretoak · Jaialdiak · Sustatzaileak · Antolatzaileak",
+    "label": "Bilatu taldeak, ekitaldiak, aretoak eta jaialdiak",
+    "labelFull": "Bilatu taldeak, ekitaldiak, aretoak, jaialdiak, sustatzaileak, antolatzaileak"
+  },
+  "bands": {
+    "title": "TALDEAK",
+    "count": "{count} talde eskenan.",
+    "count_other": "{count} talde eskenan.",
+    "empty": "Oraindik ez da talderik erregistratu. Laster edukia egongo da. Bitartean, arakatu ekitaldiak eta aretoak.",
+    "metadata": {
+      "title": "Taldeak",
+      "description": "Nafarroako eskenako taldeak"
+    }
+  },
+  "events": {
+    "title": "EKITALDIAK",
+    "subtitle": "Kontzertuak eta jaialdiak. {count} ekitaldi nafarroako eskenan.",
+    "subtitle_other": "Kontzertuak eta jaialdiak. {count} ekitaldi nafarroako eskenan.",
+    "metadata": {
+      "title": "Ekitaldiak",
+      "description": "Kontzertuak eta jaialdiak Nafarroan"
+    }
+  },
+  "scene": {
+    "title": "ESKENA",
+    "subtitle": "Nafarroako rock eskenako aretoak eta jaialdiak.",
+    "subtitleFull": "Nafarroako rock eskena posible egiten duten aretoak, sustatzaileak, antolatzaileak, jaialdiak eta elkarteak.",
+    "venues": {
+      "label": "Aretoak / Lekuak",
+      "desc": "Eskena soinu egiten duen espazioak"
+    },
+    "promoters": {
+      "label": "Sustatzaileak",
+      "desc": "Kontzertu eta ekitaldien sustapena"
+    },
+    "organizers": {
+      "label": "Antolatzaileak",
+      "desc": "Ekitaldi puntualen antolaketa"
+    },
+    "festivals": {
+      "label": "Jaialdiak",
+      "desc": "Eskenako jaialdiak"
+    },
+    "associations": {
+      "label": "Elkarteak eta Gizarteak",
+      "desc": "Elkarte eta gizarte kulturalak"
+    },
+    "metadata": {
+      "title": "Eskena",
+      "description": "Nafarroako rock eskenako aretoak, sustatzaileak, antolatzaileak eta jaialdiak"
+    }
+  },
+  "guide": {
+    "title": "GIDA",
+    "subtitle": "Zer da Nafarrock",
+    "essential": {
+      "title": "Oinarrizkoa",
+      "p1": "Nafarrock Euskal Herriko eta Nafarroako rock eskenera zentratutako plataforma kultural bat da: punk, hardcore, metal, indie eta deribatuak.",
+      "p2": "Ez gara direktorio institucional bat ez agenda kultural generikoa. Eskenan gertatzen denari ikusgarritasuna, fokua eta ahotsa emateko gaude hemen."
+    },
+    "core": {
+      "title": "Nukleoa",
+      "intro": "Hiru gauza mugitzen gaituzte:",
+      "events": "Ekitaldiak: kontzertuak eta jaialdiak. Jakin zer dagoen eta non.",
+      "bands": "Taldeak: nor soinu egiten duen, nor jotzen duen, nor gustatzen zaigun.",
+      "scene": "Eskena bizia: sustatzaileak, antolatzaileak, jaialdiak eta aretoak guzti hau posible egiten dutenak."
+    },
+    "purpose": {
+      "title": "Zertarako balio du Nafarrock",
+      "visibility": "Ikusgarri egitea gertatzen dena: kontzertuak, taldeak, espazioak.",
+      "connect": "Eskenara konektatzea: publiko, taldeak, espazioak, sustatzaileak.",
+      "voice": "Ahots kulturala izatea: rock, punk, metal eta etorriko dena."
+    },
+    "where": {
+      "title": "Non gaude",
+      "p": "Euskal Herrian eta Nafarroan zentratzen gara. Eskena bizi den lurraldea da, laguntzen nahi duguna."
+    },
+    "start": {
+      "title": "Nola hasi",
+      "p": "Sartu Ekitaldietara kontzertuak eta jaialdiak ikusteko. Arakatu Taldeak nor jotzen duen aurkitzeko. Eta pasa Eskenatik aretoak, sustatzaileak, antolatzaileak eta jaialdiak ikusteko."
+    },
+    "footer": "Plataforma kulturala · Rock eskena · Euskal Herria · Nafarroa",
+    "metadata": {
+      "title": "Gida",
+      "description": "Zer da Nafarrock: ikusgarritasuna, kontzertuak eta Euskal Herriko eta Nafarroako rock eskenako taldeak"
+    }
+  },
+  "contact": {
+    "title": "Kontaktua",
+    "intro": "Erabili formulario hau Nafarrockeko administratzailearekin harremanetan jartzeko. Mezuak harremanak@nafarrock.com helbidera bidaltzen dira.",
+    "errorHint": "Akatsa dela uste baduzu, hasi saioa kontu zuzenarekin edo kontaktatu beste bide batetik.",
+    "metadata": {
+      "title": "Kontaktua",
+      "description": "Nafarrockeko administratzailearekin kontaktatzeko formularioa"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "SARTU",
+      "subtitle": "Sartu zure Nafarrock kontura",
+      "emailVerified": "✓ Posta egiaztatua. Orain saioa hasi dezakezu.",
+      "errorCredentials": "Posta edo pasahitza okerra",
+      "errorVerify": "Saioa hasi aurretik posta egiaztatu behar duzu. Begiratu sarrerako ontzia edo spam.",
+      "errorConnection": "Konexio errorea"
+    }
+  },
+  "bandDetail": {
+    "backToBands": "← Itzuli taldeetara",
+    "status": {
+      "active": "Aktiboa",
+      "inactive": "Inaktiboa",
+      "paused": "Pausatuta"
+    }
+  },
+  "language": {
+    "es": "Castellano",
+    "eu": "Euskara"
+  }
+}

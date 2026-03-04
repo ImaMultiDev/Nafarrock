@@ -2,12 +2,12 @@
 
 const EDITORIAL_MVP_MODE = true;
 
-import Link from "next/link";
+import NextLink from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
 import { createPortal } from "react-dom";
 import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect } from "react";
+import { useTranslations, useLocale } from "next-intl";
 import {
   Menu,
   X,
@@ -17,13 +17,15 @@ import {
   Youtube,
   Music2,
 } from "lucide-react";
+import { Link, usePathname } from "@/i18n/navigation";
+import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { SOCIAL_LINKS } from "@/lib/social-links";
 
 const navLinks = [
-  { href: "/", label: "Inicio" },
-  { href: "/eventos", label: "Eventos" },
-  { href: "/bandas", label: "Bandas" },
-  { href: "/escena", label: "Escena" },
+  { href: "/", labelKey: "home" as const },
+  { href: "/eventos", labelKey: "events" as const },
+  { href: "/bandas", labelKey: "bands" as const },
+  { href: "/escena", labelKey: "scene" as const },
 ];
 
 const MANUAL_ROLES = [
@@ -47,13 +49,14 @@ const ROLE_TO_MANUAL_SLUG: Record<string, string> = {
 
 function getGuideOrManualLink(
   session: { user?: { role?: string | null } } | null,
+  t: (key: string) => string,
 ) {
   const role = session?.user?.role;
   if (role && MANUAL_ROLES.includes(role)) {
     const slug = ROLE_TO_MANUAL_SLUG[role];
-    return { href: `/manual/${slug}`, label: "Manual" };
+    return { href: `/manual/${slug}`, label: t("manual") };
   }
-  return { href: "/guia", label: "Guía" };
+  return { href: "/guia", label: t("guide") };
 }
 
 function SocialIcon({ icon, className }: { icon: string; className?: string }) {
@@ -97,7 +100,12 @@ function isActivePath(pathname: string, href: string): boolean {
 
 export function Header() {
   const pathname = usePathname();
+  const locale = useLocale();
+  const t = useTranslations("common.nav");
+  const tCommon = useTranslations("common");
   const { data: session } = useSession();
+  const isAdmin = pathname.startsWith("/admin");
+  const signOutCallbackUrl = locale === "eu" ? "/eu" : "/";
   const [menuOpen, setMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -128,7 +136,7 @@ export function Header() {
           >
             <Image
               src="/logo.png"
-              alt="Nafarrock - Guía del rock en Nafarroa"
+              alt={tCommon("logoAlt")}
               width={64}
               height={64}
               className="h-10 w-auto sm:h-12"
@@ -176,7 +184,7 @@ export function Header() {
                     : "text-punk-white/80"
                 }`}
               >
-                {link.label}
+                {t(link.labelKey)}
               </Link>
             );
           })}
@@ -189,11 +197,11 @@ export function Header() {
                   : "text-punk-white"
               }`}
             >
-              Bolos
+              {t("bolos")}
             </Link>
           )}
           {(() => {
-            const guideLink = getGuideOrManualLink(session);
+            const guideLink = getGuideOrManualLink(session, t);
             const active = isActivePath(pathname, guideLink.href);
             return (
               <Link
@@ -208,6 +216,7 @@ export function Header() {
               </Link>
             );
           })()}
+          {!isAdmin && <LanguageSwitcher />}
           <div className="ml-4 flex items-center gap-1 border-l border-punk-white/20 pl-4">
             {SOCIAL_LINKS.filter((s) => !("internal" in s && s.internal && s.href === "/contacto")).map((social) => {
               const isInternal = "internal" in social && social.internal;
@@ -241,18 +250,18 @@ export function Header() {
           </div>
           {session ? (
             <div className="ml-2 flex items-center gap-2">
-              <Link
+              <NextLink
                 href="/dashboard"
                 className="border-2 border-punk-red bg-punk-red px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white transition-colors hover:bg-transparent hover:text-punk-red"
               >
-                Panel
-              </Link>
+                {t("panel")}
+              </NextLink>
               <button
                 type="button"
-                onClick={() => signOut({ callbackUrl: "/" })}
+                onClick={() => signOut({ callbackUrl: signOutCallbackUrl })}
                 className="border-2 border-punk-white/40 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white/80 transition-colors hover:border-punk-red hover:text-punk-red"
               >
-                Salir
+                {t("logout")}
               </button>
             </div>
           ) : (
@@ -262,14 +271,14 @@ export function Header() {
                   href="/auth/reclamar"
                   className="border-2 border-punk-white/40 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white/80 transition-colors hover:border-punk-green hover:text-punk-green"
                 >
-                  Reclamar
+                  {t("claim")}
                 </Link>
               )}
               <Link
                 href="/auth/login"
                 className="border-2 border-punk-red bg-punk-red px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white transition-colors hover:bg-transparent hover:text-punk-red"
               >
-                Entrar
+                {t("login")}
               </Link>
             </div>
           )}
@@ -280,7 +289,7 @@ export function Header() {
           type="button"
           onClick={() => setMenuOpen(!menuOpen)}
           className="absolute right-4 top-1/2 flex h-10 w-10 shrink-0 -translate-y-1/2 items-center justify-center rounded border border-punk-white/30 text-punk-white nav:relative nav:right-0 nav:top-0 nav:translate-y-0 nav:hidden"
-          aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
+          aria-label={menuOpen ? tCommon("menuClose") : tCommon("menuOpen")}
           aria-expanded={menuOpen}
         >
           {menuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -299,6 +308,13 @@ export function Header() {
             <div className="flex h-full flex-col overflow-y-auto px-4 py-4 sm:px-6">
               <div className="mb-4 h-px bg-punk-red" />
 
+              {/* Idioma en móvil */}
+              {!isAdmin && (
+                <div className="mb-4 flex justify-end">
+                  <LanguageSwitcher />
+                </div>
+              )}
+
               {/* Nav links */}
               <nav className="flex flex-col gap-1 mt-2">
                 {navLinks.map((link) => {
@@ -316,7 +332,7 @@ export function Header() {
                             : "border-l-4 border-transparent text-punk-white"
                         }`}
                       >
-                        Eventos
+                        {t(link.labelKey)}
                       </Link>
                     );
                   }
@@ -331,7 +347,7 @@ export function Header() {
                           : "text-punk-white/90"
                       }`}
                     >
-                      {link.label}
+                      {t(link.labelKey)}
                     </Link>
                   );
                 })}
@@ -345,11 +361,11 @@ export function Header() {
                         : "border-l-4 border-transparent text-punk-white"
                     }`}
                   >
-                    Bolos
+                    {t("bolos")}
                   </Link>
                 )}
                 {(() => {
-                  const guideLink = getGuideOrManualLink(session);
+                  const guideLink = getGuideOrManualLink(session, t);
                   const active = isActivePath(pathname, guideLink.href);
                   return (
                     <Link
@@ -367,22 +383,22 @@ export function Header() {
                 })()}
                 {session ? (
                   <>
-                    <Link
+                    <NextLink
                       href="/dashboard"
                       onClick={() => setMenuOpen(false)}
                       className="mt-2 rounded border-2 border-punk-red bg-punk-red px-4 py-3 text-center font-punch text-xs uppercase tracking-widest text-punk-white"
                     >
-                      Panel
-                    </Link>
+                      {t("panel")}
+                    </NextLink>
                     <button
                       type="button"
                       onClick={() => {
                         setMenuOpen(false);
-                        signOut({ callbackUrl: "/" });
+                        signOut({ callbackUrl: signOutCallbackUrl });
                       }}
                       className="mt-2 rounded border-2 border-punk-white/40 px-4 py-3 text-center font-punch text-xs uppercase tracking-widest text-punk-white/80 hover:border-punk-red hover:text-punk-red"
                     >
-                      Salir
+                      {t("logout")}
                     </button>
                   </>
                 ) : (
@@ -393,7 +409,7 @@ export function Header() {
                         onClick={() => setMenuOpen(false)}
                         className="rounded border-2 border-punk-white/40 px-4 py-3 text-center font-punch text-xs uppercase tracking-widest text-punk-white/80 hover:border-punk-green hover:text-punk-green"
                       >
-                        Reclamar perfil
+                        {t("claimProfile")}
                       </Link>
                     )}
                     <Link
@@ -401,7 +417,7 @@ export function Header() {
                       onClick={() => setMenuOpen(false)}
                       className="rounded border-2 border-punk-red px-4 py-3 text-center font-punch text-xs uppercase tracking-widest text-punk-red hover:bg-punk-red hover:text-punk-white"
                     >
-                      Entrar
+                      {t("login")}
                     </Link>
                   </div>
                 )}
@@ -411,7 +427,7 @@ export function Header() {
 
               {/* REDES */}
               <p className="mb-3 font-punch text-xs uppercase tracking-widest text-punk-white/50">
-                Redes
+                {tCommon("social.networks")}
               </p>
               <div className="flex flex-col gap-2">
                 {SOCIAL_LINKS.filter((s) => !("internal" in s && s.internal && s.href === "/contacto")).map((social) => {
