@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
+import { TranslateButton } from "@/components/admin/TranslateButton";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
@@ -13,6 +14,8 @@ export function VenueForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [description, setDescription] = useState("");
+  const [descriptionEu, setDescriptionEu] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [images, setImages] = useState<string[]>([]);
@@ -31,7 +34,8 @@ export function VenueForm() {
         name: formData.get("name"),
         city: formData.get("city"),
         address: formData.get("address") || undefined,
-        description: formData.get("description") || undefined,
+        description: description || undefined,
+        descriptionEu: descriptionEu || undefined,
         foundedYear: formData.get("foundedYear")
           ? Number(formData.get("foundedYear"))
           : undefined,
@@ -85,7 +89,16 @@ export function VenueForm() {
         <label htmlFor="description" className={labelClass}>
           Descripción
         </label>
-        <textarea id="description" name="description" rows={3} className={inputClass} />
+        <textarea id="description" name="description" rows={3} value={description} onChange={(e) => setDescription(e.target.value)} className={inputClass} />
+      </div>
+      <div>
+        <label htmlFor="descriptionEu" className={labelClass}>
+          Descripción (Euskera)
+        </label>
+        <div className="mt-2 flex flex-wrap items-start gap-2">
+          <textarea id="descriptionEu" name="descriptionEu" rows={3} value={descriptionEu} onChange={(e) => setDescriptionEu(e.target.value)} className={inputClass} placeholder="Traducción al euskera batua" />
+          <TranslateButton sourceText={description} onTranslated={setDescriptionEu} />
+        </div>
       </div>
       <div>
         <ImageUpload

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
+import { TranslateButton } from "@/components/admin/TranslateButton";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
@@ -13,6 +14,7 @@ type Band = {
   id: string;
   name: string;
   bio: string | null;
+  bioEu: string | null;
   genres: string[];
   location: string | null;
   foundedYear: number | null;
@@ -34,6 +36,8 @@ export function BandEditForm({ band, genres }: { band: Band; genres: string[] })
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [bio, setBio] = useState(band.bio ?? "");
+  const [bioEu, setBioEu] = useState(band.bioEu ?? "");
   const [logoUrl, setLogoUrl] = useState(band.logoUrl ?? "");
   const [imageUrl, setImageUrl] = useState(band.imageUrl ?? "");
   const [images, setImages] = useState<string[]>(band.images ?? []);
@@ -51,7 +55,8 @@ export function BandEditForm({ band, genres }: { band: Band; genres: string[] })
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         name: formData.get("name"),
-        bio: formData.get("bio") || null,
+        bio: bio || null,
+        bioEu: bioEu || null,
         genres: selectedGenres,
         location: formData.get("location") || null,
         foundedYear: formData.get("foundedYear")
@@ -99,7 +104,16 @@ export function BandEditForm({ band, genres }: { band: Band; genres: string[] })
         <label htmlFor="bio" className={labelClass}>
           Biografía
         </label>
-        <textarea id="bio" name="bio" rows={3} defaultValue={band.bio ?? ""} className={inputClass} />
+        <textarea id="bio" name="bio" rows={3} value={bio} onChange={(e) => setBio(e.target.value)} className={inputClass} />
+      </div>
+      <div>
+        <label htmlFor="bioEu" className={labelClass}>
+          Biografía (Euskera)
+        </label>
+        <div className="mt-2 flex flex-wrap items-start gap-2">
+          <textarea id="bioEu" name="bioEu" rows={3} value={bioEu} onChange={(e) => setBioEu(e.target.value)} className={inputClass} placeholder="Traducción al euskera batua" />
+          <TranslateButton sourceText={bio} onTranslated={setBioEu} />
+        </div>
       </div>
       <div>
         <ImageUpload

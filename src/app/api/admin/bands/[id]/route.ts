@@ -9,6 +9,7 @@ const updateSchema = z.object({
   name: z.string().min(1).optional(),
   slug: z.string().optional(),
   bio: z.string().optional().nullable(),
+  bioEu: z.string().optional().nullable(),
   genres: z.array(z.string()).optional(),
   location: bandLocationSchema,
   foundedYear: z.coerce.number().optional().nullable(),
@@ -58,6 +59,7 @@ export async function PATCH(
     const updateData: Record<string, unknown> = {};
     if (data.name != null) updateData.name = data.name;
     if (data.bio !== undefined) updateData.bio = data.bio;
+    if (data.bioEu !== undefined) updateData.bioEu = data.bioEu;
     if (data.genres != null) updateData.genres = data.genres;
     if (data.location !== undefined) updateData.location = data.location;
     if (data.foundedYear !== undefined) updateData.foundedYear = data.foundedYear;

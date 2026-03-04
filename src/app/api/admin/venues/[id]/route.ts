@@ -10,6 +10,7 @@ const updateSchema = z.object({
   city: z.string().min(1).optional(),
   address: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
+  descriptionEu: z.string().optional().nullable(),
   foundedYear: z.coerce.number().optional().nullable(),
   capacity: z.coerce.number().positive().optional().nullable(),
   logoUrl: z.string().url().optional().nullable().or(z.literal("")),
@@ -55,6 +56,7 @@ export async function PATCH(
     if (data.city != null) updateData.city = data.city;
     if (data.address !== undefined) updateData.address = data.address;
     if (data.description !== undefined) updateData.description = data.description;
+    if (data.descriptionEu !== undefined) updateData.descriptionEu = data.descriptionEu;
     if (data.foundedYear !== undefined) updateData.foundedYear = data.foundedYear;
     if (data.capacity !== undefined) updateData.capacity = data.capacity;
     if (data.logoUrl !== undefined) updateData.logoUrl = cleanUrl(data.logoUrl);

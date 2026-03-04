@@ -19,6 +19,7 @@ const updateSchema = z.object({
   venueId: z.string().optional().nullable().or(z.literal("")),
   doorsOpen: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
+  descriptionEu: z.string().optional().nullable(),
   price: z.string().optional().nullable(),
   ticketUrl: z.string().url().optional().nullable().or(z.literal("")),
   instagramUrl: z.string().url().optional().nullable().or(z.literal("")),
@@ -77,6 +78,7 @@ export async function PATCH(
     if (data.venueId !== undefined) updateData.venueId = (data.venueId && data.venueId.trim()) ? data.venueId : null;
     if (data.doorsOpen !== undefined) updateData.doorsOpen = data.doorsOpen;
     if (data.description !== undefined) updateData.description = data.description;
+    if (data.descriptionEu !== undefined) updateData.descriptionEu = data.descriptionEu;
     if (data.price !== undefined) updateData.price = data.price;
     if (data.ticketUrl !== undefined) updateData.ticketUrl = data.ticketUrl || null;
     if (data.instagramUrl !== undefined) updateData.instagramUrl = data.instagramUrl || null;

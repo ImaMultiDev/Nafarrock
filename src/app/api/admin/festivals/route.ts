@@ -7,6 +7,7 @@ import { uniqueSlug } from "@/lib/slug";
 const createSchema = z.object({
   name: z.string().min(1),
   description: z.string().optional(),
+  descriptionEu: z.string().optional(),
   location: z.string().optional(),
   foundedYear: z.coerce.number().optional(),
   logoUrl: z.string().url().optional().or(z.literal("")),
@@ -39,6 +40,7 @@ export async function POST(req: Request) {
         slug,
         name: data.name,
         description: data.description || null,
+        descriptionEu: data.descriptionEu || null,
         location: data.location || null,
         foundedYear: data.foundedYear || null,
         logoUrl: data.logoUrl || null,

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
+import { TranslateButton } from "@/components/admin/TranslateButton";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
@@ -31,6 +32,8 @@ export function VenueEditForm({ venue }: { venue: Venue }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [description, setDescription] = useState(venue.description ?? "");
+  const [descriptionEu, setDescriptionEu] = useState(venue.descriptionEu ?? "");
   const [logoUrl, setLogoUrl] = useState(venue.logoUrl ?? "");
   const [imageUrl, setImageUrl] = useState(venue.imageUrl ?? "");
   const [images, setImages] = useState<string[]>(venue.images ?? []);
@@ -49,7 +52,8 @@ export function VenueEditForm({ venue }: { venue: Venue }) {
         name: formData.get("name"),
         city: formData.get("city"),
         address: formData.get("address") || null,
-        description: formData.get("description") || null,
+        description: description || null,
+        descriptionEu: descriptionEu || null,
         foundedYear: formData.get("foundedYear") ? Number(formData.get("foundedYear")) : null,
         capacity: formData.get("capacity") ? Number(formData.get("capacity")) : null,
         websiteUrl: formData.get("websiteUrl") || null,
@@ -94,7 +98,14 @@ export function VenueEditForm({ venue }: { venue: Venue }) {
       </div>
       <div>
         <label htmlFor="description" className={labelClass}>Descripción</label>
-        <textarea id="description" name="description" rows={3} defaultValue={venue.description ?? ""} className={inputClass} />
+        <textarea id="description" name="description" rows={3} value={description} onChange={(e) => setDescription(e.target.value)} className={inputClass} />
+      </div>
+      <div>
+        <label htmlFor="descriptionEu" className={labelClass}>Descripción (Euskera)</label>
+        <div className="mt-2 flex flex-wrap items-start gap-2">
+          <textarea id="descriptionEu" name="descriptionEu" rows={3} value={descriptionEu} onChange={(e) => setDescriptionEu(e.target.value)} className={inputClass} placeholder="Traducción al euskera batua" />
+          <TranslateButton sourceText={description} onTranslated={setDescriptionEu} />
+        </div>
       </div>
       <div>
         <ImageUpload

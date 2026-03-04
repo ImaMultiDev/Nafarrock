@@ -105,6 +105,7 @@ model Band {
   slug        String   @unique
   name        String
   bio         String?  @db.Text
+  bioEu       String?  @db.Text // Traducción euskera (asistida por IA)
   genres      String[] // ["punk", "rock urbano", "grunge"]
   location    String?
   foundedYear Int?
@@ -169,6 +170,7 @@ model Venue {
   slug        String   @unique
   name        String
   description String?  @db.Text
+  descriptionEu String? @db.Text // Traducción euskera (asistida por IA)
   address     String?
   city        String
   foundedYear Int?
@@ -210,6 +212,7 @@ model Festival {
   slug        String   @unique
   name        String
   description String?  @db.Text
+  descriptionEu String? @db.Text // Traducción euskera (asistida por IA)
   location    String?
   foundedYear Int?
   logoUrl     String?
@@ -306,6 +309,7 @@ model Event {
   slug             String    @unique
   title            String
   description      String?   @db.Text
+  descriptionEu   String?   @db.Text // Traducción euskera (asistida por IA)
   type             EventType
   date             DateTime
   endDate          DateTime?
@@ -549,4 +553,16 @@ model AnnouncementApplication {
   @@index([announcementId])
   @@index([bandId])
   @@map("announcement_applications")
+}
+
+// ============================================
+// CACHE DE TRADUCCIONES (IA)
+// ============================================
+
+model TranslationCache {
+  sourceHash     String   @id // SHA-256 del texto normalizado (trim + toLowerCase)
+  translatedText String   @db.Text
+  createdAt      DateTime @default(now())
+
+  @@map("translation_cache")
 }

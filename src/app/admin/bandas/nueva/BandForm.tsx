@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
+import { TranslateButton } from "@/components/admin/TranslateButton";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
@@ -13,6 +14,8 @@ export function BandForm({ genres }: { genres: string[] }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [bio, setBio] = useState("");
+  const [bioEu, setBioEu] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [images, setImages] = useState<string[]>([]);
@@ -30,7 +33,8 @@ export function BandForm({ genres }: { genres: string[] }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         name: formData.get("name"),
-        bio: formData.get("bio") || undefined,
+        bio: bio || undefined,
+        bioEu: bioEu || undefined,
         genres: selectedGenres,
         location: formData.get("location") || undefined,
         foundedYear: formData.get("foundedYear")
@@ -77,7 +81,16 @@ export function BandForm({ genres }: { genres: string[] }) {
         <label htmlFor="bio" className={labelClass}>
           Biografía
         </label>
-        <textarea id="bio" name="bio" rows={3} className={inputClass} />
+        <textarea id="bio" name="bio" rows={3} value={bio} onChange={(e) => setBio(e.target.value)} className={inputClass} />
+      </div>
+      <div>
+        <label htmlFor="bioEu" className={labelClass}>
+          Biografía (Euskera)
+        </label>
+        <div className="mt-2 flex flex-wrap items-start gap-2">
+          <textarea id="bioEu" name="bioEu" rows={3} value={bioEu} onChange={(e) => setBioEu(e.target.value)} className={inputClass} placeholder="Traducción al euskera batua" />
+          <TranslateButton sourceText={bio} onTranslated={setBioEu} />
+        </div>
       </div>
       <div>
         <ImageUpload
