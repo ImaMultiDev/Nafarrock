@@ -15,8 +15,6 @@ export function EventosFilters() {
       const params = new URLSearchParams();
       params.set("search", (formData.get("search") as string) || "");
       params.set("type", (formData.get("type") as string) || "");
-      params.set("fromDate", (formData.get("fromDate") as string) || "");
-      params.set("toDate", (formData.get("toDate") as string) || "");
       router.push(`/eventos?${params.toString()}`);
     },
     [router],
@@ -60,36 +58,6 @@ export function EventosFilters() {
           <option value="CONCIERTO">Concierto</option>
           <option value="FESTIVAL">Festival</option>
         </select>
-      </div>
-      <div>
-        <label
-          htmlFor="eventos-from"
-          className="block font-punch text-xs uppercase tracking-widest text-punk-white/70"
-        >
-          Desde
-        </label>
-        <input
-          id="eventos-from"
-          name="fromDate"
-          type="date"
-          defaultValue={searchParams.get("fromDate") ?? ""}
-          className="eventos-date-input mt-1 border-2 border-punk-white/20 bg-punk-black px-4 py-2 font-body text-punk-white focus:border-punk-red focus:outline-none"
-        />
-      </div>
-      <div>
-        <label
-          htmlFor="eventos-to"
-          className="block font-punch text-xs uppercase tracking-widest text-punk-white/70"
-        >
-          Hasta
-        </label>
-        <input
-          id="eventos-to"
-          name="toDate"
-          type="date"
-          defaultValue={searchParams.get("toDate") ?? ""}
-          className="eventos-date-input mt-1 border-2 border-punk-white/20 bg-punk-black px-4 py-2 font-body text-punk-white focus:border-punk-red focus:outline-none"
-        />
       </div>
       <button
         type="submit"

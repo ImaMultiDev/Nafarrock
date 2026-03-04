@@ -16,16 +16,9 @@ type Props = { searchParams: Promise<Record<string, string | undefined>> };
 export default async function EventosPage({ searchParams }: Props) {
   const params = await searchParams;
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
-  const today = new Date();
-  today.setUTCHours(0, 0, 0, 0);
-  let fromDate = params.fromDate ? new Date(params.fromDate) : undefined;
-  const toDate = params.toDate ? new Date(params.toDate) : undefined;
-  if (fromDate && fromDate < today) fromDate = today;
   const { items: events, total } = await getEvents({
     search: params.search || undefined,
     type: (params.type as "CONCIERTO" | "FESTIVAL") || undefined,
-    fromDate,
-    toDate,
     page,
     includePast: false,
   });
@@ -48,10 +41,22 @@ export default async function EventosPage({ searchParams }: Props) {
           <Link
             key={event.id}
             href={`/eventos/${event.slug}`}
-            className="group relative block overflow-hidden border-2 border-punk-red bg-punk-black p-6 transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_0_40px_rgba(230,0,38,0.15)]"
+            className="group relative block overflow-hidden border-2 border-punk-red bg-punk-black p-6 transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_0_40px_rgba(230,0,38,0.15)] md:min-h-[140px]"
           >
+            {event.imageUrl && (
+              <>
+                <div
+                  className="absolute inset-0 opacity-[0.15] bg-[length:auto_100%] bg-[position:right_center] bg-no-repeat md:bg-cover md:bg-[position:center_top]"
+                  style={{ backgroundImage: `url(${event.imageUrl})` }}
+                />
+                <div
+                  className="pointer-events-none absolute inset-0 bg-gradient-to-r from-punk-black via-punk-black/70 to-transparent"
+                  aria-hidden
+                />
+              </>
+            )}
             <div className="absolute right-0 top-0 h-16 w-16 border-t-2 border-r-2 border-punk-red" style={{ clipPath: "polygon(100% 0, 100% 100%, 0 0)" }} />
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+            <div className="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-center">
               <div className="shrink-0 border-2 border-punk-red/50 bg-punk-red/10 px-6 py-3 text-center">
                 <span className="block font-display text-3xl leading-none text-punk-red">
                   {event.endDate
@@ -104,8 +109,6 @@ export default async function EventosPage({ searchParams }: Props) {
             Object.entries({
               search: params.search,
               type: params.type,
-              fromDate: params.fromDate,
-              toDate: params.toDate,
             }).filter((entry): entry is [string, string] => {
           const v = entry[1];
           return v != null && v !== "";
