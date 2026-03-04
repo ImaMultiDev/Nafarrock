@@ -1,5 +1,7 @@
 import { prisma } from "./prisma";
 
+const EDITORIAL_MVP_MODE = true;
+
 const CONTACT_ALLOWED_ROLES = ["ADMIN", "BANDA", "SALA", "FESTIVAL", "ASOCIACION", "ORGANIZADOR", "PROMOTOR"] as const;
 
 export type ContactAccessResult =
@@ -8,7 +10,8 @@ export type ContactAccessResult =
 
 /**
  * Verifica si el usuario puede acceder al formulario de contacto.
- * Solo usuarios aprobados con rol distinto de USUARIO.
+ * En modo editorial: cualquier usuario registrado puede contactar.
+ * En modo completo: solo roles profesionales aprobados.
  */
 export async function canUserAccessContact(userId: string): Promise<ContactAccessResult> {
   const user = await prisma.user.findUnique({
@@ -26,6 +29,18 @@ export async function canUserAccessContact(userId: string): Promise<ContactAcces
   if (!user) return { canAccess: false, reason: "Usuario no encontrado" };
 
   const role = user.role as string;
+
+  // Modo editorial: cualquier usuario registrado puede contactar
+  if (EDITORIAL_MVP_MODE) {
+    const userName = user.name ?? user.firstName ?? user.email;
+    return {
+      canAccess: true,
+      userName: userName ?? undefined,
+      userEmail: user.email,
+      role: role === "ADMIN" ? "Administrador" : "Usuario",
+    };
+  }
+
   if (!CONTACT_ALLOWED_ROLES.includes(role as (typeof CONTACT_ALLOWED_ROLES)[number])) {
     return { canAccess: false, reason: "Solo cuentas de banda, sala, festival, asociación, organizador o promotor aprobadas pueden contactar." };
   }

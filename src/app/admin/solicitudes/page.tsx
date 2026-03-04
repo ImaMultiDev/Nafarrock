@@ -1,23 +1,36 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
+
+const EDITORIAL_MVP_MODE = true;
 import { ApproveButton } from "@/components/admin/ApproveButton";
 import { RejectFlow } from "@/components/admin/RejectFlow";
+import { DeleteButton } from "@/components/admin/DeleteButton";
+import { Pagination } from "@/components/ui/Pagination";
+
+const PAGE_SIZE = 20;
 
 type PendingItem = {
   id: string;
-  type: "band" | "venue" | "festival" | "association" | "promoter" | "organizer";
+  type: "band" | "venue" | "festival" | "association" | "promoter" | "organizer" | "event";
   name: string;
   slug: string;
   email: string | null;
   editUrl: string;
   publicUrl: string;
+  createdAt: Date;
 };
 
-export default async function AdminSolicitudesPage() {
+type Props = { searchParams: Promise<Record<string, string | undefined>> };
+
+export default async function AdminSolicitudesPage({ searchParams }: Props) {
   await requireAdmin();
 
-  const [bands, venues, festivals, asociaciones, promoters, organizers] = await Promise.all([
+  const params = await searchParams;
+  const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
+  const skip = (page - 1) * PAGE_SIZE;
+
+  const [bands, venues, festivals, asociaciones, promoters, organizers, events] = await Promise.all([
     prisma.band.findMany({
       where: { approved: false, userId: { not: null } },
       include: { user: { select: { email: true } } },
@@ -48,6 +61,11 @@ export default async function AdminSolicitudesPage() {
       include: { user: { select: { email: true } } },
       orderBy: { createdAt: "desc" },
     }),
+    prisma.event.findMany({
+      where: { isApproved: false, createdByUserId: { not: null } },
+      include: { createdByUser: { select: { email: true } } },
+      orderBy: { createdAt: "desc" },
+    }),
   ]);
 
   const typeLabels: Record<string, string> = {
@@ -57,9 +75,10 @@ export default async function AdminSolicitudesPage() {
     association: "Asociación",
     promoter: "Promotor",
     organizer: "Organizador",
+    event: "Evento",
   };
 
-  const items: PendingItem[] = [
+  const allItems: PendingItem[] = [
     ...bands.map((b) => ({
       id: b.id,
       type: "band" as const,
@@ -68,6 +87,7 @@ export default async function AdminSolicitudesPage() {
       email: b.user?.email ?? null,
       editUrl: `/admin/bandas/${b.id}/editar`,
       publicUrl: `/bandas/${b.slug}`,
+      createdAt: b.createdAt,
     })),
     ...venues.map((v) => ({
       id: v.id,
@@ -77,6 +97,7 @@ export default async function AdminSolicitudesPage() {
       email: v.user?.email ?? null,
       editUrl: `/admin/salas/${v.id}/editar`,
       publicUrl: `/salas/${v.slug}`,
+      createdAt: v.createdAt,
     })),
     ...festivals.map((f) => ({
       id: f.id,
@@ -86,6 +107,7 @@ export default async function AdminSolicitudesPage() {
       email: f.user?.email ?? null,
       editUrl: "/admin/festivales",
       publicUrl: `/festivales/${f.slug}`,
+      createdAt: f.createdAt,
     })),
     ...asociaciones.map((a) => ({
       id: a.id,
@@ -95,6 +117,7 @@ export default async function AdminSolicitudesPage() {
       email: a.user?.email ?? null,
       editUrl: "/admin/asociaciones",
       publicUrl: `/asociaciones/${a.slug}`,
+      createdAt: a.createdAt,
     })),
     ...promoters.map((p) => ({
       id: p.id,
@@ -104,6 +127,7 @@ export default async function AdminSolicitudesPage() {
       email: p.user?.email ?? null,
       editUrl: "/admin/promotores",
       publicUrl: `/promotores/${p.slug}`,
+      createdAt: p.createdAt,
     })),
     ...organizers.map((o) => ({
       id: o.id,
@@ -113,8 +137,24 @@ export default async function AdminSolicitudesPage() {
       email: o.user?.email ?? null,
       editUrl: "/admin/organizadores",
       publicUrl: `/organizadores/${o.slug}`,
+      createdAt: o.createdAt,
     })),
-  ].sort((a, b) => 0); // Mantener orden por tipo, luego por fecha (simplificado)
+    ...events.map((e) => ({
+      id: e.id,
+      type: "event" as const,
+      name: e.title,
+      slug: e.slug,
+      email: e.createdByUser?.email ?? null,
+      editUrl: `/admin/eventos/${e.id}/editar`,
+      publicUrl: `/eventos/${e.slug}`,
+      createdAt: e.createdAt,
+    })),
+  ]
+    .filter((item) => (EDITORIAL_MVP_MODE ? item.type === "band" || item.type === "event" : true))
+    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+  const total = allItems.length;
+  const items = allItems.slice(skip, skip + PAGE_SIZE);
 
   return (
     <>
@@ -124,7 +164,7 @@ export default async function AdminSolicitudesPage() {
             SOLICITUDES
           </h1>
           <p className="mt-2 font-body text-punk-white/60">
-            {items.length} perfiles pendientes de aprobación
+            {total} bandas y eventos propuestos por usuarios
           </p>
         </div>
         <Link
@@ -139,7 +179,7 @@ export default async function AdminSolicitudesPage() {
         {items.length === 0 ? (
           <div className="border-2 border-dashed border-punk-white/20 p-12 text-center">
             <p className="font-body text-punk-white/60">
-              No hay solicitudes de aprobación pendientes.
+              No hay bandas ni eventos propuestos pendientes de aprobar.
             </p>
           </div>
         ) : (
@@ -181,15 +221,24 @@ export default async function AdminSolicitudesPage() {
                   </td>
                   <td className="py-3">
                     <div className="flex flex-wrap items-center gap-2">
-                      <ApproveButton
-                        entity={item.type as "band" | "venue" | "festival" | "association" | "promoter" | "organizer"}
-                        id={item.id}
-                        approved={false}
-                      />
-                      <RejectFlow
-                        entity={item.type as "band" | "venue" | "festival" | "association" | "promoter" | "organizer"}
-                        id={item.id}
-                      />
+                      {item.type === "event" ? (
+                        <>
+                          <ApproveButton entity="event" id={item.id} approved={false} />
+                          <DeleteButton entity="event" id={item.id} label="Rechazar" />
+                        </>
+                      ) : (
+                        <>
+                          <ApproveButton
+                            entity={item.type as "band" | "venue" | "festival" | "association" | "promoter" | "organizer"}
+                            id={item.id}
+                            approved={false}
+                          />
+                          <RejectFlow
+                            entity={item.type as "band" | "venue" | "festival" | "association" | "promoter" | "organizer"}
+                            id={item.id}
+                          />
+                        </>
+                      )}
                       <Link
                         href={item.editUrl}
                         className="border-2 border-punk-white/30 px-3 py-1 font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:border-punk-white hover:text-punk-white"
@@ -204,6 +253,8 @@ export default async function AdminSolicitudesPage() {
           </table>
         )}
       </div>
+
+      <Pagination page={page} totalItems={total} pageSize={PAGE_SIZE} />
     </>
   );
 }

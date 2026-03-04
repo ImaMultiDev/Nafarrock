@@ -1,7 +1,10 @@
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { ClaimSearchForm } from "./ClaimSearchForm";
 import { ClaimTypeSelector } from "./ClaimTypeSelector";
+
+const EDITORIAL_MVP_MODE = true;
 
 export const metadata = {
   title: "Reclamar perfil",
@@ -13,6 +16,8 @@ type Props = {
 };
 
 export default async function ReclamarPage({ searchParams }: Props) {
+  if (EDITORIAL_MVP_MODE) redirect("/");
+
   const params = await searchParams;
   const type = (params.type as "BAND" | "VENUE" | "FESTIVAL" | "ASOCIACION") || undefined;
 

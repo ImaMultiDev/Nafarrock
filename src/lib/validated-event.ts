@@ -140,3 +140,42 @@ export async function getEventCreatorIds(userId: string): Promise<{
 
   return result;
 }
+
+const DAYS_BETWEEN_PROPOSALS = 5;
+
+/**
+ * Verifica si un usuario USUARIO puede proponer un evento (límite anti-spam).
+ * Solo comprueba la ventana de 5 días, sin exigir rol profesional.
+ */
+export async function canUserProposeEvent(
+  userId: string,
+  newEventDate: Date,
+  excludeEventId?: string
+): Promise<CanCreateEventResult> {
+  const windowStart = new Date(newEventDate);
+  windowStart.setDate(windowStart.getDate() - DAYS_BETWEEN_PROPOSALS);
+  const windowEnd = new Date(newEventDate);
+  windowEnd.setDate(windowEnd.getDate() + DAYS_BETWEEN_PROPOSALS);
+
+  const where: {
+    createdByUserId: string;
+    date: { gte: Date; lte: Date };
+    id?: { not: string };
+  } = {
+    createdByUserId: userId,
+    date: { gte: windowStart, lte: windowEnd },
+  };
+  if (excludeEventId) where.id = { not: excludeEventId };
+
+  const existingInWindow = await prisma.event.count({ where });
+
+  if (existingInWindow >= 1) {
+    return {
+      ok: false,
+      reason: "limit_exceeded",
+      message: `Puedes proponer 1 evento cada ${DAYS_BETWEEN_PROPOSALS} días. Ya tienes una propuesta en esa ventana.`,
+    };
+  }
+
+  return { ok: true };
+}

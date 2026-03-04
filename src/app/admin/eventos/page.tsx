@@ -5,19 +5,33 @@ import { es } from "date-fns/locale";
 import { isValid } from "date-fns";
 import { ApproveButton } from "@/components/admin/ApproveButton";
 import { DeleteButton } from "@/components/admin/DeleteButton";
+import { Pagination } from "@/components/ui/Pagination";
+
+const PAGE_SIZE = 20;
 
 function safeFormatDate(d: Date): string {
   return isValid(d) ? format(d, "d MMM yyyy", { locale: es }) : "—";
 }
 
-export default async function AdminEventosPage() {
-  const events = await prisma.event.findMany({
-    orderBy: { date: "asc" },
-    include: {
-      venue: true,
-      bands: { include: { band: true }, orderBy: { order: "asc" } },
-    },
-  });
+type Props = { searchParams: Promise<Record<string, string | undefined>> };
+
+export default async function AdminEventosPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
+  const skip = (page - 1) * PAGE_SIZE;
+
+  const [events, total] = await Promise.all([
+    prisma.event.findMany({
+      orderBy: { date: "asc" },
+      take: PAGE_SIZE,
+      skip,
+      include: {
+        venue: true,
+        bands: { include: { band: true }, orderBy: { order: "asc" } },
+      },
+    }),
+    prisma.event.count(),
+  ]);
 
   const pending = events.filter((e) => !e.isApproved);
 
@@ -29,7 +43,7 @@ export default async function AdminEventosPage() {
             EVENTOS
           </h1>
           <p className="mt-2 font-body text-punk-white/60">
-            {events.length} eventos · {pending.length} pendientes de aprobar
+            {total} eventos de la agenda · {pending.length} pendientes de aprobar en esta página
           </p>
         </div>
         <Link
@@ -84,6 +98,8 @@ export default async function AdminEventosPage() {
           </div>
         ))}
       </div>
+
+      <Pagination page={page} totalItems={total} pageSize={PAGE_SIZE} />
 
       {events.length === 0 && (
         <div className="mt-12 border-2 border-dashed border-punk-white/20 p-12 text-center">

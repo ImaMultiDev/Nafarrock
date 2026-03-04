@@ -23,6 +23,9 @@ type ClaimProps = {
   entityImageInfo?: EntityImageInfo | null;
 };
 
+/** Modelo editorial MVP: solo usuarios estándar. Proponer banda/evento desde dashboard. */
+const EDITORIAL_MVP_MODE = true;
+
 const ROLES = [
   { value: "USUARIO", label: "Usuario", desc: "Cuenta básica" },
   { value: "BANDA", label: "Banda", desc: "Requiere aprobación del admin" },
@@ -98,7 +101,7 @@ export function RegisterForm({
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [role, setRole] = useState<Role>(
-    claimType ? claimToRole[claimType] : "USUARIO",
+    EDITORIAL_MVP_MODE ? "USUARIO" : claimType ? claimToRole[claimType] : "USUARIO",
   );
   const [members, setMembers] = useState<Member[]>([]);
 
@@ -137,7 +140,7 @@ export function RegisterForm({
 
     let payload: Record<string, unknown>;
 
-    if (isClaimMode && claimType && claimId && claimName) {
+    if (!EDITORIAL_MVP_MODE && isClaimMode && claimType && claimId && claimName) {
       const userHasImages = !!(
         claimLogoUrl ||
         claimImageUrl ||
@@ -164,20 +167,21 @@ export function RegisterForm({
             : "keep_nafarrock",
       };
     } else {
+      const effectiveRole = EDITORIAL_MVP_MODE ? "USUARIO" : role;
       payload = {
         email: formData.get("email"),
         password: formData.get("password"),
         firstName: formData.get("firstName"),
         lastName: formData.get("lastName"),
         phone: formData.get("phone") || undefined,
-        role,
+        role: effectiveRole,
       };
 
-      if (role !== "USUARIO") {
+      if (!EDITORIAL_MVP_MODE && effectiveRole !== "USUARIO") {
         payload.entityName = formData.get("entityName");
       }
 
-      if (role === "BANDA") {
+      if (!EDITORIAL_MVP_MODE && effectiveRole === "BANDA") {
         payload.location = formData.get("location") || undefined;
         payload.foundedYear = formData.get("foundedYear")
           ? Number(formData.get("foundedYear"))
@@ -197,7 +201,7 @@ export function RegisterForm({
         );
       }
 
-      if (role === "SALA") {
+      if (!EDITORIAL_MVP_MODE && effectiveRole === "SALA") {
         payload.city = formData.get("city");
         payload.address = formData.get("address") || undefined;
         payload.description = formData.get("description") || undefined;
@@ -213,7 +217,7 @@ export function RegisterForm({
         payload.facebookUrl = formData.get("facebookUrl") || undefined;
       }
 
-      if (role === "FESTIVAL" || role === "ASOCIACION") {
+      if (!EDITORIAL_MVP_MODE && (effectiveRole === "FESTIVAL" || effectiveRole === "ASOCIACION")) {
         payload.location = formData.get("location") || undefined;
         payload.foundedYear = formData.get("foundedYear")
           ? Number(formData.get("foundedYear"))
@@ -224,7 +228,7 @@ export function RegisterForm({
         payload.facebookUrl = formData.get("facebookUrl") || undefined;
       }
 
-      if (role === "ORGANIZADOR" || role === "PROMOTOR") {
+      if (!EDITORIAL_MVP_MODE && (effectiveRole === "ORGANIZADOR" || effectiveRole === "PROMOTOR")) {
         payload.description = formData.get("description") || undefined;
         payload.websiteUrl = formData.get("websiteUrl") || undefined;
       }
@@ -250,7 +254,7 @@ export function RegisterForm({
     }
   };
 
-  const needsEntity = role !== "USUARIO";
+  const needsEntity = !EDITORIAL_MVP_MODE && role !== "USUARIO";
 
   return (
     <PageLayout>
@@ -278,8 +282,7 @@ export function RegisterForm({
               REGISTRARSE
             </h1>
             <p className="mt-3 font-body text-punk-white/60">
-              Crea tu cuenta como usuario o registra tu banda, sala, festival,
-              promotor u organizador.
+              Crea tu cuenta para proponer bandas y eventos al radar cultural.
             </p>
           </>
         )}
@@ -477,7 +480,7 @@ export function RegisterForm({
                 </section>
               )}
             </>
-          ) : (
+          ) : !EDITORIAL_MVP_MODE ? (
             <>
               <section>
                 <label className={labelClass}>Tipo de cuenta</label>
@@ -529,7 +532,7 @@ export function RegisterForm({
                   </div>
                 )}
             </>
-          )}
+          ) : null}
           {needsEntity && !isClaimMode && (
             <section>
               <h2 className="font-display text-xl tracking-tighter text-punk-green mb-6">

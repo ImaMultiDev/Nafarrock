@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
 
 export function FooterSection() {
+  const { data: session } = useSession();
   return (
     <footer className="relative overflow-hidden border-t-2 border-punk-green bg-punk-black py-10 px-4 sm:py-12 sm:px-12 lg:py-14 lg:px-20 max-[299px]:px-3 max-[299px]:py-8">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,200,83,0.03)_0%,transparent_70%)]" />
@@ -68,6 +70,14 @@ export function FooterSection() {
             >
               Guía
             </Link>
+            {session && (
+              <Link
+                href="/contacto"
+                className="font-punch text-xs uppercase tracking-widest text-punk-white/70 transition-colors hover:text-punk-green"
+              >
+                Contacto
+              </Link>
+            )}
           </motion.div>
         </div>
 

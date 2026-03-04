@@ -2,12 +2,26 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { ApproveButton } from "@/components/admin/ApproveButton";
 import { DeleteButton } from "@/components/admin/DeleteButton";
+import { Pagination } from "@/components/ui/Pagination";
 
-export default async function AdminSalasPage() {
-  const venues = await prisma.venue.findMany({
-    orderBy: { name: "asc" },
-    include: { user: { select: { email: true } } },
-  });
+const PAGE_SIZE = 20;
+
+type Props = { searchParams: Promise<Record<string, string | undefined>> };
+
+export default async function AdminSalasPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
+  const skip = (page - 1) * PAGE_SIZE;
+
+  const [venues, total] = await Promise.all([
+    prisma.venue.findMany({
+      orderBy: { name: "asc" },
+      take: PAGE_SIZE,
+      skip,
+      include: { user: { select: { email: true } } },
+    }),
+    prisma.venue.count(),
+  ]);
 
   const pending = venues.filter((v) => !v.approved);
 
@@ -19,7 +33,7 @@ export default async function AdminSalasPage() {
             SALAS
           </h1>
           <p className="mt-2 font-body text-punk-white/60">
-            {venues.length} salas · {pending.length} pendientes de aprobar
+            {total} salas y espacios · {pending.length} pendientes de aprobar en esta página
           </p>
         </div>
         <Link
@@ -94,6 +108,8 @@ export default async function AdminSalasPage() {
           </tbody>
         </table>
       </div>
+
+      <Pagination page={page} totalItems={total} pageSize={PAGE_SIZE} />
 
       {venues.length === 0 && (
         <div className="mt-12 border-2 border-dashed border-punk-white/20 p-12 text-center">

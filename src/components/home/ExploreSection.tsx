@@ -4,6 +4,8 @@ import Link from "next/link";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 
+const EDITORIAL_MVP_MODE = true;
+
 const links = [
   {
     href: "/bandas",
@@ -16,7 +18,7 @@ const links = [
   {
     href: "/eventos",
     title: "EVENTOS",
-    desc: "Conciertos, festivales y entradas",
+    desc: "Conciertos y agenda",
     color: "punk-red",
     delay: 0.1,
     size: "small",
@@ -24,7 +26,7 @@ const links = [
   {
     href: "/escena",
     title: "ESCENA",
-    desc: "Salas, promotores, organizadores, festivales",
+    desc: EDITORIAL_MVP_MODE ? "Salas y festivales" : "Salas, promotores, organizadores, festivales",
     color: "punk-acid",
     delay: 0.2,
     size: "small",
@@ -74,7 +76,7 @@ export function ExploreSection() {
             EXPLORA
           </h2>
           <p className="mt-3 max-w-xl font-body text-punk-white/60 sm:mt-4">
-            Entra en la escena. Bandas que han moldeado el sonido nafarroar.
+            Entra en la escena. Bandas que han moldeado el sonido nafarroa.
             Eventos que no te puedes perder.
           </p>
         </motion.div>

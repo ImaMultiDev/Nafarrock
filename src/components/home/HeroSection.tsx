@@ -4,6 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 
+const EDITORIAL_MVP_MODE = true;
+
 export function HeroSection() {
   return (
     <section className="relative min-h-0 overflow-hidden bg-punk-black sm:min-h-hero-cap">
@@ -78,11 +80,11 @@ export function HeroSection() {
             transition={{ delay: 0.6, duration: 0.8 }}
             className="mx-auto mt-8 max-w-2xl font-body text-base leading-relaxed text-punk-white/80 sm:mt-10 sm:text-lg lg:mx-0 lg:text-left lg:text-xl"
           >
-            La guía definitiva del punk rock, rock urbano y escena alternativa
+            El radar cultural del punk rock, rock urbano y escena alternativa
             nafarroa. <span className="font-bold text-punk-green">Bandas</span>,{" "}
-            <span className="font-bold text-punk-red">festivales</span>,{" "}
-            <span className="font-bold text-punk-pink">conciertos</span> y
-            salas. Memoria cultural y escena viva.
+            <span className="font-bold text-punk-red">eventos</span>,{" "}
+            <span className="font-bold text-punk-pink">salas</span> y
+            festivales. Memoria cultural y escena viva.
           </motion.p>
 
           {/* CTA buttons - centrados en mobile */}
@@ -104,12 +106,14 @@ export function HeroSection() {
             >
               Ver bandas
             </Link>
-            <Link
-              href="/bolos"
-              className="border-2 border-punk-white/40 bg-transparent px-8 py-4 font-punch text-sm uppercase tracking-widest text-punk-white/90 transition-all duration-300 hover:border-punk-white hover:bg-punk-white/10 hover:text-punk-white"
-            >
-              VER BOLOS
-            </Link>
+            {!EDITORIAL_MVP_MODE && (
+              <Link
+                href="/bolos"
+                className="border-2 border-punk-white/40 bg-transparent px-8 py-4 font-punch text-sm uppercase tracking-widest text-punk-white/90 transition-all duration-300 hover:border-punk-white hover:bg-punk-white/10 hover:text-punk-white"
+              >
+                VER BOLOS
+              </Link>
+            )}
           </motion.div>
         </motion.div>
 

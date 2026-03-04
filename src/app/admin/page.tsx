@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+const EDITORIAL_MVP_MODE = true;
+
 export default function AdminPage() {
   return (
     <>
@@ -7,7 +9,7 @@ export default function AdminPage() {
         ADMIN
       </h1>
       <p className="mt-3 font-body text-punk-white/60">
-        CRUD completo, moderación y aprobación de entidades
+        Moderación del radar cultural: bandas, eventos, salas y propuestas de usuarios
       </p>
 
       <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -30,7 +32,7 @@ export default function AdminPage() {
             Eventos
           </h2>
           <p className="mt-2 font-body text-sm text-punk-white/70">
-            Conciertos y festivales
+            Eventos de la agenda
           </p>
         </Link>
         <Link
@@ -52,7 +54,7 @@ export default function AdminPage() {
             Usuarios
           </h2>
           <p className="mt-2 font-body text-sm text-punk-white/70">
-            Promotores, bandas, roles
+            Cuentas registradas del radar
           </p>
         </Link>
         <Link
@@ -74,20 +76,22 @@ export default function AdminPage() {
             Solicitudes
           </h2>
           <p className="mt-2 font-body text-sm text-punk-white/70">
-            Perfiles pendientes de aprobación
+            Bandas y eventos propuestos por usuarios
           </p>
         </Link>
-        <Link
-          href="/admin/reclamaciones"
-          className="block border-2 border-punk-acid/50 bg-punk-black p-6 transition-all hover:border-punk-acid hover:shadow-[0_0_30px_rgba(200,255,0,0.2)]"
-        >
-          <h2 className="font-display text-xl tracking-tighter text-punk-acid">
-            Reclamaciones
-          </h2>
-          <p className="mt-2 font-body text-sm text-punk-white/70">
-            Solicitudes de reclamación de perfiles
-          </p>
-        </Link>
+        {!EDITORIAL_MVP_MODE && (
+          <Link
+            href="/admin/reclamaciones"
+            className="block border-2 border-punk-acid/50 bg-punk-black p-6 transition-all hover:border-punk-acid hover:shadow-[0_0_30px_rgba(200,255,0,0.2)]"
+          >
+            <h2 className="font-display text-xl tracking-tighter text-punk-acid">
+              Reclamaciones
+            </h2>
+            <p className="mt-2 font-body text-sm text-punk-white/70">
+              Solicitudes de reclamación de perfiles
+            </p>
+          </Link>
+        )}
       </div>
     </>
   );

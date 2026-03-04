@@ -6,6 +6,8 @@ import { PageLayout } from "@/components/ui/PageLayout";
 import { getAnnouncementById } from "@/services/announcement.service";
 import { AnnouncementDetail } from "./AnnouncementDetail";
 
+const EDITORIAL_MVP_MODE = true;
+
 export async function generateMetadata({
   params,
 }: {
@@ -25,6 +27,8 @@ export default async function AnnouncementPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  if (EDITORIAL_MVP_MODE) redirect("/");
+
   const { id } = await params;
   const session = await getServerSession(authOptions);
   const effectiveRole = session?.user?.effectiveRole ?? session?.user?.role;

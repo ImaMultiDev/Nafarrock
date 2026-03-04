@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -6,12 +7,16 @@ import { PageLayout } from "@/components/ui/PageLayout";
 import { BolosList } from "./BolosList";
 import { BolosFilters } from "./BolosFilters";
 
+const EDITORIAL_MVP_MODE = true;
+
 export const metadata = {
   title: "Buscar bolos | Nafarrock",
   description: "Conciertos, festivales, convocatorias y oportunidades para tocar en Nafarroa",
 };
 
 export default async function BolosPage() {
+  if (EDITORIAL_MVP_MODE) redirect("/");
+
   const session = await getServerSession(authOptions);
   const effectiveRole = session?.user?.effectiveRole ?? session?.user?.role;
   const isAdmin = session?.user?.role === "ADMIN";
@@ -59,12 +64,14 @@ export default async function BolosPage() {
             >
               Registrar banda
             </Link>
-            <Link
-              href="/auth/reclamar"
-              className="border-2 border-punk-white/40 px-6 py-3 font-punch text-sm uppercase tracking-widest text-punk-white/80 transition-colors hover:border-punk-green hover:text-punk-green"
-            >
-              Reclamar perfil existente
-            </Link>
+            {!EDITORIAL_MVP_MODE && (
+              <Link
+                href="/auth/reclamar"
+                className="border-2 border-punk-white/40 px-6 py-3 font-punch text-sm uppercase tracking-widest text-punk-white/80 transition-colors hover:border-punk-green hover:text-punk-green"
+              >
+                Reclamar perfil existente
+              </Link>
+            )}
           </div>
         </div>
       )}

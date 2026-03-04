@@ -7,6 +7,8 @@ import { useSearchParams } from "next/navigation";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 
+const EDITORIAL_MVP_MODE = true;
+
 function LoginForm() {
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
@@ -269,12 +271,14 @@ function LoginForm() {
             Regístrate
           </Link>
         </p>
-        <p className="mt-4 text-center font-body text-sm text-punk-white/60">
-          ¿Tu banda, sala o festival ya está en Nafarrock?{" "}
-          <Link href="/auth/reclamar" className="font-punch uppercase tracking-widest text-punk-green hover:text-punk-green/80">
-            Reclamar perfil
-          </Link>
-        </p>
+        {!EDITORIAL_MVP_MODE && (
+          <p className="mt-4 text-center font-body text-sm text-punk-white/60">
+            ¿Tu banda, sala o festival ya está en Nafarrock?{" "}
+            <Link href="/auth/reclamar" className="font-punch uppercase tracking-widest text-punk-green hover:text-punk-green/80">
+              Reclamar perfil
+            </Link>
+          </p>
+        )}
       </div>
     </PageLayout>
   );

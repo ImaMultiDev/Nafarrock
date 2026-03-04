@@ -1,0 +1,210 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { ImageUpload } from "@/components/ui/ImageUpload";
+import { ImageGallery } from "@/components/ui/ImageGallery";
+
+const inputClass =
+  "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
+const labelClass = "block font-punch text-xs uppercase tracking-widest text-punk-white/70";
+
+export function BandProposalForm({ genres }: { genres: string[] }) {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [logoUrl, setLogoUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [images, setImages] = useState<string[]>([]);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const selectedGenres = formData.getAll("genres") as string[];
+
+    const res = await fetch("/api/proposals/band", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: formData.get("name"),
+        bio: formData.get("bio") || undefined,
+        genres: selectedGenres,
+        location: formData.get("location") || undefined,
+        foundedYear: formData.get("foundedYear")
+          ? Number(formData.get("foundedYear"))
+          : undefined,
+        status: formData.get("status") || "ACTIVE",
+        spotifyUrl: formData.get("spotifyUrl") || undefined,
+        bandcampUrl: formData.get("bandcampUrl") || undefined,
+        instagramUrl: formData.get("instagramUrl") || undefined,
+        facebookUrl: formData.get("facebookUrl") || undefined,
+        youtubeUrl: formData.get("youtubeUrl") || undefined,
+        webUrl: formData.get("webUrl") || undefined,
+        merchUrl: formData.get("merchUrl") || undefined,
+        logoUrl: logoUrl || undefined,
+        imageUrl: imageUrl || undefined,
+        images,
+      }),
+    });
+
+    const data = await res.json();
+    setLoading(false);
+    if (!res.ok) {
+      setError(data.message ?? "Error al enviar");
+      return;
+    }
+    router.push("/dashboard?proposed=band");
+    router.refresh();
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="mt-10 max-w-2xl space-y-6">
+      {error && (
+        <div className="border-2 border-punk-red bg-punk-red/10 p-4">
+          <p className="font-body text-punk-red">{error}</p>
+        </div>
+      )}
+      <div>
+        <label htmlFor="name" className={labelClass}>
+          Nombre *
+        </label>
+        <input id="name" name="name" type="text" required className={inputClass} />
+      </div>
+      <div>
+        <label htmlFor="bio" className={labelClass}>
+          Biografía
+        </label>
+        <textarea id="bio" name="bio" rows={3} className={inputClass} />
+      </div>
+      <div>
+        <ImageUpload
+          folder="bands"
+          type="logo"
+          entityId={null}
+          value={logoUrl}
+          onChange={setLogoUrl}
+          onRemove={() => setLogoUrl("")}
+          label="Logo (opcional)"
+        />
+      </div>
+      <div>
+        <ImageUpload
+          folder="bands"
+          type="image"
+          entityId={null}
+          value={imageUrl}
+          onChange={setImageUrl}
+          onRemove={() => setImageUrl("")}
+          label="Imagen principal (opcional)"
+        />
+      </div>
+      <div>
+        <ImageGallery
+          folder="bands"
+          entityId="proposal"
+          images={images}
+          onChange={setImages}
+          label="Galería (máx. 3)"
+          maxImages={3}
+        />
+      </div>
+      <div>
+        <label htmlFor="location" className={labelClass}>
+          Territorio
+        </label>
+        <select id="location" name="location" className={inputClass}>
+          <option value="">—</option>
+          <option value="Nafarroa">Nafarroa</option>
+          <option value="Araba">Araba</option>
+          <option value="Bizkaia">Bizkaia</option>
+          <option value="Gipuzkoa">Gipuzkoa</option>
+        </select>
+      </div>
+      <div>
+        <label htmlFor="foundedYear" className={labelClass}>
+          Año fundación
+        </label>
+        <input
+          id="foundedYear"
+          name="foundedYear"
+          type="number"
+          min={1900}
+          max={new Date().getFullYear()}
+          className={inputClass}
+        />
+      </div>
+      <div>
+        <label htmlFor="status" className={labelClass}>
+          Estado de la banda
+        </label>
+        <select id="status" name="status" defaultValue="ACTIVE" className={inputClass}>
+          <option value="ACTIVE">Activa</option>
+          <option value="PAUSED">En pausa</option>
+          <option value="INACTIVE">Inactiva</option>
+        </select>
+      </div>
+      <div>
+        <label className={labelClass}>Géneros</label>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {genres.map((g) => (
+            <label key={g} className="flex cursor-pointer items-center gap-2">
+              <input type="checkbox" name="genres" value={g} className="accent-punk-green" />
+              <span className="font-body text-sm text-punk-white/80">{g}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label htmlFor="spotifyUrl" className={labelClass}>
+            Spotify
+          </label>
+          <input id="spotifyUrl" name="spotifyUrl" type="url" className={inputClass} />
+        </div>
+        <div>
+          <label htmlFor="instagramUrl" className={labelClass}>
+            Instagram
+          </label>
+          <input id="instagramUrl" name="instagramUrl" type="url" className={inputClass} />
+        </div>
+        <div>
+          <label htmlFor="youtubeUrl" className={labelClass}>
+            YouTube
+          </label>
+          <input id="youtubeUrl" name="youtubeUrl" type="url" className={inputClass} />
+        </div>
+        <div>
+          <label htmlFor="webUrl" className={labelClass}>
+            Web
+          </label>
+          <input id="webUrl" name="webUrl" type="url" className={inputClass} />
+        </div>
+        <div>
+          <label htmlFor="merchUrl" className={labelClass}>
+            Tienda / Merch
+          </label>
+          <input id="merchUrl" name="merchUrl" type="url" className={inputClass} placeholder="https://..." />
+        </div>
+      </div>
+      <div className="flex gap-4">
+        <button
+          type="submit"
+          disabled={loading}
+          className="border-2 border-punk-green bg-punk-green px-8 py-3 font-punch text-sm uppercase tracking-widest text-punk-black transition-all hover:bg-punk-green/90 disabled:opacity-50"
+        >
+          {loading ? "Enviando..." : "Enviar propuesta"}
+        </button>
+        <Link
+          href="/dashboard"
+          className="border-2 border-punk-white/30 px-8 py-3 font-punch text-sm uppercase tracking-widest text-punk-white/70 hover:border-punk-white"
+        >
+          Cancelar
+        </Link>
+      </div>
+    </form>
+  );
+}

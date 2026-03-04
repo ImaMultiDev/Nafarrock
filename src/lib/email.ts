@@ -7,18 +7,25 @@ const resend = process.env.RESEND_API_KEY
 const FROM_EMAIL =
   process.env.EMAIL_FROM || "Nafarrock <onboarding@resend.dev>";
 
+const isDev = process.env.NODE_ENV === "development";
+
 export async function sendVerificationEmail(
   to: string,
   token: string,
   name?: string,
 ): Promise<{ success: boolean; error?: string }> {
+  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+  const verifyUrl = `${baseUrl}/api/auth/verify-email?token=${token}`;
+
+  if (isDev) {
+    console.log("[Email DEV] Verificación omitida. Enlace para copiar:", verifyUrl);
+    return { success: true };
+  }
+
   if (!resend) {
     console.warn("RESEND_API_KEY no configurado, omitiendo envío de email");
     return { success: true };
   }
-
-  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
-  const verifyUrl = `${baseUrl}/api/auth/verify-email?token=${token}`;
 
   const { data, error } = await resend.emails.send({
     from: FROM_EMAIL,
@@ -62,6 +69,10 @@ export async function sendContactEmail(
   role?: string,
   entityName?: string,
 ): Promise<{ success: boolean; error?: string }> {
+  if (isDev) {
+    console.log("[Email DEV] Contacto omitido:", subject, "de", fromEmail);
+    return { success: true };
+  }
   if (!resend) {
     console.warn(
       "RESEND_API_KEY no configurado, omitiendo envío de email de contacto",
@@ -105,6 +116,10 @@ export async function sendClaimApprovedEmail(
   entityName: string,
   entityType: string,
 ): Promise<{ success: boolean; error?: string }> {
+  if (isDev) {
+    console.log("[Email DEV] Reclamación aprobada omitida →", to);
+    return { success: true };
+  }
   if (!resend) {
     console.warn(
       "RESEND_API_KEY no configurado, omitiendo email de reclamación aprobada",
@@ -167,6 +182,10 @@ export async function sendRequestRejectedEmail(
   entityType: string,
   reason?: string,
 ): Promise<{ success: boolean; error?: string }> {
+  if (isDev) {
+    console.log("[Email DEV] Solicitud rechazada omitida →", to);
+    return { success: true };
+  }
   if (!resend) {
     console.warn(
       "RESEND_API_KEY no configurado, omitiendo email de solicitud rechazada",
@@ -220,6 +239,10 @@ export async function sendClaimRejectedEmail(
   entityType: string,
   reason?: string,
 ): Promise<{ success: boolean; error?: string }> {
+  if (isDev) {
+    console.log("[Email DEV] Reclamación rechazada omitida →", to);
+    return { success: true };
+  }
   if (!resend) {
     console.warn(
       "RESEND_API_KEY no configurado, omitiendo email de reclamación rechazada",
@@ -273,6 +296,12 @@ export async function sendPasswordResetEmail(
   to: string,
   token: string,
 ): Promise<{ success: boolean; error?: string }> {
+  if (isDev) {
+    const base = process.env.NEXTAUTH_URL || "https://nafarrock.com";
+    const resetUrl = `${base}/auth/restablecer?token=${token}`;
+    console.log("[Email DEV] Recuperación omitida. Enlace para copiar:", resetUrl);
+    return { success: true };
+  }
   if (!resend) {
     console.warn(
       "RESEND_API_KEY no configurado, omitiendo email de recuperación",
@@ -321,6 +350,10 @@ export async function sendAnnouncementApplicationEmail(
   announcementTitle: string,
   message: string,
 ): Promise<{ success: boolean; error?: string }> {
+  if (isDev) {
+    console.log("[Email DEV] Postulación omitida →", to, bandName, announcementTitle);
+    return { success: true };
+  }
   if (!resend) {
     console.warn(
       "RESEND_API_KEY no configurado, omitiendo email de postulación",

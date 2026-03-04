@@ -1,5 +1,7 @@
 "use client";
 
+const EDITORIAL_MVP_MODE = true;
+
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -93,11 +95,6 @@ function isActivePath(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(href + "/");
 }
 
-/** Roles que pueden ver el enlace Contacto (usa effectiveRole: sin aprobar = USUARIO) */
-function canSeeContact(effectiveRole?: string | null): boolean {
-  return !!effectiveRole && effectiveRole !== "USUARIO";
-}
-
 export function Header() {
   const pathname = usePathname();
   const { data: session } = useSession();
@@ -183,7 +180,7 @@ export function Header() {
               </Link>
             );
           })}
-          {session && (
+          {session && !EDITORIAL_MVP_MODE && (
             <Link
               href="/bolos"
               className={`nav-link-special relative shrink-0 font-punch text-xs uppercase tracking-widest transition-colors hover:text-punk-green ${
@@ -211,23 +208,8 @@ export function Header() {
               </Link>
             );
           })()}
-          {session &&
-            canSeeContact(
-              session.user?.effectiveRole ?? session.user?.role,
-            ) && (
-              <Link
-                href="/contacto"
-                className={`relative font-punch text-xs uppercase tracking-widest transition-colors hover:text-punk-green ${
-                  pathname === "/contacto"
-                    ? "text-punk-red after:absolute after:bottom-[-4px] after:left-0 after:right-0 after:h-[2px] after:skew-x-[-12deg] after:bg-punk-red after:content-['']"
-                    : "text-punk-white/80"
-                }`}
-              >
-                Contacto
-              </Link>
-            )}
           <div className="ml-4 flex items-center gap-1 border-l border-punk-white/20 pl-4">
-            {SOCIAL_LINKS.map((social) => {
+            {SOCIAL_LINKS.filter((s) => !("internal" in s && s.internal && s.href === "/contacto")).map((social) => {
               const isInternal = "internal" in social && social.internal;
               const className =
                 "flex h-9 w-9 items-center justify-center rounded-full border border-punk-white/30 text-punk-white/80 transition-colors hover:border-punk-green hover:text-punk-green";
@@ -275,12 +257,14 @@ export function Header() {
             </div>
           ) : (
             <div className="ml-2 flex items-center gap-2">
-              <Link
-                href="/auth/reclamar"
-                className="border-2 border-punk-white/40 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white/80 transition-colors hover:border-punk-green hover:text-punk-green"
-              >
-                Reclamar
-              </Link>
+              {!EDITORIAL_MVP_MODE && (
+                <Link
+                  href="/auth/reclamar"
+                  className="border-2 border-punk-white/40 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white/80 transition-colors hover:border-punk-green hover:text-punk-green"
+                >
+                  Reclamar
+                </Link>
+              )}
               <Link
                 href="/auth/login"
                 className="border-2 border-punk-red bg-punk-red px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white transition-colors hover:bg-transparent hover:text-punk-red"
@@ -351,7 +335,7 @@ export function Header() {
                     </Link>
                   );
                 })}
-                {session && (
+                {session && !EDITORIAL_MVP_MODE && (
                   <Link
                     href="/bolos"
                     onClick={() => setMenuOpen(false)}
@@ -381,22 +365,6 @@ export function Header() {
                     </Link>
                   );
                 })()}
-                {session &&
-                  canSeeContact(
-                    session.user?.effectiveRole ?? session.user?.role,
-                  ) && (
-                    <Link
-                      href="/contacto"
-                      onClick={() => setMenuOpen(false)}
-                      className={`rounded px-4 py-3 font-punch text-sm uppercase tracking-widest transition-colors hover:bg-punk-white/10 hover:text-punk-green ${
-                        pathname === "/contacto"
-                          ? "border-l-4 border-punk-red bg-punk-red/10 text-punk-red"
-                          : "text-punk-white/90"
-                      }`}
-                    >
-                      Contacto
-                    </Link>
-                  )}
                 {session ? (
                   <>
                     <Link
@@ -419,13 +387,15 @@ export function Header() {
                   </>
                 ) : (
                   <div className="mt-2 flex flex-col gap-2">
-                    <Link
-                      href="/auth/reclamar"
-                      onClick={() => setMenuOpen(false)}
-                      className="rounded border-2 border-punk-white/40 px-4 py-3 text-center font-punch text-xs uppercase tracking-widest text-punk-white/80 hover:border-punk-green hover:text-punk-green"
-                    >
-                      Reclamar perfil
-                    </Link>
+                    {!EDITORIAL_MVP_MODE && (
+                      <Link
+                        href="/auth/reclamar"
+                        onClick={() => setMenuOpen(false)}
+                        className="rounded border-2 border-punk-white/40 px-4 py-3 text-center font-punch text-xs uppercase tracking-widest text-punk-white/80 hover:border-punk-green hover:text-punk-green"
+                      >
+                        Reclamar perfil
+                      </Link>
+                    )}
                     <Link
                       href="/auth/login"
                       onClick={() => setMenuOpen(false)}
@@ -444,7 +414,7 @@ export function Header() {
                 Redes
               </p>
               <div className="flex flex-col gap-2">
-                {SOCIAL_LINKS.map((social) => {
+                {SOCIAL_LINKS.filter((s) => !("internal" in s && s.internal && s.href === "/contacto")).map((social) => {
                   const isInternal = "internal" in social && social.internal;
                   const className =
                     "flex items-center gap-3 rounded px-4 py-3 text-punk-white/80 transition-colors hover:bg-punk-white/5 hover:text-punk-green";

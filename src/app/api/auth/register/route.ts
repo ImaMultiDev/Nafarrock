@@ -7,6 +7,9 @@ import { uniqueSlug } from "@/lib/slug";
 import { sendVerificationEmail } from "@/lib/email";
 import { isValidEmail, isPasswordValid, isValidUrl } from "@/lib/validation";
 
+/** Modelo editorial MVP: solo usuarios estándar en registro */
+const EDITORIAL_MVP_MODE = true;
+
 const ROLES = ["USUARIO", "BANDA", "SALA", "FESTIVAL", "ASOCIACION", "ORGANIZADOR", "PROMOTOR"] as const;
 
 const memberSchema = z.object({
@@ -123,7 +126,8 @@ async function createAndSendVerificationToken(
   email: string,
   name?: string | null
 ): Promise<{ skipVerification: boolean }> {
-  if (!process.env.RESEND_API_KEY) {
+  // En desarrollo: auto-verificar para poder probar sin email real
+  if (process.env.NODE_ENV === "development" || !process.env.RESEND_API_KEY) {
     await prisma.user.update({
       where: { email },
       data: { emailVerified: new Date() },
@@ -154,7 +158,13 @@ const claimSchema = baseSchema.extend({
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const role = body.role ?? "USUARIO";
+    let role = body.role ?? "USUARIO";
+    if (EDITORIAL_MVP_MODE) {
+      role = "USUARIO";
+      body.claimType = undefined;
+      body.claimId = undefined;
+      body.claimName = undefined;
+    }
 
     // Modo reclamación: registrarse para reclamar un perfil existente
     if (body.claimType && body.claimId && body.claimName) {

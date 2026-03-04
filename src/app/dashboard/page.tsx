@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import {
-  LayoutDashboard,
   User,
   Calendar,
   Music2,
@@ -16,6 +15,9 @@ import {
   Shield,
   ArrowRight,
 } from "lucide-react";
+
+/** Modelo editorial MVP: ocultar paneles profesionales, mostrar Proponer banda/evento */
+const EDITORIAL_MVP_MODE = true;
 
 type Props = { searchParams: Promise<Record<string, string | undefined>> };
 
@@ -37,6 +39,7 @@ export default async function DashboardPage({ searchParams }: Props) {
 
   const params = await searchParams;
   const deletionCancelled = params.deletionCancelled === "1";
+  const proposed = params.proposed;
 
   const pendingClaim = await prisma.profileClaim.findFirst({
     where: { userId: session.user.id, status: "PENDING_CLAIM" },
@@ -80,7 +83,23 @@ export default async function DashboardPage({ searchParams }: Props) {
         </div>
       )}
 
-      {pendingClaim && (
+      {proposed === "band" && (
+        <div className="mb-8 rounded-xl border-2 border-punk-green bg-punk-green/10 p-6">
+          <p className="font-body text-punk-green">
+            ✓ Propuesta de banda enviada. El administrador la revisará y te notificará.
+          </p>
+        </div>
+      )}
+
+      {proposed === "event" && (
+        <div className="mb-8 rounded-xl border-2 border-punk-green bg-punk-green/10 p-6">
+          <p className="font-body text-punk-green">
+            ✓ Propuesta de evento enviada. El administrador la revisará y te notificará.
+          </p>
+        </div>
+      )}
+
+      {!EDITORIAL_MVP_MODE && pendingClaim && (
         <div className="mb-8 rounded-xl border-2 border-l-4 border-punk-green/50 bg-punk-green/10 p-6">
           <h2 className="font-display text-xl tracking-tighter text-punk-green">
             Pendiente de aprobación
@@ -130,7 +149,7 @@ export default async function DashboardPage({ searchParams }: Props) {
           </Link>
         )}
 
-        {((session.user?.effectiveRole ?? session.user?.role) === "BANDA" || (session.user?.effectiveRole ?? session.user?.role) === "ADMIN") && (
+        {!EDITORIAL_MVP_MODE && ((session.user?.effectiveRole ?? session.user?.role) === "BANDA" || (session.user?.effectiveRole ?? session.user?.role) === "ADMIN") && (
           <Link
             href="/dashboard/banda"
             className={`group flex flex-col rounded-xl border-2 bg-gradient-to-br p-6 transition-all duration-200 ${CARD_ACCENTS.banda}`}
@@ -148,7 +167,7 @@ export default async function DashboardPage({ searchParams }: Props) {
           </Link>
         )}
 
-        {((session.user?.effectiveRole ?? session.user?.role) === "FESTIVAL" || (session.user?.effectiveRole ?? session.user?.role) === "ADMIN") && (
+        {!EDITORIAL_MVP_MODE && ((session.user?.effectiveRole ?? session.user?.role) === "FESTIVAL" || (session.user?.effectiveRole ?? session.user?.role) === "ADMIN") && (
           <Link
             href="/dashboard/festival"
             className={`group flex flex-col rounded-xl border-2 bg-gradient-to-br p-6 transition-all duration-200 ${CARD_ACCENTS.festival}`}
@@ -166,7 +185,7 @@ export default async function DashboardPage({ searchParams }: Props) {
           </Link>
         )}
 
-        {(session.user?.effectiveRole ?? session.user?.role) === "ASOCIACION" && (
+        {!EDITORIAL_MVP_MODE && (session.user?.effectiveRole ?? session.user?.role) === "ASOCIACION" && (
           <Link
             href="/dashboard/asociacion"
             className={`group flex flex-col rounded-xl border-2 bg-gradient-to-br p-6 transition-all duration-200 ${CARD_ACCENTS.asociacion}`}
@@ -184,7 +203,7 @@ export default async function DashboardPage({ searchParams }: Props) {
           </Link>
         )}
 
-        {(session.user?.effectiveRole ?? session.user?.role) === "ORGANIZADOR" && (
+        {!EDITORIAL_MVP_MODE && (session.user?.effectiveRole ?? session.user?.role) === "ORGANIZADOR" && (
           <Link
             href="/dashboard/organizador"
             className={`group flex flex-col rounded-xl border-2 bg-gradient-to-br p-6 transition-all duration-200 ${CARD_ACCENTS.organizador}`}
@@ -202,7 +221,7 @@ export default async function DashboardPage({ searchParams }: Props) {
           </Link>
         )}
 
-        {session.user?.role === "PROMOTOR" && (
+        {!EDITORIAL_MVP_MODE && session.user?.role === "PROMOTOR" && (
           <Link
             href="/dashboard/promotor"
             className={`group flex flex-col rounded-xl border-2 bg-gradient-to-br p-6 transition-all duration-200 ${CARD_ACCENTS.promotor}`}
@@ -220,7 +239,7 @@ export default async function DashboardPage({ searchParams }: Props) {
           </Link>
         )}
 
-        {((session.user?.effectiveRole ?? session.user?.role) === "SALA" || (session.user?.effectiveRole ?? session.user?.role) === "ADMIN") && (
+        {!EDITORIAL_MVP_MODE && ((session.user?.effectiveRole ?? session.user?.role) === "SALA" || (session.user?.effectiveRole ?? session.user?.role) === "ADMIN") && (
           <Link
             href="/dashboard/sala"
             className={`group flex flex-col rounded-xl border-2 bg-gradient-to-br p-6 transition-all duration-200 ${CARD_ACCENTS.sala}`}
@@ -238,7 +257,7 @@ export default async function DashboardPage({ searchParams }: Props) {
           </Link>
         )}
 
-        {((session.user?.effectiveRole ?? session.user?.role) === "SALA" ||
+        {!EDITORIAL_MVP_MODE && ((session.user?.effectiveRole ?? session.user?.role) === "SALA" ||
           (session.user?.effectiveRole ?? session.user?.role) === "FESTIVAL" ||
           (session.user?.effectiveRole ?? session.user?.role) === "ASOCIACION" ||
           (session.user?.effectiveRole ?? session.user?.role) === "ORGANIZADOR" ||
@@ -261,7 +280,42 @@ export default async function DashboardPage({ searchParams }: Props) {
           </Link>
         )}
 
-        {(session.user?.effectiveRole ?? session.user?.role) === "USUARIO" && (
+        {EDITORIAL_MVP_MODE && (session.user?.effectiveRole ?? session.user?.role) === "USUARIO" && (
+          <>
+            <Link
+              href="/dashboard/proponer-banda"
+              className={`group flex flex-col rounded-xl border-2 bg-gradient-to-br p-6 transition-all duration-200 ${CARD_ACCENTS.banda}`}
+            >
+              <Music2 size={28} className="text-punk-green/80" />
+              <h2 className="mt-4 font-display text-lg font-semibold text-punk-white">
+                Proponer banda
+              </h2>
+              <p className="mt-2 flex-1 text-sm text-punk-white/60">
+                Sugiere una banda para el radar cultural
+              </p>
+              <span className="mt-4 inline-flex items-center gap-2 font-punch text-xs uppercase tracking-widest text-punk-green opacity-0 transition-opacity group-hover:opacity-100">
+                Proponer <ArrowRight size={14} />
+              </span>
+            </Link>
+            <Link
+              href="/dashboard/proponer-evento"
+              className={`group flex flex-col rounded-xl border-2 bg-gradient-to-br p-6 transition-all duration-200 ${CARD_ACCENTS.eventos}`}
+            >
+              <Calendar size={28} className="text-punk-red/80" />
+              <h2 className="mt-4 font-display text-lg font-semibold text-punk-white">
+                Proponer evento
+              </h2>
+              <p className="mt-2 flex-1 text-sm text-punk-white/60">
+                Sugiere un concierto o festival
+              </p>
+              <span className="mt-4 inline-flex items-center gap-2 font-punch text-xs uppercase tracking-widest text-punk-red opacity-0 transition-opacity group-hover:opacity-100">
+                Proponer <ArrowRight size={14} />
+              </span>
+            </Link>
+          </>
+        )}
+
+        {!EDITORIAL_MVP_MODE && (session.user?.effectiveRole ?? session.user?.role) === "USUARIO" && (
           <div className="col-span-full rounded-xl border-2 border-punk-white/10 bg-punk-black/40 p-8">
             <p className="font-body text-punk-white/50">
               Regístrate como banda, sala o promotor para más opciones.

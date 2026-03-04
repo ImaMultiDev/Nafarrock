@@ -4,11 +4,11 @@ import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 
 const lines = [
-  "Nafarrock no es solo una agenda.",
-  "Es memoria cultural.",
-  "Es escena viva.",
-  "Es herramienta de visibilidad.",
-  "Es comunidad.",
+  "Nafarrock es un radar cultural.",
+  "Memoria de la escena.",
+  "Agenda viva.",
+  "Herramienta de visibilidad.",
+  "Comunidad.",
 ];
 
 export function ManifestoSection() {
