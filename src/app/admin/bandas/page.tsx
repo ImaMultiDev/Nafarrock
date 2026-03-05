@@ -44,6 +44,12 @@ export default async function AdminBandasPage({ searchParams }: Props) {
             Registrar banda
           </Link>
           <Link
+            href="/admin/bandas/descubrir"
+            className="border-2 border-punk-white/30 px-6 py-3 font-punch text-sm uppercase tracking-widest text-punk-white/70 hover:border-punk-green hover:text-punk-green"
+          >
+            Descubrir bandas
+          </Link>
+          <Link
             href="/admin/importacion-bandas"
             className="border-2 border-punk-white/30 px-6 py-3 font-punch text-sm uppercase tracking-widest text-punk-white/70 hover:border-punk-green hover:text-punk-green"
           >

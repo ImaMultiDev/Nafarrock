@@ -46,12 +46,20 @@ export default async function AdminEventosPage({ searchParams }: Props) {
             {total} eventos de la agenda · {pending.length} pendientes de aprobar en esta página
           </p>
         </div>
-        <Link
-          href="/admin/eventos/nuevo"
-          className="border-2 border-punk-red bg-punk-red px-6 py-3 font-punch text-sm uppercase tracking-widest text-punk-white transition-all hover:bg-punk-blood"
-        >
-          Registrar evento
-        </Link>
+        <div className="flex flex-wrap gap-3">
+          <Link
+            href="/admin/eventos/nuevo"
+            className="border-2 border-punk-red bg-punk-red px-6 py-3 font-punch text-sm uppercase tracking-widest text-punk-white transition-all hover:bg-punk-blood"
+          >
+            Registrar evento
+          </Link>
+          <Link
+            href="/admin/eventos/descubrir"
+            className="border-2 border-punk-white/30 px-6 py-3 font-punch text-sm uppercase tracking-widest text-punk-white/70 hover:border-punk-red hover:text-punk-red"
+          >
+            Descubrir eventos
+          </Link>
+        </div>
       </div>
 
       <div className="mt-10 space-y-3">

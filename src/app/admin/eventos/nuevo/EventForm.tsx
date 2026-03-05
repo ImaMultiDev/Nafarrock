@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useRef, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 import { TranslateButton } from "@/components/admin/TranslateButton";
@@ -23,6 +23,118 @@ export function EventForm({ venues, festivals, bands }: { venues: Venue[]; festi
   const [imageUrl, setImageUrl] = useState("");
   const [images, setImages] = useState<string[]>([]);
   const [isMultiDay, setIsMultiDay] = useState(false);
+  const [autofillLoading, setAutofillLoading] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
+  const searchParams = useSearchParams();
+
+  const applyAutofillData = (data: Record<string, unknown>) => {
+    const form = formRef.current;
+    if (data.title) {
+      const el = form?.querySelector<HTMLInputElement>('[name="title"]');
+      if (el) el.value = data.title as string;
+    }
+    if (data.description) setDescription(data.description as string);
+    if (data.imageUrl) setImageUrl(data.imageUrl as string);
+    if (data.date) {
+      const el = form?.querySelector<HTMLInputElement>('[name="date"]');
+      if (el) el.value = data.date as string;
+    }
+    if (data.endDate) {
+      setIsMultiDay(true);
+      const el = form?.querySelector<HTMLInputElement>('[name="endDate"]');
+      if (el) el.value = data.endDate as string;
+    }
+    if (data.venueId) {
+      const el = form?.querySelector<HTMLSelectElement>('[name="venueId"]');
+      if (el) el.value = data.venueId as string;
+    }
+    if (data.price) {
+      const el = form?.querySelector<HTMLInputElement>('[name="price"]');
+      if (el) el.value = data.price as string;
+    }
+    if (data.ticketUrl) {
+      const el = form?.querySelector<HTMLInputElement>('[name="ticketUrl"]');
+      if (el) el.value = data.ticketUrl as string;
+    }
+    if (data.webUrl) {
+      const el = form?.querySelector<HTMLInputElement>('[name="webUrl"]');
+      if (el) el.value = data.webUrl as string;
+    }
+  };
+
+  useEffect(() => {
+    const autofillUrl = searchParams.get("autofillUrl");
+    if (!autofillUrl) return;
+
+    const run = async () => {
+      const urlInput = formRef.current?.querySelector<HTMLInputElement>('[name="eventUrl"]');
+      if (urlInput) urlInput.value = autofillUrl;
+
+      setError(null);
+      setAutofillLoading(true);
+      try {
+        const res = await fetch("/api/admin/event-autofill", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: autofillUrl }),
+        });
+        const json = await res.json();
+
+        if (!res.ok) {
+          setError(json.message ?? "Error al buscar");
+          return;
+        }
+
+        const data = json.data;
+        if (!data) {
+          setError(json.message ?? "No se encontró información");
+          return;
+        }
+
+        applyAutofillData(data);
+      } catch {
+        setError("Error de conexión al buscar información");
+      } finally {
+        setAutofillLoading(false);
+      }
+    };
+
+    run();
+    router.replace("/admin/eventos/nuevo", { scroll: false });
+  }, [searchParams, router]);
+
+  const handleAutofill = async () => {
+    const urlInput = formRef.current?.querySelector<HTMLInputElement>('[name="eventUrl"]');
+    const url = urlInput?.value?.trim();
+    if (!url) {
+      setError("Pega la URL del evento antes de buscar");
+      return;
+    }
+
+    setError(null);
+    setAutofillLoading(true);
+    try {
+      const res = await fetch("/api/admin/event-autofill", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url }),
+      });
+      const json = await res.json();
+
+      if (!res.ok) {
+        setError(json.message ?? "Error al buscar");
+        return;
+      }
+
+      const data = json.data;
+      if (data) applyAutofillData(data);
+      else setError(json.message ?? "No se encontró información");
+    } catch {
+      setError("Error de conexión al buscar información");
+    } finally {
+      setAutofillLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -88,12 +200,34 @@ export function EventForm({ venues, festivals, bands }: { venues: Venue[]; festi
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-10 max-w-2xl space-y-6">
+    <form ref={formRef} onSubmit={handleSubmit} className="mt-10 max-w-2xl space-y-6">
       {error && (
         <div className="border-2 border-punk-red bg-punk-red/10 p-4">
           <p className="font-body text-punk-red">{error}</p>
         </div>
       )}
+      <div>
+        <label htmlFor="eventUrl" className={labelClass}>
+          URL del evento (autofill)
+        </label>
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          <input
+            id="eventUrl"
+            name="eventUrl"
+            type="url"
+            className={`${inputClass} flex-1 min-w-[200px]`}
+            placeholder="https://www.eventbrite.com/e/... o https://www.ticketmaster.com/..."
+          />
+          <button
+            type="button"
+            onClick={handleAutofill}
+            disabled={autofillLoading}
+            className="shrink-0 border-2 border-punk-white/30 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white/70 transition-colors hover:border-punk-red hover:text-punk-red disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {autofillLoading ? "Buscando…" : "Buscar información automáticamente"}
+          </button>
+        </div>
+      </div>
       <div>
         <label htmlFor="title" className={labelClass}>
           Título *

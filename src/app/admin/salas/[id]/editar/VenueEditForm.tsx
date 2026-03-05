@@ -16,6 +16,7 @@ type Venue = {
   city: string;
   address: string | null;
   description: string | null;
+  descriptionEu?: string | null;
   foundedYear: number | null;
   capacity: number | null;
   logoUrl: string | null;

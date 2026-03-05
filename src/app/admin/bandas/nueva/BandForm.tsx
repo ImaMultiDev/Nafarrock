@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useRef, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 import { TranslateButton } from "@/components/admin/TranslateButton";
+import { RelatedArtistsSuggestions } from "@/components/admin/RelatedArtistsSuggestions";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
@@ -19,6 +20,124 @@ export function BandForm({ genres }: { genres: string[] }) {
   const [logoUrl, setLogoUrl] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [images, setImages] = useState<string[]>([]);
+  const [autofillLoading, setAutofillLoading] = useState(false);
+  const [createdBand, setCreatedBand] = useState<{ id: string; name: string } | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const autofillName = searchParams.get("autofill");
+    if (!autofillName) return;
+
+    const runAutofill = async () => {
+      const form = formRef.current;
+      const nameInput = form?.querySelector<HTMLInputElement>('[name="name"]');
+      if (nameInput) nameInput.value = autofillName;
+
+      setError(null);
+      setAutofillLoading(true);
+      try {
+        const res = await fetch("/api/admin/band-autofill", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ bandName: autofillName }),
+        });
+        const json = await res.json();
+
+        if (!res.ok) {
+          setError(json.message ?? "Error al buscar");
+          return;
+        }
+
+        const data = json.data;
+        if (data) {
+          applyAutofillData(form, data, (input) => {
+            if (input) input.value = (data.name as string) ?? autofillName;
+          });
+        } else {
+          setError(json.message ?? "No se encontró información");
+        }
+      } catch {
+        setError("Error de conexión al buscar información");
+      } finally {
+        setAutofillLoading(false);
+      }
+    };
+
+    runAutofill();
+    router.replace("/admin/bandas/nueva", { scroll: false });
+  }, [searchParams, router]);
+
+  const applyAutofillData = (
+    form: HTMLFormElement | null,
+    data: Record<string, unknown>,
+    setName?: (input: HTMLInputElement | null) => void
+  ) => {
+    if (data.bio) setBio(data.bio as string);
+    if (data.logoUrl) setLogoUrl(data.logoUrl as string);
+    if (data.imageUrl) setImageUrl(data.imageUrl as string);
+
+    const nameInput = form?.querySelector<HTMLInputElement>('[name="name"]');
+    if (setName) setName(nameInput ?? null);
+    else if (data.name && nameInput) nameInput.value = data.name as string;
+
+    const setFormValue = (name: string, value: string | number | undefined) => {
+      const el = form?.querySelector<HTMLInputElement | HTMLSelectElement>(`[name="${name}"]`);
+      if (el && value !== undefined) el.value = String(value);
+    };
+    setFormValue("location", data.location as string ?? "");
+    setFormValue("foundedYear", data.foundedYear as number ?? "");
+    setFormValue("spotifyUrl", data.spotifyUrl as string ?? "");
+    setFormValue("instagramUrl", data.instagramUrl as string ?? "");
+    setFormValue("facebookUrl", data.facebookUrl as string ?? "");
+    setFormValue("youtubeUrl", data.youtubeUrl as string ?? "");
+    setFormValue("webUrl", data.webUrl as string ?? "");
+    setFormValue("bandcampUrl", data.bandcampUrl as string ?? "");
+
+    form?.querySelectorAll<HTMLInputElement>('[name="genres"]').forEach((cb) => {
+      cb.checked = ((data.genres as string[]) ?? []).includes(cb.value);
+    });
+  };
+
+  const handleAutofill = async () => {
+    const form = formRef.current;
+    const nameInput = form?.querySelector<HTMLInputElement>('[name="name"]');
+    const bandName = nameInput?.value?.trim();
+    if (!bandName) {
+      setError("Escribe el nombre de la banda antes de buscar");
+      return;
+    }
+
+    setError(null);
+    setAutofillLoading(true);
+    try {
+      const res = await fetch("/api/admin/band-autofill", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bandName }),
+      });
+      const json = await res.json();
+
+      if (!res.ok) {
+        setError(json.message ?? "Error al buscar");
+        return;
+      }
+
+      const data = json.data;
+      if (!data) {
+        setError(json.message ?? "No se encontró información");
+        return;
+      }
+
+      applyAutofillData(form, data, (input) => {
+        if (data.name && input) input.value = data.name;
+      });
+    } catch {
+      setError("Error de conexión al buscar información");
+    } finally {
+      setAutofillLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -60,12 +179,39 @@ export function BandForm({ genres }: { genres: string[] }) {
       setError(data.message ?? "Error al crear");
       return;
     }
-    router.push("/admin/bandas");
-    router.refresh();
+    setCreatedBand({ id: data.id, name: data.name });
   };
 
+  if (createdBand) {
+    return (
+      <div className="mt-10 max-w-2xl space-y-6">
+        <div className="border-2 border-punk-green bg-punk-green/10 p-6">
+          <p className="font-body text-punk-green">
+            Banda <strong>{createdBand.name}</strong> registrada correctamente.
+          </p>
+        </div>
+        <RelatedArtistsSuggestions bandId={createdBand.id} bandName={createdBand.name} />
+        <div className="flex gap-4">
+          <a
+            href="/admin/bandas"
+            className="border-2 border-punk-green bg-punk-green px-8 py-3 font-punch text-sm uppercase tracking-widest text-punk-black transition-all hover:bg-punk-green/90"
+          >
+            Volver al listado
+          </a>
+          <button
+            type="button"
+            onClick={() => setCreatedBand(null)}
+            className="border-2 border-punk-white/30 px-8 py-3 font-punch text-sm uppercase tracking-widest text-punk-white/70 hover:border-punk-white"
+          >
+            Registrar otra banda
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <form onSubmit={handleSubmit} className="mt-10 max-w-2xl space-y-6">
+    <form ref={formRef} onSubmit={handleSubmit} className="mt-10 max-w-2xl space-y-6">
       {error && (
         <div className="border-2 border-punk-red bg-punk-red/10 p-4">
           <p className="font-body text-punk-red">{error}</p>
@@ -75,7 +221,17 @@ export function BandForm({ genres }: { genres: string[] }) {
         <label htmlFor="name" className={labelClass}>
           Nombre *
         </label>
-        <input id="name" name="name" type="text" required className={inputClass} />
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          <input id="name" name="name" type="text" required className={`${inputClass} flex-1 min-w-[200px]`} />
+          <button
+            type="button"
+            onClick={handleAutofill}
+            disabled={autofillLoading}
+            className="shrink-0 border-2 border-punk-white/30 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white/70 transition-colors hover:border-punk-green hover:text-punk-green disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {autofillLoading ? "Buscando…" : "Buscar información automáticamente"}
+          </button>
+        </div>
       </div>
       <div>
         <label htmlFor="bio" className={labelClass}>
@@ -178,10 +334,22 @@ export function BandForm({ genres }: { genres: string[] }) {
           <input id="spotifyUrl" name="spotifyUrl" type="url" className={inputClass} />
         </div>
         <div>
+          <label htmlFor="bandcampUrl" className={labelClass}>
+            Bandcamp
+          </label>
+          <input id="bandcampUrl" name="bandcampUrl" type="url" className={inputClass} />
+        </div>
+        <div>
           <label htmlFor="instagramUrl" className={labelClass}>
             Instagram
           </label>
           <input id="instagramUrl" name="instagramUrl" type="url" className={inputClass} />
+        </div>
+        <div>
+          <label htmlFor="facebookUrl" className={labelClass}>
+            Facebook
+          </label>
+          <input id="facebookUrl" name="facebookUrl" type="url" className={inputClass} />
         </div>
         <div>
           <label htmlFor="youtubeUrl" className={labelClass}>

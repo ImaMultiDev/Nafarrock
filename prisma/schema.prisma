@@ -566,3 +566,39 @@ model TranslationCache {
 
   @@map("translation_cache")
 }
+
+// ============================================
+// CACHE DE AUTOFILL DE BANDAS
+// ============================================
+
+model BandAutofillCache {
+  nameHash  String   @id // SHA-256 del nombre normalizado (trim + toLowerCase)
+  data      Json     // Payload completo de autofill
+  createdAt DateTime @default(now())
+
+  @@map("band_autofill_cache")
+}
+
+// ============================================
+// CACHE DE REGIÓN DE ARTISTAS (Related Artists)
+// ============================================
+
+model ArtistRegionCache {
+  nameHash     String   @id // SHA-256 del nombre normalizado (trim + toLowerCase)
+  isFromRegion Boolean  // true si Navarra o País Vasco
+  createdAt    DateTime @default(now())
+
+  @@map("artist_region_cache")
+}
+
+// ============================================
+// CACHE DE AUTOFILL DE EVENTOS (por URL)
+// ============================================
+
+model EventAutofillCache {
+  urlHash  String   @id // SHA-256 de la URL normalizada
+  data     Json     // Payload de autofill
+  createdAt DateTime @default(now())
+
+  @@map("event_autofill_cache")
+}
