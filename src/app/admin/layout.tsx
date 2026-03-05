@@ -28,13 +28,13 @@ export default async function AdminLayout({
           <Link href="/admin/importacion-bandas" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Importar bandas</Link>
           <Link href="/admin/salas" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Salas</Link>
           <Link href="/admin/eventos" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Eventos</Link>
+          <Link href="/admin/festivales" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Festivales</Link>
           <Link href="/admin/usuarios" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Usuarios</Link>
           {!EDITORIAL_MVP_MODE && (
             <>
               <Link href="/admin/reclamaciones" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Reclamaciones</Link>
               <Link href="/admin/promotores" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Promotores</Link>
               <Link href="/admin/organizadores" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Organizadores</Link>
-              <Link href="/admin/festivales" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Festivales</Link>
               <Link href="/admin/asociaciones" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Asociaciones</Link>
             </>
           )}

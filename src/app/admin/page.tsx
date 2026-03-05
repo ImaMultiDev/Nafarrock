@@ -47,6 +47,17 @@ export default function AdminPage() {
           </p>
         </Link>
         <Link
+          href="/admin/festivales"
+          className="block border-2 border-rock-500/50 bg-punk-black p-6 transition-all hover:border-rock-500 hover:shadow-[0_0_30px_rgba(233,124,31,0.2)]"
+        >
+          <h2 className="font-display text-xl tracking-tighter text-rock-500">
+            Festivales
+          </h2>
+          <p className="mt-2 font-body text-sm text-punk-white/70">
+            Gestionar festivales
+          </p>
+        </Link>
+        <Link
           href="/admin/usuarios"
           className="block border-2 border-punk-acid bg-punk-black p-6 transition-all hover:border-punk-acid hover:shadow-[0_0_30px_rgba(200,255,0,0.2)]"
         >
