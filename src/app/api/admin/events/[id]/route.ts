@@ -31,6 +31,7 @@ const updateSchema = z.object({
   isSoldOut: z.boolean().optional(),
   isApproved: z.boolean().optional(),
   eventLimitExempt: z.boolean().optional(),
+  bandIds: z.array(z.string()).optional().default([]),
 });
 
 export async function PATCH(
@@ -95,6 +96,21 @@ export async function PATCH(
       }
     }
     if (data.eventLimitExempt != null) updateData.eventLimitExempt = data.eventLimitExempt;
+
+    if (data.bandIds !== undefined) {
+      await prisma.bandEvent.deleteMany({ where: { eventId: id } });
+      if (data.bandIds.length > 0) {
+        await prisma.bandEvent.createMany({
+          data: data.bandIds.map((bandId, i) => ({
+            eventId: id,
+            bandId,
+            order: i,
+            isHeadliner: i === 0,
+          })),
+        });
+      }
+    }
+
     if (data.slug != null && data.slug !== event.slug) {
       const slug = await uniqueSlug(
         (s) => prisma.event.findUnique({ where: { slug: s } }).then(Boolean),

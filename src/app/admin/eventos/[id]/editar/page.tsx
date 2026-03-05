@@ -10,14 +10,24 @@ export default async function EditarEventoPage({
   const { id } = await params;
   const event = await prisma.event.findUnique({
     where: { id },
-    include: { venue: true },
+    include: {
+      venue: true,
+      bands: { include: { band: true }, orderBy: { order: "asc" } },
+    },
   });
   if (!event) notFound();
 
-  const venues = await prisma.venue.findMany({
-    orderBy: { name: "asc" },
-    where: { approved: true },
-  });
+  const [venues, bands] = await Promise.all([
+    prisma.venue.findMany({
+      orderBy: { name: "asc" },
+      where: { approved: true },
+    }),
+    prisma.band.findMany({
+      orderBy: { name: "asc" },
+      where: { approved: true },
+      select: { id: true, name: true },
+    }),
+  ]);
 
   return (
     <>
@@ -27,7 +37,7 @@ export default async function EditarEventoPage({
       <p className="mt-2 font-body text-punk-white/60">
         {event.title}
       </p>
-      <EventEditForm event={event} venues={venues} />
+      <EventEditForm event={event} venues={venues} bands={bands} />
     </>
   );
 }

@@ -31,16 +31,22 @@ type Event = {
   eventLimitExempt: boolean;
   isSoldOut: boolean;
   venueId: string | null;
+  bands?: { bandId: string; band?: { id: string } }[];
 };
 
 type Venue = { id: string; name: string };
+type Band = { id: string; name: string };
+
 export function EventEditForm({
   event,
   venues,
+  bands,
 }: {
   event: Event;
   venues: Venue[];
+  bands: Band[];
 }) {
+  const initialBandIds = event.bands?.map((b) => b.bandId) ?? [];
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -69,6 +75,7 @@ export function EventEditForm({
     setLoading(true);
     const form = e.currentTarget;
     const formData = new FormData(form);
+    const bandIds = (formData.getAll("bandIds") as string[]).filter(Boolean);
     const date = new Date(formData.get("date") as string);
     const endDateVal = formData.get("endDate") as string;
     const endDate = isMultiDay && endDateVal ? new Date(endDateVal).toISOString() : null;
@@ -97,6 +104,7 @@ export function EventEditForm({
         webUrl: formData.get("webUrl") || null,
         imageUrl: imageUrl || null,
         images,
+        bandIds,
         isSoldOut: (formData.get("isSoldOut") as string) === "on",
         isApproved: (formData.get("approved") as string) === "on",
         eventLimitExempt: (formData.get("eventLimitExempt") as string) === "on",
@@ -207,6 +215,28 @@ export function EventEditForm({
             <option key={v.id} value={v.id}>{v.name}</option>
           ))}
         </select>
+      </div>
+      <div>
+        <label className={labelClass}>
+          Bandas (opcional)
+        </label>
+        <div className="mt-2 max-h-40 overflow-y-auto space-y-2 border-2 border-punk-white/20 p-4">
+          {bands.map((b) => (
+            <label key={b.id} className="flex cursor-pointer items-center gap-2">
+              <input
+                type="checkbox"
+                name="bandIds"
+                value={b.id}
+                defaultChecked={initialBandIds.includes(b.id)}
+                className="accent-punk-red"
+              />
+              <span className="font-body text-punk-white/80">{b.name}</span>
+            </label>
+          ))}
+          {bands.length === 0 && (
+            <p className="font-body text-sm text-punk-white/50">No hay bandas aprobadas</p>
+          )}
+        </div>
       </div>
       <div>
         <label htmlFor="description" className={labelClass}>
