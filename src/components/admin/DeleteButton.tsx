@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 type Props = {
-  entity: "band" | "venue" | "event";
+  entity: "band" | "venue" | "event" | "festival";
   id: string;
   label: string;
   onConfirm?: () => void;

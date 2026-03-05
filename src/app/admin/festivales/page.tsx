@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { ApproveButton } from "@/components/admin/ApproveButton";
+import { DeleteButton } from "@/components/admin/DeleteButton";
 
 export default async function AdminFestivalesPage() {
   const festivals = await prisma.festival.findMany({
@@ -68,7 +69,10 @@ export default async function AdminFestivalesPage() {
                   </span>
                 </td>
                 <td className="py-3">
-                  <ApproveButton entity="festival" id={f.id} approved={f.approved} />
+                  <div className="flex flex-wrap items-center gap-2">
+                    <ApproveButton entity="festival" id={f.id} approved={f.approved} />
+                    <DeleteButton entity="festival" id={f.id} label="Borrar" />
+                  </div>
                 </td>
               </tr>
             ))}

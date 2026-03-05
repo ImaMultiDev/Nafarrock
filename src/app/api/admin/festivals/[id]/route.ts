@@ -54,3 +54,30 @@ export async function PATCH(
     );
   }
 }
+
+export async function DELETE(
+  _req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    await requireAdmin();
+    const { id } = await params;
+
+    const festival = await prisma.festival.findUnique({ where: { id } });
+    if (!festival) {
+      return NextResponse.json({ message: "Festival no encontrado" }, { status: 404 });
+    }
+
+    await prisma.festival.delete({ where: { id } });
+    return NextResponse.json({ success: true });
+  } catch (e) {
+    if (e instanceof Error && e.message === "Unauthorized") {
+      return NextResponse.json({ message: "No autorizado" }, { status: 401 });
+    }
+    console.error("Admin delete festival:", e);
+    return NextResponse.json(
+      { message: "Error al borrar el festival" },
+      { status: 500 }
+    );
+  }
+}
