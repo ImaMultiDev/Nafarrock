@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { ImageUpload } from "@/components/ui/ImageUpload";
@@ -80,6 +81,7 @@ export function RegisterForm({
   entityImageInfo,
 }: ClaimProps) {
   const router = useRouter();
+  const t = useTranslations("auth.registro");
   const isClaimMode = !!claimType && !!claimId && !!claimName;
   const [claimLogoUrl, setClaimLogoUrl] = useState("");
   const [claimImageUrl, setClaimImageUrl] = useState("");
@@ -122,17 +124,15 @@ export function RegisterForm({
     const formData = new FormData(form);
     const emailVal = String(formData.get("email") ?? "").trim();
     if (!isValidEmail(emailVal)) {
-      setError("Introduce un email válido");
+      setError(t("errorInvalidEmail"));
       return;
     }
     if (!isPasswordValid(password)) {
-      setError(
-        "La contraseña no cumple los requisitos: mínimo 8 caracteres, mayúscula, minúscula, número y carácter especial",
-      );
+      setError(t("errorPasswordRequirements"));
       return;
     }
     if (password !== passwordConfirm) {
-      setError("Las contraseñas no coinciden");
+      setError(t("errorPasswordMismatch"));
       return;
     }
 
@@ -242,7 +242,7 @@ export function RegisterForm({
     const data = await res.json();
     setLoading(false);
     if (!res.ok) {
-      setError(data.message ?? "Error al registrarse");
+      setError(data.message ?? t("errorRegister"));
       return;
     }
     if (data.requiresVerification && data.email) {
@@ -265,24 +265,22 @@ export function RegisterForm({
               href="/auth/reclamar"
               className="font-punch text-xs uppercase tracking-widest text-punk-green hover:text-punk-green/80"
             >
-              ← Volver a buscar perfil
+              {t("backToClaim")}
             </Link>
             <h1 className="mt-6 font-display text-5xl tracking-tighter text-punk-white sm:text-6xl">
-              REGISTRARSE PARA RECLAMAR
+              {t("claimTitle")}
             </h1>
             <p className="mt-3 font-body text-punk-white/60">
-              Introduce tus datos para vincular tu cuenta al perfil de &quot;
-              {claimName}&quot;. Una vez verificado el email, el administrador
-              revisará tu solicitud.
+              {t("claimSubtitle", { name: claimName ?? "" })}
             </p>
           </>
         ) : (
           <>
             <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl">
-              REGISTRARSE
+              {t("title")}
             </h1>
             <p className="mt-3 font-body text-punk-white/60">
-              Crea tu cuenta para proponer bandas y eventos al radar cultural.
+              {t("subtitle")}
             </p>
           </>
         )}
@@ -296,12 +294,12 @@ export function RegisterForm({
 
           <section>
             <h2 className="font-display text-xl tracking-tighter text-punk-green mb-6">
-              Datos personales
+              {t("personalData")}
             </h2>
             <div className="grid gap-6 sm:grid-cols-2">
               <div>
                 <label htmlFor="firstName" className={labelClass}>
-                  Nombre *
+                  {t("firstName")}
                 </label>
                 <input
                   id="firstName"
@@ -313,7 +311,7 @@ export function RegisterForm({
               </div>
               <div>
                 <label htmlFor="lastName" className={labelClass}>
-                  Apellidos *
+                  {t("lastName")}
                 </label>
                 <input
                   id="lastName"
@@ -326,7 +324,7 @@ export function RegisterForm({
             </div>
             <div className="mt-6">
               <label htmlFor="email" className={labelClass}>
-                Email *
+                {t("email")}
               </label>
               <input
                 id="email"
@@ -334,7 +332,7 @@ export function RegisterForm({
                 type="email"
                 required
                 className={inputClass}
-                placeholder="ejemplo@correo.com"
+                placeholder={t("emailPlaceholder")}
               />
             </div>
             <div className="mt-6">
@@ -343,7 +341,7 @@ export function RegisterForm({
                 name="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                label="Contraseña *"
+                label={t("password")}
                 required
                 minLength={8}
                 showStrength
@@ -356,7 +354,7 @@ export function RegisterForm({
                 name="passwordConfirm"
                 value={passwordConfirm}
                 onChange={(e) => setPasswordConfirm(e.target.value)}
-                label="Repetir contraseña *"
+                label={t("repeatPassword")}
                 required
                 minLength={8}
                 autoComplete="new-password"
@@ -364,7 +362,7 @@ export function RegisterForm({
             </div>
             <div className="mt-6">
               <label htmlFor="phone" className={labelClass}>
-                Teléfono (opcional)
+                {t("phone")}
               </label>
               <input
                 id="phone"
@@ -378,7 +376,7 @@ export function RegisterForm({
           {isClaimMode ? (
             <>
               <section className="border-2 border-punk-green/30 bg-punk-green/5 p-6">
-                <label className={labelClass}>Perfil que reclamas</label>
+                <label className={labelClass}>{t("claimProfileLabel")}</label>
                 <input
                   type="text"
                   value={claimName ?? ""}
@@ -386,19 +384,17 @@ export function RegisterForm({
                   className={`${inputClass} cursor-not-allowed bg-punk-black/50`}
                 />
                 <p className="mt-2 font-body text-sm text-punk-white/70">
-                  Una vez verificado y vinculado podrán cambiar el nombre.
+                  {t("claimProfileHint")}
                 </p>
               </section>
 
               {claimType && claimId && (
                 <section className="border-2 border-punk-green/30 bg-punk-green/5 p-6 space-y-6">
                   <h2 className="font-display text-xl tracking-tighter text-punk-green">
-                    Imágenes de tu perfil (opcional)
+                    {t("profileImages")}
                   </h2>
                   <p className="font-body text-sm text-punk-white/80">
-                    Puedes subir logo e imágenes. Si Nafarrock ya ha añadido
-                    imágenes a este perfil, podrás elegir si conservarlas o
-                    reemplazarlas por las tuyas.
+                    {t("profileImagesHint")}
                   </p>
                   <div>
                     <ImageUpload
@@ -409,7 +405,7 @@ export function RegisterForm({
                       value={claimLogoUrl}
                       onChange={setClaimLogoUrl}
                       onRemove={() => setClaimLogoUrl("")}
-                      label="Logo"
+                      label={t("logo")}
                     />
                   </div>
                   {(claimType === "BAND" || claimType === "VENUE") && (
@@ -423,7 +419,7 @@ export function RegisterForm({
                         value={claimImageUrl}
                         onChange={setClaimImageUrl}
                         onRemove={() => setClaimImageUrl("")}
-                        label="Imagen principal"
+                        label={t("mainImage")}
                       />
                     </div>
                   )}
@@ -435,7 +431,7 @@ export function RegisterForm({
                       claimId={claimId}
                       images={claimImages}
                       onChange={setClaimImages}
-                      label="Galería (máx. 3)"
+                      label={t("gallery")}
                       maxImages={3}
                     />
                   </div>
@@ -445,7 +441,7 @@ export function RegisterForm({
                       claimImages.length > 0) && (
                       <div className="border-t border-punk-white/20 pt-6">
                         <label className={labelClass}>
-                          ¿Qué imágenes quieres en tu perfil?
+                          {t("imageChoice")}
                         </label>
                         <div className="mt-2 space-y-2">
                           <label className="flex cursor-pointer items-center gap-2">
@@ -458,7 +454,7 @@ export function RegisterForm({
                               className="accent-punk-green"
                             />
                             <span className="font-body text-punk-white/90">
-                              Conservar las de Nafarrock
+                              {t("keepNafarrock")}
                             </span>
                           </label>
                           <label className="flex cursor-pointer items-center gap-2">
@@ -471,7 +467,7 @@ export function RegisterForm({
                               className="accent-punk-green"
                             />
                             <span className="font-body text-punk-white/90">
-                              Usar las mías
+                              {t("useMine")}
                             </span>
                           </label>
                         </div>
@@ -985,26 +981,26 @@ export function RegisterForm({
               className="w-full border-2 border-punk-green bg-punk-green px-8 py-4 font-punch text-sm uppercase tracking-widest text-punk-black transition-all hover:bg-punk-green/90 disabled:opacity-50 sm:w-auto"
             >
               {loading
-                ? "Registrando..."
+                ? t("submitting")
                 : isClaimMode
-                  ? "Registrarse y enviar solicitud"
-                  : "Registrarse"}
+                  ? t("submitClaim")
+                  : t("submit")}
             </button>
-            <p className="font-body text-sm text-punk-white/60">
-              {isClaimMode
-                ? "Recibirás un email de verificación. Tras verificar, tu solicitud pasará a revisión del administrador."
-                : "Después del registro podrás iniciar sesión y completar tu perfil con logo e imágenes."}
-            </p>
+            {isClaimMode && (
+              <p className="font-body text-sm text-punk-white/60">
+                {t("hintClaim")}
+              </p>
+            )}
           </div>
         </form>
 
         <p className="mt-10 text-center font-body text-sm text-punk-white/60">
-          ¿Ya tienes cuenta?{" "}
+          {t("hasAccount")}{" "}
           <Link
             href="/auth/login"
             className="font-punch uppercase tracking-widest text-punk-green hover:text-punk-green/80"
           >
-            Entrar
+            {t("login")}
           </Link>
         </p>
       </div>

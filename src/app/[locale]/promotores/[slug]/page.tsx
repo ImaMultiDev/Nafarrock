@@ -6,7 +6,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { canViewRestrictedEscena } from "@/lib/escena-visibility";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { getTranslations, getLocale } from "next-intl/server";
+import { getDateLocale } from "@/lib/date-locale";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { ImageLightbox } from "@/components/ui/ImageLightbox";
 import { SocialLinks, type SocialLinkItem } from "@/components/ui/SocialLinks";
@@ -39,6 +40,10 @@ export default async function PromoterPage({
   const promoter = await getPromoterBySlug(slug);
   if (!promoter) notFound();
 
+  const locale = await getLocale();
+  const dateLocale = getDateLocale(locale);
+  const t = await getTranslations("promoterDetail");
+
   const links: SocialLinkItem[] = [
     ...(promoter.websiteUrl ? [{ kind: "web" as const, url: promoter.websiteUrl }] : []),
     ...(promoter.contactEmail
@@ -52,7 +57,7 @@ export default async function PromoterPage({
         href="/promotores"
         className="font-punch text-xs uppercase tracking-widest text-punk-pink transition-colors hover:text-punk-pink/80"
       >
-        ← Volver a promotores
+        {t("backToPromoters")}
       </Link>
 
       <div className="mt-8 flex flex-col gap-8 md:flex-row">
@@ -91,7 +96,7 @@ export default async function PromoterPage({
       {promoter.events.length > 0 && (
         <div className="mt-16">
           <h2 className="font-display text-2xl tracking-tighter text-punk-white">
-            Próximos eventos
+            {t("upcoming")}
           </h2>
           <ul className="mt-6 space-y-3">
             {promoter.events.map((evt) => (
@@ -102,7 +107,7 @@ export default async function PromoterPage({
                 >
                   <span className="font-display text-punk-white">{evt.title}</span>
                   <span className="font-punch text-xs uppercase tracking-widest text-punk-pink">
-                    {format(evt.date, "d MMM yyyy", { locale: es })} · {evt.venue?.name ?? "Por confirmar"}
+                    {format(evt.date, "d MMM yyyy", { locale: dateLocale })} · {evt.venue?.name ?? t("toConfirm")}
                   </span>
                 </Link>
               </li>

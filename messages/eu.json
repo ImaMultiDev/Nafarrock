@@ -183,21 +183,167 @@
       "title": "SARTU",
       "subtitle": "Sartu zure Nafarrock kontura",
       "emailVerified": "✓ Posta egiaztatua. Orain saioa hasi dezakezu.",
+      "passwordReset": "✓ Pasahitza berrezarrita. Orain saioa hasi dezakezu.",
       "errorCredentials": "Posta edo pasahitza okerra",
       "errorVerify": "Saioa hasi aurretik posta egiaztatu behar duzu. Begiratu sarrerako ontzia edo spam.",
-      "errorConnection": "Konexio errorea"
+      "errorConnection": "Konexio errorea",
+      "deletedScheduled": "✓ Zure kontua ezabatzeko programatuta dago",
+      "deletedScheduledDate": " {date}-(e)n",
+      "deletedScheduledHint": "7 egun dituzu berreskuratzeko. Data hori baino lehen saioa hasten baduzu, ezabatzea bertan behera geratuko da eta zure kontua mantenduko da.",
+      "deletedPending": "Zure kontua ezabatzeko programatuta dago.",
+      "deletedPendingHint": "Hasi saioa ezabatzea bertan behera uzteko eta zure kontua mantentzeko.",
+      "accountDeleted": "Zure kontua arrakastaz ezabatu da.",
+      "accountDeletedHint": "Nafarrock berriro erabili nahi baduzu, berriro erregistra zaitezke.",
+      "verificationExpired": "Egiaztapen esteka iraungitu da. Eskatu berri bat erregistrotik.",
+      "verificationInvalid": "Egiaztapen esteka ez da baliozkoa. Dagoeneko erabili duzu agian.",
+      "registered": "✓ Erregistroa osatuta. Hasi saioa zure panela atzitzeko.",
+      "registeredHint": "Talde, areto, jaialdi, sustatzaile edo antolatzaile bat erregistratu baduzu, administratzaileak zure eskaera onartzen duenean posta bat jasoko duzu.",
+      "pendingDeletion": "Kontu hau ezabatzeko prozesuan dago",
+      "pendingDeletionDate": " ({date}-(e)rako programatuta)",
+      "pendingDeletionHint": "Orain sartzen bazara, ezabatze prozesua bertan behera geratuko da eta zure kontua mantenduko da.",
+      "cancelDeletion": "Sartu eta ezabatzea bertan behera utzi",
+      "processing": "Prozesatzen…",
+      "exit": "Irten",
+      "errorCancel": "Errorea bertan behera uztean",
+      "deletionCancelled": "Ezabatzea bertan behera utzita. Saiatu berriro sartzen.",
+      "email": "Posta",
+      "password": "Pasahitza",
+      "forgotPassword": "Pasahitza ahaztu duzu?",
+      "submit": "Sartu",
+      "noAccount": "Ez duzu konturik?",
+      "register": "Erregistratu",
+      "claimProfile": "Zure taldea, aretoa edo jaialdia Nafarrocken dago jada?",
+      "claimProfileLink": "Eskatu profila",
+      "resendVerification": "Bidali berriro egiaztapen posta →"
+    },
+    "registro": {
+      "title": "ERREGISTRATU",
+      "subtitle": "Sortu zure kontua taldeak eta ekitaldiak kultura radarrean proposatzeko.",
+      "claimTitle": "ERREGISTRATU ESKATZEKO",
+      "claimSubtitle": "Sartu zure datuak zure kontua \"{name}\" profilari lotzeko. Posta egiaztatu ondoren, administratzaileak zure eskaera berrikusiko du.",
+      "backToClaim": "← Itzuli profil bilatzera",
+      "personalData": "Datu pertsonalak",
+      "firstName": "Izena *",
+      "lastName": "Abizenak *",
+      "email": "Posta *",
+      "emailPlaceholder": "adibidea@posta.com",
+      "password": "Pasahitza *",
+      "repeatPassword": "Errepikatu pasahitza *",
+      "phone": "Telefonoa (aukerakoa)",
+      "claimProfileLabel": "Eskatzen duzun profila",
+      "claimProfileHint": "Egiaztatu eta lotu ondoren izena aldatu ahal izango dute.",
+      "profileImages": "Zure profilaren irudiak (aukerakoa)",
+      "profileImagesHint": "Logo eta irudiak igo ditzakezu. Nafarrockek profil honi irudiak gehitu badizkio, gorde ala zureekin ordezkatu aukeratu ahal izango duzu.",
+      "logo": "Logotipoa",
+      "mainImage": "Irudi nagusia",
+      "gallery": "Galeria (gehienez 3)",
+      "imageChoice": "Zein irudi nahi dituzu zure profilean?",
+      "keepNafarrock": "Nafarrockenak gorde",
+      "useMine": "Nireak erabili",
+      "submit": "Erregistratu",
+      "submitting": "Erregistratzen...",
+      "submitClaim": "Erregistratu eta bidali eskaera",
+      "hintClaim": "Egiaztapen posta bat jasoko duzu. Egiaztatu ondoren, zure eskaera administratzailearen berrikuspenera pasako da.",
+      "hintNormal": "Erregistroaren ondoren saioa hasi eta zure profila logo eta irudiekin osatu ahal izango duzu.",
+      "hasAccount": "Daukazu jada kontua?",
+      "login": "Hasi saioa",
+      "errorInvalidEmail": "Sartu posta baliozkoa",
+      "errorPasswordRequirements": "Pasahitzak ez du betetzen baldintzak: gutxienez 8 karaktere, maiuskula, minuskula, zenbaki eta karaktere berezi",
+      "errorPasswordMismatch": "Pasahitzak ez datoz bat",
+      "errorRegister": "Errorea erregistratzean"
+    }
+  },
+  "filters": {
+    "eventos": {
+      "search": "Bilatu",
+      "searchPlaceholder": "Izenburua edo lekua (aretoa, hiria)...",
+      "type": "Mota",
+      "all": "Guztiak",
+      "concert": "Kontzertua",
+      "festival": "Jaialdia",
+      "filter": "Iragazi",
+      "searchButton": "Bilatu"
+    },
+    "bandas": {
+      "search": "Bilatu",
+      "searchPlaceholder": "Izena, generoa...",
+      "territory": "Lurraldea",
+      "all": "Guztiak",
+      "searchButton": "Bilatu"
     }
   },
   "bandDetail": {
     "backToBands": "← Itzuli taldeetara",
+    "registeredByNafarrock": "NAFARROCKEK ERREGISTRATUTAKO TALDEA",
+    "from": "{year} urtetik",
+    "members": "Kideak",
+    "upcoming": "Hurrengo ekitaldiak",
+    "concert": "Kontzertua",
+    "festival": "Jaialdia",
+    "toConfirm": "Baieztatzeke",
+    "soldOut": "SOLD OUT",
     "status": {
       "active": "Aktiboa",
       "inactive": "Inaktiboa",
       "paused": "Pausatuta"
     }
   },
+  "festivalDetail": {
+    "backToFestivals": "← Itzuli jaialdietara",
+    "registeredByNafarrock": "NAFARROCKEK ERREGISTRATUTAKO JAIALDIA",
+    "from": "{year} urtetik",
+    "upcoming": "Hurrengo ekitaldiak",
+    "toConfirm": "Baieztatzeke"
+  },
+  "venueDetail": {
+    "backToVenues": "← Itzuli aretoetara",
+    "registeredByNafarrock": "NAFARROCKEK ERREGISTRATUTAKO ARETOA",
+    "from": "{year} urtetik",
+    "capacity": "Edukiera: {count} lagun",
+    "upcoming": "Hurrengo ekitaldiak",
+    "toConfirm": "Baieztatzeke"
+  },
+  "promoterDetail": {
+    "backToPromoters": "← Itzuli sustatzaileetara",
+    "upcoming": "Hurrengo ekitaldiak",
+    "toConfirm": "Baieztatzeke"
+  },
+  "organizerDetail": {
+    "backToOrganizers": "← Itzuli antolatzaileetara",
+    "upcoming": "Hurrengo ekitaldiak",
+    "toConfirm": "Baieztatzeke"
+  },
+  "associationDetail": {
+    "backToAssociations": "← Itzuli elkarteetara",
+    "createdByNafarrock": "Nafarrockek sortutako profila",
+    "from": "{year} urtetik",
+    "upcoming": "Hurrengo ekitaldiak",
+    "toConfirm": "Baieztatzeke"
+  },
   "language": {
     "es": "Castellano",
     "eu": "Euskara"
+  },
+  "pagination": {
+    "previous": "Aurrekoa",
+    "next": "Hurrengoa",
+    "pageOf": "{page}. orrialdea {total}-(e)tik",
+    "result": "emaitza",
+    "results": "emaitzak"
+  },
+  "eventDetail": {
+    "festival": "Jaialdia",
+    "concert": "Kontzertua",
+    "soldOut": "SOLD OUT",
+    "publishedByNafarrock": "NAFARROCKEK ARGITARATUTAKO EKITALDIA",
+    "buyTickets": "Erosi sarrerak",
+    "venue": "Lekua",
+    "viewVenue": "Ikusi aretoa →",
+    "viewOnMap": "Ikusi mapan →",
+    "networksAndLinks": "Sareak eta estekak",
+    "description": "Deskribapena",
+    "lineup": "Kartela",
+    "headliner": "buru",
+    "doors": "Ateak"
   }
 }

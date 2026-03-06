@@ -4,6 +4,7 @@ import { signIn } from "next-auth/react";
 import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 
@@ -11,9 +12,12 @@ const EDITORIAL_MVP_MODE = true;
 
 function LoginForm() {
   const searchParams = useSearchParams();
+  const locale = useLocale();
+  const t = useTranslations("auth.login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [isVerifyError, setIsVerifyError] = useState(false);
   const [registered, setRegistered] = useState(false);
   const [pendingDeletion, setPendingDeletion] = useState<{ date: string } | null>(null);
   const [cancelling, setCancelling] = useState(false);
@@ -41,14 +45,15 @@ function LoginForm() {
     });
     if (res?.error) {
       if (res.error === "EmailNotVerified") {
-        setError("Debes verificar tu email antes de iniciar sesión. Revisa tu bandeja de entrada o spam.");
+        setIsVerifyError(true);
+        setError(t("errorVerify"));
       } else if (res.error === "AccountDeleted") {
         window.location.href = "/auth/login?deleted=done";
         return;
       } else if (res.error.startsWith("PendingDeletion|")) {
         const dateStr = res.error.split("|")[1];
         const date = dateStr
-          ? new Date(dateStr).toLocaleDateString("es-ES", {
+          ? new Date(dateStr).toLocaleDateString(locale === "eu" ? "eu-ES" : "es-ES", {
               day: "numeric",
               month: "long",
               year: "numeric",
@@ -56,7 +61,7 @@ function LoginForm() {
           : "";
         setPendingDeletion({ date });
       } else {
-        setError("Email o contraseña incorrectos");
+        setError(t("errorCredentials"));
       }
       return;
     }
@@ -74,7 +79,7 @@ function LoginForm() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.message ?? "Error al cancelar");
+        setError(data.message ?? t("errorCancel"));
         return;
       }
       const signRes = await signIn("credentials", {
@@ -85,10 +90,10 @@ function LoginForm() {
       if (signRes?.ok) {
         window.location.href = "/dashboard?deletionCancelled=1";
       } else {
-        setError("Eliminación cancelada. Intenta entrar de nuevo.");
+        setError(t("deletionCancelled"));
       }
     } catch {
-      setError("Error de conexión");
+      setError(t("errorConnection"));
     } finally {
       setCancelling(false);
     }
@@ -102,16 +107,16 @@ function LoginForm() {
     <PageLayout>
       <div className="mx-auto max-w-md">
         <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl">
-          ENTRAR
+          {t("title")}
         </h1>
         <p className="mt-3 font-body text-punk-white/60">
-          Accede a tu cuenta de Nafarrock
+          {t("subtitle")}
         </p>
 
         {verified && (
           <div className="mt-6 border-2 border-punk-green bg-punk-green/10 p-4">
             <p className="font-body text-punk-green">
-              ✓ Email verificado. Ya puedes iniciar sesión.
+              {t("emailVerified")}
             </p>
           </div>
         )}
@@ -119,7 +124,7 @@ function LoginForm() {
         {reset && (
           <div className="mt-6 border-2 border-punk-green bg-punk-green/10 p-4">
             <p className="font-body text-punk-green">
-              ✓ Contraseña restablecida. Ya puedes iniciar sesión.
+              {t("passwordReset")}
             </p>
           </div>
         )}
@@ -127,10 +132,10 @@ function LoginForm() {
         {deletedScheduled && (
           <div className="mt-6 border-2 border-punk-green bg-punk-green/10 p-4">
             <p className="font-body text-punk-green">
-              ✓ Tu cuenta está programada para eliminación{deletedDate ? ` el ${deletedDate}` : ""}.
+              {t("deletedScheduled")}{deletedDate ? t("deletedScheduledDate", { date: deletedDate }) : ""}.
             </p>
             <p className="mt-2 font-body text-sm text-punk-white/70">
-              Tienes 7 días para recuperarla. Si inicias sesión antes de esa fecha, la eliminación se cancelará y tu cuenta seguirá existiendo.
+              {t("deletedScheduledHint")}
             </p>
           </div>
         )}
@@ -138,10 +143,10 @@ function LoginForm() {
         {deletedPending && (
           <div className="mt-6 border-2 border-punk-white/30 bg-punk-white/5 p-4">
             <p className="font-body text-punk-white/90">
-              Tu cuenta está programada para eliminación.
+              {t("deletedPending")}
             </p>
             <p className="mt-2 font-body text-sm text-punk-white/60">
-              Inicia sesión para cancelar la eliminación y conservar tu cuenta.
+              {t("deletedPendingHint")}
             </p>
           </div>
         )}
@@ -149,10 +154,10 @@ function LoginForm() {
         {accountDeleted && (
           <div className="mt-6 border-2 border-punk-white/30 bg-punk-white/5 p-4">
             <p className="font-body text-punk-white/90">
-              Tu cuenta ha sido eliminada con éxito.
+              {t("accountDeleted")}
             </p>
             <p className="mt-2 font-body text-sm text-punk-white/60">
-              Si quieres volver a usar Nafarrock, puedes registrarte de nuevo.
+              {t("accountDeletedHint")}
             </p>
           </div>
         )}
@@ -160,7 +165,7 @@ function LoginForm() {
         {urlError === "VerificationTokenExpired" && (
           <div className="mt-6 border-2 border-punk-red bg-punk-red/10 p-4">
             <p className="font-body text-punk-red">
-              El enlace de verificación ha expirado. Solicita uno nuevo desde el registro.
+              {t("verificationExpired")}
             </p>
           </div>
         )}
@@ -168,7 +173,7 @@ function LoginForm() {
         {urlError === "VerificationTokenInvalid" && (
           <div className="mt-6 border-2 border-punk-red bg-punk-red/10 p-4">
             <p className="font-body text-punk-red">
-              Enlace de verificación no válido. Puede que ya lo hayas usado.
+              {t("verificationInvalid")}
             </p>
           </div>
         )}
@@ -176,10 +181,10 @@ function LoginForm() {
         {registered && (
           <div className="mt-6 border-2 border-punk-green bg-punk-green/10 p-4">
             <p className="font-body text-punk-green">
-              ✓ Registro completado. Inicia sesión para acceder a tu panel.
+              {t("registered")}
             </p>
             <p className="mt-2 font-body text-sm text-punk-white/70">
-              Si registraste una banda, sala, festival, promotor u organizador, recibirás un email cuando el admin apruebe tu solicitud.
+              {t("registeredHint")}
             </p>
           </div>
         )}
@@ -187,10 +192,10 @@ function LoginForm() {
         {pendingDeletion && (
           <div className="mt-10 border-2 border-punk-green/50 bg-punk-green/10 p-6">
             <p className="font-body text-punk-white/90">
-              Esta cuenta está en proceso de eliminación{pendingDeletion.date ? ` (programada para el ${pendingDeletion.date})` : ""}.
+              {t("pendingDeletion")}{pendingDeletion.date ? t("pendingDeletionDate", { date: pendingDeletion.date }) : ""}.
             </p>
             <p className="mt-2 font-body text-punk-white/80">
-              Si accedes ahora, el proceso de eliminación se cancelará y tu cuenta seguirá existiendo.
+              {t("pendingDeletionHint")}
             </p>
             <div className="mt-4 flex flex-wrap gap-3">
               <button
@@ -199,14 +204,14 @@ function LoginForm() {
                 disabled={cancelling}
                 className="border-2 border-punk-green bg-punk-green px-6 py-2 font-punch text-xs uppercase tracking-widest text-punk-black hover:bg-punk-green/90 disabled:opacity-50"
               >
-                {cancelling ? "Procesando…" : "Acceder y cancelar eliminación"}
+                {cancelling ? t("processing") : t("cancelDeletion")}
               </button>
               <button
                 type="button"
                 onClick={() => setPendingDeletion(null)}
                 className="border-2 border-punk-white/40 px-6 py-2 font-punch text-xs uppercase tracking-widest text-punk-white/80 hover:border-punk-red hover:text-punk-red"
               >
-                Salir
+                {t("exit")}
               </button>
             </div>
           </div>
@@ -216,18 +221,18 @@ function LoginForm() {
           {error && (
             <div className="border-2 border-punk-red bg-punk-red/10 p-4">
               <p className="font-body text-punk-red">{error}</p>
-              {error.includes("verificar") && email && (
+              {isVerifyError && email && (
                 <Link
                   href={`/auth/verificar-email?email=${encodeURIComponent(email)}`}
                   className="mt-2 inline-block font-punch text-xs uppercase tracking-widest text-punk-green hover:text-punk-green/80"
                 >
-                  Reenviar email de verificación →
+                  {t("resendVerification")}
                 </Link>
               )}
             </div>
           )}
           <div>
-            <label htmlFor="email" className={labelClass}>Email</label>
+            <label htmlFor="email" className={labelClass}>{t("email")}</label>
             <input
               id="email"
               type="email"
@@ -243,7 +248,7 @@ function LoginForm() {
               name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              label="Contraseña"
+              label={t("password")}
               required
               showStrength={false}
               autoComplete="current-password"
@@ -254,28 +259,28 @@ function LoginForm() {
               href="/auth/recuperar"
               className="font-body text-sm text-punk-white/60 hover:text-punk-green"
             >
-              ¿Olvidaste tu contraseña?
+              {t("forgotPassword")}
             </Link>
           </div>
           <button
             type="submit"
             className="w-full border-2 border-punk-green bg-punk-green px-8 py-4 font-punch text-sm uppercase tracking-widest text-punk-black transition-all hover:bg-punk-green/90"
           >
-            Entrar
+            {t("submit")}
           </button>
         </form>
 
         <p className="mt-10 text-center font-body text-sm text-punk-white/60">
-          ¿No tienes cuenta?{" "}
+          {t("noAccount")}{" "}
           <Link href="/auth/registro" className="font-punch uppercase tracking-widest text-punk-green hover:text-punk-green/80">
-            Regístrate
+            {t("register")}
           </Link>
         </p>
         {!EDITORIAL_MVP_MODE && (
           <p className="mt-4 text-center font-body text-sm text-punk-white/60">
-            ¿Tu banda, sala o festival ya está en Nafarrock?{" "}
+            {t("claimProfile")}{" "}
             <Link href="/auth/reclamar" className="font-punch uppercase tracking-widest text-punk-green hover:text-punk-green/80">
-              Reclamar perfil
+              {t("claimProfileLink")}
             </Link>
           </p>
         )}

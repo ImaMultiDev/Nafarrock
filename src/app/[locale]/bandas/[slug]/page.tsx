@@ -1,9 +1,9 @@
 import { getBandBySlug } from "@/services/band.service";
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { getDateLocale } from "@/lib/date-locale";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { ImageLightbox } from "@/components/ui/ImageLightbox";
 import { SocialLinks, type SocialLinkItem } from "@/components/ui/SocialLinks";
@@ -31,6 +31,11 @@ export default async function BandPage({
   const band = await getBandBySlug(slug);
   if (!band) notFound();
 
+  const locale = await getLocale();
+  const dateLocale = getDateLocale(locale);
+  const t = await getTranslations("bandDetail");
+  const displayBio = locale === "eu" && band.bioEu ? band.bioEu : band.bio;
+
   const links: SocialLinkItem[] = [
     ...(band.spotifyUrl ? [{ kind: "spotify" as const, url: band.spotifyUrl }] : []),
     ...(band.bandcampUrl ? [{ kind: "bandcamp" as const, url: band.bandcampUrl }] : []),
@@ -41,13 +46,13 @@ export default async function BandPage({
     ...(band.merchUrl ? [{ kind: "merch" as const, url: band.merchUrl }] : []),
   ];
 
-  const t = await getTranslations("bandDetail");
   const statusLabel =
     band.status === "INACTIVE"
       ? t("status.inactive")
       : band.status === "PAUSED"
         ? t("status.paused")
         : t("status.active");
+  const statusKey = band.status === "INACTIVE" ? "inactive" : band.status === "PAUSED" ? "paused" : "active";
 
   return (
     <PageLayout>
@@ -97,15 +102,15 @@ export default async function BandPage({
           </h1>
           {!band.userId && band.createdByNafarrock && (
             <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-red/90">
-              BANDA REGISTRADA POR NAFARROCK
+              {t("registeredByNafarrock")}
             </p>
           )}
           <div className="mt-4 flex flex-wrap gap-2">
             <span
               className={`border px-3 py-1 font-punch text-xs uppercase tracking-widest ${
-                statusLabel === "Activa"
+                statusKey === "active"
                   ? "border-punk-green/50 bg-punk-green/10 text-punk-green"
-                  : statusLabel === "En pausa"
+                  : statusKey === "paused"
                     ? "border-punk-yellow/50 bg-punk-yellow/10 text-punk-yellow"
                     : "border-punk-white/30 bg-punk-white/10 text-punk-white/70"
               }`}
@@ -126,15 +131,15 @@ export default async function BandPage({
           )}
           {band.foundedYear && (
             <p className="mt-1 font-punch text-xs uppercase tracking-widest text-punk-green/80">
-              Desde {band.foundedYear}
+              {t("from", { year: band.foundedYear })}
             </p>
           )}
-          {band.bio && (
-            <p className="mt-4 font-body leading-relaxed text-punk-white/80">{band.bio}</p>
+          {displayBio && (
+            <p className="mt-4 font-body leading-relaxed text-punk-white/80">{displayBio}</p>
           )}
           {band.members && band.members.length > 0 && (
             <div className="mt-6">
-              <h3 className="font-display text-lg tracking-tighter text-punk-white">Miembros</h3>
+              <h3 className="font-display text-lg tracking-tighter text-punk-white">{t("members")}</h3>
               <ul className="mt-2 space-y-1">
                 {band.members.map((m) => (
                   <li key={m.id} className="font-body text-punk-white/80">
@@ -153,7 +158,7 @@ export default async function BandPage({
           {band.events && band.events.length > 0 && (
             <div className="mt-16">
               <h2 className="font-display text-2xl tracking-tighter text-punk-white">
-                Próximos eventos
+                {t("upcoming")}
               </h2>
               <div className="mt-6 space-y-4 lg:space-y-5">
                 {band.events.map((be) => {
@@ -181,20 +186,22 @@ export default async function BandPage({
                         <div className="shrink-0 border-2 border-punk-red/50 bg-punk-red/10 px-6 py-3 text-center">
                           <span className="block font-display text-3xl leading-none text-punk-red">
                             {event.endDate
-                              ? `${format(event.date, "d", { locale: es })}-${format(event.endDate, "d", { locale: es })}`
-                              : format(event.date, "dd", { locale: es })}
+                              ? `${format(event.date, "d", { locale: dateLocale })}-${format(event.endDate, "d", { locale: dateLocale })}`
+                              : format(event.date, "dd", { locale: dateLocale })}
                           </span>
                           <span className="block font-punch text-xs uppercase tracking-widest text-punk-white/70">
-                            {format(event.date, "MMM", { locale: es })}
+                            {format(event.date, "MMM", { locale: dateLocale })}
                           </span>
                         </div>
                         <div className="flex-1">
                           <h3 className="font-display text-xl tracking-tighter text-punk-white group-hover:text-punk-red transition-colors sm:text-2xl">
                             {event.title}
                           </h3>
-                          <p className="mt-1 font-body text-punk-white/70">
-                            {event.venue ? `${event.venue.name} · ${event.venue.city}` : "Por confirmar"}
-                          </p>
+                          {event.venue && (
+                            <p className="mt-1 font-body text-punk-white/70">
+                              {event.venue.name} · {event.venue.city}
+                            </p>
+                          )}
                           {event.bands && event.bands.length > 0 && (
                             <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-green/80">
                               {event.bands.map((b) => b.band.name).join(" + ")}
@@ -209,11 +216,11 @@ export default async function BandPage({
                                 : "border-punk-white/40 bg-punk-black text-punk-white/90"
                             }`}
                           >
-                            {event.type === "FESTIVAL" ? "Festival" : "Concierto"}
+                            {event.type === "FESTIVAL" ? t("festival") : t("concert")}
                           </span>
                           {event.isSoldOut && (
                             <span className="border-2 border-punk-red bg-punk-red/30 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-red">
-                              SOLD OUT
+                              {t("soldOut")}
                             </span>
                           )}
                         </div>

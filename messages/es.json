@@ -183,21 +183,167 @@
       "title": "ENTRAR",
       "subtitle": "Accede a tu cuenta de Nafarrock",
       "emailVerified": "✓ Email verificado. Ya puedes iniciar sesión.",
+      "passwordReset": "✓ Contraseña restablecida. Ya puedes iniciar sesión.",
       "errorCredentials": "Email o contraseña incorrectos",
       "errorVerify": "Debes verificar tu email antes de iniciar sesión. Revisa tu bandeja de entrada o spam.",
-      "errorConnection": "Error de conexión"
+      "errorConnection": "Error de conexión",
+      "deletedScheduled": "✓ Tu cuenta está programada para eliminación",
+      "deletedScheduledDate": " el {date}",
+      "deletedScheduledHint": "Tienes 7 días para recuperarla. Si inicias sesión antes de esa fecha, la eliminación se cancelará y tu cuenta seguirá existiendo.",
+      "deletedPending": "Tu cuenta está programada para eliminación.",
+      "deletedPendingHint": "Inicia sesión para cancelar la eliminación y conservar tu cuenta.",
+      "accountDeleted": "Tu cuenta ha sido eliminada con éxito.",
+      "accountDeletedHint": "Si quieres volver a usar Nafarrock, puedes registrarte de nuevo.",
+      "verificationExpired": "El enlace de verificación ha expirado. Solicita uno nuevo desde el registro.",
+      "verificationInvalid": "Enlace de verificación no válido. Puede que ya lo hayas usado.",
+      "registered": "✓ Registro completado. Inicia sesión para acceder a tu panel.",
+      "registeredHint": "Si registraste una banda, sala, festival, promotor u organizador, recibirás un email cuando el admin apruebe tu solicitud.",
+      "pendingDeletion": "Esta cuenta está en proceso de eliminación",
+      "pendingDeletionDate": " (programada para el {date})",
+      "pendingDeletionHint": "Si accedes ahora, el proceso de eliminación se cancelará y tu cuenta seguirá existiendo.",
+      "cancelDeletion": "Acceder y cancelar eliminación",
+      "processing": "Procesando…",
+      "exit": "Salir",
+      "errorCancel": "Error al cancelar",
+      "deletionCancelled": "Eliminación cancelada. Intenta entrar de nuevo.",
+      "email": "Email",
+      "password": "Contraseña",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "submit": "Entrar",
+      "noAccount": "¿No tienes cuenta?",
+      "register": "Regístrate",
+      "claimProfile": "¿Tu banda, sala o festival ya está en Nafarrock?",
+      "claimProfileLink": "Reclamar perfil",
+      "resendVerification": "Reenviar email de verificación →"
+    },
+    "registro": {
+      "title": "REGISTRARSE",
+      "subtitle": "Crea tu cuenta para proponer bandas y eventos al radar cultural.",
+      "claimTitle": "REGISTRARSE PARA RECLAMAR",
+      "claimSubtitle": "Introduce tus datos para vincular tu cuenta al perfil de \"{name}\". Una vez verificado el email, el administrador revisará tu solicitud.",
+      "backToClaim": "← Volver a buscar perfil",
+      "personalData": "Datos personales",
+      "firstName": "Nombre *",
+      "lastName": "Apellidos *",
+      "email": "Email *",
+      "emailPlaceholder": "ejemplo@correo.com",
+      "password": "Contraseña *",
+      "repeatPassword": "Repetir contraseña *",
+      "phone": "Teléfono (opcional)",
+      "claimProfileLabel": "Perfil que reclamas",
+      "claimProfileHint": "Una vez verificado y vinculado podrán cambiar el nombre.",
+      "profileImages": "Imágenes de tu perfil (opcional)",
+      "profileImagesHint": "Puedes subir logo e imágenes. Si Nafarrock ya ha añadido imágenes a este perfil, podrás elegir si conservarlas o reemplazarlas por las tuyas.",
+      "logo": "Logo",
+      "mainImage": "Imagen principal",
+      "gallery": "Galería (máx. 3)",
+      "imageChoice": "¿Qué imágenes quieres en tu perfil?",
+      "keepNafarrock": "Conservar las de Nafarrock",
+      "useMine": "Usar las mías",
+      "submit": "Registrarse",
+      "submitting": "Registrando...",
+      "submitClaim": "Registrarse y enviar solicitud",
+      "hintClaim": "Recibirás un email de verificación. Tras verificar, tu solicitud pasará a revisión del administrador.",
+      "hintNormal": "Después del registro podrás iniciar sesión y completar tu perfil con logo e imágenes.",
+      "hasAccount": "¿Ya tienes cuenta?",
+      "login": "Iniciar sesión",
+      "errorInvalidEmail": "Introduce un email válido",
+      "errorPasswordRequirements": "La contraseña no cumple los requisitos: mínimo 8 caracteres, mayúscula, minúscula, número y carácter especial",
+      "errorPasswordMismatch": "Las contraseñas no coinciden",
+      "errorRegister": "Error al registrarse"
+    }
+  },
+  "filters": {
+    "eventos": {
+      "search": "Buscar",
+      "searchPlaceholder": "Título o lugar (sala, ciudad)...",
+      "type": "Tipo",
+      "all": "Todos",
+      "concert": "Concierto",
+      "festival": "Festival",
+      "filter": "Filtrar",
+      "searchButton": "Buscar"
+    },
+    "bandas": {
+      "search": "Buscar",
+      "searchPlaceholder": "Nombre, género...",
+      "territory": "Territorio",
+      "all": "Todos",
+      "searchButton": "Buscar"
     }
   },
   "bandDetail": {
     "backToBands": "← Volver a bandas",
+    "registeredByNafarrock": "BANDA REGISTRADA POR NAFARROCK",
+    "from": "Desde {year}",
+    "members": "Miembros",
+    "upcoming": "Próximos eventos",
+    "concert": "Concierto",
+    "festival": "Festival",
+    "toConfirm": "Por confirmar",
+    "soldOut": "SOLD OUT",
     "status": {
       "active": "Activa",
       "inactive": "Inactiva",
       "paused": "En pausa"
     }
   },
+  "festivalDetail": {
+    "backToFestivals": "← Volver a festivales",
+    "registeredByNafarrock": "FESTIVAL REGISTRADO POR NAFARROCK",
+    "from": "Desde {year}",
+    "upcoming": "Próximos eventos",
+    "toConfirm": "Por confirmar"
+  },
+  "venueDetail": {
+    "backToVenues": "← Volver a salas",
+    "registeredByNafarrock": "SALA REGISTRADA POR NAFARROCK",
+    "from": "Desde {year}",
+    "capacity": "Aforo: {count} personas",
+    "upcoming": "Próximos eventos",
+    "toConfirm": "Por confirmar"
+  },
+  "promoterDetail": {
+    "backToPromoters": "← Volver a promotores",
+    "upcoming": "Próximos eventos",
+    "toConfirm": "Por confirmar"
+  },
+  "organizerDetail": {
+    "backToOrganizers": "← Volver a organizadores",
+    "upcoming": "Próximos eventos",
+    "toConfirm": "Por confirmar"
+  },
+  "associationDetail": {
+    "backToAssociations": "← Volver a asociaciones",
+    "createdByNafarrock": "Perfil creado por Nafarrock",
+    "from": "Desde {year}",
+    "upcoming": "Próximos eventos",
+    "toConfirm": "Por confirmar"
+  },
   "language": {
     "es": "Castellano",
     "eu": "Euskara"
+  },
+  "pagination": {
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "pageOf": "Página {page} de {total}",
+    "result": "resultado",
+    "results": "resultados"
+  },
+  "eventDetail": {
+    "festival": "Festival",
+    "concert": "Concierto",
+    "soldOut": "SOLD OUT",
+    "publishedByNafarrock": "EVENTO PUBLICADO POR NAFARROCK",
+    "buyTickets": "Comprar entradas",
+    "venue": "Lugar",
+    "viewVenue": "Ver sala →",
+    "viewOnMap": "Ver en mapa →",
+    "networksAndLinks": "Redes y enlaces",
+    "description": "Descripción",
+    "lineup": "Cartel",
+    "headliner": "cabecera",
+    "doors": "Puertas"
   }
 }

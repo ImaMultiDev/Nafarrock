@@ -6,7 +6,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { canViewRestrictedEscena } from "@/lib/escena-visibility";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { getTranslations, getLocale } from "next-intl/server";
+import { getDateLocale } from "@/lib/date-locale";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { ImageLightbox } from "@/components/ui/ImageLightbox";
 import { SocialLinks, type SocialLinkItem } from "@/components/ui/SocialLinks";
@@ -39,6 +40,10 @@ export default async function AsociacionPage({
   const association = await getAssociationBySlug(slug);
   if (!association) notFound();
 
+  const locale = await getLocale();
+  const dateLocale = getDateLocale(locale);
+  const t = await getTranslations("associationDetail");
+
   const links: SocialLinkItem[] = [
     ...(association.websiteUrl ? [{ kind: "web" as const, url: association.websiteUrl }] : []),
     ...(association.instagramUrl ? [{ kind: "instagram" as const, url: association.instagramUrl }] : []),
@@ -51,7 +56,7 @@ export default async function AsociacionPage({
         href="/asociaciones"
         className="font-punch text-xs uppercase tracking-widest text-punk-yellow transition-colors hover:text-punk-yellow/80"
       >
-        ← Volver a asociaciones
+        {t("backToAssociations")}
       </Link>
 
       <div className="mt-8 flex flex-col gap-8 md:flex-row">
@@ -76,7 +81,7 @@ export default async function AsociacionPage({
           </h1>
           {!association.userId && association.createdByNafarrock && (
             <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-yellow/90">
-              Perfil creado por Nafarrock
+              {t("createdByNafarrock")}
             </p>
           )}
           {association.location && (
@@ -84,7 +89,7 @@ export default async function AsociacionPage({
           )}
           {association.foundedYear && (
             <p className="mt-1 font-punch text-xs uppercase tracking-widest text-punk-yellow/80">
-              Desde {association.foundedYear}
+              {t("from", { year: association.foundedYear })}
             </p>
           )}
           {association.description && (
@@ -115,7 +120,7 @@ export default async function AsociacionPage({
       {association.events.length > 0 && (
         <div className="mt-16">
           <h2 className="font-display text-2xl tracking-tighter text-punk-white">
-            Próximos eventos
+            {t("upcoming")}
           </h2>
           <ul className="mt-6 space-y-3">
             {association.events.map((evt) => (
@@ -126,7 +131,7 @@ export default async function AsociacionPage({
                 >
                   <span className="font-display text-punk-white">{evt.title}</span>
                   <span className="font-punch text-xs uppercase tracking-widest text-punk-yellow">
-                    {format(evt.date, "d MMM yyyy", { locale: es })} · {evt.venue?.name ?? "Por confirmar"}
+                    {format(evt.date, "d MMM yyyy", { locale: dateLocale })} · {evt.venue?.name ?? t("toConfirm")}
                   </span>
                 </Link>
               </li>

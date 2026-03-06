@@ -19,6 +19,8 @@ type Props = { searchParams: Promise<Record<string, string | undefined>> };
 
 export default async function EventosPage({ searchParams }: Props) {
   const t = await getTranslations("events");
+  const tFilters = await getTranslations("filters.eventos");
+  const tEvent = await getTranslations("eventDetail");
   const tActions = await getTranslations("common.actions");
   const locale = await getLocale();
   const dateLocale = getDateLocale(locale);
@@ -97,11 +99,11 @@ export default async function EventosPage({ searchParams }: Props) {
                       : "border-punk-white/40 bg-punk-black text-punk-white/90"
                   }`}
                 >
-                  {event.type === "FESTIVAL" ? "Festival" : "Concierto"}
+                  {event.type === "FESTIVAL" ? tFilters("festival") : tFilters("concert")}
                 </span>
                 {event.isSoldOut && (
                   <span className="border-2 border-punk-red bg-punk-red/30 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-red">
-                    SOLD OUT
+                    {tEvent("soldOut")}
                   </span>
                 )}
               </div>

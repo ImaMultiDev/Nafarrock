@@ -2,7 +2,8 @@ import { getFestivalBySlug } from "@/services/festival.service";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { getTranslations, getLocale } from "next-intl/server";
+import { getDateLocale } from "@/lib/date-locale";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { ImageLightbox } from "@/components/ui/ImageLightbox";
 import { SocialLinks, type SocialLinkItem } from "@/components/ui/SocialLinks";
@@ -30,6 +31,11 @@ export default async function FestivalPage({
   const festival = await getFestivalBySlug(slug);
   if (!festival) notFound();
 
+  const locale = await getLocale();
+  const dateLocale = getDateLocale(locale);
+  const t = await getTranslations("festivalDetail");
+  const displayDesc = locale === "eu" && festival.descriptionEu ? festival.descriptionEu : festival.description;
+
   const links: SocialLinkItem[] = [
     ...(festival.websiteUrl ? [{ kind: "web" as const, url: festival.websiteUrl }] : []),
     ...(festival.instagramUrl ? [{ kind: "instagram" as const, url: festival.instagramUrl }] : []),
@@ -42,7 +48,7 @@ export default async function FestivalPage({
         href="/festivales"
         className="font-punch text-xs uppercase tracking-widest text-punk-red transition-colors hover:text-punk-red/80"
       >
-        ← Volver a festivales
+        {t("backToFestivals")}
       </Link>
 
       <div className="mt-8 flex flex-col gap-8 md:flex-row">
@@ -67,7 +73,7 @@ export default async function FestivalPage({
           </h1>
           {!festival.userId && festival.createdByNafarrock && (
             <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-red/90">
-              FESTIVAL REGISTRADO POR NAFARROCK
+              {t("registeredByNafarrock")}
             </p>
           )}
           {festival.location && (
@@ -75,12 +81,12 @@ export default async function FestivalPage({
           )}
           {festival.foundedYear && (
             <p className="mt-1 font-punch text-xs uppercase tracking-widest text-punk-red/80">
-              Desde {festival.foundedYear}
+              {t("from", { year: festival.foundedYear })}
             </p>
           )}
-          {festival.description && (
+          {displayDesc && (
             <p className="mt-4 font-body leading-relaxed text-punk-white/80">
-              {festival.description}
+              {displayDesc}
             </p>
           )}
           {festival.images && festival.images.length > 0 && (
@@ -106,7 +112,7 @@ export default async function FestivalPage({
       {festival.events.length > 0 && (
         <div className="mt-16">
           <h2 className="font-display text-2xl tracking-tighter text-punk-white">
-            Próximos eventos
+            {t("upcoming")}
           </h2>
           <ul className="mt-6 space-y-3">
             {festival.events.map((evt) => (
@@ -117,7 +123,7 @@ export default async function FestivalPage({
                 >
                   <span className="font-display text-punk-white">{evt.title}</span>
                   <span className="font-punch text-xs uppercase tracking-widest text-punk-red">
-                    {format(evt.date, "d MMM yyyy", { locale: es })} · {evt.venue?.name ?? "Por confirmar"}
+                    {format(evt.date, "d MMM yyyy", { locale: dateLocale })} · {evt.venue?.name ?? t("toConfirm")}
                   </span>
                 </Link>
               </li>

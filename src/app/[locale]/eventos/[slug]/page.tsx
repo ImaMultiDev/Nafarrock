@@ -32,8 +32,10 @@ export default async function EventPage({
   if (!event) notFound();
 
   const t = await getTranslations("events");
+  const tEvent = await getTranslations("eventDetail");
   const locale = await getLocale();
   const dateLocale = getDateLocale(locale);
+  const displayDesc = locale === "eu" && event.descriptionEu ? event.descriptionEu : event.description;
 
   const allImages = [
     ...(event.imageUrl ? [event.imageUrl] : []),
@@ -68,11 +70,11 @@ export default async function EventPage({
                     : "border-punk-white/40 bg-punk-black text-punk-white/90"
                 }`}
               >
-                {event.type === "FESTIVAL" ? "Festival" : "Concierto"}
+                {event.type === "FESTIVAL" ? tEvent("festival") : tEvent("concert")}
               </span>
               {event.isSoldOut && (
                 <span className="inline-block border-2 border-punk-red bg-punk-red/30 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-red">
-                  SOLD OUT
+                  {tEvent("soldOut")}
                 </span>
               )}
             </div>
@@ -81,7 +83,7 @@ export default async function EventPage({
             </h1>
             {event.createdByNafarrock && (
               <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-red/90">
-                EVENTO PUBLICADO POR NAFARROCK
+                {tEvent("publishedByNafarrock")}
               </p>
             )}
             <p className="mt-4 font-body text-lg text-punk-white/70">
@@ -92,7 +94,7 @@ export default async function EventPage({
               ) : (
                 format(event.date, "EEEE d 'de' MMMM, yyyy", { locale: dateLocale })
               )}
-              {event.doorsOpen && ` · Puertas: ${event.doorsOpen}`}
+              {event.doorsOpen && ` · ${tEvent("doors")}: ${event.doorsOpen}`}
             </p>
           </div>
 
@@ -119,7 +121,7 @@ export default async function EventPage({
                       rel="noopener noreferrer"
                       className="block border-2 border-punk-red bg-punk-red px-8 py-3 text-center font-punch text-sm uppercase tracking-widest text-punk-white transition-all hover:bg-punk-blood hover:border-punk-blood hover:shadow-[0_0_30px_rgba(230,0,38,0.4)]"
                     >
-                      Comprar entradas
+                      {tEvent("buyTickets")}
                     </a>
                   )}
                 </div>
@@ -178,7 +180,7 @@ export default async function EventPage({
         {event.venue && (
           <div className="mt-12 border-l-4 border-punk-red bg-punk-black/50 p-6">
             <h2 className="font-punch text-xs uppercase tracking-widest text-punk-red/80">
-              Lugar
+              {tEvent("venue")}
             </h2>
             <p className="mt-2 font-display text-xl text-punk-white">
               {event.venue.name}
@@ -242,7 +244,7 @@ export default async function EventPage({
         {links.length > 0 && (
           <div className="mt-10">
             <h2 className="font-punch text-xs uppercase tracking-widest text-punk-red/80">
-              Redes y enlaces
+              {tEvent("networksAndLinks")}
             </h2>
             <div className="mt-3">
               <SocialLinks links={links} variant="red" />
@@ -254,7 +256,7 @@ export default async function EventPage({
         {event.bands.length > 0 && (
           <div className="mt-12">
             <h2 className="font-display text-2xl tracking-tighter text-punk-white">
-              Cartel
+              {tEvent("lineup")}
             </h2>
             <ul className="mt-4 space-y-3">
               {event.bands.map((be, i) => (
@@ -268,7 +270,7 @@ export default async function EventPage({
                   </Link>
                   {be.isHeadliner && (
                     <span className="font-punch text-xs uppercase tracking-widest text-punk-red">
-                      cabecera
+                      {tEvent("headliner")}
                     </span>
                   )}
                 </li>
@@ -278,13 +280,13 @@ export default async function EventPage({
         )}
 
         {/* Descripción */}
-        {event.description && (
+        {displayDesc && (
           <div className="mt-12">
             <h2 className="font-display text-2xl tracking-tighter text-punk-white">
-              Descripción
+              {tEvent("description")}
             </h2>
             <p className="mt-4 whitespace-pre-wrap font-body leading-relaxed text-punk-white/80">
-              {event.description}
+              {displayDesc}
             </p>
           </div>
         )}

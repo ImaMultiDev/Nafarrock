@@ -1,10 +1,14 @@
 import { prisma } from "@/lib/prisma";
+import { getTranslations } from "next-intl/server";
 import { RegisterForm } from "./RegisterForm";
 
-export const metadata = {
-  title: "Registro",
-  description: "Regístrate en Nafarrock como usuario, banda, sala, festival, promotor u organizador",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("auth.registro");
+  return {
+    title: t("title"),
+    description: t("subtitle"),
+  };
+}
 
 type Props = {
   searchParams: Promise<Record<string, string | undefined>>;

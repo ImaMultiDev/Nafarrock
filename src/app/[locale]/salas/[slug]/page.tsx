@@ -2,7 +2,8 @@ import { getVenueBySlug } from "@/services/venue.service";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { getTranslations, getLocale } from "next-intl/server";
+import { getDateLocale } from "@/lib/date-locale";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { ImageLightbox } from "@/components/ui/ImageLightbox";
 import { SocialLinks, type SocialLinkItem } from "@/components/ui/SocialLinks";
@@ -30,13 +31,18 @@ export default async function VenuePage({
   const venue = await getVenueBySlug(slug);
   if (!venue) notFound();
 
+  const locale = await getLocale();
+  const dateLocale = getDateLocale(locale);
+  const t = await getTranslations("venueDetail");
+  const displayDesc = locale === "eu" && venue.descriptionEu ? venue.descriptionEu : venue.description;
+
   return (
     <PageLayout>
       <Link
         href="/salas"
         className="font-punch text-xs uppercase tracking-widest text-punk-pink transition-colors hover:text-punk-pink/80"
       >
-        ← Volver a salas
+        {t("backToVenues")}
       </Link>
 
       <div className="mt-8 flex flex-col gap-8 md:flex-row">
@@ -78,19 +84,19 @@ export default async function VenuePage({
           </h1>
           {!venue.userId && venue.createdByNafarrock && (
             <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-red/90">
-              SALA REGISTRADA POR NAFARROCK
+              {t("registeredByNafarrock")}
             </p>
           )}
           <p className="mt-3 font-body text-punk-white/70">{venue.city}</p>
         {venue.capacity && (
           <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-pink">
-            Aforo: {venue.capacity} personas
+            {t("capacity", { count: venue.capacity })}
           </p>
         )}
 
-        {venue.description && (
+        {displayDesc && (
           <p className="mt-8 font-body leading-relaxed text-punk-white/80">
-            {venue.description}
+            {displayDesc}
           </p>
         )}
 
@@ -116,7 +122,7 @@ export default async function VenuePage({
         {venue.events.length > 0 && (
           <div className="mt-16">
             <h2 className="font-display text-2xl tracking-tighter text-punk-white">
-              Próximos eventos
+              {t("upcoming")}
             </h2>
             <ul className="mt-6 space-y-3">
               {venue.events.map((evt) => (
@@ -129,7 +135,7 @@ export default async function VenuePage({
                       {evt.title}
                     </span>
                     <span className="font-punch text-xs uppercase tracking-widest text-punk-pink">
-                      {format(evt.date, "d MMM yyyy", { locale: es })}
+                      {format(evt.date, "d MMM yyyy", { locale: dateLocale })}
                     </span>
                   </Link>
                 </li>
