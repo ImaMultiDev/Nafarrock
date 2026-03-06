@@ -343,6 +343,8 @@
     "networksAndLinks": "Sareak eta estekak",
     "description": "Deskribapena",
     "lineup": "Kartela",
+    "localBand": "● Bertako taldea",
+    "cartelCount": "+{count}",
     "headliner": "buru",
     "doors": "Ateak"
   }

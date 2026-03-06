@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 import { TranslateButton } from "@/components/admin/TranslateButton";
+import { CartelBuilder, type CartelItem } from "@/components/admin/CartelBuilder";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
@@ -19,6 +20,7 @@ export function EventForm({ venues, festivals, bands }: { venues: Venue[]; festi
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [description, setDescription] = useState("");
+  const [cartel, setCartel] = useState<CartelItem[]>([]);
   const [descriptionEu, setDescriptionEu] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [images, setImages] = useState<string[]>([]);
@@ -142,7 +144,6 @@ export function EventForm({ venues, festivals, bands }: { venues: Venue[]; festi
     setLoading(true);
     const form = e.currentTarget;
     const formData = new FormData(form);
-    const bandIds = formData.getAll("bandIds") as string[];
 
     const dateStr = formData.get("date") as string;
     const date = new Date(dateStr);
@@ -185,7 +186,9 @@ export function EventForm({ venues, festivals, bands }: { venues: Venue[]; festi
         imageUrl: imageUrl || undefined,
         images,
         isSoldOut: (formData.get("isSoldOut") as string) === "on",
-        bandIds: bandIds.filter(Boolean),
+        cartel: cartel.map((i) =>
+          i.type === "band" ? { type: "band" as const, bandId: i.bandId } : { type: "external" as const, name: i.name }
+        ),
       }),
     });
 
@@ -355,22 +358,7 @@ export function EventForm({ venues, festivals, bands }: { venues: Venue[]; festi
           </p>
         </div>
       </div>
-      <div>
-        <label className={labelClass}>
-          Bandas (opcional)
-        </label>
-        <div className="mt-2 max-h-40 overflow-y-auto space-y-2 border-2 border-punk-white/20 p-4">
-          {bands.map((b) => (
-            <label key={b.id} className="flex cursor-pointer items-center gap-2">
-              <input type="checkbox" name="bandIds" value={b.id} className="accent-punk-red" />
-              <span className="font-body text-punk-white/80">{b.name}</span>
-            </label>
-          ))}
-          {bands.length === 0 && (
-            <p className="font-body text-sm text-punk-white/50">No hay bandas aprobadas</p>
-          )}
-        </div>
-      </div>
+      <CartelBuilder bands={bands} value={cartel} onChange={setCartel} />
       <div>
         <label htmlFor="description" className={labelClass}>
           Descripción

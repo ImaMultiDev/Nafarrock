@@ -31,7 +31,15 @@ const updateSchema = z.object({
   isSoldOut: z.boolean().optional(),
   isApproved: z.boolean().optional(),
   eventLimitExempt: z.boolean().optional(),
-  bandIds: z.array(z.string()).optional().default([]),
+  bandIds: z.array(z.string()).optional(),
+  cartel: z
+    .array(
+      z.union([
+        z.object({ type: z.literal("band"), bandId: z.string() }),
+        z.object({ type: z.literal("external"), name: z.string().min(1) }),
+      ])
+    )
+    .optional(),
 });
 
 export async function PATCH(
@@ -97,16 +105,24 @@ export async function PATCH(
     }
     if (data.eventLimitExempt != null) updateData.eventLimitExempt = data.eventLimitExempt;
 
-    if (data.bandIds !== undefined) {
+    const cartel = data.cartel ?? (data.bandIds != null ? data.bandIds.map((bandId) => ({ type: "band" as const, bandId })) : undefined);
+    if (cartel !== undefined) {
       await prisma.bandEvent.deleteMany({ where: { eventId: id } });
-      if (data.bandIds.length > 0) {
+      await prisma.eventExternalBand.deleteMany({ where: { eventId: id } });
+      const bandCreates = cartel
+        .map((i, globalOrder) => (i.type === "band" ? { bandId: i.bandId, order: globalOrder, isHeadliner: globalOrder === 0 } : null))
+        .filter((x): x is { bandId: string; order: number; isHeadliner: boolean } => x !== null);
+      const externalCreates = cartel
+        .map((i, globalOrder) => (i.type === "external" ? { name: i.name, order: globalOrder } : null))
+        .filter((x): x is { name: string; order: number } => x !== null);
+      if (bandCreates.length > 0) {
         await prisma.bandEvent.createMany({
-          data: data.bandIds.map((bandId, i) => ({
-            eventId: id,
-            bandId,
-            order: i,
-            isHeadliner: i === 0,
-          })),
+          data: bandCreates.map((b) => ({ eventId: id, ...b })),
+        });
+      }
+      if (externalCreates.length > 0) {
+        await prisma.eventExternalBand.createMany({
+          data: externalCreates.map((e) => ({ eventId: id, ...e })),
         });
       }
     }

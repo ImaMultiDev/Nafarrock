@@ -53,6 +53,7 @@ export async function getEvents(filters: EventFilters = {}) {
       include: {
         venue: true,
         bands: { include: { band: true }, orderBy: { order: "asc" } },
+        externalBands: { orderBy: { order: "asc" } },
       },
       skip,
       take: pageSize,
@@ -72,6 +73,34 @@ export async function getEventBySlug(slug: string) {
       festival: true,
       organizer: true,
       bands: { include: { band: true }, orderBy: { order: "asc" } },
+      externalBands: { orderBy: { order: "asc" } },
     },
   });
+}
+
+/** Cartel unificado: bandas registradas + externas, ordenadas por order */
+export type CartelItem =
+  | { type: "band"; id: string; name: string; slug: string; order: number }
+  | { type: "external"; id: string; name: string; order: number };
+
+export function getEventCartel(event: {
+  bands: { id: string; order: number; band: { name: string; slug: string } }[];
+  externalBands: { id: string; name: string; order: number }[];
+}): CartelItem[] {
+  const items: CartelItem[] = [
+    ...event.bands.map((be) => ({
+      type: "band" as const,
+      id: be.id,
+      name: be.band.name,
+      slug: be.band.slug,
+      order: be.order,
+    })),
+    ...event.externalBands.map((eb) => ({
+      type: "external" as const,
+      id: eb.id,
+      name: eb.name,
+      order: eb.order,
+    })),
+  ];
+  return items.sort((a, b) => a.order - b.order);
 }

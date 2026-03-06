@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 import { TranslateButton } from "@/components/admin/TranslateButton";
+import { CartelBuilder, type CartelItem } from "@/components/admin/CartelBuilder";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
@@ -31,7 +32,8 @@ type Event = {
   eventLimitExempt: boolean;
   isSoldOut: boolean;
   venueId: string | null;
-  bands?: { bandId: string; band?: { id: string } }[];
+  bands?: { bandId: string; order: number; band?: { id: string; name: string } }[];
+  externalBands?: { name: string; order: number }[];
 };
 
 type Venue = { id: string; name: string };
@@ -46,10 +48,23 @@ export function EventEditForm({
   venues: Venue[];
   bands: Band[];
 }) {
-  const initialBandIds = event.bands?.map((b) => b.bandId) ?? [];
+  const initialCartel: CartelItem[] = (() => {
+    const all: { order: number; item: CartelItem }[] = [
+      ...(event.bands ?? []).map((be) => ({
+        order: be.order,
+        item: { type: "band" as const, bandId: be.bandId, name: be.band?.name ?? "" },
+      })),
+      ...(event.externalBands ?? []).map((eb) => ({
+        order: eb.order,
+        item: { type: "external" as const, name: eb.name },
+      })),
+    ];
+    return all.sort((a, b) => a.order - b.order).map((x) => x.item);
+  })();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [cartel, setCartel] = useState<CartelItem[]>(initialCartel);
   const [description, setDescription] = useState(event.description ?? "");
   const [descriptionEu, setDescriptionEu] = useState(event.descriptionEu ?? "");
   const [imageUrl, setImageUrl] = useState(event.imageUrl ?? "");
@@ -75,7 +90,6 @@ export function EventEditForm({
     setLoading(true);
     const form = e.currentTarget;
     const formData = new FormData(form);
-    const bandIds = (formData.getAll("bandIds") as string[]).filter(Boolean);
     const date = new Date(formData.get("date") as string);
     const endDateVal = formData.get("endDate") as string;
     const endDate = isMultiDay && endDateVal ? new Date(endDateVal).toISOString() : null;
@@ -104,7 +118,9 @@ export function EventEditForm({
         webUrl: formData.get("webUrl") || null,
         imageUrl: imageUrl || null,
         images,
-        bandIds,
+        cartel: cartel.map((i) =>
+          i.type === "band" ? { type: "band" as const, bandId: i.bandId } : { type: "external" as const, name: i.name }
+        ),
         isSoldOut: (formData.get("isSoldOut") as string) === "on",
         isApproved: (formData.get("approved") as string) === "on",
         eventLimitExempt: (formData.get("eventLimitExempt") as string) === "on",
@@ -216,28 +232,7 @@ export function EventEditForm({
           ))}
         </select>
       </div>
-      <div>
-        <label className={labelClass}>
-          Bandas (opcional)
-        </label>
-        <div className="mt-2 max-h-40 overflow-y-auto space-y-2 border-2 border-punk-white/20 p-4">
-          {bands.map((b) => (
-            <label key={b.id} className="flex cursor-pointer items-center gap-2">
-              <input
-                type="checkbox"
-                name="bandIds"
-                value={b.id}
-                defaultChecked={initialBandIds.includes(b.id)}
-                className="accent-punk-red"
-              />
-              <span className="font-body text-punk-white/80">{b.name}</span>
-            </label>
-          ))}
-          {bands.length === 0 && (
-            <p className="font-body text-sm text-punk-white/50">No hay bandas aprobadas</p>
-          )}
-        </div>
-      </div>
+      <CartelBuilder bands={bands} value={cartel} onChange={setCartel} />
       <div>
         <label htmlFor="description" className={labelClass}>
           Descripción

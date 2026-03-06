@@ -5,6 +5,31 @@ import { z } from "zod";
 import { uniqueSlug } from "@/lib/slug";
 import { startOfToday } from "@/lib/date";
 
+type CartelItem =
+  | { type: "band"; bandId: string }
+  | { type: "external"; name: string };
+
+function buildBandEventsFromCartel(cartel: CartelItem[]) {
+  return cartel
+    .map((i, globalOrder) => (i.type === "band" ? { ...i, globalOrder } : null))
+    .filter((x): x is { type: "band"; bandId: string; globalOrder: number } => x !== null)
+    .map((i, idx) => ({
+      bandId: i.bandId,
+      order: i.globalOrder,
+      isHeadliner: i.globalOrder === 0,
+    }));
+}
+
+function buildExternalBandsFromCartel(cartel: CartelItem[]) {
+  return cartel
+    .map((i, globalOrder) => (i.type === "external" ? { ...i, globalOrder } : null))
+    .filter((x): x is { type: "external"; name: string; globalOrder: number } => x !== null)
+    .map((i) => ({
+      name: i.name,
+      order: i.globalOrder,
+    }));
+}
+
 const createSchema = z.object({
   title: z.string().min(1),
   type: z.enum(["CONCIERTO", "FESTIVAL"]),
@@ -27,7 +52,15 @@ const createSchema = z.object({
   imageUrl: z.string().optional().nullable(),
   images: z.array(z.string()).optional().default([]),
   isSoldOut: z.boolean().optional().default(false),
-  bandIds: z.array(z.string()).optional().default([]),
+  bandIds: z.array(z.string()).optional(),
+  cartel: z
+    .array(
+      z.union([
+        z.object({ type: z.literal("band"), bandId: z.string() }),
+        z.object({ type: z.literal("external"), name: z.string().min(1) }),
+      ])
+    )
+    .optional(),
 });
 
 export async function POST(req: Request) {
@@ -85,11 +118,10 @@ export async function POST(req: Request) {
         createdByNafarrock: true,
         eventLimitExempt: true,
         bands: {
-          create: (data.bandIds ?? []).map((bandId, i) => ({
-            bandId,
-            order: i,
-            isHeadliner: i === 0,
-          })),
+          create: buildBandEventsFromCartel(data.cartel ?? (data.bandIds ?? []).map((bandId) => ({ type: "band" as const, bandId }))),
+        },
+        externalBands: {
+          create: buildExternalBandsFromCartel(data.cartel ?? []),
         },
       },
     });

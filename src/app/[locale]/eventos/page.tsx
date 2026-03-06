@@ -85,11 +85,22 @@ export default async function EventosPage({ searchParams }: Props) {
                 <p className="mt-1 font-body text-punk-white/70">
                   {event.venue ? `${event.venue.name} · ${event.venue.city}` : ""}
                 </p>
-                {event.bands.length > 0 && (
-                  <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-green/80">
-                    {event.bands.map((be) => be.band.name).join(" + ")}
-                  </p>
-                )}
+                {(() => {
+                  const localBands = (event.bands ?? []).slice(0, 3).map((be) => be.band.name);
+                  const totalBands = (event.bands?.length ?? 0) + (event.externalBands?.length ?? 0);
+                  if (totalBands === 0) return null;
+                  return (
+                    <p className="mt-1 font-body text-sm text-punk-green/90">
+                      <span>
+                        {localBands.join(" · ")}
+                        {" · "}
+                        <span className="inline-flex shrink-0 border-2 border-punk-red bg-punk-red/20 px-2 py-0.5 font-punch text-xs uppercase tracking-widest text-punk-red">
+                          {tEvent("cartelCount", { count: totalBands })}
+                        </span>
+                      </span>
+                    </p>
+                  );
+                })()}
               </div>
               <div className="flex shrink-0 flex-wrap gap-2">
                 <span

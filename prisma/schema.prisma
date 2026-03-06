@@ -346,6 +346,7 @@ model Event {
   createdByUserId  String?
   createdByUser     User?     @relation("EventCreator", fields: [createdByUserId], references: [id], onDelete: SetNull)
   bands             BandEvent[]
+  externalBands     EventExternalBand[]
 
   @@index([slug])
   @@index([date])
@@ -376,6 +377,20 @@ model BandEvent {
   @@index([eventId])
   @@index([bandId])
   @@map("band_events")
+}
+
+// Bandas externas (no registradas en Nafarrock) - orden manual en el cartel
+model EventExternalBand {
+  id       String @id @default(cuid())
+  eventId  String
+  name     String
+  order    Int    @default(0)
+  createdAt DateTime @default(now())
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+  @@map("event_external_bands")
 }
 
 // Promotores
