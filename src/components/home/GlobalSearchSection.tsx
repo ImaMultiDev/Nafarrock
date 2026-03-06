@@ -8,7 +8,6 @@ import { Search } from "lucide-react";
 export function GlobalSearchSection() {
   const [query, setQuery] = useState("");
   const router = useRouter();
-  const { data: session } = useSession();
   const t = useTranslations("search");
   const tActions = useTranslations("common.actions");
 
