@@ -69,8 +69,8 @@ export default async function EventosPage({ searchParams }: Props) {
               <div className="shrink-0 border-2 border-punk-red/50 bg-punk-red/10 px-6 py-3 text-center">
                 <span className="block font-display text-3xl leading-none text-punk-red">
                   {event.endDate
-                    ? `${format(event.date, "d", { locale: es })}-${format(event.endDate, "d", { locale: es })}`
-                    : format(event.date, "dd", { locale: es })}
+                    ? `${format(event.date, "d", { locale: dateLocale })}-${format(event.endDate, "d", { locale: dateLocale })}`
+                    : format(event.date, "dd", { locale: dateLocale })}
                 </span>
                 <span className="block font-punch text-xs uppercase tracking-widest text-punk-white/70">
                   {format(event.date, "MMM", { locale: dateLocale })}
