@@ -44,7 +44,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    images: ["/logo-512.png"],
+    images: ["/LogoRedes.png"],
   },
 };
 

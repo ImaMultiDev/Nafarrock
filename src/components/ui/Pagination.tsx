@@ -65,28 +65,45 @@ export function Pagination({
 
   const pageNumbers = getPageNumbers();
 
+  const prevButton = hasPrev ? (
+    <Link
+      href={buildUrl(page - 1)}
+      className="flex items-center justify-center gap-2 border-2 border-punk-white/30 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white/80 transition-colors hover:border-punk-green hover:text-punk-green"
+    >
+      <ChevronLeft className="h-4 w-4" />
+      {t("previous")}
+    </Link>
+  ) : (
+    <span className="flex items-center justify-center gap-2 border-2 border-punk-white/10 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white/30">
+      <ChevronLeft className="h-4 w-4" />
+      {t("previous")}
+    </span>
+  );
+
+  const nextButton = hasNext ? (
+    <Link
+      href={buildUrl(page + 1)}
+      className="flex items-center justify-center gap-2 border-2 border-punk-white/30 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white/80 transition-colors hover:border-punk-green hover:text-punk-green"
+    >
+      {t("next")}
+      <ChevronRight className="h-4 w-4" />
+    </Link>
+  ) : (
+    <span className="flex items-center justify-center gap-2 border-2 border-punk-white/10 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white/30">
+      {t("next")}
+      <ChevronRight className="h-4 w-4" />
+    </span>
+  );
+
   return (
     <nav
       className="mt-12 flex flex-col items-center gap-4 border-t border-punk-white/10 pt-8"
       aria-label="Paginación"
     >
-      <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4">
-        {hasPrev ? (
-          <Link
-            href={buildUrl(page - 1)}
-            className="flex items-center gap-2 border-2 border-punk-white/30 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white/80 transition-colors hover:border-punk-green hover:text-punk-green"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            {t("previous")}
-          </Link>
-        ) : (
-          <span className="flex items-center gap-2 border-2 border-punk-white/10 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white/30">
-            <ChevronLeft className="h-4 w-4" />
-            {t("previous")}
-          </span>
-        )}
-
-        <div className="flex items-center gap-1">
+      {/* Mobile: Anterior arriba, números centro, Siguiente abajo. Desktop: todo en fila */}
+      <div className="flex flex-col items-center gap-3 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4">
+        <div className="order-1 sm:order-1 w-full sm:w-auto flex justify-center">{prevButton}</div>
+        <div className="order-2 flex items-center gap-1">
           {pageNumbers.map((p, i) =>
             p === "ellipsis" ? (
               <span key={`ell-${i}`} className="px-2 font-body text-punk-white/40">
@@ -110,21 +127,7 @@ export function Pagination({
             )
           )}
         </div>
-
-        {hasNext ? (
-          <Link
-            href={buildUrl(page + 1)}
-            className="flex items-center gap-2 border-2 border-punk-white/30 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white/80 transition-colors hover:border-punk-green hover:text-punk-green"
-          >
-            {t("next")}
-            <ChevronRight className="h-4 w-4" />
-          </Link>
-        ) : (
-          <span className="flex items-center gap-2 border-2 border-punk-white/10 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white/30">
-            {t("next")}
-            <ChevronRight className="h-4 w-4" />
-          </span>
-        )}
+        <div className="order-3 sm:order-3 w-full sm:w-auto flex justify-center">{nextButton}</div>
       </div>
 
       <span className="font-body text-sm text-punk-white/60">

@@ -1,22 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { canViewRestrictedEscena } from "@/lib/escena-visibility";
 import { Search } from "lucide-react";
 
 export function GlobalSearchSection() {
   const [query, setQuery] = useState("");
   const router = useRouter();
   const { data: session } = useSession();
-  const showRestricted = canViewRestrictedEscena(session ?? null);
   const t = useTranslations("search");
   const tActions = useTranslations("common.actions");
 
-  const searchHint = showRestricted ? t("hintFull") : t("hint");
-  const labelText = showRestricted ? t("labelFull") : t("label");
+  const searchHint = t("hint");
+  const labelText = t("label");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
