@@ -88,9 +88,28 @@ export default async function EventPage({
             )}
             <p className="mt-4 font-body text-lg text-punk-white/70">
               {event.endDate ? (
-                <>
-                  Del {format(event.date, "d 'de' MMMM", { locale: dateLocale })} al {format(event.endDate, "d 'de' MMMM, yyyy", { locale: dateLocale })}
-                </>
+                locale === "eu" ? (
+                  (() => {
+                    const year = format(event.date, "yyyy", { locale: dateLocale });
+                    const month = format(event.date, "MMMM", { locale: dateLocale });
+                    const monthGenitive = month.endsWith("a") ? month.slice(0, -1) + "aren" : month + "ren";
+                    const startDay = format(event.date, "d", { locale: dateLocale });
+                    const endDay = format(event.endDate!, "d", { locale: dateLocale });
+                    return `${year}ko ${monthGenitive} ${startDay}tik ${endDay}ra`;
+                  })()
+                ) : (
+                  <>
+                    Del {format(event.date, "d 'de' MMMM", { locale: dateLocale })} al {format(event.endDate, "d 'de' MMMM, yyyy", { locale: dateLocale })}
+                  </>
+                )
+              ) : locale === "eu" ? (
+                (() => {
+                  const year = format(event.date, "yyyy", { locale: dateLocale });
+                  const month = format(event.date, "MMMM", { locale: dateLocale });
+                  const monthGenitive = month.endsWith("a") ? month.slice(0, -1) + "aren" : month + "ren";
+                  const day = format(event.date, "d", { locale: dateLocale });
+                  return `${year}ko ${monthGenitive} ${day}a`;
+                })()
               ) : (
                 format(event.date, "EEEE d 'de' MMMM, yyyy", { locale: dateLocale })
               )}
