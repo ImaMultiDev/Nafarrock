@@ -7,6 +7,8 @@ import { motion } from "framer-motion";
 import NextLink from "next/link";
 import { Link } from "@/i18n/navigation";
 
+import { ESCENA_HIDDEN } from "@/lib/feature-flags";
+
 export function FooterSection() {
   const { data: session } = useSession();
   const t = useTranslations("home.footer");
@@ -62,12 +64,14 @@ export function FooterSection() {
             >
               {tNav("events")}
             </Link>
-            <Link
-              href="/escena"
-              className="font-punch text-xs uppercase tracking-widest text-punk-white/70 transition-colors hover:text-punk-green"
-            >
-              {tNav("scene")}
-            </Link>
+            {!ESCENA_HIDDEN && (
+              <Link
+                href="/escena"
+                className="font-punch text-xs uppercase tracking-widest text-punk-white/70 transition-colors hover:text-punk-green"
+              >
+                {tNav("scene")}
+              </Link>
+            )}
             <Link
               href="/guia"
               className="font-punch text-xs uppercase tracking-widest text-punk-white/70 transition-colors hover:text-punk-green"

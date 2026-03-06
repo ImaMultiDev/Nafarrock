@@ -5,7 +5,7 @@
       "events": "Eventos",
       "bands": "Bandas",
       "scene": "Escena",
-      "guide": "Guía",
+      "guide": "Nafarrock",
       "manual": "Manual",
       "contact": "Contacto",
       "panel": "Panel",
@@ -57,8 +57,8 @@
         "descFull": "Salas, promotores, organizadores, festivales"
       },
       "guide": {
-        "title": "GUÍA",
-        "desc": "Qué es Nafarrock"
+        "title": "NAFARROCK",
+        "desc": "La escena rock de Navarra y Euskal Herria"
       },
       "enter": "Entrar →"
     },
@@ -85,7 +85,11 @@
     "hint": "Bandas · Eventos · Salas · Festivales",
     "hintFull": "Bandas · Eventos · Salas · Festivales · Promotores · Organizadores",
     "label": "Buscar bandas, eventos, salas y festivales",
-    "labelFull": "Buscar bandas, eventos, salas, festivales, promotores, organizadores"
+    "labelFull": "Buscar bandas, eventos, salas, festivales, promotores, organizadores",
+    "metadata": {
+      "title": "Buscador",
+      "description": "Busca bandas, eventos, salas, festivales, promotores y organizadores"
+    }
   },
   "bands": {
     "title": "BANDAS",
@@ -101,6 +105,9 @@
     "title": "EVENTOS",
     "subtitle": "Conciertos y festivales. {count} evento en la escena nafarroa.",
     "subtitle_other": "Conciertos y festivales. {count} eventos en la escena nafarroa.",
+    "empty": "No hay eventos próximos. Pronto habrá contenido. Mientras tanto, explora bandas y la escena.",
+    "backToEvents": "← Volver a eventos",
+    "upcoming": "Próximos eventos",
     "metadata": {
       "title": "Eventos",
       "description": "Conciertos y festivales en Nafarroa"
@@ -136,37 +143,29 @@
     }
   },
   "guide": {
-    "title": "GUÍA",
-    "subtitle": "Qué es Nafarrock",
-    "essential": {
-      "title": "Lo esencial",
-      "p1": "Nafarrock es una plataforma cultural centrada en la escena rock: punk, hardcore, metal, indie y derivados en Euskal Herria y Navarra.",
-      "p2": "No somos un directorio institucional ni una agenda cultural genérica. Estamos aquí para dar visibilidad, foco y voz a lo que ocurre en la escena."
+    "title": "NAFARROCK",
+    "subtitle": "La escena rock de Navarra y Euskal Herria",
+    "why": {
+      "title": "Para qué nace Nafarrock",
+      "p1": "El objetivo de Nafarrock es apoyar y dar visibilidad a la escena rock local, facilitando el acceso a información sobre bandas y conciertos.",
+      "p2": "Al mismo tiempo, el proyecto pretende contribuir a fortalecer la cultura musical del territorio, poniendo en valor la diversidad de estilos y propuestas que existen dentro del rock."
     },
-    "core": {
-      "title": "El núcleo",
-      "intro": "Lo que nos mueve son tres cosas:",
-      "events": "Los eventos: conciertos y festivales. Que sepas qué hay y dónde.",
-      "bands": "Las bandas: quiénes suenan, quiénes tocan, quiénes molan.",
-      "scene": "La escena viva: promotores, organizadores, festivales y salas que hacen posible que todo esto ocurra."
-    },
-    "purpose": {
-      "title": "Para qué sirve Nafarrock",
-      "visibility": "Visibilizar lo que sucede: conciertos, bandas, espacios.",
-      "connect": "Conectar a la escena: público, bandas, espacios, promotores.",
-      "voice": "Servir de altavoz cultural: rock, punk, metal y lo que venga."
-    },
-    "where": {
-      "title": "Dónde estamos",
-      "p": "Nos centramos en Euskal Herria y Navarra. Es el territorio donde vive la escena que queremos apoyar."
+    "future": {
+      "title": "Mirando al futuro",
+      "p1": "Nafarrock nace como una plataforma digital, pero el proyecto tiene vocación de crecer.",
+      "p2": "Entre sus objetivos a largo plazo está impulsar iniciativas culturales relacionadas con el rock, incluyendo la posibilidad de organizar eventos o festivales que reúnan a bandas de Navarra y Euskal Herria.",
+      "p3": "Un espacio donde la música, la cultura y también el euskera puedan convivir y seguir creciendo dentro de la escena rock."
     },
     "start": {
       "title": "Cómo empezar",
-      "p": "Entra en Eventos para ver conciertos y festivales. Explora Bandas para descubrir quién toca. Y pasa por la Escena para ver salas, promotores, organizadores y festivales."
+      "eventsIntro": "Entra en",
+      "eventsOutro": "para ver conciertos.",
+      "bandsIntro": "Explora",
+      "bandsOutro": "para descubrir quién toca."
     },
     "footer": "Plataforma cultural · Escena rock · Euskal Herria · Navarra",
     "metadata": {
-      "title": "Guía",
+      "title": "Nafarrock",
       "description": "Qué es Nafarrock: visibilidad, conciertos y bandas de la escena rock en Euskal Herria y Navarra"
     }
   },

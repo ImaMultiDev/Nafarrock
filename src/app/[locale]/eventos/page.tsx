@@ -1,19 +1,28 @@
 import { getEvents } from "@/services/event.service";
 import Link from "next/link";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { EventosFilters } from "@/components/buscador/EventosFilters";
 import { Pagination } from "@/components/ui/Pagination";
+import { getTranslations, getLocale } from "next-intl/server";
+import { getDateLocale } from "@/lib/date-locale";
 
-export const metadata = {
-  title: "Eventos",
-  description: "Conciertos y festivales en Nafarroa",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("events.metadata");
+  return {
+    title: t("title"),
+    description: t("description"),
+  };
+}
 
 type Props = { searchParams: Promise<Record<string, string | undefined>> };
 
 export default async function EventosPage({ searchParams }: Props) {
+  const t = await getTranslations("events");
+  const tActions = await getTranslations("common.actions");
+  const locale = await getLocale();
+  const dateLocale = getDateLocale(locale);
+
   const params = await searchParams;
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
   const { items: events, total } = await getEvents({
@@ -27,10 +36,10 @@ export default async function EventosPage({ searchParams }: Props) {
     <PageLayout>
       <div className="mb-10 sm:mb-16">
         <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl lg:text-7xl">
-          EVENTOS
+          {t("title")}
         </h1>
         <p className="mt-3 max-w-xl font-body text-punk-white/60 sm:mt-4">
-          Conciertos y festivales. {total} {total === 1 ? "evento" : "eventos"} en la escena nafarroa.
+          {t("subtitle", { count: total })}
         </p>
       </div>
 
@@ -64,7 +73,7 @@ export default async function EventosPage({ searchParams }: Props) {
                     : format(event.date, "dd", { locale: es })}
                 </span>
                 <span className="block font-punch text-xs uppercase tracking-widest text-punk-white/70">
-                  {format(event.date, "MMM", { locale: es })}
+                  {format(event.date, "MMM", { locale: dateLocale })}
                 </span>
               </div>
               <div className="flex-1">
@@ -120,10 +129,10 @@ export default async function EventosPage({ searchParams }: Props) {
       {events.length === 0 && (
         <div className="border-2 border-punk-white/20 border-dashed p-16 text-center">
           <p className="font-body text-punk-white/60">
-            No hay eventos próximos. Pronto habrá contenido. Mientras tanto, explora bandas, salas y la escena.
+            {t("empty")}
           </p>
           <Link href="/" className="mt-4 inline-block font-punch text-sm uppercase tracking-widest text-punk-red hover:text-punk-red/80 transition-colors">
-            ← Volver al inicio
+            {tActions("backToHome")}
           </Link>
         </div>
       )}

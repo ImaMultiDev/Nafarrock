@@ -2,7 +2,8 @@ import { getEventBySlug } from "@/services/event.service";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { getTranslations, getLocale } from "next-intl/server";
+import { getDateLocale } from "@/lib/date-locale";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { ImageLightbox } from "@/components/ui/ImageLightbox";
 import { SocialLinks, type SocialLinkItem } from "@/components/ui/SocialLinks";
@@ -30,6 +31,10 @@ export default async function EventPage({
   const event = await getEventBySlug(slug);
   if (!event) notFound();
 
+  const t = await getTranslations("events");
+  const locale = await getLocale();
+  const dateLocale = getDateLocale(locale);
+
   const allImages = [
     ...(event.imageUrl ? [event.imageUrl] : []),
     ...(event.images ?? []),
@@ -48,7 +53,7 @@ export default async function EventPage({
         href="/eventos"
         className="font-punch text-xs uppercase tracking-widest text-punk-red transition-colors hover:text-punk-red/80"
       >
-        ← Volver a eventos
+        {t("backToEvents")}
       </Link>
 
       <article className="mt-10">
@@ -82,10 +87,10 @@ export default async function EventPage({
             <p className="mt-4 font-body text-lg text-punk-white/70">
               {event.endDate ? (
                 <>
-                  Del {format(event.date, "d 'de' MMMM", { locale: es })} al {format(event.endDate, "d 'de' MMMM, yyyy", { locale: es })}
+                  Del {format(event.date, "d 'de' MMMM", { locale: dateLocale })} al {format(event.endDate, "d 'de' MMMM, yyyy", { locale: dateLocale })}
                 </>
               ) : (
-                format(event.date, "EEEE d 'de' MMMM, yyyy", { locale: es })
+                format(event.date, "EEEE d 'de' MMMM, yyyy", { locale: dateLocale })
               )}
               {event.doorsOpen && ` · Puertas: ${event.doorsOpen}`}
             </p>

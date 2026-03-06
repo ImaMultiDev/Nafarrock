@@ -11,15 +11,20 @@ import { canViewRestrictedEscena } from "@/lib/escena-visibility";
 import BandSearchForm from "./BandSearchForm";
 import Link from "next/link";
 import { PageLayout } from "@/components/ui/PageLayout";
+import { getTranslations } from "next-intl/server";
 
-export const metadata = {
-  title: "Buscador",
-  description: "Busca bandas, eventos, salas, festivales, promotores y organizadores",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("search");
+  return {
+    title: t("metadata.title"),
+    description: t("metadata.description"),
+  };
+}
 
 type SearchParams = { searchParams: Promise<Record<string, string | undefined>> };
 
 export default async function BuscarPage({ searchParams }: SearchParams) {
+  const t = await getTranslations("common.nav");
   const session = await getServerSession(authOptions);
   const showRestricted = canViewRestrictedEscena(session);
 
@@ -103,7 +108,7 @@ export default async function BuscarPage({ searchParams }: SearchParams) {
 
         <section>
           <h2 className="font-display text-3xl tracking-tighter text-punk-red sm:text-4xl">
-            Eventos ({events.total})
+            {t("events")} ({events.total})
           </h2>
           <div className="mt-6 space-y-3">
             {events.items.map((event) => (

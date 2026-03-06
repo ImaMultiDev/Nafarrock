@@ -5,7 +5,7 @@
       "events": "Ekitaldiak",
       "bands": "Taldeak",
       "scene": "Eskena",
-      "guide": "Gida",
+      "guide": "Nafarrock",
       "manual": "Eskuliburua",
       "contact": "Kontaktua",
       "panel": "Panela",
@@ -57,8 +57,8 @@
         "descFull": "Aretoak, sustatzaileak, antolatzaileak, jaialdiak"
       },
       "guide": {
-        "title": "GIDA",
-        "desc": "Zer da Nafarrock"
+        "title": "NAFARROCK",
+        "desc": "Nafarroa eta Euskal Herriko rock eskena"
       },
       "enter": "Sartu →"
     },
@@ -85,7 +85,11 @@
     "hint": "Taldeak · Ekitaldiak · Aretoak · Jaialdiak",
     "hintFull": "Taldeak · Ekitaldiak · Aretoak · Jaialdiak · Sustatzaileak · Antolatzaileak",
     "label": "Bilatu taldeak, ekitaldiak, aretoak eta jaialdiak",
-    "labelFull": "Bilatu taldeak, ekitaldiak, aretoak, jaialdiak, sustatzaileak, antolatzaileak"
+    "labelFull": "Bilatu taldeak, ekitaldiak, aretoak, jaialdiak, sustatzaileak, antolatzaileak",
+    "metadata": {
+      "title": "Bilatzailea",
+      "description": "Bilatu taldeak, ekitaldiak, aretoak, jaialdiak, sustatzaileak eta antolatzaileak"
+    }
   },
   "bands": {
     "title": "TALDEAK",
@@ -101,6 +105,9 @@
     "title": "EKITALDIAK",
     "subtitle": "Kontzertuak eta jaialdiak. {count} ekitaldi nafarroako eskenan.",
     "subtitle_other": "Kontzertuak eta jaialdiak. {count} ekitaldi nafarroako eskenan.",
+    "empty": "Ez da hurrengo ekitaldirik. Laster edukia egongo da. Bitartean, arakatu taldeak eta eskena.",
+    "backToEvents": "← Itzuli ekitaldietara",
+    "upcoming": "Hurrengo ekitaldiak",
     "metadata": {
       "title": "Ekitaldiak",
       "description": "Kontzertuak eta jaialdiak Nafarroan"
@@ -136,37 +143,29 @@
     }
   },
   "guide": {
-    "title": "GIDA",
-    "subtitle": "Zer da Nafarrock",
-    "essential": {
-      "title": "Oinarrizkoa",
-      "p1": "Nafarrock Euskal Herriko eta Nafarroako rock eskenera zentratutako plataforma kultural bat da: punk, hardcore, metal, indie eta deribatuak.",
-      "p2": "Ez gara direktorio institucional bat ez agenda kultural generikoa. Eskenan gertatzen denari ikusgarritasuna, fokua eta ahotsa emateko gaude hemen."
+    "title": "NAFARROCK",
+    "subtitle": "Nafarroako eta Euskal Herriko rock eszena",
+    "why": {
+      "title": "Zergatik sortu da Nafar Rock",
+      "p1": "Nafar Rock proiektuak tokiko rock eszena babestea eta ikusgarritasuna ematea du helburu, bandak eta kontzertuei buruzko informazioa eskuragarri jarriz.",
+      "p2": "Aldi berean, proiektuak lurraldeko musika-kultura indartzen lagundu nahi du, rockaren barruan dauden estilo eta proposamen aniztasuna balioan jarriz."
     },
-    "core": {
-      "title": "Nukleoa",
-      "intro": "Hiru gauza mugitzen gaituzte:",
-      "events": "Ekitaldiak: kontzertuak eta jaialdiak. Jakin zer dagoen eta non.",
-      "bands": "Taldeak: nor soinu egiten duen, nor jotzen duen, nor gustatzen zaigun.",
-      "scene": "Eskena bizia: sustatzaileak, antolatzaileak, jaialdiak eta aretoak guzti hau posible egiten dutenak."
-    },
-    "purpose": {
-      "title": "Zertarako balio du Nafarrock",
-      "visibility": "Ikusgarri egitea gertatzen dena: kontzertuak, taldeak, espazioak.",
-      "connect": "Eskenara konektatzea: publiko, taldeak, espazioak, sustatzaileak.",
-      "voice": "Ahots kulturala izatea: rock, punk, metal eta etorriko dena."
-    },
-    "where": {
-      "title": "Non gaude",
-      "p": "Euskal Herrian eta Nafarroan zentratzen gara. Eskena bizi den lurraldea da, laguntzen nahi duguna."
+    "future": {
+      "title": "Etorkizunari begira",
+      "p1": "Nafar Rock plataforma digital gisa sortu da, baina proiektuak hazteko bokazioa du.",
+      "p2": "Epe luzerako helburuen artean dago rockarekin lotutako kultur ekimenak sustatzea, besteak beste Nafarroako eta Euskal Herriko bandak biltzen dituzten ekitaldi edo jaialdiak antolatzeko aukera.",
+      "p3": "Musika, kultura eta euskara elkarrekin bizi eta hazten jarrai dezaten sortutako espazio bat, rock eszenaren barruan."
     },
     "start": {
       "title": "Nola hasi",
-      "p": "Sartu Ekitaldietara kontzertuak eta jaialdiak ikusteko. Arakatu Taldeak nor jotzen duen aurkitzeko. Eta pasa Eskenatik aretoak, sustatzaileak, antolatzaileak eta jaialdiak ikusteko."
+      "eventsIntro": "Sartu",
+      "eventsOutro": "atalean kontzertuak ikusteko.",
+      "bandsIntro": "Arakatu",
+      "bandsOutro": "atala nor ari den jotzen ezagutzeko."
     },
     "footer": "Plataforma kulturala · Rock eskena · Euskal Herria · Nafarroa",
     "metadata": {
-      "title": "Gida",
+      "title": "Nafarrock",
       "description": "Zer da Nafarrock: ikusgarritasuna, kontzertuak eta Euskal Herriko eta Nafarroako rock eskenako taldeak"
     }
   },

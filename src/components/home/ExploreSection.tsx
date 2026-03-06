@@ -5,6 +5,8 @@ import { useRef } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
+import { ESCENA_HIDDEN } from "@/lib/feature-flags";
+
 const EDITORIAL_MVP_MODE = true;
 
 export function ExploreSection() {
@@ -30,14 +32,18 @@ export function ExploreSection() {
       delay: 0.1,
       size: "small",
     },
-    {
-      href: "/escena",
-      titleKey: "scene.title" as const,
-      descKey: EDITORIAL_MVP_MODE ? "scene.desc" : "scene.descFull",
-      color: "punk-acid",
-      delay: 0.2,
-      size: "small",
-    },
+    ...(!ESCENA_HIDDEN
+      ? [
+          {
+            href: "/escena",
+            titleKey: "scene.title" as const,
+            descKey: EDITORIAL_MVP_MODE ? "scene.desc" : "scene.descFull",
+            color: "punk-acid",
+            delay: 0.2,
+            size: "small",
+          },
+        ]
+      : []),
     {
       href: "/guia",
       titleKey: "guide.title" as const,

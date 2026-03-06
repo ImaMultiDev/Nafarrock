@@ -21,11 +21,13 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { SOCIAL_LINKS } from "@/lib/social-links";
 
+import { ESCENA_HIDDEN } from "@/lib/feature-flags";
+
 const navLinks = [
   { href: "/", labelKey: "home" as const },
   { href: "/eventos", labelKey: "events" as const },
   { href: "/bandas", labelKey: "bands" as const },
-  { href: "/escena", labelKey: "scene" as const },
+  ...(!ESCENA_HIDDEN ? [{ href: "/escena", labelKey: "scene" as const }] : []),
 ];
 
 const MANUAL_ROLES = [
@@ -83,7 +85,7 @@ function isActivePath(pathname: string, href: string): boolean {
     return pathname === "/bolos" || pathname.startsWith("/bolos/");
   if (href === "/bolos-nav")
     return pathname === "/bolos" || pathname.startsWith("/bolos/");
-  if (href === "/escena") {
+  if (href === "/escena" && !ESCENA_HIDDEN) {
     return (
       pathname === "/escena" ||
       pathname.startsWith("/promotores") ||
@@ -170,7 +172,7 @@ export function Header() {
                       : "text-punk-white"
                   }`}
                 >
-                  Eventos
+                  {t(link.labelKey)}
                 </Link>
               );
             }

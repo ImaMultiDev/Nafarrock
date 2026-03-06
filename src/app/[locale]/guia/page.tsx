@@ -1,112 +1,92 @@
+import Image from "next/image";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { PageLayout } from "@/components/ui/PageLayout";
 
-export const metadata = {
-  title: "Guía",
-  description:
-    "Qué es Nafarrock: visibilidad, conciertos y bandas de la escena rock en Euskal Herria y Navarra",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("guide.metadata");
+  return {
+    title: t("title"),
+    description: t("description"),
+  };
+}
 
-export default function GuiaPage() {
+export default async function NafarrockPage() {
+  const t = await getTranslations("guide");
+  const tNav = await getTranslations("common.nav");
+
   return (
     <PageLayout>
       <div className="mx-auto max-w-3xl">
         <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl">
-          GUÍA
+          {t("title")}
         </h1>
         <p className="mt-3 font-punch text-xs uppercase tracking-widest text-punk-red">
-          Qué es Nafarrock
+          {t("subtitle")}
         </p>
 
-        <article className="mt-10 space-y-8 font-body leading-relaxed">
+        <article className="mt-10 space-y-10 font-body leading-relaxed">
           <section>
             <h2 className="font-display text-2xl tracking-tighter text-punk-white">
-              Lo esencial
+              {t("why.title")}
             </h2>
             <p className="mt-3 text-punk-white/90">
-              <strong className="text-punk-red">Nafarrock</strong> es una plataforma cultural
-              centrada en la escena rock: punk, hardcore, metal, indie y derivados en{" "}
-              <strong className="text-punk-green">Euskal Herria</strong> y{" "}
-              <strong className="text-punk-green">Navarra</strong>.
+              {t("why.p1")}
             </p>
             <p className="mt-4 text-punk-white/90">
-              No somos un directorio institucional ni una agenda cultural genérica.
-              Estamos aquí para dar <strong>visibilidad</strong>, <strong>foco</strong> y{" "}
-              <strong>voz</strong> a lo que ocurre en la escena.
+              {t("why.p2")}
             </p>
           </section>
 
           <section>
             <h2 className="font-display text-2xl tracking-tighter text-punk-white">
-              El núcleo
+              {t("future.title")}
             </h2>
             <p className="mt-3 text-punk-white/90">
-              Lo que nos mueve son tres cosas:
+              {t("future.p1")}
             </p>
-            <ul className="mt-4 space-y-2 text-punk-white/90">
-              <li className="flex gap-3">
-                <span className="text-punk-red font-display">—</span>
-                <span><strong>Los eventos</strong>: conciertos y festivales. Que sepas qué hay y dónde.</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-punk-red font-display">—</span>
-                <span><strong>Las bandas</strong>: quiénes suenan, quiénes tocan, quiénes molan.</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-punk-red font-display">—</span>
-                <span><strong>La escena viva</strong>: promotores, organizadores, festivales y salas que hacen posible que todo esto ocurra.</span>
-              </li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="font-display text-2xl tracking-tighter text-punk-white">
-              Para qué sirve Nafarrock
-            </h2>
-            <ul className="mt-4 space-y-2 text-punk-white/90">
-              <li className="flex gap-3">
-                <span className="text-punk-green font-display">·</span>
-                <span><strong>Visibilizar</strong> lo que sucede: conciertos, bandas, espacios.</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-punk-green font-display">·</span>
-                <span><strong>Conectar</strong> a la escena: público, bandas, espacios, promotores.</span>
-              </li>
-              <li className="flex gap-3">
-                <span className="text-punk-green font-display">·</span>
-                <span><strong>Servir de altavoz</strong> cultural: rock, punk, metal y lo que venga.</span>
-              </li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="font-display text-2xl tracking-tighter text-punk-white">
-              Dónde estamos
-            </h2>
-            <p className="mt-3 text-punk-white/90">
-              Nos centramos en <strong>Euskal Herria</strong> y <strong>Navarra</strong>.
-              Es el territorio donde vive la escena que queremos apoyar.
+            <p className="mt-4 text-punk-white/90">
+              {t("future.p2")}
+            </p>
+            <p className="mt-4 text-punk-white/90">
+              {t("future.p3")}
             </p>
           </section>
 
           <section>
             <h2 className="font-display text-2xl tracking-tighter text-punk-white">
-              Cómo empezar
+              {t("start.title")}
             </h2>
             <p className="mt-3 text-punk-white/90">
-              Entra en <Link href="/eventos" className="text-punk-red hover:underline">Eventos</Link> para
-              ver conciertos y festivales. Explora <Link href="/bandas" className="text-punk-green hover:underline">Bandas</Link> para
-              descubrir quién toca. Y pasa por la <Link href="/escena" className="text-punk-pink hover:underline">Escena</Link> para
-              ver salas, promotores, organizadores y festivales.
+              {t("start.eventsIntro")}{" "}
+              <Link href="/eventos" className="text-punk-red hover:underline">
+                {tNav("events")}
+              </Link>{" "}
+              {t("start.eventsOutro")}{" "}
+              {t("start.bandsIntro")}{" "}
+              <Link href="/bandas" className="text-punk-green hover:underline">
+                {tNav("bands")}
+              </Link>{" "}
+              {t("start.bandsOutro")}
             </p>
           </section>
 
           <div className="mt-12 border-t-2 border-punk-white/10 pt-8">
             <p className="font-punch text-xs uppercase tracking-widest text-punk-white/60">
-              Plataforma cultural · Escena rock · Euskal Herria · Navarra
+              {t("footer")}
             </p>
           </div>
         </article>
+
+        <div className="mt-16 flex justify-center">
+          <Image
+            src="/logo.png"
+            alt="Nafarrock"
+            width={400}
+            height={400}
+            className="w-64 sm:w-80 md:w-96"
+          />
+        </div>
       </div>
     </PageLayout>
   );
