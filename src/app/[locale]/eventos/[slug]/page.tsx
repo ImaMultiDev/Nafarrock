@@ -268,11 +268,6 @@ export default async function EventPage({
                   >
                     {be.band.name}
                   </Link>
-                  {be.isHeadliner && (
-                    <span className="font-punch text-xs uppercase tracking-widest text-punk-red">
-                      {tEvent("headliner")}
-                    </span>
-                  )}
                 </li>
               ))}
             </ul>
