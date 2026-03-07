@@ -11,11 +11,10 @@ const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
 const labelClass = "block font-punch text-xs uppercase tracking-widest text-punk-white/70";
 
-type Venue = { id: string; name: string };
 type Festival = { id: string; name: string };
 type Band = { id: string; name: string };
 
-export function EventForm({ venues, festivals, bands }: { venues: Venue[]; festivals: Festival[]; bands: Band[] }) {
+export function EventForm({ festivals, bands }: { festivals: Festival[]; bands: Band[] }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -46,9 +45,9 @@ export function EventForm({ venues, festivals, bands }: { venues: Venue[]; festi
       const el = form?.querySelector<HTMLInputElement>('[name="endDate"]');
       if (el) el.value = data.endDate as string;
     }
-    if (data.venueId) {
-      const el = form?.querySelector<HTMLSelectElement>('[name="venueId"]');
-      if (el) el.value = data.venueId as string;
+    if (data.venueText) {
+      const el = form?.querySelector<HTMLInputElement>('[name="venueText"]');
+      if (el) el.value = data.venueText as string;
     }
     if (data.price) {
       const el = form?.querySelector<HTMLInputElement>('[name="price"]');
@@ -173,7 +172,7 @@ export function EventForm({ venues, festivals, bands }: { venues: Venue[]; festi
         type: formData.get("type"),
         date: date.toISOString(),
         endDate,
-        venueId: formData.get("venueId"),
+        venueText: formData.get("venueText") || undefined,
         festivalId: formData.get("festivalId") || undefined,
         doorsOpen: formData.get("doorsOpen") || undefined,
         description: formData.get("description") || undefined,
@@ -324,22 +323,16 @@ export function EventForm({ venues, festivals, bands }: { venues: Venue[]; festi
       )}
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label htmlFor="venueId" className={labelClass}>
+          <label htmlFor="venueText" className={labelClass}>
             Sala / Recinto (opcional)
           </label>
-          <select id="venueId" name="venueId" className={inputClass}>
-            <option value="">Sin sala / Por confirmar</option>
-            {venues.map((v) => (
-              <option key={v.id} value={v.id}>
-                {v.name}
-              </option>
-            ))}
-          </select>
-          {venues.length === 0 && (
-            <p className="mt-2 font-body text-sm text-punk-white/50">
-              No hay salas aprobadas. Puedes crear el evento sin sala.
-            </p>
-          )}
+          <input
+            id="venueText"
+            name="venueText"
+            type="text"
+            className={inputClass}
+            placeholder="Ej: Plaza de toros de Pamplona, Polideportivo..."
+          />
         </div>
         <div>
           <label htmlFor="festivalId" className={labelClass}>

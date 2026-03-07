@@ -18,7 +18,7 @@ export async function generateMetadata({
   if (!event) return {};
   return {
     title: event.title,
-    description: event.description ?? (event.venue ? `${event.title} en ${event.venue.name}` : event.title),
+    description: event.description ?? (event.venue ? `${event.title} en ${event.venue.name}` : event.venueText ? `${event.title} en ${event.venueText}` : event.title),
   };
 }
 
@@ -196,36 +196,40 @@ export default async function EventPage({
         )}
 
         {/* Lugar */}
-        {event.venue && (
+        {(event.venue || event.venueText) && (
           <div className="mt-12 border-l-4 border-punk-red bg-punk-black/50 p-6">
             <h2 className="font-punch text-xs uppercase tracking-widest text-punk-red/80">
               {tEvent("venue")}
             </h2>
             <p className="mt-2 font-display text-xl text-punk-white">
-              {event.venue.name}
+              {event.venue ? event.venue.name : event.venueText}
             </p>
-            {event.venue.address && (
-              <p className="font-body text-punk-white/70">{event.venue.address}</p>
+            {event.venue && (
+              <>
+                {event.venue.address && (
+                  <p className="font-body text-punk-white/70">{event.venue.address}</p>
+                )}
+                <p className="font-body text-punk-white/70">{event.venue.city}</p>
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <Link
+                    href={`/salas/${event.venue.slug}`}
+                    className="inline-block border-2 border-punk-red px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-red transition-all hover:bg-punk-red hover:text-punk-black"
+                  >
+                    Ver sala →
+                  </Link>
+                  {event.venue.mapUrl && (
+                    <a
+                      href={event.venue.mapUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block border-2 border-punk-white/40 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white/80 transition-all hover:border-punk-green hover:text-punk-green"
+                    >
+                      Ver en mapa →
+                    </a>
+                  )}
+                </div>
+              </>
             )}
-            <p className="font-body text-punk-white/70">{event.venue.city}</p>
-            <div className="mt-4 flex flex-wrap gap-3">
-              <Link
-                href={`/salas/${event.venue.slug}`}
-                className="inline-block border-2 border-punk-red px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-red transition-all hover:bg-punk-red hover:text-punk-black"
-              >
-                Ver sala →
-              </Link>
-              {event.venue.mapUrl && (
-                <a
-                  href={event.venue.mapUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block border-2 border-punk-white/40 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white/80 transition-all hover:border-punk-green hover:text-punk-green"
-                >
-                  Ver en mapa →
-                </a>
-              )}
-            </div>
           </div>
         )}
 

@@ -17,6 +17,7 @@ const updateSchema = z.object({
     }),
   endDate: z.union([z.string(), z.coerce.date()]).optional().nullable().or(z.literal("")),
   venueId: z.string().optional().nullable().or(z.literal("")),
+  venueText: z.string().optional().nullable().or(z.literal("")),
   doorsOpen: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
   descriptionEu: z.string().optional().nullable(),
@@ -84,7 +85,10 @@ export async function PATCH(
     }
     if (newDate != null) updateData.date = newDate;
     if (newEndDate !== undefined) updateData.endDate = newEndDate;
-    if (data.venueId !== undefined) updateData.venueId = (data.venueId && data.venueId.trim()) ? data.venueId : null;
+    if (data.venueText !== undefined) {
+      updateData.venueText = (data.venueText && data.venueText.trim()) ? data.venueText.trim() : null;
+      updateData.venueId = null;
+    }
     if (data.doorsOpen !== undefined) updateData.doorsOpen = data.doorsOpen;
     if (data.description !== undefined) updateData.description = data.description;
     if (data.descriptionEu !== undefined) updateData.descriptionEu = data.descriptionEu;

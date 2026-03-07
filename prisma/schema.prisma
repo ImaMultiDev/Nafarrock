@@ -335,6 +335,7 @@ model Event {
 
   venueId          String?
   venue            Venue?    @relation(fields: [venueId], references: [id], onDelete: SetNull)
+  venueText        String?   // Sala/recinto en texto libre (cuando no hay sala registrada)
   promoterId       String?
   promoter         Promoter? @relation(fields: [promoterId], references: [id], onDelete: SetNull)
   organizerId      String?

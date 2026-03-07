@@ -83,7 +83,7 @@ export default async function EventosPage({ searchParams }: Props) {
                   {event.title}
                 </h2>
                 <p className="mt-1 font-body text-punk-white/70">
-                  {event.venue ? `${event.venue.name} · ${event.venue.city}` : ""}
+                  {event.venue ? `${event.venue.name} · ${event.venue.city}` : event.venueText ?? ""}
                 </p>
                 {(() => {
                   const localBands = (event.bands ?? []).slice(0, 3).map((be) => be.band.name);

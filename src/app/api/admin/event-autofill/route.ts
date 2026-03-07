@@ -105,21 +105,7 @@ export async function POST(req: Request) {
     if (parsedData.endDate) data.endDate = toDatetimeLocal(parsedData.endDate);
 
     if (parsedData.venueName) {
-      let venue = await prisma.venue.findFirst({
-        where: {
-          approved: true,
-          name: { equals: parsedData.venueName, mode: "insensitive" },
-        },
-      });
-      if (!venue) {
-        venue = await prisma.venue.findFirst({
-          where: {
-            approved: true,
-            name: { contains: parsedData.venueName, mode: "insensitive" },
-          },
-        });
-      }
-      if (venue) data.venueId = venue.id;
+      data.venueText = parsedData.venueName.trim();
     }
 
     await prisma.eventAutofillCache.create({

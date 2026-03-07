@@ -32,22 +32,15 @@ type Event = {
   eventLimitExempt: boolean;
   isSoldOut: boolean;
   venueId: string | null;
+  venueText: string | null;
+  venue?: { name: string } | null;
   bands?: { bandId: string; order: number; band?: { id: string; name: string } }[];
   externalBands?: { name: string; order: number }[];
 };
 
-type Venue = { id: string; name: string };
 type Band = { id: string; name: string };
 
-export function EventEditForm({
-  event,
-  venues,
-  bands,
-}: {
-  event: Event;
-  venues: Venue[];
-  bands: Band[];
-}) {
+export function EventEditForm({ event, bands }: { event: Event; bands: Band[] }) {
   const initialCartel: CartelItem[] = (() => {
     const all: { order: number; item: CartelItem }[] = [
       ...(event.bands ?? []).map((be) => ({
@@ -107,7 +100,7 @@ export function EventEditForm({
         date: date.toISOString(),
         endDate,
         doorsOpen: formData.get("doorsOpen") || null,
-        venueId: formData.get("venueId"),
+        venueText: formData.get("venueText") || null,
         description: description || null,
         descriptionEu: descriptionEu || null,
         price: formData.get("price") || null,
@@ -222,15 +215,17 @@ export function EventEditForm({
         </div>
       )}
       <div>
-        <label htmlFor="venueId" className={labelClass}>
-          Sala (opcional)
+        <label htmlFor="venueText" className={labelClass}>
+          Sala / Recinto (opcional)
         </label>
-        <select id="venueId" name="venueId" defaultValue={event.venueId ?? ""} className={inputClass}>
-          <option value="">Sin sala / Por confirmar</option>
-          {venues.map((v) => (
-            <option key={v.id} value={v.id}>{v.name}</option>
-          ))}
-        </select>
+        <input
+          id="venueText"
+          name="venueText"
+          type="text"
+          className={inputClass}
+          defaultValue={event.venue?.name ?? event.venueText ?? ""}
+          placeholder="Ej: Plaza de toros de Pamplona, Polideportivo..."
+        />
       </div>
       <CartelBuilder bands={bands} value={cartel} onChange={setCartel} />
       <div>
