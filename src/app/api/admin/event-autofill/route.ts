@@ -17,7 +17,7 @@ export type EventAutofillData = {
   date?: string;
   endDate?: string;
   doorsOpen?: string;
-  venueId?: string;
+  venueText?: string;
   price?: string;
   ticketUrl?: string;
   webUrl?: string;
