@@ -7,6 +7,7 @@ import { getDateLocale } from "@/lib/date-locale";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { ImageLightbox } from "@/components/ui/ImageLightbox";
 import { SocialLinks, type SocialLinkItem } from "@/components/ui/SocialLinks";
+import { getYouTubeEmbedUrl } from "@/lib/video-embed";
 
 export async function generateMetadata({
   params,
@@ -152,6 +153,23 @@ export default async function BandPage({
           {links.length > 0 && (
             <div className="mt-6">
               <SocialLinks links={links} variant="green" />
+            </div>
+          )}
+
+          {band.featuredVideoUrl && getYouTubeEmbedUrl(band.featuredVideoUrl) && (
+            <div className="mt-6">
+              <h3 className="font-display text-lg tracking-tighter text-punk-white">
+                {t("featuredVideo")}
+              </h3>
+              <div className="mt-3 aspect-video w-full max-w-2xl overflow-hidden border-2 border-punk-green/50">
+                <iframe
+                  src={getYouTubeEmbedUrl(band.featuredVideoUrl)!}
+                  title={t("featuredVideo")}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="h-full w-full"
+                />
+              </div>
             </div>
           )}
 

@@ -26,6 +26,7 @@ const updateSchema = z.object({
   youtubeUrl: z.string().url().optional().nullable().or(z.literal("")),
   webUrl: z.string().url().optional().nullable().or(z.literal("")),
   merchUrl: z.string().url().optional().nullable().or(z.literal("")),
+  featuredVideoUrl: z.string().url().optional().nullable().or(z.literal("")),
   logoUrl: z.string().optional().nullable(),
   imageUrl: z.string().optional().nullable(),
   images: z.array(z.string()).optional(),
@@ -75,6 +76,7 @@ export async function PATCH(req: Request) {
     if (data.youtubeUrl !== undefined) updateData.youtubeUrl = cleanUrl(data.youtubeUrl);
     if (data.webUrl !== undefined) updateData.webUrl = cleanUrl(data.webUrl);
     if (data.merchUrl !== undefined) updateData.merchUrl = cleanUrl(data.merchUrl);
+    if (data.featuredVideoUrl !== undefined) updateData.featuredVideoUrl = cleanUrl(data.featuredVideoUrl);
     if (data.logoUrl !== undefined) updateData.logoUrl = data.logoUrl;
     if (data.imageUrl !== undefined) updateData.imageUrl = data.imageUrl;
     if (data.images !== undefined) updateData.images = data.images;

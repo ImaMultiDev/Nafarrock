@@ -45,6 +45,7 @@ export function BandProposalForm({ genres }: { genres: string[] }) {
         youtubeUrl: formData.get("youtubeUrl") || undefined,
         webUrl: formData.get("webUrl") || undefined,
         merchUrl: formData.get("merchUrl") || undefined,
+        featuredVideoUrl: formData.get("featuredVideoUrl") || undefined,
         logoUrl: logoUrl || undefined,
         imageUrl: imageUrl || undefined,
         images,
@@ -188,6 +189,21 @@ export function BandProposalForm({ genres }: { genres: string[] }) {
             Tienda / Merch
           </label>
           <input id="merchUrl" name="merchUrl" type="url" className={inputClass} placeholder="https://..." />
+        </div>
+        <div className="sm:col-span-2">
+          <label htmlFor="featuredVideoUrl" className={labelClass}>
+            Vídeo destacado (opcional)
+          </label>
+          <input
+            id="featuredVideoUrl"
+            name="featuredVideoUrl"
+            type="url"
+            className={inputClass}
+            placeholder="https://www.youtube.com/watch?v=... o https://youtu.be/..."
+          />
+          <p className="mt-1 font-body text-xs text-punk-white/50">
+            Canción o vídeo representativo de la banda (YouTube)
+          </p>
         </div>
       </div>
       <div className="flex gap-4">

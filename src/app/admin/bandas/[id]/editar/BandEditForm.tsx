@@ -29,6 +29,7 @@ type Band = {
   youtubeUrl: string | null;
   webUrl: string | null;
   merchUrl: string | null;
+  featuredVideoUrl: string | null;
   approved: boolean;
 };
 
@@ -70,6 +71,7 @@ export function BandEditForm({ band, genres }: { band: Band; genres: string[] })
         youtubeUrl: formData.get("youtubeUrl") || null,
         webUrl: formData.get("webUrl") || null,
         merchUrl: formData.get("merchUrl") || null,
+        featuredVideoUrl: formData.get("featuredVideoUrl") || null,
         approved: formData.get("approved") === "on",
         logoUrl,
         imageUrl,
@@ -242,6 +244,22 @@ export function BandEditForm({ band, genres }: { band: Band; genres: string[] })
             Tienda / Merch
           </label>
           <input id="merchUrl" name="merchUrl" type="url" defaultValue={band.merchUrl ?? ""} className={inputClass} placeholder="https://..." />
+        </div>
+        <div className="sm:col-span-2">
+          <label htmlFor="featuredVideoUrl" className={labelClass}>
+            Vídeo destacado (opcional)
+          </label>
+          <input
+            id="featuredVideoUrl"
+            name="featuredVideoUrl"
+            type="url"
+            defaultValue={band.featuredVideoUrl ?? ""}
+            className={inputClass}
+            placeholder="https://www.youtube.com/watch?v=... o https://youtu.be/..."
+          />
+          <p className="mt-1 font-body text-xs text-punk-white/50">
+            Canción o vídeo representativo de la banda (YouTube, etc.)
+          </p>
         </div>
       </div>
       <div className="flex gap-4">

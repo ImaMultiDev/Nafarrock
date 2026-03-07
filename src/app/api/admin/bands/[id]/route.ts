@@ -23,6 +23,7 @@ const updateSchema = z.object({
   youtubeUrl: z.string().url().optional().nullable().or(z.literal("")),
   webUrl: z.string().url().optional().nullable().or(z.literal("")),
   merchUrl: z.string().url().optional().nullable().or(z.literal("")),
+  featuredVideoUrl: z.string().url().optional().nullable().or(z.literal("")),
   status: z.enum(["ACTIVE", "INACTIVE", "PAUSED"]).optional(),
   isActive: z.boolean().optional(),
   isEmerging: z.boolean().optional(),
@@ -73,6 +74,7 @@ export async function PATCH(
     if (data.youtubeUrl !== undefined) updateData.youtubeUrl = cleanUrl(data.youtubeUrl);
     if (data.webUrl !== undefined) updateData.webUrl = cleanUrl(data.webUrl);
     if (data.merchUrl !== undefined) updateData.merchUrl = cleanUrl(data.merchUrl);
+    if (data.featuredVideoUrl !== undefined) updateData.featuredVideoUrl = cleanUrl(data.featuredVideoUrl);
     if (data.status !== undefined) updateData.status = data.status;
     if (data.isActive != null) updateData.isActive = data.isActive;
     if (data.isEmerging != null) updateData.isEmerging = data.isEmerging;

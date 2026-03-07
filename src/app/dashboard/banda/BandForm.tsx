@@ -31,6 +31,7 @@ type Band = {
   youtubeUrl: string | null;
   webUrl: string | null;
   merchUrl: string | null;
+  featuredVideoUrl: string | null;
   logoUrl: string | null;
   images: string[];
   members?: { name: string; instrument: string; order: number }[];
@@ -78,6 +79,7 @@ export function BandForm({ band, genres }: { band: Band; genres: string[] }) {
         youtubeUrl: formData.get("youtubeUrl") || null,
         webUrl: formData.get("webUrl") || null,
         merchUrl: formData.get("merchUrl") || null,
+        featuredVideoUrl: formData.get("featuredVideoUrl") || null,
         logoUrl: logoUrl || null,
         images,
         members: members
@@ -201,6 +203,11 @@ export function BandForm({ band, genres }: { band: Band; genres: string[] }) {
       <div>
         <label htmlFor="merchUrl" className={labelClass}>Tienda / Merch</label>
         <input id="merchUrl" name="merchUrl" type="url" placeholder="https://..." defaultValue={band.merchUrl ?? ""} className={inputClass} />
+      </div>
+      <div>
+        <label htmlFor="featuredVideoUrl" className={labelClass}>Vídeo destacado</label>
+        <input id="featuredVideoUrl" name="featuredVideoUrl" type="url" placeholder="https://youtube.com/watch?v=..." defaultValue={band.featuredVideoUrl ?? ""} className={inputClass} />
+        <p className="mt-1 font-body text-xs text-punk-white/50">Canción o vídeo representativo (YouTube)</p>
       </div>
       <button type="submit" disabled={loading} className="border-2 border-punk-pink bg-punk-pink px-8 py-3 font-punch text-sm uppercase tracking-widest text-punk-black hover:bg-punk-pink/90 disabled:opacity-50">
         {loading ? "Guardando..." : "Guardar"}

@@ -161,6 +161,7 @@ export function BandForm({ genres }: { genres: string[] }) {
         status: formData.get("status") || "ACTIVE",
         spotifyUrl: formData.get("spotifyUrl") || undefined,
         bandcampUrl: formData.get("bandcampUrl") || undefined,
+        featuredVideoUrl: formData.get("featuredVideoUrl") || undefined,
         instagramUrl: formData.get("instagramUrl") || undefined,
         facebookUrl: formData.get("facebookUrl") || undefined,
         youtubeUrl: formData.get("youtubeUrl") || undefined,
@@ -366,6 +367,21 @@ export function BandForm({ genres }: { genres: string[] }) {
             Tienda / Merch
           </label>
           <input id="merchUrl" name="merchUrl" type="url" className={inputClass} placeholder="https://..." />
+        </div>
+        <div className="sm:col-span-2">
+          <label htmlFor="featuredVideoUrl" className={labelClass}>
+            Vídeo destacado (opcional)
+          </label>
+          <input
+            id="featuredVideoUrl"
+            name="featuredVideoUrl"
+            type="url"
+            className={inputClass}
+            placeholder="https://www.youtube.com/watch?v=... o https://youtu.be/..."
+          />
+          <p className="mt-1 font-body text-xs text-punk-white/50">
+            Canción o vídeo representativo de la banda (YouTube, etc.)
+          </p>
         </div>
       </div>
       <div className="flex gap-4">

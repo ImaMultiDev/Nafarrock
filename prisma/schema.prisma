@@ -123,6 +123,7 @@ model Band {
   youtubeUrl   String?
   webUrl       String?
   merchUrl     String?  // Tienda / merchandising
+  featuredVideoUrl String?  // Vídeo destacado (YouTube, etc.) - canción representativa
   // Aprobación
   approved    Boolean  @default(false)
   approvedAt  DateTime?

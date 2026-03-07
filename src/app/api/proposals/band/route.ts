@@ -23,6 +23,7 @@ const createSchema = z.object({
   youtubeUrl: z.string().url().optional().or(z.literal("")),
   webUrl: z.string().url().optional().or(z.literal("")),
   merchUrl: z.string().url().optional().or(z.literal("")),
+  featuredVideoUrl: z.string().url().optional().or(z.literal("")),
 });
 
 export async function POST(req: Request) {
@@ -66,6 +67,7 @@ export async function POST(req: Request) {
         youtubeUrl: data.youtubeUrl || null,
         webUrl: data.webUrl || null,
         merchUrl: data.merchUrl || null,
+        featuredVideoUrl: data.featuredVideoUrl || null,
         status: data.status ?? "ACTIVE",
         isActive: data.status !== "INACTIVE",
         isEmerging: false,
