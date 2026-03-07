@@ -7,7 +7,8 @@ import { startOfToday } from "@/lib/date";
 
 type CartelItem =
   | { type: "band"; bandId: string }
-  | { type: "external"; name: string };
+  | { type: "external"; name: string }
+  | { type: "otherLocal"; name: string };
 
 function buildBandEventsFromCartel(cartel: CartelItem[]) {
   return cartel
@@ -24,6 +25,16 @@ function buildExternalBandsFromCartel(cartel: CartelItem[]) {
   return cartel
     .map((i, globalOrder) => (i.type === "external" ? { ...i, globalOrder } : null))
     .filter((x): x is { type: "external"; name: string; globalOrder: number } => x !== null)
+    .map((i) => ({
+      name: i.name,
+      order: i.globalOrder,
+    }));
+}
+
+function buildOtherLocalGenresFromCartel(cartel: CartelItem[]) {
+  return cartel
+    .map((i, globalOrder) => (i.type === "otherLocal" ? { ...i, globalOrder } : null))
+    .filter((x): x is { type: "otherLocal"; name: string; globalOrder: number } => x !== null)
     .map((i) => ({
       name: i.name,
       order: i.globalOrder,
@@ -59,6 +70,7 @@ const createSchema = z.object({
       z.union([
         z.object({ type: z.literal("band"), bandId: z.string() }),
         z.object({ type: z.literal("external"), name: z.string().min(1) }),
+        z.object({ type: z.literal("otherLocal"), name: z.string().min(1) }),
       ])
     )
     .optional(),
@@ -124,6 +136,9 @@ export async function POST(req: Request) {
         },
         externalBands: {
           create: buildExternalBandsFromCartel(data.cartel ?? []),
+        },
+        otherLocalGenres: {
+          create: buildOtherLocalGenresFromCartel(data.cartel ?? []),
         },
       },
     });

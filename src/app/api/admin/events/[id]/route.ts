@@ -38,6 +38,7 @@ const updateSchema = z.object({
       z.union([
         z.object({ type: z.literal("band"), bandId: z.string() }),
         z.object({ type: z.literal("external"), name: z.string().min(1) }),
+        z.object({ type: z.literal("otherLocal"), name: z.string().min(1) }),
       ])
     )
     .optional(),
@@ -113,11 +114,15 @@ export async function PATCH(
     if (cartel !== undefined) {
       await prisma.bandEvent.deleteMany({ where: { eventId: id } });
       await prisma.eventExternalBand.deleteMany({ where: { eventId: id } });
+      await prisma.eventOtherLocalGenre.deleteMany({ where: { eventId: id } });
       const bandCreates = cartel
         .map((i, globalOrder) => (i.type === "band" ? { bandId: i.bandId, order: globalOrder, isHeadliner: globalOrder === 0 } : null))
         .filter((x): x is { bandId: string; order: number; isHeadliner: boolean } => x !== null);
       const externalCreates = cartel
         .map((i, globalOrder) => (i.type === "external" ? { name: i.name, order: globalOrder } : null))
+        .filter((x): x is { name: string; order: number } => x !== null);
+      const otherLocalCreates = cartel
+        .map((i, globalOrder) => (i.type === "otherLocal" ? { name: i.name, order: globalOrder } : null))
         .filter((x): x is { name: string; order: number } => x !== null);
       if (bandCreates.length > 0) {
         await prisma.bandEvent.createMany({
@@ -127,6 +132,11 @@ export async function PATCH(
       if (externalCreates.length > 0) {
         await prisma.eventExternalBand.createMany({
           data: externalCreates.map((e) => ({ eventId: id, ...e })),
+        });
+      }
+      if (otherLocalCreates.length > 0) {
+        await prisma.eventOtherLocalGenre.createMany({
+          data: otherLocalCreates.map((o) => ({ eventId: id, ...o })),
         });
       }
     }

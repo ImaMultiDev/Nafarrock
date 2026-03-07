@@ -349,6 +349,7 @@ model Event {
   createdByUser     User?     @relation("EventCreator", fields: [createdByUserId], references: [id], onDelete: SetNull)
   bands             BandEvent[]
   externalBands     EventExternalBand[]
+  otherLocalGenres   EventOtherLocalGenre[]
 
   @@index([slug])
   @@index([date])
@@ -393,6 +394,21 @@ model EventExternalBand {
 
   @@index([eventId])
   @@map("event_external_bands")
+}
+
+// Otro género local: artistas del territorio que no son rock (rap, trap, etc.)
+// El usuario añade el género entre paréntesis, ej: "Artista (rap)"
+model EventOtherLocalGenre {
+  id       String   @id @default(cuid())
+  eventId  String
+  name     String   // ej: "Artista (rap)"
+  order    Int      @default(0)
+  createdAt DateTime @default(now())
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+  @@map("event_other_local_genres")
 }
 
 // Promotores

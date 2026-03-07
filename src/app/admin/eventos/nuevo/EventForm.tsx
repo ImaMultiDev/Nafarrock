@@ -186,7 +186,11 @@ export function EventForm({ festivals, bands }: { festivals: Festival[]; bands: 
         images,
         isSoldOut: (formData.get("isSoldOut") as string) === "on",
         cartel: cartel.map((i) =>
-          i.type === "band" ? { type: "band" as const, bandId: i.bandId } : { type: "external" as const, name: i.name }
+          i.type === "band"
+            ? { type: "band" as const, bandId: i.bandId }
+            : i.type === "otherLocal"
+              ? { type: "otherLocal" as const, name: i.name }
+              : { type: "external" as const, name: i.name }
         ),
       }),
     });

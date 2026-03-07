@@ -280,6 +280,7 @@ export default async function EventPage({
           const cartel = getEventCartel({
             bands: event.bands,
             externalBands: event.externalBands ?? [],
+            otherLocalGenres: event.otherLocalGenres ?? [],
           });
           if (cartel.length === 0) return null;
           return (
@@ -297,10 +298,12 @@ export default async function EventPage({
                       >
                         {item.name}
                       </Link>
+                    ) : item.type === "otherLocal" ? (
+                      <span className="font-display text-lg text-punk-red">{item.name}</span>
                     ) : (
                       <span className="font-display text-lg text-punk-white">{item.name}</span>
                     )}
-                    {item.type === "band" && (
+                    {(item.type === "band" || item.type === "otherLocal") && (
                       <span className="shrink-0 font-punch text-[10px] tracking-widest text-punk-green/90 sm:ml-auto sm:text-xs">
                         {tEvent("localBand")}
                       </span>

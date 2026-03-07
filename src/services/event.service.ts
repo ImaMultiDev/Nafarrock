@@ -54,6 +54,7 @@ export async function getEvents(filters: EventFilters = {}) {
         venue: true,
         bands: { include: { band: true }, orderBy: { order: "asc" } },
         externalBands: { orderBy: { order: "asc" } },
+        otherLocalGenres: { orderBy: { order: "asc" } },
       },
       skip,
       take: pageSize,
@@ -74,18 +75,21 @@ export async function getEventBySlug(slug: string) {
       organizer: true,
       bands: { include: { band: true }, orderBy: { order: "asc" } },
       externalBands: { orderBy: { order: "asc" } },
+      otherLocalGenres: { orderBy: { order: "asc" } },
     },
   });
 }
 
-/** Cartel unificado: bandas registradas + externas, ordenadas por order */
+/** Cartel unificado: bandas registradas + externas + otro género local, ordenadas por order */
 export type CartelItem =
   | { type: "band"; id: string; name: string; slug: string; order: number }
-  | { type: "external"; id: string; name: string; order: number };
+  | { type: "external"; id: string; name: string; order: number }
+  | { type: "otherLocal"; id: string; name: string; order: number };
 
 export function getEventCartel(event: {
   bands: { id: string; order: number; band: { name: string; slug: string } }[];
   externalBands: { id: string; name: string; order: number }[];
+  otherLocalGenres?: { id: string; name: string; order: number }[];
 }): CartelItem[] {
   const items: CartelItem[] = [
     ...event.bands.map((be) => ({
@@ -100,6 +104,12 @@ export function getEventCartel(event: {
       id: eb.id,
       name: eb.name,
       order: eb.order,
+    })),
+    ...(event.otherLocalGenres ?? []).map((ol) => ({
+      type: "otherLocal" as const,
+      id: ol.id,
+      name: ol.name,
+      order: ol.order,
     })),
   ];
   return items.sort((a, b) => a.order - b.order);

@@ -87,7 +87,10 @@ export default async function EventosPage({ searchParams }: Props) {
                 </p>
                 {(() => {
                   const localBands = (event.bands ?? []).slice(0, 3).map((be) => be.band.name);
-                  const totalBands = (event.bands?.length ?? 0) + (event.externalBands?.length ?? 0);
+                  const totalBands =
+                    (event.bands?.length ?? 0) +
+                    (event.externalBands?.length ?? 0) +
+                    (event.otherLocalGenres?.length ?? 0);
                   if (totalBands === 0) return null;
                   return (
                     <p className="mt-1 font-body text-sm text-punk-green/90">

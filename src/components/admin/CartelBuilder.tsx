@@ -5,7 +5,8 @@ import { ChevronUp, ChevronDown, X } from "lucide-react";
 
 export type CartelItem =
   | { type: "band"; bandId: string; name: string }
-  | { type: "external"; name: string };
+  | { type: "external"; name: string }
+  | { type: "otherLocal"; name: string }; // ej: "Artista (rap)" - territorio, otro género
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
@@ -19,6 +20,7 @@ type Props = {
 
 export function CartelBuilder({ bands, value, onChange }: Props) {
   const [externalInput, setExternalInput] = useState("");
+  const [otherLocalInput, setOtherLocalInput] = useState("");
 
   const addBand = (bandId: string) => {
     const band = bands.find((b) => b.id === bandId);
@@ -31,6 +33,13 @@ export function CartelBuilder({ bands, value, onChange }: Props) {
     if (!name) return;
     onChange([...value, { type: "external", name }]);
     setExternalInput("");
+  };
+
+  const addOtherLocal = () => {
+    const name = otherLocalInput.trim();
+    if (!name) return;
+    onChange([...value, { type: "otherLocal", name }]);
+    setOtherLocalInput("");
   };
 
   const remove = (index: number) => {
@@ -53,7 +62,7 @@ export function CartelBuilder({ bands, value, onChange }: Props) {
       <div>
         <label className={labelClass}>Cartel (orden manual)</label>
         <p className="mt-1 font-body text-xs text-punk-white/50">
-          Añade bandas registradas o externas. El orden se respeta en la visualización.
+          Añade bandas registradas, externas u otro género local (rap, trap…). Indica el género entre paréntesis. El orden se respeta en la visualización.
         </p>
       </div>
 
@@ -97,6 +106,24 @@ export function CartelBuilder({ bands, value, onChange }: Props) {
             + Añadir
           </button>
         </div>
+        <div className="flex gap-2 flex-1 min-w-[200px]">
+          <input
+            type="text"
+            value={otherLocalInput}
+            onChange={(e) => setOtherLocalInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addOtherLocal())}
+            placeholder="Otro género local (ej: Artista (rap))"
+            className={inputClass}
+          />
+          <button
+            type="button"
+            onClick={addOtherLocal}
+            disabled={!otherLocalInput.trim()}
+            className="shrink-0 border-2 border-punk-red/50 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-red/80 hover:border-punk-red hover:text-punk-red disabled:opacity-50"
+          >
+            + Añadir
+          </button>
+        </div>
       </div>
 
       {value.length > 0 && (
@@ -128,11 +155,15 @@ export function CartelBuilder({ bands, value, onChange }: Props) {
               </div>
               <span
                 className={`flex-1 font-body ${
-                  item.type === "band" ? "text-punk-green" : "text-punk-white"
+                  item.type === "band"
+                    ? "text-punk-green"
+                    : item.type === "otherLocal"
+                      ? "text-punk-red"
+                      : "text-punk-white"
                 }`}
               >
-                {item.type === "band" ? item.name : item.name}
-                {item.type === "band" && (
+                {item.name}
+                {(item.type === "band" || item.type === "otherLocal") && (
                   <span className="ml-2 font-punch text-xs text-punk-white/60">● Banda local</span>
                 )}
               </span>

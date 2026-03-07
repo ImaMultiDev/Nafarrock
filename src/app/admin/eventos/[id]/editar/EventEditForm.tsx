@@ -36,6 +36,7 @@ type Event = {
   venue?: { name: string } | null;
   bands?: { bandId: string; order: number; band?: { id: string; name: string } }[];
   externalBands?: { name: string; order: number }[];
+  otherLocalGenres?: { name: string; order: number }[];
 };
 
 type Band = { id: string; name: string };
@@ -50,6 +51,10 @@ export function EventEditForm({ event, bands }: { event: Event; bands: Band[] })
       ...(event.externalBands ?? []).map((eb) => ({
         order: eb.order,
         item: { type: "external" as const, name: eb.name },
+      })),
+      ...(event.otherLocalGenres ?? []).map((ol) => ({
+        order: ol.order,
+        item: { type: "otherLocal" as const, name: ol.name },
       })),
     ];
     return all.sort((a, b) => a.order - b.order).map((x) => x.item);
@@ -112,7 +117,11 @@ export function EventEditForm({ event, bands }: { event: Event; bands: Band[] })
         imageUrl: imageUrl || null,
         images,
         cartel: cartel.map((i) =>
-          i.type === "band" ? { type: "band" as const, bandId: i.bandId } : { type: "external" as const, name: i.name }
+          i.type === "band"
+            ? { type: "band" as const, bandId: i.bandId }
+            : i.type === "otherLocal"
+              ? { type: "otherLocal" as const, name: i.name }
+              : { type: "external" as const, name: i.name }
         ),
         isSoldOut: (formData.get("isSoldOut") as string) === "on",
         isApproved: (formData.get("approved") as string) === "on",
