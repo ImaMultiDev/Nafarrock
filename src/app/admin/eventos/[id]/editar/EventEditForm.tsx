@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 import { TranslateButton } from "@/components/admin/TranslateButton";
-import { CartelBuilder, type CartelItem } from "@/components/admin/CartelBuilder";
+import { BandSelector } from "@/components/admin/BandSelector";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
@@ -34,35 +34,17 @@ type Event = {
   venueId: string | null;
   venueText: string | null;
   venue?: { name: string } | null;
-  bands?: { bandId: string; order: number; band?: { id: string; name: string } }[];
-  externalBands?: { name: string; order: number }[];
-  otherLocalGenres?: { name: string; order: number }[];
+  bands?: { bandId: string; band?: { id: string; name: string } }[];
 };
 
 type Band = { id: string; name: string };
 
 export function EventEditForm({ event, bands }: { event: Event; bands: Band[] }) {
-  const initialCartel: CartelItem[] = (() => {
-    const all: { order: number; item: CartelItem }[] = [
-      ...(event.bands ?? []).map((be) => ({
-        order: be.order,
-        item: { type: "band" as const, bandId: be.bandId, name: be.band?.name ?? "" },
-      })),
-      ...(event.externalBands ?? []).map((eb) => ({
-        order: eb.order,
-        item: { type: "external" as const, name: eb.name },
-      })),
-      ...(event.otherLocalGenres ?? []).map((ol) => ({
-        order: ol.order,
-        item: { type: "otherLocal" as const, name: ol.name },
-      })),
-    ];
-    return all.sort((a, b) => a.order - b.order).map((x) => x.item);
-  })();
+  const initialBandIds = (event.bands ?? []).map((be) => be.bandId);
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [cartel, setCartel] = useState<CartelItem[]>(initialCartel);
+  const [bandIds, setBandIds] = useState<string[]>(initialBandIds);
   const [description, setDescription] = useState(event.description ?? "");
   const [descriptionEu, setDescriptionEu] = useState(event.descriptionEu ?? "");
   const [imageUrl, setImageUrl] = useState(event.imageUrl ?? "");
@@ -116,13 +98,7 @@ export function EventEditForm({ event, bands }: { event: Event; bands: Band[] })
         webUrl: formData.get("webUrl") || null,
         imageUrl: imageUrl || null,
         images,
-        cartel: cartel.map((i) =>
-          i.type === "band"
-            ? { type: "band" as const, bandId: i.bandId }
-            : i.type === "otherLocal"
-              ? { type: "otherLocal" as const, name: i.name }
-              : { type: "external" as const, name: i.name }
-        ),
+        bandIds,
         isSoldOut: (formData.get("isSoldOut") as string) === "on",
         isApproved: (formData.get("approved") as string) === "on",
         eventLimitExempt: (formData.get("eventLimitExempt") as string) === "on",
@@ -236,7 +212,7 @@ export function EventEditForm({ event, bands }: { event: Event; bands: Band[] })
           placeholder="Ej: Plaza de toros de Pamplona, Polideportivo..."
         />
       </div>
-      <CartelBuilder bands={bands} value={cartel} onChange={setCartel} />
+      <BandSelector bands={bands} value={bandIds} onChange={setBandIds} />
       <div>
         <label htmlFor="description" className={labelClass}>
           Descripción

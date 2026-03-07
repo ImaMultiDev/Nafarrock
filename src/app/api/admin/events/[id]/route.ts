@@ -33,15 +33,6 @@ const updateSchema = z.object({
   isApproved: z.boolean().optional(),
   eventLimitExempt: z.boolean().optional(),
   bandIds: z.array(z.string()).optional(),
-  cartel: z
-    .array(
-      z.union([
-        z.object({ type: z.literal("band"), bandId: z.string() }),
-        z.object({ type: z.literal("external"), name: z.string().min(1) }),
-        z.object({ type: z.literal("otherLocal"), name: z.string().min(1) }),
-      ])
-    )
-    .optional(),
 });
 
 export async function PATCH(
@@ -110,33 +101,16 @@ export async function PATCH(
     }
     if (data.eventLimitExempt != null) updateData.eventLimitExempt = data.eventLimitExempt;
 
-    const cartel = data.cartel ?? (data.bandIds != null ? data.bandIds.map((bandId) => ({ type: "band" as const, bandId })) : undefined);
-    if (cartel !== undefined) {
+    if (data.bandIds !== undefined) {
       await prisma.bandEvent.deleteMany({ where: { eventId: id } });
-      await prisma.eventExternalBand.deleteMany({ where: { eventId: id } });
-      await prisma.eventOtherLocalGenre.deleteMany({ where: { eventId: id } });
-      const bandCreates = cartel
-        .map((i, globalOrder) => (i.type === "band" ? { bandId: i.bandId, order: globalOrder, isHeadliner: globalOrder === 0 } : null))
-        .filter((x): x is { bandId: string; order: number; isHeadliner: boolean } => x !== null);
-      const externalCreates = cartel
-        .map((i, globalOrder) => (i.type === "external" ? { name: i.name, order: globalOrder } : null))
-        .filter((x): x is { name: string; order: number } => x !== null);
-      const otherLocalCreates = cartel
-        .map((i, globalOrder) => (i.type === "otherLocal" ? { name: i.name, order: globalOrder } : null))
-        .filter((x): x is { name: string; order: number } => x !== null);
-      if (bandCreates.length > 0) {
+      if (data.bandIds.length > 0) {
         await prisma.bandEvent.createMany({
-          data: bandCreates.map((b) => ({ eventId: id, ...b })),
-        });
-      }
-      if (externalCreates.length > 0) {
-        await prisma.eventExternalBand.createMany({
-          data: externalCreates.map((e) => ({ eventId: id, ...e })),
-        });
-      }
-      if (otherLocalCreates.length > 0) {
-        await prisma.eventOtherLocalGenre.createMany({
-          data: otherLocalCreates.map((o) => ({ eventId: id, ...o })),
+          data: data.bandIds.map((bandId, idx) => ({
+            eventId: id,
+            bandId,
+            order: idx,
+            isHeadliner: idx === 0,
+          })),
         });
       }
     }

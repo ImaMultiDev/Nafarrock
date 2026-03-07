@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 import { TranslateButton } from "@/components/admin/TranslateButton";
-import { CartelBuilder, type CartelItem } from "@/components/admin/CartelBuilder";
+import { BandSelector } from "@/components/admin/BandSelector";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
@@ -19,7 +19,7 @@ export function EventForm({ festivals, bands }: { festivals: Festival[]; bands: 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [description, setDescription] = useState("");
-  const [cartel, setCartel] = useState<CartelItem[]>([]);
+  const [bandIds, setBandIds] = useState<string[]>([]);
   const [descriptionEu, setDescriptionEu] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [images, setImages] = useState<string[]>([]);
@@ -185,13 +185,7 @@ export function EventForm({ festivals, bands }: { festivals: Festival[]; bands: 
         imageUrl: imageUrl || undefined,
         images,
         isSoldOut: (formData.get("isSoldOut") as string) === "on",
-        cartel: cartel.map((i) =>
-          i.type === "band"
-            ? { type: "band" as const, bandId: i.bandId }
-            : i.type === "otherLocal"
-              ? { type: "otherLocal" as const, name: i.name }
-              : { type: "external" as const, name: i.name }
-        ),
+        bandIds,
       }),
     });
 
@@ -355,7 +349,7 @@ export function EventForm({ festivals, bands }: { festivals: Festival[]; bands: 
           </p>
         </div>
       </div>
-      <CartelBuilder bands={bands} value={cartel} onChange={setCartel} />
+      <BandSelector bands={bands} value={bandIds} onChange={setBandIds} />
       <div>
         <label htmlFor="description" className={labelClass}>
           Descripción

@@ -12,9 +12,7 @@ export default async function EditarEventoPage({
     where: { id },
     include: {
       venue: true,
-      bands: { include: { band: true }, orderBy: { order: "asc" } },
-      externalBands: { orderBy: { order: "asc" } },
-      otherLocalGenres: { orderBy: { order: "asc" } },
+      bands: { include: { band: true } },
     },
   });
   if (!event) notFound();

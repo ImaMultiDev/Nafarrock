@@ -20,7 +20,7 @@ type Props = { searchParams: Promise<Record<string, string | undefined>> };
 export default async function EventosPage({ searchParams }: Props) {
   const t = await getTranslations("events");
   const tFilters = await getTranslations("filters.eventos");
-  const tEvent = await getTranslations("eventDetail");
+  const tEventDetail = await getTranslations("eventDetail");
   const tActions = await getTranslations("common.actions");
   const locale = await getLocale();
   const dateLocale = getDateLocale(locale);
@@ -85,25 +85,6 @@ export default async function EventosPage({ searchParams }: Props) {
                 <p className="mt-1 font-body text-punk-white/70">
                   {event.venue ? `${event.venue.name} · ${event.venue.city}` : event.venueText ?? ""}
                 </p>
-                {(() => {
-                  const localBands = (event.bands ?? []).slice(0, 3).map((be) => be.band.name);
-                  const totalBands =
-                    (event.bands?.length ?? 0) +
-                    (event.externalBands?.length ?? 0) +
-                    (event.otherLocalGenres?.length ?? 0);
-                  if (totalBands === 0) return null;
-                  return (
-                    <p className="mt-1 font-body text-sm text-punk-green/90">
-                      <span>
-                        {localBands.join(" · ")}
-                        {" · "}
-                        <span className="inline-flex shrink-0 border-2 border-punk-red bg-punk-red/20 px-2 py-0.5 font-punch text-xs uppercase tracking-widest text-punk-red">
-                          {tEvent("cartelCount", { count: totalBands })}
-                        </span>
-                      </span>
-                    </p>
-                  );
-                })()}
               </div>
               <div className="flex shrink-0 flex-wrap gap-2">
                 <span
@@ -117,7 +98,7 @@ export default async function EventosPage({ searchParams }: Props) {
                 </span>
                 {event.isSoldOut && (
                   <span className="border-2 border-punk-red bg-punk-red/30 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-red">
-                    {tEvent("soldOut")}
+                    {tEventDetail("soldOut")}
                   </span>
                 )}
               </div>

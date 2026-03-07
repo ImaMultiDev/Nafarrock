@@ -1,4 +1,4 @@
-import { getEventBySlug, getEventCartel } from "@/services/event.service";
+import { getEventBySlug } from "@/services/event.service";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
@@ -274,46 +274,6 @@ export default async function EventPage({
             </div>
           </div>
         )}
-
-        {/* Cartel de bandas */}
-        {(() => {
-          const cartel = getEventCartel({
-            bands: event.bands,
-            externalBands: event.externalBands ?? [],
-            otherLocalGenres: event.otherLocalGenres ?? [],
-          });
-          if (cartel.length === 0) return null;
-          return (
-            <div className="mt-12">
-              <h2 className="font-display text-2xl tracking-tighter text-punk-white">
-                {tEvent("lineup")}
-              </h2>
-              <ul className="mt-4 space-y-3">
-                {cartel.map((item) => (
-                  <li key={item.id} className="flex flex-row flex-wrap items-center gap-x-2 gap-y-1 border-b border-punk-white/10 pb-3 last:border-0">
-                    {item.type === "band" ? (
-                      <Link
-                        href={`/bandas/${item.slug}`}
-                        className="font-display text-lg text-punk-green transition-colors hover:text-punk-green/80"
-                      >
-                        {item.name}
-                      </Link>
-                    ) : item.type === "otherLocal" ? (
-                      <span className="font-display text-lg text-punk-red">{item.name}</span>
-                    ) : (
-                      <span className="font-display text-lg text-punk-white">{item.name}</span>
-                    )}
-                    {(item.type === "band" || item.type === "otherLocal") && (
-                      <span className="shrink-0 font-punch text-[10px] tracking-widest text-punk-green/90 sm:ml-auto sm:text-xs">
-                        {tEvent("localBand")}
-                      </span>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          );
-        })()}
 
         {/* Descripción */}
         {displayDesc && (
