@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 import { TranslateButton } from "@/components/admin/TranslateButton";
-import { RelatedArtistsSuggestions } from "@/components/admin/RelatedArtistsSuggestions";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
@@ -190,7 +189,6 @@ export function BandForm({ genres }: { genres: string[] }) {
             Banda <strong>{createdBand.name}</strong> registrada correctamente.
           </p>
         </div>
-        <RelatedArtistsSuggestions bandId={createdBand.id} bandName={createdBand.name} />
         <div className="flex gap-4">
           <a
             href="/admin/bandas"

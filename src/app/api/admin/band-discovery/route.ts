@@ -2,19 +2,19 @@ import { NextResponse } from "next/server";
 import { createHash } from "crypto";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin";
-import { searchArtists as spotifySearch } from "@/lib/spotify";
-import { searchArtists as mbSearch, getArtistArea, isFromNavarraOrEuskadi } from "@/lib/musicbrainz";
+import { searchArtists as spotifySearch, isSpotifyConfigured } from "@/lib/spotify";
+import { getArtistArea, isFromNavarraOrEuskadi } from "@/lib/musicbrainz";
 
-const MAX_RESULTS = 10;
+const MAX_RESULTS = 12;
 const CONCURRENCY = 3;
-const FALLBACK_COUNT = 5;
+const FALLBACK_COUNT = 8;
 
 type DiscoveryArtist = {
   id: string;
   name: string;
   imageUrl: string | null;
   spotifyUrl: string | null;
-  source: "spotify" | "musicbrainz";
+  source: "spotify";
   isRegistered: boolean;
 };
 
@@ -52,49 +52,35 @@ export async function GET(req: Request) {
   }
 
   try {
-    const seenNames = new Set<string>();
-    const candidates: Array<{ name: string; id: string; imageUrl: string | null; spotifyUrl: string | null; source: "spotify" | "musicbrainz" }> = [];
-
-    if (process.env.SPOTIFY_CLIENT_ID?.trim() && process.env.SPOTIFY_CLIENT_SECRET?.trim()) {
-      try {
-        const spotifyArtists = await spotifySearch(q, 15);
-        for (const a of spotifyArtists) {
-          const key = normalizeName(a.name);
-          if (seenNames.has(key)) continue;
-          seenNames.add(key);
-          const images = a.images ?? [];
-          const bestImage = images.length > 0
-            ? [...images].sort((x, y) => (y.height ?? 0) - (x.height ?? 0))[0]?.url ?? null
-            : null;
-          candidates.push({
-            name: a.name,
-            id: a.id,
-            imageUrl: bestImage,
-            spotifyUrl: a.external_urls?.spotify ?? `https://open.spotify.com/artist/${a.id}`,
-            source: "spotify",
-          });
-        }
-      } catch (err) {
-        console.error("[band-discovery] Spotify error:", err);
-      }
+    if (!isSpotifyConfigured()) {
+      return NextResponse.json({
+        artists: [],
+        message: "Spotify no está configurado. Configura SPOTIFY_CLIENT_ID y SPOTIFY_CLIENT_SECRET para usar Descubrir bandas.",
+      });
     }
 
+    const candidates: Array<{ name: string; id: string; imageUrl: string | null; spotifyUrl: string | null }> = [];
+
     try {
-      const mbArtists = await mbSearch(q, 15);
-      for (const a of mbArtists) {
-        const key = normalizeName(a.name);
-        if (seenNames.has(key)) continue;
-        seenNames.add(key);
+      const spotifyArtists = await spotifySearch(q, 20, "ES");
+      for (const a of spotifyArtists) {
+        const images = a.images ?? [];
+        const bestImage = images.length > 0
+          ? [...images].sort((x, y) => (y.height ?? 0) - (x.height ?? 0))[0]?.url ?? null
+          : null;
         candidates.push({
           name: a.name,
           id: a.id,
-          imageUrl: null,
-          spotifyUrl: null,
-          source: "musicbrainz",
+          imageUrl: bestImage,
+          spotifyUrl: a.external_urls?.spotify ?? `https://open.spotify.com/artist/${a.id}`,
         });
       }
     } catch (err) {
-      console.error("[band-discovery] MusicBrainz error:", err);
+      console.error("[band-discovery] Spotify error:", err);
+      return NextResponse.json({
+        artists: [],
+        message: "Error al buscar en Spotify. Comprueba las credenciales.",
+      });
     }
 
     if (candidates.length === 0) {
@@ -139,8 +125,8 @@ export async function GET(req: Request) {
         ? filtered.slice(0, MAX_RESULTS)
         : candidates.slice(0, FALLBACK_COUNT).map((c) => ({ ...c, isFromRegion: false }));
 
-    const checkIsRegistered = async (c: typeof toShow[0]): Promise<boolean> => {
-      if (c.source === "spotify" && c.spotifyUrl) {
+    const checkIsRegistered = async (c: (typeof toShow)[0]): Promise<boolean> => {
+      if (c.spotifyUrl) {
         const match = c.spotifyUrl.match(/artist\/([a-zA-Z0-9]+)/);
         const artistId = match?.[1];
         if (artistId) {
@@ -151,9 +137,7 @@ export async function GET(req: Request) {
         }
       }
       const count = await prisma.band.count({
-        where: {
-          name: { equals: c.name, mode: "insensitive" },
-        },
+        where: { name: { equals: c.name, mode: "insensitive" } },
       });
       return count > 0;
     };
@@ -164,7 +148,7 @@ export async function GET(req: Request) {
         name: c.name,
         imageUrl: c.imageUrl,
         spotifyUrl: c.spotifyUrl,
-        source: c.source,
+        source: "spotify" as const,
         isRegistered: await checkIsRegistered(c),
       }))
     );

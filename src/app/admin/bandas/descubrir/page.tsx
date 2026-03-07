@@ -9,7 +9,7 @@ type DiscoveryArtist = {
   name: string;
   imageUrl: string | null;
   spotifyUrl: string | null;
-  source: string;
+  source: "spotify";
   isRegistered: boolean;
 };
 
@@ -74,7 +74,7 @@ export default function DescubrirBandasPage() {
             DESCUBRIR BANDAS
           </h1>
           <p className="mt-2 font-body text-punk-white/60">
-            Busca bandas de la escena (Navarra, Araba, Bizkaia, Gipuzkoa) en Spotify y MusicBrainz
+            Busca bandas en Spotify. Se priorizan las del territorio (Navarra, Araba, Bizkaia, Gipuzkoa).
           </p>
         </div>
         <Link
@@ -131,7 +131,7 @@ export default function DescubrirBandasPage() {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {artists.map((artist) => (
                 <div
-                  key={`${artist.source}-${artist.id}`}
+                  key={artist.id}
                   className="flex items-center gap-3 border-2 border-punk-white/10 p-4"
                 >
                   {artist.imageUrl ? (
@@ -148,9 +148,6 @@ export default function DescubrirBandasPage() {
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-body font-medium text-punk-white">
                       {artist.name}
-                    </p>
-                    <p className="font-body text-xs text-punk-white/50 capitalize">
-                      {artist.source}
                     </p>
                     {artist.isRegistered && (
                       <span className="mt-1 inline-block font-body text-xs text-punk-green">
@@ -179,7 +176,7 @@ export default function DescubrirBandasPage() {
             Introduce un término de búsqueda (género, ciudad, nombre de banda) y pulsa Buscar.
           </p>
           <p className="mt-2 font-body text-sm text-punk-white/40">
-            Solo se muestran bandas de Navarra y País Vasco. Si no hay resultados de la región, se muestran algunas sugerencias.
+            Se priorizan bandas de Navarra y País Vasco. Si no hay de la región, se muestran sugerencias de Spotify.
           </p>
         </div>
       )}

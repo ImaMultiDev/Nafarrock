@@ -59,14 +59,16 @@ export type SpotifySearchResult = {
 
 /**
  * Busca artistas por nombre o género.
+ * @param market - Código ISO (ej: ES) para sesgar resultados hacia ese mercado.
  */
-export async function searchArtists(query: string, limit = 5): Promise<SpotifyArtist[]> {
+export async function searchArtists(query: string, limit = 5, market?: string): Promise<SpotifyArtist[]> {
   const token = await getAccessToken();
   const params = new URLSearchParams({
     q: query.trim(),
     type: "artist",
     limit: String(Math.min(Math.max(limit, 1), 50)),
   });
+  if (market?.trim()) params.set("market", market.trim());
 
   const res = await fetch(`${SPOTIFY_API_BASE}/search?${params}`, {
     headers: { Authorization: `Bearer ${token}` },
