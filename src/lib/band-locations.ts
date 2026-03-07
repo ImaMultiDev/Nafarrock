@@ -2,9 +2,18 @@ import { z } from "zod";
 
 /**
  * Territorios válidos para la localidad de bandas
- * Nafarroa, Araba, Bizkaia, Gipuzkoa
+ * Hegoalde: Nafarroa, Araba, Bizkaia, Gipuzkoa
+ * Iparralde: Lapurdi, Nafarroa Beherea, Zuberoa
  */
-export const BAND_LOCATIONS = ["Nafarroa", "Araba", "Bizkaia", "Gipuzkoa"] as const;
+export const BAND_LOCATIONS = [
+  "Nafarroa",
+  "Araba",
+  "Bizkaia",
+  "Gipuzkoa",
+  "Lapurdi",
+  "Nafarroa Beherea",
+  "Zuberoa",
+] as const;
 
 export type BandLocation = (typeof BAND_LOCATIONS)[number];
 

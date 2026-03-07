@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 import { TranslateButton } from "@/components/admin/TranslateButton";
+import { BAND_LOCATIONS } from "@/lib/band-locations";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
@@ -156,10 +157,9 @@ export function BandEditForm({ band, genres }: { band: Band; genres: string[] })
         </label>
         <select id="location" name="location" defaultValue={band.location ?? ""} className={inputClass}>
           <option value="">—</option>
-          <option value="Nafarroa">Nafarroa</option>
-          <option value="Araba">Araba</option>
-          <option value="Bizkaia">Bizkaia</option>
-          <option value="Gipuzkoa">Gipuzkoa</option>
+          {BAND_LOCATIONS.map((loc) => (
+            <option key={loc} value={loc}>{loc}</option>
+          ))}
         </select>
       </div>
       <div>

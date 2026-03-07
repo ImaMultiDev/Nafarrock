@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { BAND_LOCATIONS } from "@/lib/band-locations";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ImageUpload } from "@/components/ui/ImageUpload";
@@ -119,10 +120,9 @@ export function BandProposalForm({ genres }: { genres: string[] }) {
         </label>
         <select id="location" name="location" className={inputClass}>
           <option value="">—</option>
-          <option value="Nafarroa">Nafarroa</option>
-          <option value="Araba">Araba</option>
-          <option value="Bizkaia">Bizkaia</option>
-          <option value="Gipuzkoa">Gipuzkoa</option>
+          {BAND_LOCATIONS.map((loc) => (
+            <option key={loc} value={loc}>{loc}</option>
+          ))}
         </select>
       </div>
       <div>

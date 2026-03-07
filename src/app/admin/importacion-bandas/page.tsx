@@ -151,7 +151,7 @@ export default function ImportacionBandasPage() {
               2. Sube tu archivo
             </h2>
             <p className="mt-2 font-body text-sm text-punk-white/60">
-              Columnas: nombre, biografia, logo_url, imagen_url, localidad (Nafarroa|Araba|Bizkaia|Gipuzkoa), año_fundacion,
+              Columnas: nombre, biografia, logo_url, imagen_url, localidad (Nafarroa|Araba|Bizkaia|Gipuzkoa|Lapurdi|Nafarroa Beherea|Zuberoa), año_fundacion,
               estado, generos, spotify_url, instagram_url, youtube_url, web_url, merch_url
             </p>
             <p className="mt-1 font-body text-xs text-punk-white/50">

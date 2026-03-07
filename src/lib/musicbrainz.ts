@@ -112,17 +112,24 @@ export function extractUrlsFromRelations(artist: MusicBrainzArtist): Record<stri
 }
 
 /**
- * Mapea país/área de MusicBrainz a territorio del formulario (Nafarroa, Araba, Bizkaia, Gipuzkoa).
+ * Mapea país/área de MusicBrainz a territorio del formulario.
+ * Hegoalde: Nafarroa, Araba, Bizkaia, Gipuzkoa.
+ * Iparralde: Lapurdi, Nafarroa Beherea, Zuberoa.
  */
 export function mapAreaToLocation(artist: MusicBrainzArtist): string | undefined {
   const area = artist.area?.name ?? artist.country ?? "";
   if (!area) return undefined;
 
   const lower = area.toLowerCase();
-  if (lower.includes("navarr") || lower.includes("nafarroa")) return "Nafarroa";
+  if (lower.includes("navarr") || lower.includes("nafarroa")) {
+    if (lower.includes("basse") || lower.includes("beherea") || lower.includes("lower")) return "Nafarroa Beherea";
+    return "Nafarroa";
+  }
   if (lower.includes("álava") || lower.includes("araba")) return "Araba";
   if (lower.includes("vizcaya") || lower.includes("bizkaia")) return "Bizkaia";
   if (lower.includes("guipúzcoa") || lower.includes("gipuzkoa")) return "Gipuzkoa";
+  if (lower.includes("labourd") || lower.includes("lapurdi")) return "Lapurdi";
+  if (lower.includes("soule") || lower.includes("zuberoa")) return "Zuberoa";
   if (lower.includes("euskadi") || lower.includes("país vasco")) return undefined; // No podemos saber cuál
 
   return undefined;
@@ -153,7 +160,8 @@ export async function getArtistArea(artistName: string): Promise<string | undefi
 }
 
 /**
- * Determina si un artista pertenece a Navarra o País Vasco según el área de MusicBrainz.
+ * Determina si un artista pertenece a Euskal Herria según el área de MusicBrainz.
+ * Incluye Hegoalde (Nafarroa, Araba, Bizkaia, Gipuzkoa) e Iparralde (Lapurdi, Nafarroa Beherea, Zuberoa).
  */
 export function isFromNavarraOrEuskadi(area: string | undefined): boolean {
   if (!area?.trim()) return false;
@@ -162,6 +170,8 @@ export function isFromNavarraOrEuskadi(area: string | undefined): boolean {
   if (lower.includes("álava") || lower.includes("araba")) return true;
   if (lower.includes("vizcaya") || lower.includes("bizkaia")) return true;
   if (lower.includes("guipúzcoa") || lower.includes("gipuzkoa")) return true;
+  if (lower.includes("labourd") || lower.includes("lapurdi")) return true;
+  if (lower.includes("soule") || lower.includes("zuberoa")) return true;
   if (lower.includes("euskadi") || lower.includes("país vasco") || lower.includes("basque country")) return true;
   return false;
 }

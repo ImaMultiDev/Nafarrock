@@ -12,7 +12,7 @@ const importSchema = z.array(
     logo_url: z.string().url().optional().or(z.literal("")),
     imagen_url: z.string().url().optional().or(z.literal("")),
     localidad: z
-      .enum(["Nafarroa", "Araba", "Bizkaia", "Gipuzkoa"])
+      .enum(["Nafarroa", "Araba", "Bizkaia", "Gipuzkoa", "Lapurdi", "Nafarroa Beherea", "Zuberoa"])
       .optional()
       .or(z.literal(""))
       .transform((v) => (v && v.trim() ? v : null)),

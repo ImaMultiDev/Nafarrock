@@ -6,6 +6,7 @@ import { z } from "zod";
 import { uniqueSlug } from "@/lib/slug";
 import { sendVerificationEmail } from "@/lib/email";
 import { isValidEmail, isPasswordValid, isValidUrl } from "@/lib/validation";
+import { BAND_LOCATIONS } from "@/lib/band-locations";
 
 /** Modelo editorial MVP: solo usuarios estándar en registro */
 const EDITORIAL_MVP_MODE = true;
@@ -39,8 +40,6 @@ const baseSchema = z.object({
   phone: z.string().optional(),
   role: z.enum(ROLES).default("USUARIO"),
 });
-
-const BAND_LOCATIONS = ["Nafarroa", "Araba", "Bizkaia", "Gipuzkoa"] as const;
 
 const bandSchema = baseSchema.extend({
   role: z.literal("BANDA"),

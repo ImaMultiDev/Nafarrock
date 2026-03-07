@@ -9,6 +9,7 @@ import { PasswordInput } from "@/components/ui/PasswordInput";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 import { isValidEmail, isPasswordValid } from "@/lib/validation";
+import { BAND_LOCATIONS } from "@/lib/band-locations";
 
 type EntityImageInfo = {
   hasImages: boolean;
@@ -570,10 +571,9 @@ export function RegisterForm({
                     </label>
                     <select id="location" name="location" className={inputClass}>
                       <option value="">—</option>
-                      <option value="Nafarroa">Nafarroa</option>
-                      <option value="Araba">Araba</option>
-                      <option value="Bizkaia">Bizkaia</option>
-                      <option value="Gipuzkoa">Gipuzkoa</option>
+                      {BAND_LOCATIONS.map((loc) => (
+                        <option key={loc} value={loc}>{loc}</option>
+                      ))}
                     </select>
                   </div>
                   <div className="mt-6">
