@@ -19,10 +19,6 @@ type Event = {
   description: string | null;
   price: string | null;
   ticketUrl: string | null;
-  instagramUrl: string | null;
-  facebookUrl: string | null;
-  twitterUrl: string | null;
-  webUrl: string | null;
   imageUrl: string | null;
   images: string[];
   isSoldOut: boolean;
