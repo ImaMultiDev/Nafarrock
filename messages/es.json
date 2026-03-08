@@ -273,7 +273,7 @@
     }
   },
   "bandDetail": {
-    "backToBands": "← Volver a bandas",
+    "backToBands": "Volver a bandas",
     "registeredByNafarrock": "BANDA REGISTRADA POR NAFARROCK",
     "from": "Desde {year}",
     "members": "Miembros",

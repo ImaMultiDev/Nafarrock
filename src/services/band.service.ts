@@ -79,10 +79,7 @@ export async function getBandBySlug(slug: string, approvedOnly = true) {
         orderBy: { event: { date: "asc" } },
         include: {
           event: {
-            include: {
-              venue: true,
-              bands: { include: { band: true }, orderBy: { order: "asc" } },
-            },
+            include: { venue: true },
           },
         },
       },

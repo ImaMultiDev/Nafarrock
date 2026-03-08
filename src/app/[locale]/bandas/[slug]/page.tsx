@@ -215,14 +215,9 @@ export default async function BandPage({
                           <h3 className="font-display text-xl tracking-tighter text-punk-white group-hover:text-punk-red transition-colors sm:text-2xl">
                             {event.title}
                           </h3>
-                          {event.venue && (
+                          {(event.venue || event.venueText) && (
                             <p className="mt-1 font-body text-punk-white/70">
-                              {event.venue.name} · {event.venue.city}
-                            </p>
-                          )}
-                          {event.bands && event.bands.length > 0 && (
-                            <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-green/80">
-                              {event.bands.map((b) => b.band.name).join(" + ")}
+                              {event.venue ? `${event.venue.name} · ${event.venue.city}` : event.venueText ?? ""}
                             </p>
                           )}
                         </div>
