@@ -39,15 +39,13 @@
   }
 }
 
-/* Guitarra de fondo en hero - oscurecida para legibilidad */
+/* Guitarra de fondo en hero - opacidad y filter controlados por animación en HeroSection */
 .hero-guitar-bg {
-  opacity: 0.5;
   filter: brightness(0.25);
 }
 
 @media (min-width: 1024px) {
   .hero-guitar-bg {
-    opacity: 0.6;
     filter: brightness(0.2);
   }
 }

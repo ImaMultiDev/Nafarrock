@@ -42,6 +42,10 @@
       "viewBands": "Ver bandas",
       "verBolos": "VER BOLOS"
     },
+    "upcomingEvents": {
+      "title": "PRÓXIMOS EVENTOS",
+      "viewAll": "Ver todos"
+    },
     "explore": {
       "bands": {
         "title": "BANDAS",

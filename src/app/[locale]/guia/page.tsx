@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { PageLayout } from "@/components/ui/PageLayout";
+import { AnimatedSection } from "@/components/ui/AnimatedSection";
 
 export async function generateMetadata() {
   const t = await getTranslations("guide.metadata");
@@ -18,13 +19,16 @@ export default async function NafarrockPage() {
   return (
     <PageLayout>
       <div className="mx-auto max-w-3xl">
-        <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl">
-          {t("title")}
-        </h1>
-        <p className="mt-3 font-punch text-xs uppercase tracking-widest text-punk-red">
-          {t("subtitle")}
-        </p>
+        <AnimatedSection>
+          <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl">
+            {t("title")}
+          </h1>
+          <p className="mt-3 font-punch text-xs uppercase tracking-widest text-punk-red">
+            {t("subtitle")}
+          </p>
+        </AnimatedSection>
 
+        <AnimatedSection delay={0.1}>
         <article className="mt-10 space-y-10 font-body leading-relaxed">
           <section>
             <h2 className="font-display text-2xl tracking-tighter text-punk-white">
@@ -77,7 +81,9 @@ export default async function NafarrockPage() {
             </p>
           </div>
         </article>
+        </AnimatedSection>
 
+        <AnimatedSection delay={0.2}>
         <div className="mt-16 flex justify-center">
           <Image
             src="/logo.png"
@@ -87,6 +93,7 @@ export default async function NafarrockPage() {
             className="w-64 sm:w-80 md:w-96"
           />
         </div>
+        </AnimatedSection>
       </div>
     </PageLayout>
   );

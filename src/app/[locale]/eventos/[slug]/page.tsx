@@ -1,12 +1,13 @@
 import { getEventBySlug } from "@/services/event.service";
 import { notFound } from "next/navigation";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { format } from "date-fns";
 import { getTranslations, getLocale } from "next-intl/server";
 import { getDateLocale } from "@/lib/date-locale";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { ImageLightbox } from "@/components/ui/ImageLightbox";
 import { SocialLinks, type SocialLinkItem } from "@/components/ui/SocialLinks";
+import { AnimatedSection } from "@/components/ui/AnimatedSection";
 
 export async function generateMetadata({
   params,
@@ -50,14 +51,15 @@ export default async function EventPage({
 
   return (
     <PageLayout>
-      <Link
-        href="/eventos"
-        className="font-punch text-xs uppercase tracking-widest text-punk-red transition-colors hover:text-punk-red/80"
-      >
-        {t("backToEvents")}
-      </Link>
+      <AnimatedSection>
+        <Link
+          href="/eventos"
+          className="font-punch text-xs uppercase tracking-widest text-punk-red transition-colors hover:text-punk-red/80"
+        >
+          {t("backToEvents")}
+        </Link>
 
-      <article className="mt-10">
+        <article className="mt-10">
         {/* Hero: título + CTA entradas arriba a la derecha */}
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
           <div className="min-w-0 flex-1">
@@ -286,6 +288,7 @@ export default async function EventPage({
           </div>
         )}
       </article>
+      </AnimatedSection>
     </PageLayout>
   );
 }

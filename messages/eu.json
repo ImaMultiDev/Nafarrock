@@ -42,6 +42,10 @@
       "viewBands": "Ikusi taldeak",
       "verBolos": "IKUSI BOLOS"
     },
+    "upcomingEvents": {
+      "title": "HURREngo EKITALDIAK",
+      "viewAll": "Denak ikusi"
+    },
     "explore": {
       "bands": {
         "title": "TALDEAK",

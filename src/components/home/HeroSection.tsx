@@ -4,10 +4,27 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { UpcomingEventsHero } from "./UpcomingEventsHero";
 
 const EDITORIAL_MVP_MODE = true;
 
-export function HeroSection() {
+type EventItem = {
+  id: string;
+  slug: string;
+  title: string;
+  date: Date | string;
+  endDate: Date | string | null;
+  type: string;
+  imageUrl: string | null;
+  venue: { name: string; city: string } | null;
+  venueText: string | null;
+};
+
+type Props = {
+  upcomingEvents?: EventItem[];
+};
+
+export function HeroSection({ upcomingEvents = [] }: Props) {
   const t = useTranslations("home");
   const tActions = useTranslations("common.actions");
   return (
@@ -32,32 +49,67 @@ export function HeroSection() {
       <div className="absolute -left-48 top-1/3 h-64 w-64 -rotate-45 border-[4px] border-punk-red opacity-20" />
       <div className="absolute bottom-20 right-1/4 h-32 w-32 rotate-[70deg] border-[3px] border-punk-pink opacity-25" />
 
-      {/* Guitarra de fondo - alineada con NAFARROCK, oscurecida para legibilidad */}
+      {/* Guitarra de fondo - animación de entrada: aparece con fuerza y se asienta */}
       <div className="absolute left-1/2 top-[25%] w-[120%] max-w-[900px] -translate-x-1/2 -translate-y-1/2 lg:left-0 lg:top-1/2 lg:w-[100%] lg:max-w-[1600px] lg:translate-x-0 lg:-translate-y-1/2">
-        <Image
-          src="/Logo_Sin_Texto.png"
-          alt=""
-          width={1000}
-          height={710}
-          className="hero-guitar-bg w-full object-contain"
-          priority
-        />
+        <motion.div
+          className="h-full w-full"
+          initial={{
+            opacity: 0,
+            scale: 1.4,
+            y: "12%",
+            rotate: -2,
+          }}
+          animate={{
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            rotate: 0,
+          }}
+          transition={{
+            duration: 1.6,
+            ease: [0.16, 1, 0.3, 1],
+          }}
+        >
+        <motion.div
+          className="hero-guitar-bg h-full w-full"
+          initial={{ opacity: 0.95, filter: "brightness(0.5)" }}
+          animate={{
+            opacity: 0.6,
+            filter: "brightness(0.2)",
+          }}
+          transition={{
+            duration: 1.4,
+            delay: 0.5,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+        >
+          <Image
+            src="/Logo_Sin_Texto.png"
+            alt=""
+            width={1000}
+            height={710}
+            className="w-full object-contain"
+            priority
+          />
+        </motion.div>
+        </motion.div>
       </div>
 
       {/* Contenido principal - misma estructura que EXPLORA: padding fuera, max-w-7xl sin padding */}
       <div className="relative z-10 flex min-h-0 flex-col justify-start px-6 pt-14 pb-section-gap sm:min-h-hero-cap sm:px-12 sm:pt-20 sm:pb-section-gap lg:px-20 lg:pt-24 lg:pb-section-gap max-[299px]:px-3 max-[299px]:pt-10">
         <div className="mx-auto w-full max-w-7xl 2xl:max-w-content-wide">
+          <div className="flex flex-col gap-10 lg:flex-row lg:items-start lg:justify-between lg:gap-12">
           <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="mx-auto w-full max-w-2xl text-center lg:mx-0 lg:text-left"
+          transition={{ delay: 0.9, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="mx-auto w-full max-w-2xl shrink-0 text-center lg:mx-0 lg:text-left"
         >
           {/* Tagline arriba */}
           <motion.p
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
+            transition={{ delay: 1.1, duration: 0.5 }}
             className="font-punch mb-6 text-xs uppercase tracking-[0.35em] text-punk-green sm:mb-8 sm:text-sm sm:tracking-[0.4em]"
           >
             {t("tagline")}
@@ -100,7 +152,7 @@ export function HeroSection() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.9, duration: 0.5 }}
+            transition={{ delay: 1.5, duration: 0.5 }}
             className="mt-10 flex flex-wrap justify-center gap-4 sm:mt-12 sm:gap-5 lg:justify-start"
           >
             <Link
@@ -124,13 +176,22 @@ export function HeroSection() {
               </Link>
             )}
           </motion.div>
-        </motion.div>
+          </motion.div>
+
+          {upcomingEvents.length > 0 && (
+            <UpcomingEventsHero
+              events={upcomingEvents}
+              title={t("upcomingEvents.title")}
+              viewAllLabel={t("upcomingEvents.viewAll")}
+            />
+          )}
+          </div>
 
           {/* Scroll indicator - centrado horizontalmente en la sección, en el flujo */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1.5, duration: 0.5 }}
+            transition={{ delay: 2, duration: 0.5 }}
             className="mt-section-gap flex w-full justify-center"
           >
             <motion.div

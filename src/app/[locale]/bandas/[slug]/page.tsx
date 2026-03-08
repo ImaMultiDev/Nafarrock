@@ -7,6 +7,7 @@ import { getDateLocale } from "@/lib/date-locale";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { ImageLightbox } from "@/components/ui/ImageLightbox";
 import { SocialLinks, type SocialLinkItem } from "@/components/ui/SocialLinks";
+import { AnimatedSection } from "@/components/ui/AnimatedSection";
 import { getYouTubeEmbedUrl } from "@/lib/video-embed";
 
 export async function generateMetadata({
@@ -57,14 +58,15 @@ export default async function BandPage({
 
   return (
     <PageLayout>
-      <Link
-        href="/bandas"
-        className="font-punch text-xs uppercase tracking-widest text-punk-green transition-colors hover:text-punk-green/80"
-      >
-        ← {t("backToBands")}
-      </Link>
+      <AnimatedSection>
+        <Link
+          href="/bandas"
+          className="font-punch text-xs uppercase tracking-widest text-punk-green transition-colors hover:text-punk-green/80"
+        >
+          ← {t("backToBands")}
+        </Link>
 
-      <div className="mt-8 flex flex-col gap-8 md:flex-row">
+        <div className="mt-8 flex flex-col gap-8 md:flex-row">
         <div className="min-w-0 shrink-0 space-y-4">
           <div className="aspect-square w-full max-w-64 overflow-hidden border-2 border-punk-green">
             {(band.logoUrl || band.imageUrl || (band.images && band.images[0])) ? (
@@ -246,6 +248,7 @@ export default async function BandPage({
           )}
         </div>
       </div>
+      </AnimatedSection>
     </PageLayout>
   );
 }
