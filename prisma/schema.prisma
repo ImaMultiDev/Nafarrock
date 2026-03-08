@@ -320,10 +320,6 @@ model Event {
   ticketUrl        String?
   price            String?
   abonos           String?   // Info de abonos
-  instagramUrl     String?   // Enlace Instagram (publicación, perfil)
-  facebookUrl      String?   // Enlace Facebook (evento, página)
-  twitterUrl       String?   // Enlace X/Twitter
-  webUrl           String?   // Web del evento
   capacity         Int?      // Aforo del evento
   isSoldOut        Boolean   @default(false)  // Sin entradas (SALA, FESTIVAL, ORGANIZADOR, PROMOTOR)
   isApproved       Boolean   @default(false)
@@ -348,6 +344,7 @@ model Event {
   createdByUserId  String?
   createdByUser     User?     @relation("EventCreator", fields: [createdByUserId], references: [id], onDelete: SetNull)
   bands             BandEvent[]
+  links             EventLink[]
 
   @@index([slug])
   @@index([date])
@@ -378,6 +375,21 @@ model BandEvent {
   @@index([eventId])
   @@index([bandId])
   @@map("band_events")
+}
+
+// Enlaces de redes/web del evento: múltiples por tipo, con etiqueta (ej: Instagram banda, Instagram sala)
+model EventLink {
+  id       String   @id @default(cuid())
+  eventId  String
+  kind     String   // instagram | facebook | twitter | web
+  url      String
+  label    String?  // ej: "Instagram de la banda", "Sala"
+  createdAt DateTime @default(now())
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+  @@map("event_links")
 }
 
 // Promotores

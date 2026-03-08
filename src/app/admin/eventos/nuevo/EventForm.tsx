@@ -6,6 +6,7 @@ import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 import { TranslateButton } from "@/components/admin/TranslateButton";
 import { BandSelector } from "@/components/admin/BandSelector";
+import { EventLinksBuilder, type EventLinkItem } from "@/components/admin/EventLinksBuilder";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
@@ -20,6 +21,7 @@ export function EventForm({ festivals, bands }: { festivals: Festival[]; bands: 
   const [error, setError] = useState<string | null>(null);
   const [description, setDescription] = useState("");
   const [bandIds, setBandIds] = useState<string[]>([]);
+  const [links, setLinks] = useState<EventLinkItem[]>([]);
   const [descriptionEu, setDescriptionEu] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [images, setImages] = useState<string[]>([]);
@@ -58,8 +60,7 @@ export function EventForm({ festivals, bands }: { festivals: Festival[]; bands: 
       if (el) el.value = data.ticketUrl as string;
     }
     if (data.webUrl) {
-      const el = form?.querySelector<HTMLInputElement>('[name="webUrl"]');
-      if (el) el.value = data.webUrl as string;
+      setLinks([{ kind: "web", url: data.webUrl as string, label: "Web del evento" }]);
     }
   };
 
@@ -178,10 +179,7 @@ export function EventForm({ festivals, bands }: { festivals: Festival[]; bands: 
         description: formData.get("description") || undefined,
         price: formData.get("price") || undefined,
         ticketUrl: formData.get("ticketUrl") || undefined,
-        instagramUrl: formData.get("instagramUrl") || undefined,
-        facebookUrl: formData.get("facebookUrl") || undefined,
-        twitterUrl: formData.get("twitterUrl") || undefined,
-        webUrl: formData.get("webUrl") || undefined,
+        links: links.filter((l) => l.url?.trim()).map((l) => ({ kind: l.kind, url: l.url.trim(), label: l.label || "" })),
         imageUrl: imageUrl || undefined,
         images,
         isSoldOut: (formData.get("isSoldOut") as string) === "on",
@@ -379,15 +377,7 @@ export function EventForm({ festivals, bands }: { festivals: Festival[]; bands: 
           <input id="ticketUrl" name="ticketUrl" type="url" className={inputClass} />
         </div>
       </div>
-      <div>
-        <label className={labelClass}>Redes y enlaces (opcional)</label>
-        <div className="mt-2 grid gap-4 sm:grid-cols-2">
-          <input id="instagramUrl" name="instagramUrl" type="url" className={inputClass} placeholder="Instagram" />
-          <input id="facebookUrl" name="facebookUrl" type="url" className={inputClass} placeholder="Facebook" />
-          <input id="twitterUrl" name="twitterUrl" type="url" className={inputClass} placeholder="X (Twitter)" />
-          <input id="webUrl" name="webUrl" type="url" className={inputClass} placeholder="Web del evento" />
-        </div>
-      </div>
+      <EventLinksBuilder value={links} onChange={setLinks} />
       <label className="flex cursor-pointer items-center gap-2">
         <input type="checkbox" name="isSoldOut" className="accent-punk-red" />
         <span className={labelClass}>Entradas agotadas (SOLD OUT)</span>

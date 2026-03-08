@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
+import { EventLinksBuilder, type EventLinkItem } from "@/components/admin/EventLinksBuilder";
 
 const inputClass = "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
 const labelClass = "block font-punch text-xs uppercase tracking-widest text-punk-white/70";
@@ -27,6 +28,7 @@ type Event = {
   isSoldOut: boolean;
   venueId: string | null;
   bands: { band: { id: string } }[];
+  links?: { kind: string; url: string; label: string | null }[];
 };
 type Venue = { id: string; name: string };
 type Band = { id: string; name: string };
@@ -46,6 +48,12 @@ export function EventEditForm({
   const [imageUrl, setImageUrl] = useState(event.imageUrl ?? "");
   const [images, setImages] = useState<string[]>(event.images ?? []);
   const [isMultiDay, setIsMultiDay] = useState(!!event.endDate);
+  const initialLinks: EventLinkItem[] = (event.links ?? []).map((l) => ({
+    kind: l.kind as EventLinkItem["kind"],
+    url: l.url,
+    label: l.label ?? "",
+  }));
+  const [links, setLinks] = useState<EventLinkItem[]>(initialLinks);
 
   const dateLocal = new Date(event.date);
   dateLocal.setMinutes(dateLocal.getMinutes() - dateLocal.getTimezoneOffset());
@@ -91,10 +99,7 @@ export function EventEditForm({
         description: formData.get("description") || null,
         price: formData.get("price") || null,
         ticketUrl: formData.get("ticketUrl") || null,
-        instagramUrl: formData.get("instagramUrl") || null,
-        facebookUrl: formData.get("facebookUrl") || null,
-        twitterUrl: formData.get("twitterUrl") || null,
-        webUrl: formData.get("webUrl") || null,
+        links: links.filter((l) => l.url?.trim()).map((l) => ({ kind: l.kind, url: l.url.trim(), label: l.label || "" })),
         imageUrl: imageUrl || null,
         images: images,
         isSoldOut: (formData.get("isSoldOut") as string) === "on",
@@ -206,15 +211,7 @@ export function EventEditForm({
           <input id="ticketUrl" name="ticketUrl" type="url" defaultValue={event.ticketUrl ?? ""} className={inputClass} />
         </div>
       </div>
-      <div>
-        <label className={labelClass}>Redes y enlaces (opcional)</label>
-        <div className="mt-2 grid gap-4 sm:grid-cols-2">
-          <input id="instagramUrl" name="instagramUrl" type="url" defaultValue={event.instagramUrl ?? ""} className={inputClass} placeholder="Instagram" />
-          <input id="facebookUrl" name="facebookUrl" type="url" defaultValue={event.facebookUrl ?? ""} className={inputClass} placeholder="Facebook" />
-          <input id="twitterUrl" name="twitterUrl" type="url" defaultValue={event.twitterUrl ?? ""} className={inputClass} placeholder="X (Twitter)" />
-          <input id="webUrl" name="webUrl" type="url" defaultValue={event.webUrl ?? ""} className={inputClass} placeholder="Web del evento" />
-        </div>
-      </div>
+      <EventLinksBuilder value={links} onChange={setLinks} />
       <label className="flex cursor-pointer items-center gap-2">
         <input type="checkbox" name="isSoldOut" defaultChecked={event.isSoldOut} className="accent-punk-red" />
         <span className={labelClass}>Entradas agotadas (SOLD OUT)</span>

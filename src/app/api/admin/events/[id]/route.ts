@@ -23,10 +23,15 @@ const updateSchema = z.object({
   descriptionEu: z.string().optional().nullable(),
   price: z.string().optional().nullable(),
   ticketUrl: z.string().url().optional().nullable().or(z.literal("")),
-  instagramUrl: z.string().url().optional().nullable().or(z.literal("")),
-  facebookUrl: z.string().url().optional().nullable().or(z.literal("")),
-  twitterUrl: z.string().url().optional().nullable().or(z.literal("")),
-  webUrl: z.string().url().optional().nullable().or(z.literal("")),
+  links: z
+    .array(
+      z.object({
+        kind: z.enum(["instagram", "facebook", "twitter", "web"]),
+        url: z.string().url(),
+        label: z.string().optional().default(""),
+      })
+    )
+    .optional(),
   imageUrl: z.string().optional().nullable(),
   images: z.array(z.string()).optional(),
   isSoldOut: z.boolean().optional(),
@@ -86,10 +91,6 @@ export async function PATCH(
     if (data.descriptionEu !== undefined) updateData.descriptionEu = data.descriptionEu;
     if (data.price !== undefined) updateData.price = data.price;
     if (data.ticketUrl !== undefined) updateData.ticketUrl = data.ticketUrl || null;
-    if (data.instagramUrl !== undefined) updateData.instagramUrl = data.instagramUrl || null;
-    if (data.facebookUrl !== undefined) updateData.facebookUrl = data.facebookUrl || null;
-    if (data.twitterUrl !== undefined) updateData.twitterUrl = data.twitterUrl || null;
-    if (data.webUrl !== undefined) updateData.webUrl = data.webUrl || null;
     if (data.imageUrl !== undefined) updateData.imageUrl = data.imageUrl;
     if (data.images !== undefined) updateData.images = data.images;
     if (data.isSoldOut !== undefined) updateData.isSoldOut = data.isSoldOut;
@@ -110,6 +111,21 @@ export async function PATCH(
             bandId,
             order: idx,
             isHeadliner: idx === 0,
+          })),
+        });
+      }
+    }
+
+    if (data.links !== undefined) {
+      await prisma.eventLink.deleteMany({ where: { eventId: id } });
+      const validLinks = data.links.filter((l) => l.url?.trim());
+      if (validLinks.length > 0) {
+        await prisma.eventLink.createMany({
+          data: validLinks.map((l) => ({
+            eventId: id,
+            kind: l.kind,
+            url: l.url.trim(),
+            label: l.label?.trim() || null,
           })),
         });
       }

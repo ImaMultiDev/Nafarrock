@@ -13,6 +13,7 @@ export default async function EditarEventoPage({
     include: {
       venue: true,
       bands: { include: { band: true } },
+      links: true,
     },
   });
   if (!event) notFound();

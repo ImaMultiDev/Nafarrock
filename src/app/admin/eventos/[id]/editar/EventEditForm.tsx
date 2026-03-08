@@ -6,6 +6,7 @@ import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 import { TranslateButton } from "@/components/admin/TranslateButton";
 import { BandSelector } from "@/components/admin/BandSelector";
+import { EventLinksBuilder, type EventLinkItem } from "@/components/admin/EventLinksBuilder";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
@@ -22,10 +23,6 @@ type Event = {
   descriptionEu: string | null;
   price: string | null;
   ticketUrl: string | null;
-  instagramUrl: string | null;
-  facebookUrl: string | null;
-  twitterUrl: string | null;
-  webUrl: string | null;
   imageUrl: string | null;
   images: string[];
   isApproved: boolean;
@@ -35,16 +32,23 @@ type Event = {
   venueText: string | null;
   venue?: { name: string } | null;
   bands?: { bandId: string; band?: { id: string; name: string } }[];
+  links?: { kind: string; url: string; label: string | null }[];
 };
 
 type Band = { id: string; name: string };
 
 export function EventEditForm({ event, bands }: { event: Event; bands: Band[] }) {
   const initialBandIds = (event.bands ?? []).map((be) => be.bandId);
+  const initialLinks: EventLinkItem[] = (event.links ?? []).map((l) => ({
+    kind: l.kind as EventLinkItem["kind"],
+    url: l.url,
+    label: l.label ?? "",
+  }));
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [bandIds, setBandIds] = useState<string[]>(initialBandIds);
+  const [links, setLinks] = useState<EventLinkItem[]>(initialLinks);
   const [description, setDescription] = useState(event.description ?? "");
   const [descriptionEu, setDescriptionEu] = useState(event.descriptionEu ?? "");
   const [imageUrl, setImageUrl] = useState(event.imageUrl ?? "");
@@ -92,10 +96,7 @@ export function EventEditForm({ event, bands }: { event: Event; bands: Band[] })
         descriptionEu: descriptionEu || null,
         price: formData.get("price") || null,
         ticketUrl: formData.get("ticketUrl") || null,
-        instagramUrl: formData.get("instagramUrl") || null,
-        facebookUrl: formData.get("facebookUrl") || null,
-        twitterUrl: formData.get("twitterUrl") || null,
-        webUrl: formData.get("webUrl") || null,
+        links: links.filter((l) => l.url?.trim()).map((l) => ({ kind: l.kind, url: l.url.trim(), label: l.label || "" })),
         imageUrl: imageUrl || null,
         images,
         bandIds,
@@ -242,15 +243,7 @@ export function EventEditForm({ event, bands }: { event: Event; bands: Band[] })
           <input id="ticketUrl" name="ticketUrl" type="url" defaultValue={event.ticketUrl ?? ""} className={inputClass} />
         </div>
       </div>
-      <div>
-        <label className={labelClass}>Redes y enlaces (opcional)</label>
-        <div className="mt-2 grid gap-4 sm:grid-cols-2">
-          <input id="instagramUrl" name="instagramUrl" type="url" defaultValue={event.instagramUrl ?? ""} className={inputClass} placeholder="Instagram" />
-          <input id="facebookUrl" name="facebookUrl" type="url" defaultValue={event.facebookUrl ?? ""} className={inputClass} placeholder="Facebook" />
-          <input id="twitterUrl" name="twitterUrl" type="url" defaultValue={event.twitterUrl ?? ""} className={inputClass} placeholder="X (Twitter)" />
-          <input id="webUrl" name="webUrl" type="url" defaultValue={event.webUrl ?? ""} className={inputClass} placeholder="Web del evento" />
-        </div>
-      </div>
+      <EventLinksBuilder value={links} onChange={setLinks} />
       <label className="flex cursor-pointer items-center gap-2">
         <input type="checkbox" name="isSoldOut" defaultChecked={event.isSoldOut} className="accent-punk-red" />
         <span className={labelClass}>Entradas agotadas (SOLD OUT)</span>

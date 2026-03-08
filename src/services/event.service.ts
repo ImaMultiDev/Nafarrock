@@ -53,6 +53,7 @@ export async function getEvents(filters: EventFilters = {}) {
       include: {
         venue: true,
         bands: { include: { band: true } },
+        links: true,
       },
       skip,
       take: pageSize,
@@ -66,13 +67,14 @@ export async function getEvents(filters: EventFilters = {}) {
 export async function getEventBySlug(slug: string) {
   return prisma.event.findUnique({
     where: { slug, isApproved: true },
-    include: {
-      venue: true,
-      promoter: true,
-      festival: true,
-      organizer: true,
-      bands: { include: { band: true } },
-    },
+      include: {
+        venue: true,
+        promoter: true,
+        festival: true,
+        organizer: true,
+        bands: { include: { band: true } },
+        links: true,
+      },
   });
 }
 

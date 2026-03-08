@@ -42,12 +42,11 @@ export default async function EventPage({
     ...(event.images ?? []),
   ];
 
-  const links: SocialLinkItem[] = [
-    ...(event.webUrl ? [{ kind: "web" as const, url: event.webUrl }] : []),
-    ...(event.instagramUrl ? [{ kind: "instagram" as const, url: event.instagramUrl }] : []),
-    ...(event.facebookUrl ? [{ kind: "facebook" as const, url: event.facebookUrl }] : []),
-    ...(event.twitterUrl ? [{ kind: "twitter" as const, url: event.twitterUrl }] : []),
-  ];
+  const links: SocialLinkItem[] = (event.links ?? []).map((l) => ({
+    kind: l.kind as SocialLinkItem["kind"],
+    url: l.url,
+    label: l.label ?? undefined,
+  }));
 
   return (
     <PageLayout>
