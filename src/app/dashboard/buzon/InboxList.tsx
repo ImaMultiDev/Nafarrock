@@ -18,6 +18,7 @@ type InboxMessage = {
 
 export function InboxList({ messages }: { messages: InboxMessage[] }) {
   const router = useRouter();
+  const t = useTranslations("dashboard.inbox");
   const [markingAll, setMarkingAll] = useState(false);
 
   const unreadCount = messages.filter((m) => !m.readAt).length;
