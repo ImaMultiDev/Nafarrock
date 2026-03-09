@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getEventBySlug } from "@/services/event.service";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
@@ -8,18 +9,47 @@ import { PageLayout } from "@/components/ui/PageLayout";
 import { ImageLightbox } from "@/components/ui/ImageLightbox";
 import { SocialLinks, type SocialLinkItem } from "@/components/ui/SocialLinks";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
+import { getSiteUrl } from "@/lib/site-url";
 
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
-}) {
+}): Promise<Metadata> {
   const { slug } = await params;
   const event = await getEventBySlug(slug);
   if (!event) return {};
+  const venueName = event.venue?.name ?? event.venueText ?? "";
+  const description =
+    event.description ??
+    (venueName ? `${event.title} en ${venueName}` : event.title);
+  const imageUrl = event.imageUrl ?? (event.images && event.images[0]);
+  const canonicalUrl = `${getSiteUrl()}/eventos/${slug}`;
+
   return {
     title: event.title,
-    description: event.description ?? (event.venue ? `${event.title} en ${event.venue.name}` : event.venueText ? `${event.title} en ${event.venueText}` : event.title),
+    description,
+    openGraph: {
+      title: event.title,
+      description,
+      url: canonicalUrl,
+      siteName: "Nafarrock",
+      type: "website",
+      images: imageUrl
+        ? [{ url: imageUrl, width: 1200, height: 630, alt: event.title }]
+        : undefined,
+      locale: "es_ES",
+      alternateLocale: "eu_ES",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: event.title,
+      description,
+      images: imageUrl ? [imageUrl] : undefined,
+    },
+    alternates: {
+      canonical: canonicalUrl,
+    },
   };
 }
 

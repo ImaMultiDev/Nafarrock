@@ -7,11 +7,15 @@ import { PageLayout } from "@/components/ui/PageLayout";
 import { EscenaBackNav } from "@/components/escena/EscenaBackNav";
 import { Pagination } from "@/components/ui/Pagination";
 import { canViewRestrictedEscena } from "@/lib/escena-visibility";
+import { getTranslations } from "next-intl/server";
 
-export const metadata = {
-  title: "Asociaciones y Sociedades",
-  description: "Asociaciones y sociedades de la escena rock nafarroa",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("scene.associations.metadata");
+  return {
+    title: t("title"),
+    description: t("description"),
+  };
+}
 
 type Props = { searchParams: Promise<Record<string, string | undefined>> };
 

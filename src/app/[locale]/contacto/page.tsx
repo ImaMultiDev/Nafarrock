@@ -4,11 +4,15 @@ import { canUserAccessContact } from "@/lib/contact-access";
 import { redirect } from "next/navigation";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { ContactForm } from "./ContactForm";
+import { getTranslations } from "next-intl/server";
 
-export const metadata = {
-  title: "Contacto",
-  description: "Formulario de contacto con el administrador de Nafarrock",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("contact.metadata");
+  return {
+    title: t("title"),
+    description: t("description"),
+  };
+}
 
 export default async function ContactoPage() {
   const session = await getServerSession(authOptions);

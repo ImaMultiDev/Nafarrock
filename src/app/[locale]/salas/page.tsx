@@ -4,11 +4,15 @@ import { PageLayout } from "@/components/ui/PageLayout";
 import { EscenaBackNav } from "@/components/escena/EscenaBackNav";
 import { SalasFilters } from "@/components/buscador/SalasFilters";
 import { Pagination } from "@/components/ui/Pagination";
+import { getTranslations } from "next-intl/server";
 
-export const metadata = {
-  title: "Salas y espacios",
-  description: "Salas de conciertos y espacios de la escena nafarroa",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("scene.venues.metadata");
+  return {
+    title: t("title"),
+    description: t("description"),
+  };
+}
 
 type Props = { searchParams: Promise<Record<string, string | undefined>> };
 

@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import { Inter, Bebas_Neue, Space_Mono } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages, getLocale } from "next-intl/server";
+import { getMessages, getLocale, getTranslations } from "next-intl/server";
 import { Providers } from "@/components/providers/Providers";
 import { Header } from "@/components/ui/Header";
 import { BandVerificationBanner } from "@/components/BandVerificationBanner";
 import { InboxBanner } from "@/components/InboxBanner";
 import { FooterSection } from "@/components/home/FooterSection";
+import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
 const inter = Inter({
@@ -27,27 +28,31 @@ const spaceMono = Space_Mono({
   variable: "--font-punch",
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "Nafarrock | Guía del rock en Nafarroa",
-    template: "%s | Nafarrock",
-  },
-  description:
-    "La guía y plataforma de referencia del punk rock, rock urbano y escena alternativa nafarroa. Bandas, festivales, conciertos y salas.",
-  keywords: ["rock", "punk", "Nafarroa", "conciertos", "bandas", "festivales"],
-  icons: {
-    icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/logo-192.png", sizes: "192x192", type: "image/png" },
-      { url: "/logo-512.png", sizes: "512x512", type: "image/png" },
-    ],
-    apple: "/logo-192.png",
-  },
-  openGraph: {
-    type: "website",
-    images: ["/LogoRedes.png"],
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("home.metadata");
+  const siteUrl = getSiteUrl();
+
+  return {
+    title: {
+      default: t("title"),
+      template: "%s | Nafarrock",
+    },
+    description: t("description"),
+    keywords: ["rock", "punk", "Nafarroa", "conciertos", "bandas", "festivales"],
+    icons: {
+      icon: [
+        { url: "/favicon.ico", sizes: "any" },
+        { url: "/logo-192.png", sizes: "192x192", type: "image/png" },
+        { url: "/logo-512.png", sizes: "512x512", type: "image/png" },
+      ],
+      apple: "/logo-192.png",
+    },
+    openGraph: {
+      type: "website",
+      images: [`${siteUrl}/LogoRedes.png`],
+    },
+  };
+}
 
 export default async function RootLayout({
   children,

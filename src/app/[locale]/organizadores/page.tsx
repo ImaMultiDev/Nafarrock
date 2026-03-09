@@ -7,11 +7,15 @@ import { PageLayout } from "@/components/ui/PageLayout";
 import { EscenaBackNav } from "@/components/escena/EscenaBackNav";
 import { Pagination } from "@/components/ui/Pagination";
 import { canViewRestrictedEscena } from "@/lib/escena-visibility";
+import { getTranslations } from "next-intl/server";
 
-export const metadata = {
-  title: "Organizadores",
-  description: "Organizadores de eventos en Nafarroa",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("scene.organizers.metadata");
+  return {
+    title: t("title"),
+    description: t("description"),
+  };
+}
 
 type Props = { searchParams: Promise<Record<string, string | undefined>> };
 

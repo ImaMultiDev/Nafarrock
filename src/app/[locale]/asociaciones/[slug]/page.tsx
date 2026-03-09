@@ -20,9 +20,23 @@ export async function generateMetadata({
   const { slug } = await params;
   const association = await getAssociationBySlug(slug);
   if (!association) return {};
+  const description = association.description ?? `Asociación de rock en Nafarroa: ${association.name}`;
+  const imageUrl = association.logoUrl ?? (association.images && association.images[0]);
+  const base = (await import("@/lib/site-url")).getSiteUrl();
+  const canonicalUrl = `${base}/asociaciones/${slug}`;
   return {
     title: association.name,
-    description: association.description ?? `Asociación de rock en Nafarroa: ${association.name}`,
+    description,
+    openGraph: {
+      title: association.name,
+      description,
+      url: canonicalUrl,
+      siteName: "Nafarrock",
+      type: "website",
+      images: imageUrl ? [{ url: imageUrl, width: 600, height: 600, alt: association.name }] : undefined,
+    },
+    twitter: { card: "summary_large_image", title: association.name, description, images: imageUrl ? [imageUrl] : undefined },
+    alternates: { canonical: canonicalUrl },
   };
 }
 

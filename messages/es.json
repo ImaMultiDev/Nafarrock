@@ -91,6 +91,10 @@
     "footer": {
       "platform": "Plataforma de la escena rock nafarroa",
       "copyright": "© {year} Nafarrock · Punk · Rock · Nafarroa"
+    },
+    "metadata": {
+      "title": "Nafarrock | Guía del rock en Nafarroa",
+      "description": "La guía y plataforma de referencia del punk rock, rock urbano y escena alternativa nafarroa. Bandas, festivales, conciertos y salas."
     }
   },
   "search": {
@@ -132,23 +136,43 @@
     "subtitleFull": "Salas, promotores, organizadores, festivales y asociaciones que hacen posible la escena rock nafarroa.",
     "venues": {
       "label": "Salas / Recintos",
-      "desc": "Espacios donde suena la escena"
+      "desc": "Espacios donde suena la escena",
+      "metadata": {
+        "title": "Salas y espacios",
+        "description": "Salas de conciertos y espacios de la escena rock nafarroa"
+      }
     },
     "promoters": {
       "label": "Promotores",
-      "desc": "Promoción de conciertos y eventos"
+      "desc": "Promoción de conciertos y eventos",
+      "metadata": {
+        "title": "Promotores",
+        "description": "Promotores de conciertos en Nafarroa"
+      }
     },
     "organizers": {
       "label": "Organizadores",
-      "desc": "Organización de eventos puntuales"
+      "desc": "Organización de eventos puntuales",
+      "metadata": {
+        "title": "Organizadores",
+        "description": "Organizadores de eventos en Nafarroa"
+      }
     },
     "festivals": {
       "label": "Festivales",
-      "desc": "Festivales de la escena"
+      "desc": "Festivales de la escena",
+      "metadata": {
+        "title": "Festivales",
+        "description": "Festivales de rock en Nafarroa"
+      }
     },
     "associations": {
       "label": "Asociaciones y Sociedades",
-      "desc": "Asociaciones y sociedades culturales"
+      "desc": "Asociaciones y sociedades culturales",
+      "metadata": {
+        "title": "Asociaciones y Sociedades",
+        "description": "Asociaciones y sociedades de la escena rock nafarroa"
+      }
     },
     "metadata": {
       "title": "Escena",

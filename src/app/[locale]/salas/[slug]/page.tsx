@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getVenueBySlug } from "@/services/venue.service";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -7,18 +8,32 @@ import { getDateLocale } from "@/lib/date-locale";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { ImageLightbox } from "@/components/ui/ImageLightbox";
 import { SocialLinks, type SocialLinkItem } from "@/components/ui/SocialLinks";
+import { getSiteUrl } from "@/lib/site-url";
 
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
-}) {
+}): Promise<Metadata> {
   const { slug } = await params;
   const venue = await getVenueBySlug(slug);
   if (!venue) return {};
+  const description = venue.description ?? `Sala de conciertos en ${venue.city}`;
+  const imageUrl = venue.logoUrl ?? venue.imageUrl ?? (venue.images && venue.images[0]);
+  const canonicalUrl = `${getSiteUrl()}/salas/${slug}`;
   return {
     title: venue.name,
-    description: venue.description ?? `Sala de conciertos en ${venue.city}`,
+    description,
+    openGraph: {
+      title: venue.name,
+      description,
+      url: canonicalUrl,
+      siteName: "Nafarrock",
+      type: "website",
+      images: imageUrl ? [{ url: imageUrl, width: 600, height: 600, alt: venue.name }] : undefined,
+    },
+    twitter: { card: "summary_large_image", title: venue.name, description, images: imageUrl ? [imageUrl] : undefined },
+    alternates: { canonical: canonicalUrl },
   };
 }
 

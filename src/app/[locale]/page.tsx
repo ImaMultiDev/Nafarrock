@@ -2,6 +2,15 @@ import { HeroSection } from "@/components/home/HeroSection";
 import { ExploreSection } from "@/components/home/ExploreSection";
 import { ManifestoSection } from "@/components/home/ManifestoSection";
 import { getEvents } from "@/services/event.service";
+import { getTranslations } from "next-intl/server";
+
+export async function generateMetadata() {
+  const t = await getTranslations("home.metadata");
+  return {
+    title: t("title"),
+    description: t("description"),
+  };
+}
 
 export default async function HomePage() {
   const { items: upcomingEvents } = await getEvents({

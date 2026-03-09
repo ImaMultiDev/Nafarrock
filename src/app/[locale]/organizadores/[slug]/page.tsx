@@ -20,11 +20,23 @@ export async function generateMetadata({
   const { slug } = await params;
   const organizer = await getOrganizerBySlug(slug);
   if (!organizer) return {};
+  const description = organizer.description ?? `Organizador de eventos en Nafarroa: ${organizer.name}`;
+  const imageUrl = organizer.logoUrl;
+  const base = (await import("@/lib/site-url")).getSiteUrl();
+  const canonicalUrl = `${base}/organizadores/${slug}`;
   return {
     title: organizer.name,
-    description:
-      organizer.description ??
-      `Organizador de eventos en Nafarroa: ${organizer.name}`,
+    description,
+    openGraph: {
+      title: organizer.name,
+      description,
+      url: canonicalUrl,
+      siteName: "Nafarrock",
+      type: "profile",
+      images: imageUrl ? [{ url: imageUrl, width: 600, height: 600, alt: organizer.name }] : undefined,
+    },
+    twitter: { card: "summary_large_image", title: organizer.name, description, images: imageUrl ? [imageUrl] : undefined },
+    alternates: { canonical: canonicalUrl },
   };
 }
 

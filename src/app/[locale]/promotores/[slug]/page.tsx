@@ -20,9 +20,23 @@ export async function generateMetadata({
   const { slug } = await params;
   const promoter = await getPromoterBySlug(slug);
   if (!promoter) return {};
+  const description = promoter.description ?? `Promotor en Nafarroa: ${promoter.name}`;
+  const imageUrl = promoter.imageUrl;
+  const base = (await import("@/lib/site-url")).getSiteUrl();
+  const canonicalUrl = `${base}/promotores/${slug}`;
   return {
     title: promoter.name,
-    description: promoter.description ?? `Promotor en Nafarroa: ${promoter.name}`,
+    description,
+    openGraph: {
+      title: promoter.name,
+      description,
+      url: canonicalUrl,
+      siteName: "Nafarrock",
+      type: "profile",
+      images: imageUrl ? [{ url: imageUrl, width: 600, height: 600, alt: promoter.name }] : undefined,
+    },
+    twitter: { card: "summary_large_image", title: promoter.name, description, images: imageUrl ? [imageUrl] : undefined },
+    alternates: { canonical: canonicalUrl },
   };
 }
 

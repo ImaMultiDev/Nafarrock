@@ -3,11 +3,15 @@ import Link from "next/link";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { EscenaBackNav } from "@/components/escena/EscenaBackNav";
 import { Pagination } from "@/components/ui/Pagination";
+import { getTranslations } from "next-intl/server";
 
-export const metadata = {
-  title: "Festivales",
-  description: "Festivales de rock en Nafarroa",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("scene.festivals.metadata");
+  return {
+    title: t("title"),
+    description: t("description"),
+  };
+}
 
 type Props = { searchParams: Promise<Record<string, string | undefined>> };
 

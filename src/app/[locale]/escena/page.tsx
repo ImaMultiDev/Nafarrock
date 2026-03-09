@@ -8,11 +8,15 @@ import { getAssociations } from "@/services/association.service";
 import { getVenues } from "@/services/venue.service";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { canViewRestrictedEscena } from "@/lib/escena-visibility";
+import { getTranslations } from "next-intl/server";
 
-export const metadata = {
-  title: "Escena",
-  description: "Salas, promotores, organizadores y festivales de la escena rock nafarroa",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("scene.metadata");
+  return {
+    title: t("title"),
+    description: t("description"),
+  };
+}
 
 // Tipos visibles solo para bandas, salas, festivales y perfiles de la escena
 const RESTRICTED_TIPOS = ["promotor", "organizador", "asociacion"];

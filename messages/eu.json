@@ -91,6 +91,10 @@
     "footer": {
       "platform": "Nafarroako rock eskenaren plataforma",
       "copyright": "© {year} Nafarrock · Punk · Rock · Nafarroa"
+    },
+    "metadata": {
+      "title": "Nafarrock | Nafarroako rock gida",
+      "description": "Punk rock, rock urbano eta nafarroako eskena alternatiboko erreferentzia gida eta plataforma. Taldeak, jaialdiak, kontzertuak eta aretoak."
     }
   },
   "search": {
@@ -132,23 +136,43 @@
     "subtitleFull": "Nafarroako rock eskena posible egiten duten aretoak, sustatzaileak, antolatzaileak, jaialdiak eta elkarteak.",
     "venues": {
       "label": "Aretoak / Lekuak",
-      "desc": "Eskena soinu egiten duen espazioak"
+      "desc": "Eskena soinu egiten duen espazioak",
+      "metadata": {
+        "title": "Aretoak eta espazioak",
+        "description": "Nafarroako rock eskenako kontzertu aretoak eta espazioak"
+      }
     },
     "promoters": {
       "label": "Sustatzaileak",
-      "desc": "Kontzertu eta ekitaldien sustapena"
+      "desc": "Kontzertu eta ekitaldien sustapena",
+      "metadata": {
+        "title": "Sustatzaileak",
+        "description": "Nafarroako kontzertu sustatzaileak"
+      }
     },
     "organizers": {
       "label": "Antolatzaileak",
-      "desc": "Ekitaldi puntualen antolaketa"
+      "desc": "Ekitaldi puntualen antolaketa",
+      "metadata": {
+        "title": "Antolatzaileak",
+        "description": "Nafarroako ekitaldi antolatzaileak"
+      }
     },
     "festivals": {
       "label": "Jaialdiak",
-      "desc": "Eskenako jaialdiak"
+      "desc": "Eskenako jaialdiak",
+      "metadata": {
+        "title": "Jaialdiak",
+        "description": "Nafarroako rock jaialdiak"
+      }
     },
     "associations": {
       "label": "Elkarteak eta Gizarteak",
-      "desc": "Elkarte eta gizarte kulturalak"
+      "desc": "Elkarte eta gizarte kulturalak",
+      "metadata": {
+        "title": "Elkarteak eta Gizarteak",
+        "description": "Nafarroako rock eskenako elkarteak eta gizarteak"
+      }
     },
     "metadata": {
       "title": "Eskena",

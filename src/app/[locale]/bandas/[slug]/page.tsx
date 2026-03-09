@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getBandBySlug } from "@/services/band.service";
 import { notFound } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
@@ -9,18 +10,42 @@ import { ImageLightbox } from "@/components/ui/ImageLightbox";
 import { SocialLinks, type SocialLinkItem } from "@/components/ui/SocialLinks";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
 import { getYouTubeEmbedUrl } from "@/lib/video-embed";
+import { getSiteUrl } from "@/lib/site-url";
 
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
-}) {
+}): Promise<Metadata> {
   const { slug } = await params;
   const band = await getBandBySlug(slug);
   if (!band) return {};
+  const description = band.bio ?? `Banda de rock nafarroa: ${(band.genres ?? []).join(", ")}`;
+  const imageUrl = band.logoUrl ?? band.imageUrl ?? (band.images && band.images[0]);
+  const canonicalUrl = `${getSiteUrl()}/bandas/${slug}`;
+
   return {
     title: band.name,
-    description: band.bio ?? `Banda de rock nafarroa: ${band.genres.join(", ")}`,
+    description,
+    openGraph: {
+      title: band.name,
+      description,
+      url: canonicalUrl,
+      siteName: "Nafarrock",
+      type: "profile",
+      images: imageUrl ? [{ url: imageUrl, width: 600, height: 600, alt: band.name }] : undefined,
+      locale: "es_ES",
+      alternateLocale: "eu_ES",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: band.name,
+      description,
+      images: imageUrl ? [imageUrl] : undefined,
+    },
+    alternates: {
+      canonical: canonicalUrl,
+    },
   };
 }
 
