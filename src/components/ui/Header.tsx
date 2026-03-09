@@ -103,6 +103,18 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b-2 border-punk-red bg-punk-black/95 backdrop-blur-md">
+      {/* Letrero neón LASTER - en construcción, cruza el navbar */}
+      <div
+        className="neon-laster-badge pointer-events-none absolute bottom-0 left-1/2 z-10"
+        aria-hidden
+      >
+        <div className="neon-laster-sign">
+          <span className="neon-laster-text font-display text-xl tracking-[0.35em] sm:text-2xl sm:tracking-[0.4em]">
+            LASTER
+          </span>
+        </div>
+      </div>
+
       <nav className="relative flex w-full min-w-0 items-center justify-between px-3 py-3 sm:px-6 lg:px-12 max-[299px]:px-2">
         {/* Logo a la izquierda + NAFARROCK centrado y más grande en mobile */}
         <div className="flex flex-1 items-center nav:flex-initial">
