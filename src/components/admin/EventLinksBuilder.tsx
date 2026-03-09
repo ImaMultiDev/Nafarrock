@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Plus, X } from "lucide-react";
 
 const inputClass =
@@ -13,20 +14,17 @@ export type EventLinkItem = {
   label: string;
 };
 
-const KIND_OPTIONS: { value: EventLinkItem["kind"]; label: string }[] = [
-  { value: "instagram", label: "Instagram" },
-  { value: "facebook", label: "Facebook" },
-  { value: "twitter", label: "X (Twitter)" },
-  { value: "web", label: "Web" },
-];
+const KIND_KEYS = ["instagram", "facebook", "twitter", "web"] as const;
 
 type Props = {
   value: EventLinkItem[];
   onChange: (links: EventLinkItem[]) => void;
+  namespace?: string;
 };
 
 /** Constructor de enlaces para eventos: múltiples URLs con etiqueta (ej: Instagram banda, Instagram sala) */
-export function EventLinksBuilder({ value, onChange }: Props) {
+export function EventLinksBuilder({ value, onChange, namespace = "dashboard.proposals.event.links" }: Props) {
+  const t = useTranslations(namespace);
   const addLink = () => {
     onChange([...value, { kind: "instagram", url: "", label: "" }]);
   };
@@ -44,9 +42,9 @@ export function EventLinksBuilder({ value, onChange }: Props) {
   return (
     <div className="space-y-4">
       <div>
-        <label className={labelClass}>Redes y enlaces (opcional)</label>
+        <label className={labelClass}>{t("label")}</label>
         <p className="mt-1 font-body text-xs text-punk-white/50">
-          Añade varias URLs con etiqueta (ej: Instagram de la banda, Instagram de la sala). La URL de entradas va aparte.
+          {t("hint")}
         </p>
       </div>
 
@@ -56,44 +54,44 @@ export function EventLinksBuilder({ value, onChange }: Props) {
           className="flex flex-wrap gap-3 border-2 border-punk-white/20 p-4 sm:flex-nowrap sm:items-end"
         >
           <div className="w-full sm:w-32">
-            <label className={labelClass}>Tipo</label>
+            <label className={labelClass}>{t("type")}</label>
             <select
               value={link.kind}
               onChange={(e) => updateLink(i, { kind: e.target.value as EventLinkItem["kind"] })}
               className={inputClass}
             >
-              {KIND_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
+              {KIND_KEYS.map((k) => (
+                <option key={k} value={k}>
+                  {t(`kind.${k}`)}
                 </option>
               ))}
             </select>
           </div>
           <div className="min-w-0 flex-1">
-            <label className={labelClass}>Etiqueta (ej: Banda, Sala)</label>
+            <label className={labelClass}>{t("typeLabel")}</label>
             <input
               type="text"
               value={link.label}
               onChange={(e) => updateLink(i, { label: e.target.value })}
               className={inputClass}
-              placeholder="Instagram de la banda"
+              placeholder={t("typePlaceholder")}
             />
           </div>
           <div className="min-w-0 flex-1">
-            <label className={labelClass}>URL</label>
+            <label className={labelClass}>{t("url")}</label>
             <input
               type="url"
               value={link.url}
               onChange={(e) => updateLink(i, { url: e.target.value })}
               className={inputClass}
-              placeholder="https://instagram.com/..."
+              placeholder={t("urlPlaceholder")}
             />
           </div>
           <button
             type="button"
             onClick={() => removeLink(i)}
             className="shrink-0 p-2 text-punk-white/50 hover:text-punk-red"
-            aria-label="Quitar"
+            aria-label={t("remove")}
           >
             <X className="h-5 w-5" />
           </button>
@@ -106,7 +104,7 @@ export function EventLinksBuilder({ value, onChange }: Props) {
         className="flex items-center gap-2 border-2 border-dashed border-punk-white/30 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:border-punk-green hover:text-punk-green"
       >
         <Plus className="h-4 w-4" />
-        Añadir enlace
+        {t("add")}
       </button>
     </div>
   );

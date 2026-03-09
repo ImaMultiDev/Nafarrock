@@ -6,6 +6,7 @@ import { getMessages, getLocale } from "next-intl/server";
 import { Providers } from "@/components/providers/Providers";
 import { Header } from "@/components/ui/Header";
 import { BandVerificationBanner } from "@/components/BandVerificationBanner";
+import { InboxBanner } from "@/components/InboxBanner";
 import { FooterSection } from "@/components/home/FooterSection";
 import "./globals.css";
 
@@ -65,6 +66,7 @@ export default async function RootLayout({
           <Providers>
             <Header />
             <BandVerificationBanner />
+            <InboxBanner />
             {children}
             <FooterSection />
           </Providers>

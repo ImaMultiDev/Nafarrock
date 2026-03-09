@@ -2,20 +2,11 @@ import { NextAuthOptions } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import GitHubProvider from "next-auth/providers/github";
 import { compare } from "bcryptjs";
 import { prisma } from "./prisma";
 
-export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma) as NextAuthOptions["adapter"],
-  session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 }, // 30 días
-  pages: {
-    signIn: "/auth/login",
-    signOut: "/auth/logout",
-    error: "/auth/error",
-  },
-  providers: [
-    CredentialsProvider({
+const providers: NextAuthOptions["providers"] = [
+  CredentialsProvider({
       name: "credentials",
       credentials: {
         email: { label: "Email", type: "email" },
@@ -58,17 +49,50 @@ export const authOptions: NextAuthOptions = {
         };
       },
     }),
-    // OAuth preparado - descomentar y añadir vars de entorno
-    // GoogleProvider({
-    //   clientId: process.env.AUTH_GOOGLE_ID!,
-    //   clientSecret: process.env.AUTH_GOOGLE_SECRET!,
-    // }),
-    // GitHubProvider({
-    //   clientId: process.env.AUTH_GITHUB_ID!,
-    //   clientSecret: process.env.AUTH_GITHUB_SECRET!,
-    // }),
-  ],
+];
+
+// Google OAuth: solo si las variables de entorno están configuradas
+if (process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET) {
+  providers.push(
+    GoogleProvider({
+      clientId: process.env.AUTH_GOOGLE_ID,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET,
+    })
+  );
+}
+
+export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(prisma) as NextAuthOptions["adapter"],
+  session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 }, // 30 días
+  pages: {
+    signIn: "/auth/login",
+    signOut: "/auth/logout",
+    error: "/auth/error",
+  },
+  providers,
   callbacks: {
+    async signIn({ user, account }) {
+      // OAuth (Google): marcar email como verificado automáticamente
+      if (account?.provider === "google" && user?.email) {
+        await prisma.user.updateMany({
+          where: { email: user.email },
+          data: { emailVerified: new Date() },
+        });
+        // Comprobar cuenta programada para borrado
+        const dbUser = await prisma.user.findUnique({
+          where: { email: user.email },
+          select: { scheduledDeletionAt: true },
+        });
+        if (dbUser?.scheduledDeletionAt) {
+          if (dbUser.scheduledDeletionAt < new Date()) {
+            await prisma.user.delete({ where: { email: user.email } });
+            return "/auth/login?deleted=done";
+          }
+          return `/auth/login?deleted=pending&date=${encodeURIComponent(dbUser.scheduledDeletionAt.toISOString())}`;
+        }
+      }
+      return true;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role;

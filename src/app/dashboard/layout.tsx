@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { prisma } from "@/lib/prisma";
 import { DashboardNav, type NavItem } from "@/components/dashboard/DashboardNav";
@@ -31,38 +32,41 @@ export default async function DashboardLayout({
 
   const role = (session.user?.effectiveRole as string) ?? user?.role ?? "";
   const canPublishBolos = ["PROMOTOR", "SALA", "FESTIVAL", "ASOCIACION", "ORGANIZADOR"].includes(role);
+  const t = await getTranslations("dashboard.cards");
+  const tNav = await getTranslations("common.nav");
 
   const navItems: NavItem[] = [
-    { href: "/dashboard", label: "Panel", icon: "dashboard", accent: "green" },
-    { href: "/dashboard/perfil", label: "Mi perfil", icon: "perfil", accent: "pink" },
+    { href: "/dashboard", label: tNav("panel"), icon: "dashboard", accent: "green" },
+    { href: "/dashboard/perfil", label: tNav("myProfile"), icon: "perfil", accent: "pink" },
+    { href: "/dashboard/buzon", label: tNav("inbox"), icon: "buzon", accent: "yellow" },
   ];
 
   if (role === "BANDA" || role === "ADMIN") {
-    navItems.push({ href: "/dashboard/banda", label: "Mi banda", icon: "banda", accent: "green" });
+    navItems.push({ href: "/dashboard/banda", label: t("myBand"), icon: "banda", accent: "green" });
   }
   if (role === "SALA" || role === "ADMIN") {
-    navItems.push({ href: "/dashboard/sala", label: "Mi sala", icon: "sala", accent: "pink" });
+    navItems.push({ href: "/dashboard/sala", label: t("myVenue"), icon: "sala", accent: "pink" });
   }
   if (role === "FESTIVAL" || role === "ADMIN") {
-    navItems.push({ href: "/dashboard/festival", label: "Mi festival", icon: "festival", accent: "red" });
+    navItems.push({ href: "/dashboard/festival", label: t("myFestival"), icon: "festival", accent: "red" });
   }
   if (role === "ASOCIACION") {
-    navItems.push({ href: "/dashboard/asociacion", label: "Mi asociación", icon: "asociacion", accent: "yellow" });
+    navItems.push({ href: "/dashboard/asociacion", label: t("myAssociation"), icon: "asociacion", accent: "yellow" });
   }
   if (role === "PROMOTOR") {
-    navItems.push({ href: "/dashboard/promotor", label: "Mi promotor", icon: "promotor", accent: "pink" });
+    navItems.push({ href: "/dashboard/promotor", label: t("myPromoter"), icon: "promotor", accent: "pink" });
   }
   if (role === "ORGANIZADOR") {
-    navItems.push({ href: "/dashboard/organizador", label: "Mi organizador", icon: "organizador", accent: "yellow" });
+    navItems.push({ href: "/dashboard/organizador", label: t("myOrganizer"), icon: "organizador", accent: "yellow" });
   }
   if (
     ["SALA", "FESTIVAL", "ASOCIACION", "ORGANIZADOR", "PROMOTOR"].includes(role) ||
     (role === "ADMIN")
   ) {
-    navItems.push({ href: "/dashboard/eventos", label: "Mis eventos", icon: "eventos", accent: "red" });
+    navItems.push({ href: "/dashboard/eventos", label: t("myEvents"), icon: "eventos", accent: "red" });
   }
   if (canPublishBolos) {
-    navItems.push({ href: "/dashboard/bolos/nuevo", label: "Publicar anuncio", icon: "anuncio", accent: "green" });
+    navItems.push({ href: "/dashboard/bolos/nuevo", label: t("publishAnnouncement"), icon: "anuncio", accent: "green" });
   }
 
   return (

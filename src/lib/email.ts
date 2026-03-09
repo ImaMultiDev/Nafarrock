@@ -388,3 +388,99 @@ export async function sendAnnouncementApplicationEmail(
   console.log("[Resend] Postulación enviada. ID:", data?.id, "→", to);
   return { success: true };
 }
+
+/** Email cuando se aprueba un anuncio del tablón */
+export async function sendBoardAnnouncementApprovedEmail(
+  to: string,
+  title: string,
+): Promise<{ success: boolean; error?: string }> {
+  if (isDev) {
+    console.log("[Email DEV] Anuncio tablón aprobado omitido →", to, title);
+    return { success: true };
+  }
+  if (!resend) {
+    console.warn(
+      "RESEND_API_KEY no configurado, omitiendo email de anuncio aprobado",
+    );
+    return { success: true };
+  }
+
+  const tablonUrl = `${baseUrl()}/tablon`;
+
+  const { data, error } = await resend.emails.send({
+    from: FROM_EMAIL,
+    to,
+    subject: "Anuncio aprobado - Nafarrock",
+    html: `
+      <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto;">
+        <h2 style="color: #00c853;">NAFARROCK</h2>
+        <p>¡Buenas noticias!</p>
+        <p>Tu anuncio <strong>"${title.replace(/</g, "&lt;")}"</strong> ha sido aprobado y ya está publicado en el tablón.</p>
+        <p style="margin: 24px 0;">
+          <a href="${tablonUrl}" style="background: #e60026; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
+            Ver tablón de anuncios
+          </a>
+        </p>
+        <p style="color: #666; font-size: 12px;">— Equipo Nafarrock</p>
+      </div>
+    `,
+  });
+
+  if (error) {
+    console.error("[Resend] Error enviando email anuncio aprobado:", error);
+    return { success: false, error: error.message };
+  }
+  console.log("[Resend] Anuncio aprobado enviado. ID:", data?.id, "→", to);
+  return { success: true };
+}
+
+/** Email cuando se rechaza un anuncio del tablón */
+export async function sendBoardAnnouncementRejectedEmail(
+  to: string,
+  title: string,
+  reason?: string,
+): Promise<{ success: boolean; error?: string }> {
+  if (isDev) {
+    console.log("[Email DEV] Anuncio tablón rechazado omitido →", to, title);
+    return { success: true };
+  }
+  if (!resend) {
+    console.warn(
+      "RESEND_API_KEY no configurado, omitiendo email de anuncio rechazado",
+    );
+    return { success: true };
+  }
+
+  const contactUrl = `${baseUrl()}/contacto`;
+  const reasonBlock = reason?.trim()
+    ? `<p><strong>Motivo:</strong></p><div style="white-space: pre-wrap; background: #f5f5f5; padding: 12px; border-radius: 4px; margin: 12px 0;">${reason.replace(/\n/g, "<br>").replace(/</g, "&lt;")}</div>`
+    : "";
+
+  const { data, error } = await resend.emails.send({
+    from: FROM_EMAIL,
+    to,
+    subject: reason?.trim() ? "Anuncio rechazado - Motivo" : "Anuncio rechazado - Nafarrock",
+    html: `
+      <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto;">
+        <h2 style="color: #e60026;">NAFARROCK</h2>
+        <p>Hola,</p>
+        <p>Tu anuncio <strong>"${title.replace(/</g, "&lt;")}"</strong> no ha podido ser publicado en el tablón.</p>
+        ${reasonBlock}
+        <p>Si tienes dudas, ponte en contacto con Nafarrock:</p>
+        <p style="margin: 24px 0;">
+          <a href="${contactUrl}" style="background: #00c853; color: #000; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
+            Formulario de contacto
+          </a>
+        </p>
+        <p style="color: #666; font-size: 12px;">— Equipo Nafarrock</p>
+      </div>
+    `,
+  });
+
+  if (error) {
+    console.error("[Resend] Error enviando email anuncio rechazado:", error);
+    return { success: false, error: error.message };
+  }
+  console.log("[Resend] Anuncio rechazado enviado. ID:", data?.id, "→", to);
+  return { success: true };
+}

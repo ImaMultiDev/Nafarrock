@@ -5,21 +5,13 @@ const EDITORIAL_MVP_MODE = true;
 import NextLink from "next/link";
 import Image from "next/image";
 import { createPortal } from "react-dom";
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
-import { useTranslations, useLocale } from "next-intl";
-import {
-  Menu,
-  X,
-  Instagram,
-  Mail,
-  Facebook,
-  Youtube,
-  Music2,
-} from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Menu, X } from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
-import { SOCIAL_LINKS } from "@/lib/social-links";
+import { InboxBadge } from "@/components/InboxBadge";
 
 import { ESCENA_HIDDEN } from "@/lib/feature-flags";
 
@@ -27,6 +19,7 @@ const navLinks = [
   { href: "/", labelKey: "home" as const },
   { href: "/eventos", labelKey: "events" as const },
   { href: "/bandas", labelKey: "bands" as const },
+  { href: "/tablon", labelKey: "tablon" as const },
   ...(!ESCENA_HIDDEN ? [{ href: "/escena", labelKey: "scene" as const }] : []),
 ];
 
@@ -61,24 +54,6 @@ function getGuideOrManualLink(
   return { href: "/guia", label: t("guide") };
 }
 
-function SocialIcon({ icon, className }: { icon: string; className?: string }) {
-  const iconProps = { className, size: 20 };
-  switch (icon) {
-    case "instagram":
-      return <Instagram {...iconProps} />;
-    case "facebook":
-      return <Facebook {...iconProps} />;
-    case "youtube":
-      return <Youtube {...iconProps} />;
-    case "spotify":
-      return <Music2 {...iconProps} />;
-    case "mail":
-      return <Mail {...iconProps} />;
-    default:
-      return <Mail {...iconProps} />;
-  }
-}
-
 function isActivePath(pathname: string, href: string): boolean {
   if (href === "/") return pathname === "/";
   if (href === "/bolos")
@@ -96,18 +71,17 @@ function isActivePath(pathname: string, href: string): boolean {
     );
   }
   if (href === "/guia") return pathname === "/guia";
+  if (href === "/tablon") return pathname === "/tablon" || pathname.startsWith("/tablon/");
   if (href.startsWith("/manual")) return pathname.startsWith("/manual");
   return pathname === href || pathname.startsWith(href + "/");
 }
 
 export function Header() {
   const pathname = usePathname();
-  const locale = useLocale();
   const t = useTranslations("common.nav");
   const tCommon = useTranslations("common");
   const { data: session } = useSession();
   const isAdmin = pathname.startsWith("/admin");
-  const signOutCallbackUrl = locale === "eu" ? "/eu" : "/";
   const [menuOpen, setMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -219,52 +193,15 @@ export function Header() {
             );
           })()}
           {!isAdmin && <LanguageSwitcher />}
-          <div className="ml-4 flex items-center gap-1 border-l border-punk-white/20 pl-4">
-            {SOCIAL_LINKS.filter((s) => !("internal" in s && s.internal && s.href === "/contacto")).map((social) => {
-              const isInternal = "internal" in social && social.internal;
-              const className =
-                "flex h-9 w-9 items-center justify-center rounded-full border border-punk-white/30 text-punk-white/80 transition-colors hover:border-punk-green hover:text-punk-green";
-              if (isInternal) {
-                return (
-                  <Link
-                    key={social.name}
-                    href={social.href}
-                    className={className}
-                    aria-label={social.name}
-                  >
-                    <SocialIcon icon={social.icon} />
-                  </Link>
-                );
-              }
-              return (
-                <a
-                  key={social.name}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={className}
-                  aria-label={social.name}
-                >
-                  <SocialIcon icon={social.icon} />
-                </a>
-              );
-            })}
-          </div>
           {session ? (
-            <div className="ml-2 flex items-center gap-2">
+            <div className="ml-4 flex items-center gap-2">
               <NextLink
                 href="/dashboard"
                 className="border-2 border-punk-red bg-punk-red px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white transition-colors hover:bg-transparent hover:text-punk-red"
               >
                 {t("panel")}
               </NextLink>
-              <button
-                type="button"
-                onClick={() => signOut({ callbackUrl: signOutCallbackUrl })}
-                className="border-2 border-punk-white/40 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white/80 transition-colors hover:border-punk-red hover:text-punk-red"
-              >
-                {t("logout")}
-              </button>
+              <InboxBadge variant="desktop-icon" />
             </div>
           ) : (
             <div className="ml-2 flex items-center gap-2">
@@ -392,16 +329,10 @@ export function Header() {
                     >
                       {t("panel")}
                     </NextLink>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setMenuOpen(false);
-                        signOut({ callbackUrl: signOutCallbackUrl });
-                      }}
-                      className="mt-2 rounded border-2 border-punk-white/40 px-4 py-3 text-center font-punch text-xs uppercase tracking-widest text-punk-white/80 hover:border-punk-red hover:text-punk-red"
-                    >
-                      {t("logout")}
-                    </button>
+                    <InboxBadge
+                      variant="mobile-list"
+                      onNavigate={() => setMenuOpen(false)}
+                    />
                   </>
                 ) : (
                   <div className="mt-2 flex flex-col gap-2">
@@ -424,46 +355,6 @@ export function Header() {
                   </div>
                 )}
               </nav>
-
-              <div className="my-6 h-px bg-punk-white/20" />
-
-              {/* REDES */}
-              <p className="mb-3 font-punch text-xs uppercase tracking-widest text-punk-white/50">
-                {tCommon("social.networks")}
-              </p>
-              <div className="flex flex-col gap-2">
-                {SOCIAL_LINKS.filter((s) => !("internal" in s && s.internal && s.href === "/contacto")).map((social) => {
-                  const isInternal = "internal" in social && social.internal;
-                  const className =
-                    "flex items-center gap-3 rounded px-4 py-3 text-punk-white/80 transition-colors hover:bg-punk-white/5 hover:text-punk-green";
-                  if (isInternal) {
-                    return (
-                      <Link
-                        key={social.name}
-                        href={social.href}
-                        onClick={() => setMenuOpen(false)}
-                        className={className}
-                      >
-                        <SocialIcon icon={social.icon} className="shrink-0" />
-                        <span>{social.name}</span>
-                      </Link>
-                    );
-                  }
-                  return (
-                    <a
-                      key={social.name}
-                      href={social.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => setMenuOpen(false)}
-                      className={className}
-                    >
-                      <SocialIcon icon={social.icon} className="shrink-0" />
-                      <span>{social.name}</span>
-                    </a>
-                  );
-                })}
-              </div>
             </div>
           </div>,
           document.body,

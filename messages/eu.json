@@ -5,15 +5,18 @@
       "events": "Ekitaldiak",
       "bands": "Taldeak",
       "scene": "Eskena",
-      "guide": "Nafarrock",
+      "guide": "Proiektua",
       "manual": "Eskuliburua",
       "contact": "Kontaktua",
       "panel": "Panela",
+      "myProfile": "Nire profila",
+      "inbox": "Postontzia",
       "logout": "Irten",
       "login": "Sartu",
       "claim": "Eskatu",
       "claimProfile": "Eskatu profila",
-      "bolos": "Bolos"
+      "bolos": "Bolos",
+      "tablon": "Iragarkiak"
     },
     "actions": {
       "search": "Bilatu",
@@ -32,7 +35,9 @@
       "facebook": "Facebook",
       "youtube": "YouTube",
       "email": "Posta"
-    }
+    },
+    "proposalLimitExceeded": "Proposamen mota honetako bat bidal dezakezu 5 egunero. Mesedez, itxaron beste bat bidali aurretik.",
+    "modalClose": "Onartu"
   },
   "home": {
     "tagline": "Nafarroa · Punk · Rock · Alternatiboa",
@@ -54,6 +59,10 @@
       "events": {
         "title": "EKITALDIAK",
         "desc": "Kontzertuak eta agenda"
+      },
+      "announcements": {
+        "title": "IRAGARKIAK",
+        "desc": "Deialdiak, bilaketak eta aukerak"
       },
       "scene": {
         "title": "ESKENA",
@@ -218,7 +227,9 @@
       "register": "Erregistratu",
       "claimProfile": "Zure taldea, aretoa edo jaialdia Nafarrocken dago jada?",
       "claimProfileLink": "Eskatu profila",
-      "resendVerification": "Bidali berriro egiaztapen posta →"
+      "resendVerification": "Bidali berriro egiaztapen posta →",
+      "continueWithGoogle": "Google bidez jarraitu",
+      "orDivider": "edo"
     },
     "registro": {
       "title": "ERREGISTRATU",
@@ -254,7 +265,9 @@
       "errorInvalidEmail": "Sartu posta baliozkoa",
       "errorPasswordRequirements": "Pasahitzak ez du betetzen baldintzak: gutxienez 8 karaktere, maiuskula, minuskula, zenbaki eta karaktere berezi",
       "errorPasswordMismatch": "Pasahitzak ez datoz bat",
-      "errorRegister": "Errorea erregistratzean"
+      "errorRegister": "Errorea erregistratzean",
+      "continueWithGoogle": "Google bidez jarraitu",
+      "orDivider": "edo"
     }
   },
   "filters": {
@@ -335,6 +348,263 @@
     "pageOf": "{page}. orrialdea {total}-(e)tik",
     "result": "emaitza",
     "results": "emaitzak"
+  },
+  "boardAnnouncement": {
+    "title": "Iragarki-taula",
+    "subtitle": "Deialdiak, bilaketak eta rock eskenako aukerak.",
+    "empty": "Ez da argitaratutako iragarkirik. Laster edukia egongo da.",
+    "propose": {
+      "title": "Proposatu iragarkia",
+      "subtitle": "Argitaratu zure iragarkia taulan. Administratzaileak argitaratu aurretik berrikusiko du.",
+      "formTitle": "Iragarkiaren datuak",
+      "submit": "Bidali proposamena",
+      "submitting": "Bidaltzen...",
+      "cancel": "Utzi",
+      "success": "Iragarki proposamena bidali da. Administratzaileak berrikusiko du eta jakinaraziko dizu.",
+      "successModal": "Iragarkia bidali da egiaztatzeko. Gure taldeak berrikusi ondoren posta elektroniko bat jasoko duzu.",
+      "errorSend": "Errorea bidaltzean"
+    },
+    "categories": {
+      "SE_BUSCA_MUSICO": "Musikari bila",
+      "SE_BUSCAN_BANDAS": "Taldeak bila / Postulazioak",
+      "CONCURSO": "Lehiaketak",
+      "LOCAL_MATERIAL": "Lekua eta materiala",
+      "SERVICIOS": "Zerbitzuak",
+      "OTROS": "Besteak"
+    },
+    "fields": {
+      "title": "Izenburua *",
+      "category": "Kategoria *",
+      "territory": "Probintzia/Lurraldea",
+      "description": "Deskribapena *",
+      "contactEmail": "Kontakturako posta *",
+      "emailPlaceholder": "adibidea@posta.com",
+      "imageMain": "Irudi nagusia (aukerakoa)",
+      "imageGallery": "Irudi gehigarriak (aukerakoak, gehienez 2)"
+    },
+    "filters": {
+      "category": "Kategoria",
+      "territory": "Lurraldea",
+      "all": "Guztiak",
+      "allTerritories": "Guztiak",
+      "filter": "Iragazi"
+    },
+    "contact": "Kontaktua",
+    "metadata": {
+      "title": "Iragarki-taula",
+      "description": "Deialdiak, musikari bilaketak eta Nafarroako rock eskenako aukerak"
+    }
+  },
+  "dashboard": {
+    "title": "Panela",
+    "hello": "Kaixo, {name}",
+    "back": "← Itzuli",
+    "access": "Sartu",
+    "deletionCancelled": "✓ Ezabaketa bertan behera utzi da. Zure kontua aktibo jarraitzen du.",
+    "proposedBand": "✓ Talde proposamena bidalia. Administratzaileak berrikusiko du eta jakinaraziko dizu.",
+    "proposedEvent": "✓ Ekitaldi proposamena bidalia. Administratzaileak berrikusiko du eta jakinaraziko dizu.",
+    "proposedAnnouncement": "✓ Iragarki proposamena bidalia. Administratzaileak berrikusiko du eta jakinaraziko dizu.",
+    "pendingProposals": {
+      "title": "Beren ikuskapenaren zain dauden proposamenak",
+      "description": "Proposamen hauek berrikuspen prozesuan daude. Administratzaileak postontzian jakinaraziko dizu berrikusi dituenean.",
+      "event": "Ekitaldia",
+      "band": "Taldea",
+      "announcement": "Iragarkia"
+    },
+    "pendingClaim": {
+      "title": "Onarpenaren zain",
+      "description": "\"{name}\" profilaren jabetza eskatu duzu. Zure eskaera berrikuspen prozesuan dago. Administratzaileak egiaztatzean posta elektroniko bat jasoko duzu.",
+      "hint": "Zalantzak badituzu, Nafarrockekin harremanetan jarri zaitezke Kontaktua ataletik (onarpenaren ondoren ikusgarria)."
+    },
+    "cards": {
+      "myProfile": "Nire profila",
+      "myProfileDesc": "Datu pertsonalak eta onarpen egoera",
+      "inbox": "Postontzia",
+      "inboxDesc": "Zure proposamenen jakinarazpenak",
+      "admin": "Administrazioa",
+      "adminDesc": "CRUD taldeak, ekitaldiak, aretoak, erabiltzaileak",
+      "myBand": "Nire taldea",
+      "myBandDesc": "Editatu profila, logotipoa, estekak",
+      "myFestival": "Nire jaialdia",
+      "myFestivalDesc": "Editatu profila, logotipoa, sareak",
+      "myAssociation": "Nire elkartea",
+      "myAssociationDesc": "Editatu profila, logotipoa, sareak",
+      "myOrganizer": "Nire antolatzailea",
+      "myOrganizerDesc": "Editatu profila, logotipoa, sareak",
+      "myPromoter": "Nire sustatzailea",
+      "myPromoterDesc": "Editatu profila, logotipoa, sareak",
+      "myVenue": "Nire aretoa",
+      "myVenueDesc": "Editatu profila, logotipoa, sareak",
+      "myEvents": "Nire ekitaldiak",
+      "myEventsDesc": "Sortu eta kudeatu kontzertuak",
+      "proposeBand": "Taldea proposatu",
+      "proposeBandDesc": "Proposatu talde bat kultura erradarrerako",
+      "proposeEvent": "Ekitaldia proposatu",
+      "proposeEventDesc": "Proposatu kontzertu edo jaialdi bat",
+      "proposeAnnouncement": "Iragarkia proposatu",
+      "proposeAnnouncementDesc": "Argitaratu iragarki-taulan",
+      "registerHint": "Erregistratu talde, areto edo sustatzaile gisa aukera gehiago lortzeko.",
+      "publishAnnouncement": "Iragarkia argitaratu"
+    },
+    "inbox": {
+      "title": "Postontzia",
+      "subtitle": "Zure proposamenen jakinarazpenak (taldeak, ekitaldiak, iragarkiak)",
+      "empty": "Ez duzu mezurik postontzian",
+      "emptyHint": "Administratzaileak proposamen bat onartu edo baztertu duenean hemen agertuko da",
+      "markAllRead": "Markatu {count} irakurrita bezala",
+      "markAllReadPlural": "Markatu {count} irakurrita bezala",
+      "new": "Berria",
+      "banner": "Mezu {count} duzu postontzian",
+      "bannerPlural": "{count} mezu dituzu postontzian",
+      "viewInbox": "Ikusi postontzia"
+    },
+    "perfil": {
+      "title": "Nire profila",
+      "subtitle": "Kudeatu zure datu pertsonalak eta zure entitatearen egoera",
+      "personalData": "Datu pertsonalak",
+      "approvalStatus": "Onarpen egoera",
+      "approved": "Onartua",
+      "approvedFem": "Onartua",
+      "pending": "Zain",
+      "pendingApproval": "Onarpenaren zain",
+      "edit": "Editatu",
+      "changePassword": "Pasahitza aldatu",
+      "dangerZone": "Arrisku zona",
+      "deleteAccountHint": "Zure kontua ezabatzeak zure datu guztiak betirako ezabatuko ditu.",
+      "noEntityHint": "Erregistratu {role} gisa zure entitatea sortu eta onarpen egoera ikusteko.",
+      "noName": "Izenik gabe",
+      "entityType": {
+        "band": "Taldea",
+        "venue": "Aretoa",
+        "festival": "Jaialdia",
+        "association": "Elkartea",
+        "organizer": "Antolatzailea",
+        "promoter": "Sustatzailea"
+      },
+      "profileForm": {
+        "email": "Email (ez da editagarria)",
+        "firstName": "Izena",
+        "lastName": "Abizenak",
+        "save": "Gorde",
+        "saving": "Gordetzen...",
+        "errorUpdate": "Errorea eguneratzean"
+      },
+      "changePasswordForm": {
+        "currentPassword": "Uneko pasahitza *",
+        "newPassword": "Pasahitz berria *",
+        "repeatPassword": "Errepikatu pasahitz berria *",
+        "submit": "Pasahitza aldatu",
+        "saving": "Gordetzen…",
+        "externalHint": "Zure kontuak kanpoko sarbidea erabiltzen du (Google, etab.). Pasahitza hornitzaileak kudeatzen du.",
+        "errorPasswordRequirements": "Pasahitz berria: gutxienez 8 karaktere, maiuskula, minuskula, zenbakia eta karaktere berezi bat",
+        "errorPasswordMismatch": "Pasahitzak ez datoz bat",
+        "errorCurrentRequired": "Sartu zure uneko pasahitza",
+        "errorChange": "Errorea pasahitza aldatzean",
+        "errorConnection": "Konexio errorea"
+      },
+      "deleteAccount": {
+        "button": "Kontua ezabatu",
+        "cancel": "Utzi",
+        "confirmButton": "Nire kontua ezabatu",
+        "confirming": "Ezabatzen…",
+        "adminHint": "Administratzaileek ezin dute beren kontua ezabatu paneletik.",
+        "confirmLabel": "Idatzi <b>BORRAR CUENTA</b> baieztatzeko *",
+        "confirmPlaceholder": "BORRAR CUENTA",
+        "confirmHint": "Zure kontua betirako ezabatuko da 7 egunen ondoren. Data hori baino lehen saioa hasten baduzu, ezabatzea bertan behera geratuko da eta zure kontua existitzen jarraituko du.",
+        "passwordLabel": "Zure pasahitza *",
+        "errorConfirm": "Idatzi \"BORRAR CUENTA\" baieztatzeko",
+        "errorPassword": "Sartu zure pasahitza baieztatzeko",
+        "errorDelete": "Errorea kontua ezabatzean",
+        "errorConnection": "Konexio errorea"
+      }
+    },
+    "proposals": {
+      "band": {
+        "title": "Taldea proposatu",
+        "subtitle": "Proposatu talde bat kultura erradarrerako. Administratzaileak zure proposamena berrikusiko du argitaratu aurretik.",
+        "form": {
+          "name": "Izena *",
+          "bio": "Biografia",
+          "logo": "Logotipoa (aukerakoa)",
+          "imageMain": "Irudi nagusia (aukerakoa)",
+          "gallery": "Galería (gehienez 3)",
+          "territory": "Lurraldea",
+          "foundedYear": "Sortze urtea",
+          "status": "Taldearen egoera",
+          "statusActive": "Aktiboa",
+          "statusPaused": "Pausatua",
+          "statusInactive": "Inaktiboa",
+          "genres": "Generoak",
+          "spotify": "Spotify",
+          "instagram": "Instagram",
+          "youtube": "YouTube",
+          "web": "Web",
+          "merch": "Denda / Merch",
+          "featuredVideo": "Bideo nabarmena (aukerakoa)",
+          "featuredVideoPlaceholder": "https://www.youtube.com/watch?v=... edo https://youtu.be/...",
+          "featuredVideoHint": "Taldearen abesti edo bideo adierazgarria (YouTube)",
+          "submit": "Bidali proposamena",
+          "submitting": "Bidaltzen...",
+          "cancel": "Utzi",
+          "errorSend": "Errorea bidaltzean",
+          "urlPlaceholder": "https://..."
+        }
+      },
+      "event": {
+        "title": "Ekitaldia proposatu",
+        "subtitle": "Proposatu kontzertu edo jaialdi bat kultura erradarrerako. Adierazi lekua ezagutzen baduzu. Administratzaileak zure proposamena berrikusiko du argitaratu aurretik.",
+        "form": {
+          "title": "Izenburua *",
+          "imageMain": "Irudi nagusia (aukerakoa)",
+          "gallery": "Irudi gehigarriak (aukerakoak, gehienez 2)",
+          "type": "Mota",
+          "typeConcert": "Kontzertua",
+          "typeFestival": "Jaialdia",
+          "duration": "Ekitaldiaren iraupena",
+          "oneDay": "Egun bat",
+          "multiDay": "Egun batzuk",
+          "dateStart": "Hasiera data *",
+          "dateTime": "Data eta ordua *",
+          "dateEnd": "Amaiera data *",
+          "doors": "Ateak",
+          "doorsOptional": "Ateak (aukerakoa)",
+          "doorsPlaceholder": "20:00",
+          "doorsMultiPlaceholder": "18:00 egunero",
+          "venue": "Aretoa / Lekua (aukerakoa)",
+          "venuePlaceholder": "Adib: Iruñeko zezen-plaza, Kirol-gunea...",
+          "bands": "Taldeak (aukerakoa)",
+          "bandsEmpty": "Ez da oraindik onartutako talderik. Ekitaldia talderik gabe proposa dezakezu.",
+          "description": "Deskribapena",
+          "price": "Prezioa",
+          "pricePlaceholder": "10€ / Sarrera doan",
+          "ticketUrl": "Sarreren URLa",
+          "soldOut": "Sarrerak agortuta (SOLD OUT)",
+          "submit": "Bidali proposamena",
+          "submitting": "Bidaltzen...",
+          "reviewHint": "Administratzaileak proposamena berrikusiko du agendan argitaratu aurretik.",
+          "errorSend": "Errorea bidaltzean",
+          "errorInvalidDate": "Data baliogabea",
+          "errorEndDate": "Amaiera data hasiera data baino geroago izan behar du"
+        },
+        "links": {
+          "label": "Sareak eta estekak (aukerakoa)",
+          "hint": "Gehitu hainbat URL etiketekin (adib: taldearen Instagram, aretoaren Instagram). Sarreren URLa aparte doa.",
+          "type": "Mota",
+          "kind": {
+            "instagram": "Instagram",
+            "facebook": "Facebook",
+            "twitter": "X (Twitter)",
+            "web": "Web"
+          },
+          "typeLabel": "Etiketa (adib: Taldea, Aretoa)",
+          "typePlaceholder": "Taldearen Instagram",
+          "url": "URLa",
+          "urlPlaceholder": "https://instagram.com/...",
+          "add": "Gehitu esteka",
+          "remove": "Kendu"
+        }
+      }
+    }
   },
   "eventDetail": {
     "festival": "Jaialdia",

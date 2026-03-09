@@ -1,4 +1,4 @@
-import { AdminAnnouncementForm } from "./AdminAnnouncementForm";
+import { AdminBoardAnnouncementForm } from "./AdminBoardAnnouncementForm";
 
 export default function AdminNuevoBoloPage() {
   return (
@@ -8,10 +8,10 @@ export default function AdminNuevoBoloPage() {
           CREAR ANUNCIO
         </h1>
         <p className="mt-2 font-body text-punk-white/60">
-          Publica un anuncio en nombre de Nafarrock. Aparecerá como &quot;PUBLICADO POR NAFARROCK&quot;.
+          El anuncio se publicará directamente en la página pública de ANUNCIOS.
         </p>
       </div>
-      <AdminAnnouncementForm />
+      <AdminBoardAnnouncementForm />
     </>
   );
 }

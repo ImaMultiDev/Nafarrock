@@ -5,15 +5,18 @@
       "events": "Eventos",
       "bands": "Bandas",
       "scene": "Escena",
-      "guide": "Nafarrock",
+      "guide": "Proyecto",
       "manual": "Manual",
       "contact": "Contacto",
       "panel": "Panel",
+      "myProfile": "Mi perfil",
+      "inbox": "Buzón",
       "logout": "Salir",
       "login": "Entrar",
       "claim": "Reclamar",
       "claimProfile": "Reclamar perfil",
-      "bolos": "Bolos"
+      "bolos": "Bolos",
+      "tablon": "ANUNCIOS"
     },
     "actions": {
       "search": "Buscar",
@@ -32,7 +35,9 @@
       "facebook": "Facebook",
       "youtube": "YouTube",
       "email": "Correo"
-    }
+    },
+    "proposalLimitExceeded": "Solo puedes enviar una propuesta de este tipo cada 5 días. Por favor, espera antes de enviar otra.",
+    "modalClose": "Aceptar"
   },
   "home": {
     "tagline": "Nafarroa · Punk · Rock · Alternativo",
@@ -54,6 +59,10 @@
       "events": {
         "title": "EVENTOS",
         "desc": "Conciertos y agenda"
+      },
+      "announcements": {
+        "title": "ANUNCIOS",
+        "desc": "Convocatorias, búsquedas y oportunidades"
       },
       "scene": {
         "title": "ESCENA",
@@ -218,7 +227,9 @@
       "register": "Regístrate",
       "claimProfile": "¿Tu banda, sala o festival ya está en Nafarrock?",
       "claimProfileLink": "Reclamar perfil",
-      "resendVerification": "Reenviar email de verificación →"
+      "resendVerification": "Reenviar email de verificación →",
+      "continueWithGoogle": "Continuar con Google",
+      "orDivider": "o"
     },
     "registro": {
       "title": "REGISTRARSE",
@@ -254,7 +265,9 @@
       "errorInvalidEmail": "Introduce un email válido",
       "errorPasswordRequirements": "La contraseña no cumple los requisitos: mínimo 8 caracteres, mayúscula, minúscula, número y carácter especial",
       "errorPasswordMismatch": "Las contraseñas no coinciden",
-      "errorRegister": "Error al registrarse"
+      "errorRegister": "Error al registrarse",
+      "continueWithGoogle": "Continuar con Google",
+      "orDivider": "o"
     }
   },
   "filters": {
@@ -335,6 +348,263 @@
     "pageOf": "Página {page} de {total}",
     "result": "resultado",
     "results": "resultados"
+  },
+  "boardAnnouncement": {
+    "title": "TABLÓN DE ANUNCIOS",
+    "subtitle": "Convocatorias, búsquedas y oportunidades de la escena rock.",
+    "empty": "No hay anuncios publicados. Pronto habrá contenido.",
+    "propose": {
+      "title": "Proponer anuncio",
+      "subtitle": "Publica tu anuncio en el tablón. El administrador lo revisará antes de publicarlo.",
+      "formTitle": "Datos del anuncio",
+      "submit": "Enviar propuesta",
+      "submitting": "Enviando...",
+      "cancel": "Cancelar",
+      "success": "Propuesta de anuncio enviada. El administrador la revisará y te notificará.",
+      "successModal": "Anuncio enviado para verificación. Recibirás un correo electrónico una vez sea revisado por nuestro equipo.",
+      "errorSend": "Error al enviar"
+    },
+    "categories": {
+      "SE_BUSCA_MUSICO": "Se busca músico",
+      "SE_BUSCAN_BANDAS": "Se buscan bandas / Postulaciones",
+      "CONCURSO": "Concursos",
+      "LOCAL_MATERIAL": "Local y material",
+      "SERVICIOS": "Servicios",
+      "OTROS": "Otros"
+    },
+    "fields": {
+      "title": "Título *",
+      "category": "Categoría *",
+      "territory": "Provincia/Territorio",
+      "description": "Descripción *",
+      "contactEmail": "Email de contacto *",
+      "emailPlaceholder": "ejemplo@correo.com",
+      "imageMain": "Imagen principal (opcional)",
+      "imageGallery": "Imágenes adicionales (opcionales, máx. 2)"
+    },
+    "filters": {
+      "category": "Categoría",
+      "territory": "Territorio",
+      "all": "Todas",
+      "allTerritories": "Todos",
+      "filter": "Filtrar"
+    },
+    "contact": "Contacto",
+    "metadata": {
+      "title": "Tablón de anuncios",
+      "description": "Convocatorias, búsquedas de músicos y oportunidades de la escena rock en Nafarroa"
+    }
+  },
+  "dashboard": {
+    "title": "Panel",
+    "hello": "Hola, {name}",
+    "back": "← Volver",
+    "access": "Acceder",
+    "deletionCancelled": "✓ Eliminación cancelada. Tu cuenta sigue activa.",
+    "proposedBand": "✓ Propuesta de banda enviada. El administrador la revisará y te notificará.",
+    "proposedEvent": "✓ Propuesta de evento enviada. El administrador la revisará y te notificará.",
+    "proposedAnnouncement": "✓ Propuesta de anuncio enviada. El administrador la revisará y te notificará.",
+    "pendingProposals": {
+      "title": "Propuestas pendientes de verificación",
+      "description": "Estas propuestas están en revisión. El administrador te notificará en el buzón cuando las revise.",
+      "event": "Evento",
+      "band": "Banda",
+      "announcement": "Anuncio"
+    },
+    "pendingClaim": {
+      "title": "Pendiente de aprobación",
+      "description": "Has reclamado el perfil de \"{name}\". Tu solicitud está en revisión. Recibirás un email cuando el administrador verifique tu reclamación.",
+      "hint": "Si tienes dudas, puedes contactar con Nafarrock desde la sección Contacto (visible tras la aprobación)."
+    },
+    "cards": {
+      "myProfile": "Mi perfil",
+      "myProfileDesc": "Datos personales y estado de aprobación",
+      "inbox": "Buzón",
+      "inboxDesc": "Notificaciones sobre tus propuestas",
+      "admin": "Administración",
+      "adminDesc": "CRUD bandas, eventos, salas, usuarios",
+      "myBand": "Mi banda",
+      "myBandDesc": "Editar perfil, logo, enlaces",
+      "myFestival": "Mi festival",
+      "myFestivalDesc": "Editar perfil, logo, redes",
+      "myAssociation": "Mi asociación",
+      "myAssociationDesc": "Editar perfil, logo, redes",
+      "myOrganizer": "Mi organizador",
+      "myOrganizerDesc": "Editar perfil, logo, redes",
+      "myPromoter": "Mi promotor",
+      "myPromoterDesc": "Editar perfil, logo, redes",
+      "myVenue": "Mi sala",
+      "myVenueDesc": "Editar perfil, logo, redes",
+      "myEvents": "Mis eventos",
+      "myEventsDesc": "Crear y gestionar conciertos",
+      "proposeBand": "Proponer banda",
+      "proposeBandDesc": "Sugiere una banda para el radar cultural",
+      "proposeEvent": "Proponer evento",
+      "proposeEventDesc": "Sugiere un concierto o festival",
+      "proposeAnnouncement": "Proponer anuncio",
+      "proposeAnnouncementDesc": "Publica en el tablón de anuncios",
+      "registerHint": "Regístrate como banda, sala o promotor para más opciones.",
+      "publishAnnouncement": "Publicar anuncio"
+    },
+    "inbox": {
+      "title": "Buzón",
+      "subtitle": "Notificaciones sobre tus propuestas (bandas, eventos, anuncios)",
+      "empty": "No tienes mensajes en el buzón",
+      "emptyHint": "Cuando el administrador apruebe o rechace una propuesta, aparecerá aquí",
+      "markAllRead": "Marcar {count} como leído",
+      "markAllReadPlural": "Marcar {count} como leídos",
+      "new": "Nuevo",
+      "banner": "Tienes {count} mensaje en el buzón",
+      "bannerPlural": "Tienes {count} mensajes en el buzón",
+      "viewInbox": "Ver buzón"
+    },
+    "perfil": {
+      "title": "Mi perfil",
+      "subtitle": "Gestiona tus datos personales y el estado de tu entidad",
+      "personalData": "Datos personales",
+      "approvalStatus": "Estado de aprobación",
+      "approved": "Aprobado",
+      "approvedFem": "Aprobada",
+      "pending": "Pendiente",
+      "pendingApproval": "Pendiente de aprobación",
+      "edit": "Editar",
+      "changePassword": "Cambiar contraseña",
+      "dangerZone": "Zona de riesgo",
+      "deleteAccountHint": "Borrar tu cuenta eliminará todos tus datos de forma permanente.",
+      "noEntityHint": "Regístrate como {role} para crear tu entidad y ver el estado de aprobación.",
+      "noName": "Sin nombre",
+      "entityType": {
+        "band": "Banda",
+        "venue": "Sala",
+        "festival": "Festival",
+        "association": "Asociación",
+        "organizer": "Organizador",
+        "promoter": "Promotor"
+      },
+      "profileForm": {
+        "email": "Email (no editable)",
+        "firstName": "Nombre",
+        "lastName": "Apellidos",
+        "save": "Guardar",
+        "saving": "Guardando...",
+        "errorUpdate": "Error al actualizar"
+      },
+      "changePasswordForm": {
+        "currentPassword": "Contraseña actual *",
+        "newPassword": "Nueva contraseña *",
+        "repeatPassword": "Repetir nueva contraseña *",
+        "submit": "Cambiar contraseña",
+        "saving": "Guardando…",
+        "externalHint": "Tu cuenta utiliza acceso externo (Google, etc.). La contraseña se gestiona desde el proveedor.",
+        "errorPasswordRequirements": "Nueva contraseña: mínimo 8 caracteres, mayúscula, minúscula, número y carácter especial",
+        "errorPasswordMismatch": "Las contraseñas no coinciden",
+        "errorCurrentRequired": "Introduce tu contraseña actual",
+        "errorChange": "Error al cambiar contraseña",
+        "errorConnection": "Error de conexión"
+      },
+      "deleteAccount": {
+        "button": "Borrar cuenta",
+        "cancel": "Cancelar",
+        "confirmButton": "Borrar mi cuenta",
+        "confirming": "Borrando…",
+        "adminHint": "Los administradores no pueden borrar su cuenta desde el panel.",
+        "confirmLabel": "Escribe <b>BORRAR CUENTA</b> para confirmar *",
+        "confirmPlaceholder": "BORRAR CUENTA",
+        "confirmHint": "Tu cuenta se eliminará de forma permanente después de 7 días. Si inicias sesión antes de esa fecha, la eliminación se cancelará y tu cuenta seguirá existiendo.",
+        "passwordLabel": "Tu contraseña *",
+        "errorConfirm": "Escribe \"BORRAR CUENTA\" para confirmar",
+        "errorPassword": "Introduce tu contraseña para confirmar",
+        "errorDelete": "Error al borrar la cuenta",
+        "errorConnection": "Error de conexión"
+      }
+    },
+    "proposals": {
+      "band": {
+        "title": "Proponer banda",
+        "subtitle": "Sugiere una banda para el radar cultural. El administrador revisará tu propuesta antes de publicarla.",
+        "form": {
+          "name": "Nombre *",
+          "bio": "Biografía",
+          "logo": "Logo (opcional)",
+          "imageMain": "Imagen principal (opcional)",
+          "gallery": "Galería (máx. 3)",
+          "territory": "Territorio",
+          "foundedYear": "Año fundación",
+          "status": "Estado de la banda",
+          "statusActive": "Activa",
+          "statusPaused": "En pausa",
+          "statusInactive": "Inactiva",
+          "genres": "Géneros",
+          "spotify": "Spotify",
+          "instagram": "Instagram",
+          "youtube": "YouTube",
+          "web": "Web",
+          "merch": "Tienda / Merch",
+          "featuredVideo": "Vídeo destacado (opcional)",
+          "featuredVideoPlaceholder": "https://www.youtube.com/watch?v=... o https://youtu.be/...",
+          "featuredVideoHint": "Canción o vídeo representativo de la banda (YouTube)",
+          "submit": "Enviar propuesta",
+          "submitting": "Enviando...",
+          "cancel": "Cancelar",
+          "errorSend": "Error al enviar",
+          "urlPlaceholder": "https://..."
+        }
+      },
+      "event": {
+        "title": "Proponer evento",
+        "subtitle": "Sugiere un concierto o festival para el radar cultural. Indica el lugar si lo conoces. El administrador revisará tu propuesta antes de publicarla.",
+        "form": {
+          "title": "Título *",
+          "imageMain": "Imagen principal (opcional)",
+          "gallery": "Imágenes adicionales (opcionales, máx. 2)",
+          "type": "Tipo",
+          "typeConcert": "Concierto",
+          "typeFestival": "Festival",
+          "duration": "Duración del evento",
+          "oneDay": "Un día",
+          "multiDay": "Varios días",
+          "dateStart": "Fecha de inicio *",
+          "dateTime": "Fecha y hora *",
+          "dateEnd": "Fecha de fin *",
+          "doors": "Puertas",
+          "doorsOptional": "Puertas (opcional)",
+          "doorsPlaceholder": "20:00",
+          "doorsMultiPlaceholder": "18:00 cada día",
+          "venue": "Sala / Recinto (opcional)",
+          "venuePlaceholder": "Ej: Plaza de toros de Pamplona, Polideportivo...",
+          "bands": "Bandas (opcional)",
+          "bandsEmpty": "No hay bandas aprobadas aún. Puedes proponer el evento sin bandas.",
+          "description": "Descripción",
+          "price": "Precio",
+          "pricePlaceholder": "10€ / Entrada libre",
+          "ticketUrl": "URL entradas",
+          "soldOut": "Entradas agotadas (SOLD OUT)",
+          "submit": "Enviar propuesta",
+          "submitting": "Enviando...",
+          "reviewHint": "La propuesta será revisada por el administrador antes de publicarse en la agenda.",
+          "errorSend": "Error al enviar",
+          "errorInvalidDate": "Fecha inválida",
+          "errorEndDate": "La fecha de fin debe ser posterior a la de inicio"
+        },
+        "links": {
+          "label": "Redes y enlaces (opcional)",
+          "hint": "Añade varias URLs con etiqueta (ej: Instagram de la banda, Instagram de la sala). La URL de entradas va aparte.",
+          "type": "Tipo",
+          "kind": {
+            "instagram": "Instagram",
+            "facebook": "Facebook",
+            "twitter": "X (Twitter)",
+            "web": "Web"
+          },
+          "typeLabel": "Etiqueta (ej: Banda, Sala)",
+          "typePlaceholder": "Instagram de la banda",
+          "url": "URL",
+          "urlPlaceholder": "https://instagram.com/...",
+          "add": "Añadir enlace",
+          "remove": "Quitar"
+        }
+      }
+    }
   },
   "eventDetail": {
     "festival": "Festival",

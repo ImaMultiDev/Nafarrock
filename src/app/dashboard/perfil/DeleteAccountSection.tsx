@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import { signOut } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { PasswordInput } from "@/components/ui/PasswordInput";
+
+const CONFIRM_TEXT = "BORRAR CUENTA";
 
 export function DeleteAccountSection({
   hasPassword,
@@ -11,6 +14,7 @@ export function DeleteAccountSection({
   hasPassword: boolean;
   isAdmin: boolean;
 }) {
+  const t = useTranslations("dashboard.perfil.deleteAccount");
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmText, setConfirmText] = useState("");
   const [password, setPassword] = useState("");
@@ -20,7 +24,7 @@ export function DeleteAccountSection({
   if (isAdmin) {
     return (
       <p className="font-body text-punk-white/50">
-        Los administradores no pueden borrar su cuenta desde el panel.
+        {t("adminHint")}
       </p>
     );
   }
@@ -29,12 +33,12 @@ export function DeleteAccountSection({
     e.preventDefault();
     setError(null);
 
-    if (confirmText !== "BORRAR CUENTA") {
-      setError('Escribe "BORRAR CUENTA" para confirmar');
+    if (confirmText !== CONFIRM_TEXT) {
+      setError(t("errorConfirm"));
       return;
     }
     if (hasPassword && !password) {
-      setError("Introduce tu contraseña para confirmar");
+      setError(t("errorPassword"));
       return;
     }
 
@@ -50,7 +54,7 @@ export function DeleteAccountSection({
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.message ?? "Error al borrar la cuenta");
+        setError(data.message ?? t("errorDelete"));
         return;
       }
       const scheduledAt = data.scheduledAt
@@ -64,7 +68,7 @@ export function DeleteAccountSection({
         callbackUrl: `/auth/login?deleted=scheduled&date=${encodeURIComponent(scheduledAt)}`,
       });
     } catch {
-      setError("Error de conexión");
+      setError(t("errorConnection"));
     } finally {
       setLoading(false);
     }
@@ -86,9 +90,7 @@ export function DeleteAccountSection({
           className="max-w-xl space-y-4 border-2 border-punk-red/30 bg-punk-red/5 p-6"
         >
           <p className="font-body text-punk-white/90">
-            Tu cuenta se eliminará de forma permanente después de 7 días. Si
-            inicias sesión antes de esa fecha, la eliminación se cancelará y
-            tu cuenta seguirá existiendo.
+            {t("confirmHint")}
           </p>
           {error && (
             <div className="border-2 border-punk-red bg-punk-red/10 p-4">
@@ -100,14 +102,14 @@ export function DeleteAccountSection({
               htmlFor="confirmDelete"
               className="block font-punch text-xs uppercase tracking-widest text-punk-white/70"
             >
-              Escribe <b>BORRAR CUENTA</b> para confirmar *
+              <span dangerouslySetInnerHTML={{ __html: t("confirmLabel") }} />
             </label>
             <input
               id="confirmDelete"
               type="text"
               value={confirmText}
               onChange={(e) => setConfirmText(e.target.value)}
-              placeholder="BORRAR CUENTA"
+              placeholder={t("confirmPlaceholder")}
               className="mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-red focus:outline-none"
             />
           </div>
@@ -118,7 +120,7 @@ export function DeleteAccountSection({
                 name="deletePassword"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                label="Tu contraseña *"
+                label={t("passwordLabel")}
                 required
                 showStrength={false}
                 autoComplete="current-password"
@@ -136,14 +138,14 @@ export function DeleteAccountSection({
               }}
               className="border-2 border-punk-white/40 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-white/80 hover:border-punk-green hover:text-punk-green"
             >
-              Cancelar
+              {t("cancel")}
             </button>
             <button
               type="submit"
-              disabled={loading || confirmText !== "BORRAR CUENTA"}
+              disabled={loading || confirmText !== CONFIRM_TEXT}
               className="border-2 border-punk-red bg-punk-red px-6 py-2 font-punch text-xs uppercase tracking-widest text-punk-black hover:bg-punk-red/90 disabled:opacity-50"
             >
-              {loading ? "Borrando…" : "Borrar mi cuenta"}
+              {loading ? t("confirming") : t("confirmButton")}
             </button>
           </div>
         </form>

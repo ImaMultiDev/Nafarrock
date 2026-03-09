@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 
 type ImageUploadProps = {
-  folder: "bands" | "venues" | "events" | "festivals" | "promoters" | "organizers" | "asociaciones";
+  folder: "bands" | "venues" | "events" | "festivals" | "promoters" | "organizers" | "asociaciones" | "board-announcements";
   type: "logo" | "image";
   entityId?: string | null;
   /** Modo reclamación: sube sin auth usando claimId (perfil a reclamar) */

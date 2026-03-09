@@ -73,10 +73,10 @@ export default function AdminPage() {
           className="block border-2 border-punk-green/50 bg-punk-black p-6 transition-all hover:border-punk-green hover:shadow-[0_0_30px_rgba(0,200,83,0.2)]"
         >
           <h2 className="font-display text-xl tracking-tighter text-punk-green">
-            Anuncios / Bolos
+            Anuncios
           </h2>
           <p className="mt-2 font-body text-sm text-punk-white/70">
-            Moderar anuncios de oportunidades
+            Gestionar tablón de anuncios (crear, editar, aprobar)
           </p>
         </Link>
         <Link

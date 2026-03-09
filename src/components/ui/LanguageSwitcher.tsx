@@ -8,12 +8,13 @@ const LOCALE_COOKIE = "NEXT_LOCALE";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 año
 
 function buildLocalizedUrl(pathname: string, newLocale: "es" | "eu"): string {
-  const isAdminOrDashboard =
-    pathname.startsWith("/admin") || pathname.startsWith("/dashboard");
-  const basePath = isAdminOrDashboard ? "/" : pathname;
+  // Admin y dashboard: mantener la misma ruta (el cookie aplicará el locale al recargar)
+  if (pathname.startsWith("/admin") || pathname.startsWith("/dashboard")) {
+    return pathname || "/";
+  }
   // Castellano (default): sin prefijo. Euskera: prefijo /eu
-  if (newLocale === "es") return basePath || "/";
-  return basePath === "/" ? "/eu" : `/eu${basePath}`;
+  if (newLocale === "es") return pathname || "/";
+  return pathname === "/" ? "/eu" : `/eu${pathname}`;
 }
 
 export function LanguageSwitcher() {

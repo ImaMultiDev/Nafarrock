@@ -12,7 +12,7 @@ const PAGE_SIZE = 20;
 
 type PendingItem = {
   id: string;
-  type: "band" | "venue" | "festival" | "association" | "promoter" | "organizer" | "event";
+  type: "band" | "venue" | "festival" | "association" | "promoter" | "organizer" | "event" | "boardAnnouncement";
   name: string;
   slug: string;
   email: string | null;
@@ -30,7 +30,7 @@ export default async function AdminSolicitudesPage({ searchParams }: Props) {
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
   const skip = (page - 1) * PAGE_SIZE;
 
-  const [bands, venues, festivals, asociaciones, promoters, organizers, events] = await Promise.all([
+  const [bands, venues, festivals, asociaciones, promoters, organizers, events, boardAnnouncements] = await Promise.all([
     prisma.band.findMany({
       where: { approved: false, userId: { not: null } },
       include: { user: { select: { email: true } } },
@@ -64,6 +64,11 @@ export default async function AdminSolicitudesPage({ searchParams }: Props) {
     prisma.event.findMany({
       where: { isApproved: false, createdByUserId: { not: null } },
       include: { createdByUser: { select: { email: true } } },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.boardAnnouncement.findMany({
+      where: { approved: false },
+      include: { user: { select: { email: true } } },
       orderBy: { createdAt: "desc" },
     }),
   ]);
@@ -149,8 +154,18 @@ export default async function AdminSolicitudesPage({ searchParams }: Props) {
       publicUrl: `/eventos/${e.slug}`,
       createdAt: e.createdAt,
     })),
+    ...boardAnnouncements.map((a) => ({
+      id: a.id,
+      type: "boardAnnouncement" as const,
+      name: a.title,
+      slug: a.id,
+      email: a.user?.email ?? a.contactEmail,
+      editUrl: `/admin/tablon/${a.id}/editar`,
+      publicUrl: `/tablon`,
+      createdAt: a.createdAt,
+    })),
   ]
-    .filter((item) => (EDITORIAL_MVP_MODE ? item.type === "band" || item.type === "event" : true))
+    .filter((item) => (EDITORIAL_MVP_MODE ? item.type === "band" || item.type === "event" || item.type === "boardAnnouncement" : true))
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
   const total = allItems.length;
@@ -164,7 +179,7 @@ export default async function AdminSolicitudesPage({ searchParams }: Props) {
             SOLICITUDES
           </h1>
           <p className="mt-2 font-body text-punk-white/60">
-            {total} bandas y eventos propuestos por usuarios
+            {total} bandas, eventos y anuncios propuestos por usuarios
           </p>
         </div>
         <Link
@@ -179,7 +194,7 @@ export default async function AdminSolicitudesPage({ searchParams }: Props) {
         {items.length === 0 ? (
           <div className="border-2 border-dashed border-punk-white/20 p-12 text-center">
             <p className="font-body text-punk-white/60">
-              No hay bandas ni eventos propuestos pendientes de aprobar.
+              No hay bandas, eventos ni anuncios propuestos pendientes de aprobar.
             </p>
           </div>
         ) : (
@@ -229,12 +244,12 @@ export default async function AdminSolicitudesPage({ searchParams }: Props) {
                       ) : (
                         <>
                           <ApproveButton
-                            entity={item.type as "band" | "venue" | "festival" | "association" | "promoter" | "organizer"}
+                            entity={item.type as "band" | "venue" | "festival" | "association" | "promoter" | "organizer" | "boardAnnouncement"}
                             id={item.id}
                             approved={false}
                           />
                           <RejectFlow
-                            entity={item.type as "band" | "venue" | "festival" | "association" | "promoter" | "organizer"}
+                            entity={item.type as "band" | "venue" | "festival" | "association" | "promoter" | "organizer" | "boardAnnouncement"}
                             id={item.id}
                           />
                         </>

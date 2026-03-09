@@ -3,7 +3,7 @@
 import { ImageUpload } from "./ImageUpload";
 
 type ImageGalleryProps = {
-  folder: "bands" | "venues" | "events" | "festivals" | "promoters" | "organizers" | "asociaciones";
+  folder: "bands" | "venues" | "events" | "festivals" | "promoters" | "organizers" | "asociaciones" | "board-announcements";
   entityId: string;
   /** Modo reclamación: sube sin auth usando claimId */
   claimMode?: boolean;

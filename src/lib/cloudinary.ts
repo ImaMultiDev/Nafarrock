@@ -17,7 +17,8 @@ export type UploadFolder =
   | "festivals"
   | "promoters"
   | "organizers"
-  | "asociaciones";
+  | "asociaciones"
+  | "board-announcements";
 
 const MAX_IMAGES = 3; // Máximo de imágenes en galería por entidad
 const MAX_FILE_SIZE_MB = 5;

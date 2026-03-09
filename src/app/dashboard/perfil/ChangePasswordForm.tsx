@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { isPasswordValid } from "@/lib/validation";
 
 export function ChangePasswordForm({ hasPassword }: { hasPassword: boolean }) {
   const router = useRouter();
+  const t = useTranslations("dashboard.perfil.changePasswordForm");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newPasswordConfirm, setNewPasswordConfirm] = useState("");
@@ -18,15 +20,15 @@ export function ChangePasswordForm({ hasPassword }: { hasPassword: boolean }) {
     setError(null);
 
     if (!isPasswordValid(newPassword)) {
-      setError("Nueva contraseña: mínimo 8 caracteres, mayúscula, minúscula, número y carácter especial");
+      setError(t("errorPasswordRequirements"));
       return;
     }
     if (newPassword !== newPasswordConfirm) {
-      setError("Las contraseñas no coinciden");
+      setError(t("errorPasswordMismatch"));
       return;
     }
     if (hasPassword && !currentPassword) {
-      setError("Introduce tu contraseña actual");
+      setError(t("errorCurrentRequired"));
       return;
     }
 
@@ -42,7 +44,7 @@ export function ChangePasswordForm({ hasPassword }: { hasPassword: boolean }) {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.message ?? "Error al cambiar contraseña");
+        setError(data.message ?? t("errorChange"));
         return;
       }
       setCurrentPassword("");
@@ -50,7 +52,7 @@ export function ChangePasswordForm({ hasPassword }: { hasPassword: boolean }) {
       setNewPasswordConfirm("");
       router.refresh();
     } catch {
-      setError("Error de conexión");
+      setError(t("errorConnection"));
     } finally {
       setLoading(false);
     }
@@ -59,7 +61,7 @@ export function ChangePasswordForm({ hasPassword }: { hasPassword: boolean }) {
   if (!hasPassword) {
     return (
       <p className="font-body text-punk-white/60">
-        Tu cuenta utiliza acceso externo (Google, etc.). La contraseña se gestiona desde el proveedor.
+        {t("externalHint")}
       </p>
     );
   }
@@ -77,7 +79,7 @@ export function ChangePasswordForm({ hasPassword }: { hasPassword: boolean }) {
           name="currentPassword"
           value={currentPassword}
           onChange={(e) => setCurrentPassword(e.target.value)}
-          label="Contraseña actual *"
+          label={t("currentPassword")}
           required
           showStrength={false}
           autoComplete="current-password"
@@ -89,7 +91,7 @@ export function ChangePasswordForm({ hasPassword }: { hasPassword: boolean }) {
           name="newPassword"
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
-          label="Nueva contraseña *"
+          label={t("newPassword")}
           required
           minLength={8}
           showStrength
@@ -102,7 +104,7 @@ export function ChangePasswordForm({ hasPassword }: { hasPassword: boolean }) {
           name="newPasswordConfirm"
           value={newPasswordConfirm}
           onChange={(e) => setNewPasswordConfirm(e.target.value)}
-          label="Repetir nueva contraseña *"
+          label={t("repeatPassword")}
           required
           minLength={8}
           autoComplete="new-password"
@@ -113,7 +115,7 @@ export function ChangePasswordForm({ hasPassword }: { hasPassword: boolean }) {
         disabled={loading}
         className="border-2 border-punk-green bg-punk-green px-8 py-3 font-punch text-sm uppercase tracking-widest text-punk-black transition-colors hover:bg-punk-green/90 disabled:opacity-50"
       >
-        {loading ? "Guardando…" : "Cambiar contraseña"}
+        {loading ? t("saving") : t("submit")}
       </button>
     </form>
   );

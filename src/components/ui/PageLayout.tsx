@@ -10,7 +10,7 @@ export function PageLayout({
 }) {
   return (
     <main
-      className={`relative min-h-screen overflow-hidden bg-punk-black ${className}`}
+      className={`relative min-h-screen overflow-hidden bg-punk-black${className ? ` ${className}` : ""}`}
     >
       {/* Grid sutil de fondo */}
       <div

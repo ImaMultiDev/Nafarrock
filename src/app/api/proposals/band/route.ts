@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { uniqueSlug } from "@/lib/slug";
+import { canUserProposeBand } from "@/lib/validated-band";
 import { z } from "zod";
 import { bandLocationSchema } from "@/lib/band-locations";
 
@@ -43,6 +44,11 @@ export async function POST(req: Request) {
       );
     }
     const data = parsed.data;
+
+    const check = await canUserProposeBand(session.user.id);
+    if (!check.ok) {
+      return NextResponse.json({ message: check.message }, { status: 403 });
+    }
 
     const slug = await uniqueSlug(
       (s) => prisma.band.findUnique({ where: { slug: s } }).then(Boolean),

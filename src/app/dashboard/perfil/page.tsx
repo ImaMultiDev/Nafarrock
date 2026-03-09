@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { ProfileForm } from "./ProfileForm";
@@ -34,18 +35,18 @@ export default async function PerfilPage() {
     user.organizerProfile ??
     user.promoterProfile;
 
-  const entityType = user.bandProfile
-    ? "Banda"
+  const entityTypeKey = user.bandProfile
+    ? "band"
     : user.venueProfile
-      ? "Sala"
+      ? "venue"
       : user.festivalProfile
-        ? "Festival"
+        ? "festival"
         : user.associationProfile
-          ? "Asociación"
+          ? "association"
           : user.organizerProfile
-            ? "Organizador"
+            ? "organizer"
             : user.promoterProfile
-              ? "Promotor"
+              ? "promoter"
               : null;
 
   const entityEditLink = user.bandProfile
@@ -61,6 +62,8 @@ export default async function PerfilPage() {
             : user.promoterProfile
               ? "/dashboard/promotor"
               : null;
+
+  const t = await getTranslations("dashboard.perfil");
 
   return (
     <>
@@ -83,14 +86,14 @@ export default async function PerfilPage() {
         </DashboardSection>
 
         {entity && (
-          <DashboardSection title="Estado de aprobación" accent="pink">
+          <DashboardSection title={t("approvalStatus")} accent="pink">
             <div className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-punk-white/10 bg-punk-black/40 p-6">
               <div>
                 <p className="font-punch text-xs uppercase tracking-widest text-punk-white/60">
-                  {entityType}
+                  {entityTypeKey ? t(`entityType.${entityTypeKey}`) : ""}
                 </p>
                 <p className="mt-1 font-display text-xl text-punk-white">
-                  {"name" in entity ? entity.name : "Sin nombre"}
+                  {"name" in entity ? entity.name : t("noName")}
                 </p>
                 <span
                   className={`mt-2 inline-block px-2 py-1 font-punch text-xs uppercase ${
@@ -100,8 +103,8 @@ export default async function PerfilPage() {
                   }`}
                 >
                   {"approved" in entity && entity.approved
-                    ? "Aprobada"
-                    : "Pendiente de aprobación"}
+                    ? t("approvedFem")
+                    : t("pendingApproval")}
                 </span>
               </div>
               {entityEditLink && (
@@ -109,7 +112,7 @@ export default async function PerfilPage() {
                   href={entityEditLink}
                   className="border-2 border-punk-pink bg-punk-pink px-6 py-2 font-punch text-sm uppercase tracking-widest text-punk-black transition-colors hover:bg-punk-pink/90"
                 >
-                  Editar {entityType?.toLowerCase()}
+                  {t("edit")} {entityTypeKey ? t(`entityType.${entityTypeKey}`).toLowerCase() : ""}
                 </Link>
               )}
             </div>
@@ -118,18 +121,17 @@ export default async function PerfilPage() {
 
         {!entity && session.user?.role !== "USUARIO" && (
           <p className="font-body text-punk-white/60">
-            Regístrate como {session.user?.role?.toLowerCase()} para crear tu
-            entidad y ver el estado de aprobación.
+            {t("noEntityHint", { role: session.user?.role?.toLowerCase() ?? "" })}
           </p>
         )}
 
-        <DashboardSection title="Cambiar contraseña" accent="pink">
+        <DashboardSection title={t("changePassword")} accent="pink">
           <ChangePasswordForm hasPassword={!!user.password} />
         </DashboardSection>
 
-        <DashboardSection title="Zona de riesgo" accent="red">
+        <DashboardSection title={t("dangerZone")} accent="red">
           <p className="mb-4 font-body text-punk-white/60">
-            Borrar tu cuenta eliminará todos tus datos de forma permanente.
+            {t("deleteAccountHint")}
           </p>
           <DeleteAccountSection
             hasPassword={!!user.password}

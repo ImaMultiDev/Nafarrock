@@ -26,11 +26,11 @@ export function BandSelector({ bands, value, onChange }: Props) {
           Selecciona las bandas registradas que participan. Solo se usa para mostrar sus próximos eventos en /bandas.
         </p>
       </div>
-      <div className="flex flex-wrap gap-3 border-2 border-punk-white/20 p-4">
+      <div className="max-h-40 space-y-2 overflow-y-auto border-2 border-punk-white/20 p-4">
         {bands.map((band) => (
           <label
             key={band.id}
-            className="flex cursor-pointer items-center gap-2 border-2 border-punk-white/20 px-4 py-2 transition-colors hover:border-punk-green/50 has-[:checked]:border-punk-green has-[:checked]:bg-punk-green/10"
+            className="flex cursor-pointer items-center gap-2 transition-colors hover:text-punk-green/80 has-[:checked]:text-punk-green"
           >
             <input
               type="checkbox"
@@ -38,7 +38,7 @@ export function BandSelector({ bands, value, onChange }: Props) {
               onChange={() => toggle(band.id)}
               className="accent-punk-green"
             />
-            <span className="font-body text-punk-white/90">{band.name}</span>
+            <span className="font-body text-punk-white/80">{band.name}</span>
           </label>
         ))}
         {bands.length === 0 && (

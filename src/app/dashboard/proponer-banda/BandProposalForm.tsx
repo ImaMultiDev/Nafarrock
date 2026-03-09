@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { BAND_LOCATIONS } from "@/lib/band-locations";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 
@@ -13,6 +14,7 @@ const labelClass = "block font-punch text-xs uppercase tracking-widest text-punk
 
 export function BandProposalForm({ genres }: { genres: string[] }) {
   const router = useRouter();
+  const t = useTranslations("dashboard.proposals.band.form");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [logoUrl, setLogoUrl] = useState("");
@@ -56,7 +58,7 @@ export function BandProposalForm({ genres }: { genres: string[] }) {
     const data = await res.json();
     setLoading(false);
     if (!res.ok) {
-      setError(data.message ?? "Error al enviar");
+      setError(data.message ?? t("errorSend"));
       return;
     }
     router.push("/dashboard?proposed=band");
@@ -72,13 +74,13 @@ export function BandProposalForm({ genres }: { genres: string[] }) {
       )}
       <div>
         <label htmlFor="name" className={labelClass}>
-          Nombre *
+          {t("name")}
         </label>
         <input id="name" name="name" type="text" required className={inputClass} />
       </div>
       <div>
         <label htmlFor="bio" className={labelClass}>
-          Biografía
+          {t("bio")}
         </label>
         <textarea id="bio" name="bio" rows={3} className={inputClass} />
       </div>
@@ -101,7 +103,7 @@ export function BandProposalForm({ genres }: { genres: string[] }) {
           value={imageUrl}
           onChange={setImageUrl}
           onRemove={() => setImageUrl("")}
-          label="Imagen principal (opcional)"
+          label={t("imageMain")}
         />
       </div>
       <div>
@@ -110,13 +112,13 @@ export function BandProposalForm({ genres }: { genres: string[] }) {
           entityId="proposal"
           images={images}
           onChange={setImages}
-          label="Galería (máx. 3)"
+          label={t("gallery")}
           maxImages={3}
         />
       </div>
       <div>
         <label htmlFor="location" className={labelClass}>
-          Territorio
+          {t("territory")}
         </label>
         <select id="location" name="location" className={inputClass}>
           <option value="">—</option>
@@ -127,7 +129,7 @@ export function BandProposalForm({ genres }: { genres: string[] }) {
       </div>
       <div>
         <label htmlFor="foundedYear" className={labelClass}>
-          Año fundación
+          {t("foundedYear")}
         </label>
         <input
           id="foundedYear"
@@ -140,16 +142,16 @@ export function BandProposalForm({ genres }: { genres: string[] }) {
       </div>
       <div>
         <label htmlFor="status" className={labelClass}>
-          Estado de la banda
+          {t("status")}
         </label>
         <select id="status" name="status" defaultValue="ACTIVE" className={inputClass}>
-          <option value="ACTIVE">Activa</option>
-          <option value="PAUSED">En pausa</option>
-          <option value="INACTIVE">Inactiva</option>
+          <option value="ACTIVE">{t("statusActive")}</option>
+          <option value="PAUSED">{t("statusPaused")}</option>
+          <option value="INACTIVE">{t("statusInactive")}</option>
         </select>
       </div>
       <div>
-        <label className={labelClass}>Géneros</label>
+        <label className={labelClass}>{t("genres")}</label>
         <div className="mt-2 flex flex-wrap gap-2">
           {genres.map((g) => (
             <label key={g} className="flex cursor-pointer items-center gap-2">
@@ -162,47 +164,47 @@ export function BandProposalForm({ genres }: { genres: string[] }) {
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="spotifyUrl" className={labelClass}>
-            Spotify
+            {t("spotify")}
           </label>
           <input id="spotifyUrl" name="spotifyUrl" type="url" className={inputClass} />
         </div>
         <div>
           <label htmlFor="instagramUrl" className={labelClass}>
-            Instagram
+            {t("instagram")}
           </label>
           <input id="instagramUrl" name="instagramUrl" type="url" className={inputClass} />
         </div>
         <div>
           <label htmlFor="youtubeUrl" className={labelClass}>
-            YouTube
+            {t("youtube")}
           </label>
           <input id="youtubeUrl" name="youtubeUrl" type="url" className={inputClass} />
         </div>
         <div>
           <label htmlFor="webUrl" className={labelClass}>
-            Web
+            {t("web")}
           </label>
           <input id="webUrl" name="webUrl" type="url" className={inputClass} />
         </div>
         <div>
           <label htmlFor="merchUrl" className={labelClass}>
-            Tienda / Merch
+            {t("merch")}
           </label>
-          <input id="merchUrl" name="merchUrl" type="url" className={inputClass} placeholder="https://..." />
+          <input id="merchUrl" name="merchUrl" type="url" className={inputClass} placeholder={t("urlPlaceholder")} />
         </div>
         <div className="sm:col-span-2">
           <label htmlFor="featuredVideoUrl" className={labelClass}>
-            Vídeo destacado (opcional)
+            {t("featuredVideo")}
           </label>
           <input
             id="featuredVideoUrl"
             name="featuredVideoUrl"
             type="url"
             className={inputClass}
-            placeholder="https://www.youtube.com/watch?v=... o https://youtu.be/..."
+            placeholder={t("featuredVideoPlaceholder")}
           />
           <p className="mt-1 font-body text-xs text-punk-white/50">
-            Canción o vídeo representativo de la banda (YouTube)
+            {t("featuredVideoHint")}
           </p>
         </div>
       </div>
@@ -212,13 +214,13 @@ export function BandProposalForm({ genres }: { genres: string[] }) {
           disabled={loading}
           className="border-2 border-punk-green bg-punk-green px-8 py-3 font-punch text-sm uppercase tracking-widest text-punk-black transition-all hover:bg-punk-green/90 disabled:opacity-50"
         >
-          {loading ? "Enviando..." : "Enviar propuesta"}
+          {loading ? t("submitting") : t("submit")}
         </button>
         <Link
           href="/dashboard"
           className="border-2 border-punk-white/30 px-8 py-3 font-punch text-sm uppercase tracking-widest text-punk-white/70 hover:border-punk-white"
         >
-          Cancelar
+          {t("cancel")}
         </Link>
       </div>
     </form>

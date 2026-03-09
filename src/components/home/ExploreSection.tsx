@@ -32,6 +32,14 @@ export function ExploreSection() {
       delay: 0.1,
       size: "small",
     },
+    {
+      href: "/tablon",
+      titleKey: "announcements.title" as const,
+      descKey: "announcements.desc" as const,
+      color: "punk-yellow",
+      delay: 0.15,
+      size: "small",
+    },
     ...(!ESCENA_HIDDEN
       ? [
           {
@@ -49,7 +57,7 @@ export function ExploreSection() {
       titleKey: "guide.title" as const,
       descKey: "guide.desc" as const,
       color: "punk-pink",
-      delay: 0.3,
+      delay: 0.35,
       size: "large",
     },
   ];
@@ -106,6 +114,8 @@ export function ExploreSection() {
                     ? "border-punk-green hover:shadow-[0_0_40px_rgba(0,200,83,0.2)]"
                     : item.color === "punk-red"
                     ? "border-punk-red hover:shadow-[0_0_40px_rgba(230,0,38,0.2)]"
+                    : item.color === "punk-yellow"
+                    ? "border-punk-yellow hover:shadow-[0_0_40px_rgba(255,214,10,0.2)]"
                     : item.color === "punk-pink"
                     ? "border-punk-pink hover:shadow-[0_0_40px_rgba(255,0,110,0.2)]"
                     : "border-punk-acid hover:shadow-[0_0_40px_rgba(200,255,0,0.2)]"
@@ -140,6 +150,8 @@ export function ExploreSection() {
                         ? "text-punk-green"
                         : item.color === "punk-red"
                         ? "text-punk-red"
+                        : item.color === "punk-yellow"
+                        ? "text-punk-yellow"
                         : item.color === "punk-pink"
                         ? "text-punk-pink"
                         : "text-punk-acid"
@@ -156,6 +168,8 @@ export function ExploreSection() {
                       ? "border-punk-green"
                       : item.color === "punk-red"
                       ? "border-punk-red"
+                      : item.color === "punk-yellow"
+                      ? "border-punk-yellow"
                       : item.color === "punk-pink"
                       ? "border-punk-pink"
                       : "border-punk-acid"

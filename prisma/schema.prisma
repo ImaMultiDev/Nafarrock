@@ -51,6 +51,8 @@ model User {
   associationProfile Asociacion? // Si es rol ASOCIACION
   eventsCreated    Event[]    @relation("EventCreator")
   profileClaims    ProfileClaim[]
+  boardAnnouncements BoardAnnouncement[]
+  inboxMessages    InboxMessage[]
 
   @@index([email])
   @@index([role])
@@ -94,6 +96,27 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verification_tokens")
+}
+
+// ============================================
+// BUZÓN (notificaciones al usuario)
+// ============================================
+
+model InboxMessage {
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind       String    // PROPOSAL_APPROVED | PROPOSAL_REJECTED
+  entityType String    // event | band | boardAnnouncement
+  entityId   String
+  title      String
+  body       String?   @db.Text // Mensaje opcional del admin (ej. motivo rechazo)
+  readAt     DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([userId])
+  @@index([userId, readAt])
+  @@map("inbox_messages")
 }
 
 // ============================================
@@ -567,6 +590,44 @@ model AnnouncementApplication {
   @@index([announcementId])
   @@index([bandId])
   @@map("announcement_applications")
+}
+
+// ============================================
+// TABLÓN DE ANUNCIOS (propuestos por usuarios)
+// ============================================
+
+enum BoardAnnouncementCategory {
+  SE_BUSCA_MUSICO      // Se busca músico
+  SE_BUSCAN_BANDAS     // Se buscan bandas / Postulaciones
+  CONCURSO             // Concursos
+  LOCAL_MATERIAL       // Local y material
+  SERVICIOS            // Servicios
+  OTROS                // Otros
+}
+
+model BoardAnnouncement {
+  id           String   @id @default(cuid())
+  title        String
+  category     BoardAnnouncementCategory
+  territory    String?  // Provincia/Territorio (BAND_LOCATIONS)
+  description  String   @db.Text
+  contactEmail String
+  imageUrl     String?  // Imagen principal (opcional)
+  images       String[] // Hasta 2 imágenes adicionales (opcional)
+  approved     Boolean  @default(false)
+  approvedAt   DateTime?
+  approvedBy   String?
+  userId       String?
+  user         User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([approved])
+  @@index([category])
+  @@index([territory])
+  @@index([userId])
+  @@index([createdAt])
+  @@map("board_announcements")
 }
 
 // ============================================

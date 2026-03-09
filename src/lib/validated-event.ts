@@ -144,6 +144,36 @@ export async function getEventCreatorIds(userId: string): Promise<{
 const DAYS_BETWEEN_PROPOSALS = 5;
 
 /**
+ * Verifica si un usuario puede proponer un evento desde el dashboard (sin fecha aún).
+ * Usa createdAt: 1 propuesta cada 5 días.
+ */
+export async function canUserProposeEventFromDashboard(
+  userId: string
+): Promise<CanCreateEventResult> {
+  const windowStart = new Date();
+  windowStart.setDate(windowStart.getDate() - DAYS_BETWEEN_PROPOSALS);
+  const windowEnd = new Date();
+  windowEnd.setDate(windowEnd.getDate() + DAYS_BETWEEN_PROPOSALS);
+
+  const existingInWindow = await prisma.event.count({
+    where: {
+      createdByUserId: userId,
+      createdAt: { gte: windowStart, lte: windowEnd },
+    },
+  });
+
+  if (existingInWindow >= 1) {
+    return {
+      ok: false,
+      reason: "limit_exceeded",
+      message: `Puedes proponer 1 evento cada ${DAYS_BETWEEN_PROPOSALS} días. Ya tienes una propuesta en esa ventana.`,
+    };
+  }
+
+  return { ok: true };
+}
+
+/**
  * Verifica si un usuario USUARIO puede proponer un evento (límite anti-spam).
  * Solo comprueba la ventana de 5 días, sin exigir rol profesional.
  */

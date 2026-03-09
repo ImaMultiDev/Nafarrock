@@ -1,10 +1,12 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import {
   User,
+  Inbox,
   Calendar,
   Music2,
   Megaphone,
@@ -14,7 +16,9 @@ import {
   Sparkles,
   Shield,
   ArrowRight,
+  ClipboardList,
 } from "lucide-react";
+import { ProposalCard } from "@/components/dashboard/ProposalCard";
 
 /** Modelo editorial MVP: ocultar paneles profesionales, mostrar Proponer banda/evento */
 const EDITORIAL_MVP_MODE = true;
@@ -31,6 +35,7 @@ const CARD_ACCENTS = {
   promotor: "from-punk-pink/20 to-punk-pink/5 border-punk-pink/40 hover:border-punk-pink hover:shadow-[0_0_24px_rgba(255,0,110,0.15)]",
   organizador: "from-punk-yellow/20 to-punk-yellow/5 border-punk-yellow/40 hover:border-punk-yellow hover:shadow-[0_0_24px_rgba(255,214,10,0.15)]",
   eventos: "from-punk-red/20 to-punk-red/5 border-punk-red/40 hover:border-punk-red hover:shadow-[0_0_24px_rgba(230,0,38,0.15)]",
+  tablon: "from-punk-yellow/20 to-punk-yellow/5 border-punk-yellow/40 hover:border-punk-yellow hover:shadow-[0_0_24px_rgba(255,214,10,0.15)]",
 };
 
 export default async function DashboardPage({ searchParams }: Props) {
@@ -41,10 +46,62 @@ export default async function DashboardPage({ searchParams }: Props) {
   const deletionCancelled = params.deletionCancelled === "1";
   const proposed = params.proposed;
 
-  const pendingClaim = await prisma.profileClaim.findFirst({
-    where: { userId: session.user.id, status: "PENDING_CLAIM" },
-    include: { band: true, venue: true, festival: true },
-  });
+  const [pendingClaim, pendingProposals] = await Promise.all([
+    prisma.profileClaim.findFirst({
+      where: { userId: session.user.id, status: "PENDING_CLAIM" },
+      include: { band: true, venue: true, festival: true },
+    }),
+    (session.user?.effectiveRole ?? session.user?.role) === "USUARIO"
+      ? Promise.all([
+          prisma.event.findMany({
+            where: { createdByUserId: session.user.id, isApproved: false },
+            select: { id: true, title: true, date: true, createdAt: true },
+            orderBy: { createdAt: "desc" },
+          }),
+          prisma.band.findMany({
+            where: { userId: session.user.id, approved: false },
+            select: { id: true, name: true, createdAt: true },
+            orderBy: { createdAt: "desc" },
+          }),
+          prisma.boardAnnouncement.findMany({
+            where: { userId: session.user.id, approved: false },
+            select: { id: true, title: true, createdAt: true },
+            orderBy: { createdAt: "desc" },
+          }),
+        ]).then(([events, bands, announcements]) => ({
+          events,
+          bands,
+          announcements,
+        }))
+      : { events: [], bands: [], announcements: [] },
+  ]);
+
+  const pendingProposalItems = [
+    ...pendingProposals.events.map((e) => ({
+      type: "event" as const,
+      id: e.id,
+      name: e.title,
+      date: e.date,
+      createdAt: e.createdAt,
+    })),
+    ...pendingProposals.bands.map((b) => ({
+      type: "band" as const,
+      id: b.id,
+      name: b.name,
+      createdAt: b.createdAt,
+    })),
+    ...pendingProposals.announcements.map((a) => ({
+      type: "announcement" as const,
+      id: a.id,
+      name: a.title,
+      createdAt: a.createdAt,
+    })),
+  ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+  const t = await getTranslations("dashboard");
+  const tCards = await getTranslations("dashboard.cards");
+  const tPending = await getTranslations("dashboard.pendingProposals");
+  const tClaim = await getTranslations("dashboard.pendingClaim");
 
   let claimEntityName: string | null = null;
   if (pendingClaim) {
@@ -68,17 +125,17 @@ export default async function DashboardPage({ searchParams }: Props) {
     <>
       <div className="mb-2">
         <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
-          Panel
+          {t("title")}
         </h1>
         <p className="mt-2 font-body text-punk-white/60">
-          Hola, {session.user?.name ?? session.user?.email}
+          {t("hello", { name: session.user?.name ?? session.user?.email ?? "" })}
         </p>
       </div>
 
       {deletionCancelled && (
         <div className="mb-8 rounded-xl border-2 border-punk-green bg-punk-green/10 p-6">
           <p className="font-body text-punk-green">
-            ✓ Eliminación cancelada. Tu cuenta sigue activa.
+            {t("deletionCancelled")}
           </p>
         </div>
       )}
@@ -86,7 +143,7 @@ export default async function DashboardPage({ searchParams }: Props) {
       {proposed === "band" && (
         <div className="mb-8 rounded-xl border-2 border-punk-green bg-punk-green/10 p-6">
           <p className="font-body text-punk-green">
-            ✓ Propuesta de banda enviada. El administrador la revisará y te notificará.
+            {t("proposedBand")}
           </p>
         </div>
       )}
@@ -94,8 +151,47 @@ export default async function DashboardPage({ searchParams }: Props) {
       {proposed === "event" && (
         <div className="mb-8 rounded-xl border-2 border-punk-green bg-punk-green/10 p-6">
           <p className="font-body text-punk-green">
-            ✓ Propuesta de evento enviada. El administrador la revisará y te notificará.
+            {t("proposedEvent")}
           </p>
+        </div>
+      )}
+
+      {proposed === "announcement" && (
+        <div className="mb-8 rounded-xl border-2 border-punk-green bg-punk-green/10 p-6">
+          <p className="font-body text-punk-green">
+            {t("proposedAnnouncement")}
+          </p>
+        </div>
+      )}
+
+      {EDITORIAL_MVP_MODE && (session.user?.effectiveRole ?? session.user?.role) === "USUARIO" && pendingProposalItems.length > 0 && (
+        <div className="mb-8 rounded-xl border-2 border-l-4 border-punk-yellow/50 bg-punk-yellow/10 p-6">
+          <h2 className="font-display text-xl tracking-tighter text-punk-yellow">
+            {tPending("title")}
+          </h2>
+          <p className="mt-2 font-body text-punk-white/90">
+            {tPending("description")}
+          </p>
+          <div className="mt-4 flex flex-wrap gap-3">
+            {pendingProposalItems.map((item) => (
+              <div
+                key={`${item.type}-${item.id}`}
+                className="rounded-lg border border-punk-white/20 bg-punk-black/40 px-4 py-2"
+              >
+                <span className="font-punch text-xs uppercase tracking-widest text-punk-white/50">
+                  {item.type === "event" ? tPending("event") : item.type === "band" ? tPending("band") : tPending("announcement")}
+                </span>
+                <p className="mt-1 font-body font-medium text-punk-white">{item.name}</p>
+                <p className="mt-0.5 font-body text-xs text-punk-white/50">
+                  {new Date(item.createdAt).toLocaleDateString(undefined, {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
@@ -121,13 +217,29 @@ export default async function DashboardPage({ searchParams }: Props) {
         >
           <User size={28} className="text-punk-pink/80" />
           <h2 className="mt-4 font-display text-lg font-semibold text-punk-white">
-            Mi perfil
+            {tCards("myProfile")}
           </h2>
           <p className="mt-2 flex-1 text-sm text-punk-white/60">
-            Datos personales y estado de aprobación
+            {tCards("myProfileDesc")}
           </p>
           <span className="mt-4 inline-flex items-center gap-2 font-punch text-xs uppercase tracking-widest text-punk-pink opacity-0 transition-opacity group-hover:opacity-100">
-            Acceder <ArrowRight size={14} />
+            {t("access")} <ArrowRight size={14} />
+          </span>
+        </Link>
+
+        <Link
+          href="/dashboard/buzon"
+          className={`group flex flex-col rounded-xl border-2 bg-gradient-to-br p-6 transition-all duration-200 ${CARD_ACCENTS.tablon}`}
+        >
+          <Inbox size={28} className="text-punk-yellow/80" />
+          <h2 className="mt-4 font-display text-lg font-semibold text-punk-white">
+            {tCards("inbox")}
+          </h2>
+          <p className="mt-2 flex-1 text-sm text-punk-white/60">
+            {tCards("inboxDesc")}
+          </p>
+          <span className="mt-4 inline-flex items-center gap-2 font-punch text-xs uppercase tracking-widest text-punk-yellow opacity-0 transition-opacity group-hover:opacity-100">
+            {t("access")} <ArrowRight size={14} />
           </span>
         </Link>
 
@@ -138,13 +250,13 @@ export default async function DashboardPage({ searchParams }: Props) {
           >
             <Shield size={28} className="text-punk-green/80" />
             <h2 className="mt-4 font-display text-lg font-semibold text-punk-green">
-              Administración
+              {tCards("admin")}
             </h2>
             <p className="mt-2 flex-1 text-sm text-punk-white/60">
-              CRUD bandas, eventos, salas, usuarios
+              {tCards("adminDesc")}
             </p>
             <span className="mt-4 inline-flex items-center gap-2 font-punch text-xs uppercase tracking-widest text-punk-green opacity-0 transition-opacity group-hover:opacity-100">
-              Acceder <ArrowRight size={14} />
+              {t("access")} <ArrowRight size={14} />
             </span>
           </Link>
         )}
@@ -156,13 +268,13 @@ export default async function DashboardPage({ searchParams }: Props) {
           >
             <Music2 size={28} className="text-punk-green/80" />
             <h2 className="mt-4 font-display text-lg font-semibold text-punk-white">
-              Mi banda
+              {tCards("myBand")}
             </h2>
             <p className="mt-2 flex-1 text-sm text-punk-white/60">
-              Editar perfil, logo, enlaces
+              {tCards("myBandDesc")}
             </p>
             <span className="mt-4 inline-flex items-center gap-2 font-punch text-xs uppercase tracking-widest text-punk-green opacity-0 transition-opacity group-hover:opacity-100">
-              Acceder <ArrowRight size={14} />
+              {t("access")} <ArrowRight size={14} />
             </span>
           </Link>
         )}
@@ -174,13 +286,13 @@ export default async function DashboardPage({ searchParams }: Props) {
           >
             <PartyPopper size={28} className="text-punk-red/80" />
             <h2 className="mt-4 font-display text-lg font-semibold text-punk-white">
-              Mi festival
+              {tCards("myFestival")}
             </h2>
             <p className="mt-2 flex-1 text-sm text-punk-white/60">
-              Editar perfil, logo, redes
+              {tCards("myFestivalDesc")}
             </p>
             <span className="mt-4 inline-flex items-center gap-2 font-punch text-xs uppercase tracking-widest text-punk-red opacity-0 transition-opacity group-hover:opacity-100">
-              Acceder <ArrowRight size={14} />
+              {t("access")} <ArrowRight size={14} />
             </span>
           </Link>
         )}
@@ -192,13 +304,13 @@ export default async function DashboardPage({ searchParams }: Props) {
           >
             <Users size={28} className="text-punk-yellow/80" />
             <h2 className="mt-4 font-display text-lg font-semibold text-punk-white">
-              Mi asociación
+              {tCards("myAssociation")}
             </h2>
             <p className="mt-2 flex-1 text-sm text-punk-white/60">
-              Editar perfil, logo, redes
+              {tCards("myAssociationDesc")}
             </p>
             <span className="mt-4 inline-flex items-center gap-2 font-punch text-xs uppercase tracking-widest text-punk-yellow opacity-0 transition-opacity group-hover:opacity-100">
-              Acceder <ArrowRight size={14} />
+              {t("access")} <ArrowRight size={14} />
             </span>
           </Link>
         )}
@@ -210,13 +322,13 @@ export default async function DashboardPage({ searchParams }: Props) {
           >
             <Sparkles size={28} className="text-punk-yellow/80" />
             <h2 className="mt-4 font-display text-lg font-semibold text-punk-white">
-              Mi organizador
+              {tCards("myOrganizer")}
             </h2>
             <p className="mt-2 flex-1 text-sm text-punk-white/60">
-              Editar perfil, logo, redes
+              {tCards("myOrganizerDesc")}
             </p>
             <span className="mt-4 inline-flex items-center gap-2 font-punch text-xs uppercase tracking-widest text-punk-yellow opacity-0 transition-opacity group-hover:opacity-100">
-              Acceder <ArrowRight size={14} />
+              {t("access")} <ArrowRight size={14} />
             </span>
           </Link>
         )}
@@ -228,13 +340,13 @@ export default async function DashboardPage({ searchParams }: Props) {
           >
             <Megaphone size={28} className="text-punk-pink/80" />
             <h2 className="mt-4 font-display text-lg font-semibold text-punk-white">
-              Mi promotor
+              {tCards("myPromoter")}
             </h2>
             <p className="mt-2 flex-1 text-sm text-punk-white/60">
-              Editar perfil, logo, redes
+              {tCards("myPromoterDesc")}
             </p>
             <span className="mt-4 inline-flex items-center gap-2 font-punch text-xs uppercase tracking-widest text-punk-pink opacity-0 transition-opacity group-hover:opacity-100">
-              Acceder <ArrowRight size={14} />
+              {t("access")} <ArrowRight size={14} />
             </span>
           </Link>
         )}
@@ -246,13 +358,13 @@ export default async function DashboardPage({ searchParams }: Props) {
           >
             <Building2 size={28} className="text-punk-pink/80" />
             <h2 className="mt-4 font-display text-lg font-semibold text-punk-white">
-              Mi sala
+              {tCards("myVenue")}
             </h2>
             <p className="mt-2 flex-1 text-sm text-punk-white/60">
-              Editar perfil, logo, redes
+              {tCards("myVenueDesc")}
             </p>
             <span className="mt-4 inline-flex items-center gap-2 font-punch text-xs uppercase tracking-widest text-punk-pink opacity-0 transition-opacity group-hover:opacity-100">
-              Acceder <ArrowRight size={14} />
+              {t("access")} <ArrowRight size={14} />
             </span>
           </Link>
         )}
@@ -269,56 +381,47 @@ export default async function DashboardPage({ searchParams }: Props) {
           >
             <Calendar size={28} className="text-punk-red/80" />
             <h2 className="mt-4 font-display text-lg font-semibold text-punk-white">
-              Mis eventos
+              {tCards("myEvents")}
             </h2>
             <p className="mt-2 flex-1 text-sm text-punk-white/60">
-              Crear y gestionar conciertos
+              {tCards("myEventsDesc")}
             </p>
             <span className="mt-4 inline-flex items-center gap-2 font-punch text-xs uppercase tracking-widest text-punk-red opacity-0 transition-opacity group-hover:opacity-100">
-              Acceder <ArrowRight size={14} />
+              {t("access")} <ArrowRight size={14} />
             </span>
           </Link>
         )}
 
         {EDITORIAL_MVP_MODE && (session.user?.effectiveRole ?? session.user?.role) === "USUARIO" && (
           <>
-            <Link
+            <ProposalCard
               href="/dashboard/proponer-banda"
-              className={`group flex flex-col rounded-xl border-2 bg-gradient-to-br p-6 transition-all duration-200 ${CARD_ACCENTS.banda}`}
-            >
-              <Music2 size={28} className="text-punk-green/80" />
-              <h2 className="mt-4 font-display text-lg font-semibold text-punk-white">
-                Proponer banda
-              </h2>
-              <p className="mt-2 flex-1 text-sm text-punk-white/60">
-                Sugiere una banda para el radar cultural
-              </p>
-              <span className="mt-4 inline-flex items-center gap-2 font-punch text-xs uppercase tracking-widest text-punk-green opacity-0 transition-opacity group-hover:opacity-100">
-                Proponer <ArrowRight size={14} />
-              </span>
-            </Link>
-            <Link
+              type="band"
+              title={tCards("proposeBand")}
+              description={tCards("proposeBandDesc")}
+              accent={CARD_ACCENTS.banda}
+            />
+            <ProposalCard
               href="/dashboard/proponer-evento"
-              className={`group flex flex-col rounded-xl border-2 bg-gradient-to-br p-6 transition-all duration-200 ${CARD_ACCENTS.eventos}`}
-            >
-              <Calendar size={28} className="text-punk-red/80" />
-              <h2 className="mt-4 font-display text-lg font-semibold text-punk-white">
-                Proponer evento
-              </h2>
-              <p className="mt-2 flex-1 text-sm text-punk-white/60">
-                Sugiere un concierto o festival
-              </p>
-              <span className="mt-4 inline-flex items-center gap-2 font-punch text-xs uppercase tracking-widest text-punk-red opacity-0 transition-opacity group-hover:opacity-100">
-                Proponer <ArrowRight size={14} />
-              </span>
-            </Link>
+              type="event"
+              title={tCards("proposeEvent")}
+              description={tCards("proposeEventDesc")}
+              accent={CARD_ACCENTS.eventos}
+            />
+            <ProposalCard
+              href="/dashboard/proponer-anuncio"
+              type="announcement"
+              title={tCards("proposeAnnouncement")}
+              description={tCards("proposeAnnouncementDesc")}
+              accent={CARD_ACCENTS.tablon}
+            />
           </>
         )}
 
         {!EDITORIAL_MVP_MODE && (session.user?.effectiveRole ?? session.user?.role) === "USUARIO" && (
           <div className="col-span-full rounded-xl border-2 border-punk-white/10 bg-punk-black/40 p-8">
             <p className="font-body text-punk-white/50">
-              Regístrate como banda, sala o promotor para más opciones.
+              {tCards("registerHint")}
             </p>
           </div>
         )}

@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { ImageUpload } from "@/components/ui/ImageUpload";
+import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 import { isValidEmail, isPasswordValid } from "@/lib/validation";
 import { BAND_LOCATIONS } from "@/lib/band-locations";
@@ -285,6 +286,19 @@ export function RegisterForm({
             </p>
           </>
         )}
+
+        <GoogleSignInButton
+          label={t("continueWithGoogle")}
+          className="mt-10"
+        />
+
+        <div className="mt-6 flex items-center gap-4">
+          <div className="h-px flex-1 bg-punk-white/20" />
+          <span className="font-punch text-xs uppercase tracking-widest text-punk-white/50">
+            {t("orDivider")}
+          </span>
+          <div className="h-px flex-1 bg-punk-white/20" />
+        </div>
 
         <form onSubmit={handleSubmit} className="mt-10 space-y-8">
           {error && (

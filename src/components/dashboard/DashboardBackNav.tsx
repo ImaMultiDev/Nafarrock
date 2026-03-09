@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 export function DashboardBackNav() {
   const pathname = usePathname();
+  const t = useTranslations("dashboard");
   const path = pathname.replace(/^\/dashboard\/?/, "");
   const segments = path.split("/").filter(Boolean);
 
@@ -26,7 +28,7 @@ export function DashboardBackNav() {
       href={backHref}
       className="mb-6 block font-punch text-xs uppercase tracking-widest text-punk-green hover:text-punk-green/80"
     >
-      ← Volver
+      {t("back")}
     </Link>
   );
 }

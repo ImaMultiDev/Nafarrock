@@ -2,9 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
+import { signOut } from "next-auth/react";
 import {
   LayoutDashboard,
   User,
+  Inbox,
   Calendar,
   Music2,
   Megaphone,
@@ -18,13 +21,14 @@ import {
 export type NavItem = {
   href: string;
   label: string;
-  icon: "dashboard" | "perfil" | "eventos" | "banda" | "sala" | "festival" | "asociacion" | "promotor" | "organizador" | "anuncio";
+  icon: "dashboard" | "perfil" | "buzon" | "eventos" | "banda" | "sala" | "festival" | "asociacion" | "promotor" | "organizador" | "anuncio";
   accent?: "green" | "pink" | "red" | "yellow";
 };
 
 const ICONS = {
   dashboard: LayoutDashboard,
   perfil: User,
+  buzon: Inbox,
   eventos: Calendar,
   banda: Music2,
   sala: Building2,
@@ -44,6 +48,9 @@ const ACCENT_STYLES = {
 
 export function DashboardNav({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
+  const locale = useLocale();
+  const t = useTranslations("common.nav");
+  const signOutCallbackUrl = locale === "eu" ? "/eu" : "/";
 
   const isActive = (href: string) => {
     if (href === "/dashboard") return pathname === "/dashboard";
@@ -73,6 +80,13 @@ export function DashboardNav({ items }: { items: NavItem[] }) {
       <aside className="hidden lg:flex lg:w-56 lg:shrink-0 lg:flex-col">
         <nav className="flex flex-col gap-2 rounded-xl border-2 border-punk-white/10 bg-punk-black/60 p-4 backdrop-blur-sm">
           {navLinks}
+          <button
+            type="button"
+            onClick={() => signOut({ callbackUrl: signOutCallbackUrl })}
+            className="mt-4 flex items-center gap-3 rounded-lg border-2 border-punk-white/20 px-4 py-3 font-punch text-sm uppercase tracking-widest text-punk-white/60 transition-colors hover:border-punk-red/50 hover:bg-punk-red/5 hover:text-punk-red"
+          >
+            Salir
+          </button>
         </nav>
       </aside>
 
@@ -94,6 +108,13 @@ export function DashboardNav({ items }: { items: NavItem[] }) {
             </Link>
           );
         })}
+        <button
+          type="button"
+          onClick={() => signOut({ callbackUrl: signOutCallbackUrl })}
+          className="flex shrink-0 items-center gap-1.5 rounded-lg border-2 border-punk-white/20 px-3 py-2 font-punch text-[11px] uppercase tracking-widest text-punk-white/60 transition-colors hover:border-punk-red/50 hover:bg-punk-red/5 hover:text-punk-red sm:gap-2 sm:px-4 sm:py-2.5 sm:text-xs"
+        >
+          {t("logout")}
+        </button>
       </div>
     </>
   );

@@ -7,6 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { PasswordInput } from "@/components/ui/PasswordInput";
+import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 
 const EDITORIAL_MVP_MODE = true;
 
@@ -216,6 +217,19 @@ function LoginForm() {
             </div>
           </div>
         )}
+
+        <GoogleSignInButton
+          label={t("continueWithGoogle")}
+          className="mt-10"
+        />
+
+        <div className="mt-6 flex items-center gap-4">
+          <div className="h-px flex-1 bg-punk-white/20" />
+          <span className="font-punch text-xs uppercase tracking-widest text-punk-white/50">
+            {t("orDivider")}
+          </span>
+          <div className="h-px flex-1 bg-punk-white/20" />
+        </div>
 
         <form onSubmit={handleSubmit} className="mt-10 space-y-6">
           {error && (

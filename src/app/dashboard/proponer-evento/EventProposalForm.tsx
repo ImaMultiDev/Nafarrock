@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 import { EventLinksBuilder, type EventLinkItem } from "@/components/admin/EventLinksBuilder";
@@ -21,6 +22,7 @@ export function EventProposalForm({
   bands: Band[];
 }) {
   const router = useRouter();
+  const t = useTranslations("dashboard.proposals.event.form");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [imageUrl, setImageUrl] = useState("");
@@ -49,7 +51,7 @@ export function EventProposalForm({
     if (isMultiDay && endDateStr) {
       const end = new Date(endDateStr);
       if (isNaN(end.getTime()) || end < date) {
-        setError("La fecha de fin debe ser posterior a la de inicio");
+        setError(t("errorEndDate"));
         setLoading(false);
         return;
       }
@@ -64,7 +66,7 @@ export function EventProposalForm({
         type: formData.get("type"),
         date: date.toISOString(),
         endDate,
-        venueId: formData.get("venueId"),
+        venueText: formData.get("venueText") || undefined,
         doorsOpen: formData.get("doorsOpen") || undefined,
         description: formData.get("description") || undefined,
         price: formData.get("price") || undefined,
@@ -96,7 +98,7 @@ export function EventProposalForm({
       )}
       <div>
         <label htmlFor="title" className={labelClass}>
-          Título *
+          {t("title")}
         </label>
         <input id="title" name="title" type="text" required className={inputClass} />
       </div>
@@ -117,36 +119,36 @@ export function EventProposalForm({
           entityId="proposal"
           images={images}
           onChange={setImages}
-          label="Imágenes adicionales (opcionales, máx. 2)"
+          label={t("gallery")}
           maxImages={2}
         />
       </div>
       <div>
         <label htmlFor="type" className={labelClass}>
-          Tipo
+          {t("type")}
         </label>
         <select id="type" name="type" className={inputClass}>
-          <option value="CONCIERTO">Concierto</option>
-          <option value="FESTIVAL">Festival</option>
+          <option value="CONCIERTO">{t("typeConcert")}</option>
+          <option value="FESTIVAL">{t("typeFestival")}</option>
         </select>
       </div>
       <div>
-        <label className={labelClass}>Duración del evento</label>
+        <label className={labelClass}>{t("duration")}</label>
         <div className="mt-2 flex gap-6">
           <label className="flex cursor-pointer items-center gap-2">
             <input type="radio" name="duration" checked={!isMultiDay} onChange={() => setIsMultiDay(false)} className="accent-punk-red" />
-            <span className="font-body text-punk-white/90">Un día</span>
+            <span className="font-body text-punk-white/90">{t("oneDay")}</span>
           </label>
           <label className="flex cursor-pointer items-center gap-2">
             <input type="radio" name="duration" checked={isMultiDay} onChange={() => setIsMultiDay(true)} className="accent-punk-red" />
-            <span className="font-body text-punk-white/90">Varios días</span>
+            <span className="font-body text-punk-white/90">{t("multiDay")}</span>
           </label>
         </div>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="date" className={labelClass}>
-            {isMultiDay ? "Fecha de inicio *" : "Fecha y hora *"}
+            {isMultiDay ? t("dateStart") : t("dateTime")}
           </label>
           <input
             id="date"
@@ -160,7 +162,7 @@ export function EventProposalForm({
         {isMultiDay ? (
           <div>
             <label htmlFor="endDate" className={labelClass}>
-              Fecha de fin *
+              {t("dateEnd")}
             </label>
             <input
               id="endDate"
@@ -174,41 +176,35 @@ export function EventProposalForm({
         ) : (
           <div>
             <label htmlFor="doorsOpen" className={labelClass}>
-              Puertas
+              {t("doors")}
             </label>
-            <input id="doorsOpen" name="doorsOpen" type="text" className={inputClass} placeholder="20:00" />
+            <input id="doorsOpen" name="doorsOpen" type="text" className={inputClass} placeholder={t("doorsPlaceholder")} />
           </div>
         )}
       </div>
       {isMultiDay && (
         <div>
           <label htmlFor="doorsOpen" className={labelClass}>
-            Puertas (opcional)
+            {t("doorsOptional")}
           </label>
-          <input id="doorsOpen" name="doorsOpen" type="text" className={inputClass} placeholder="18:00 cada día" />
+          <input id="doorsOpen" name="doorsOpen" type="text" className={inputClass} placeholder={t("doorsMultiPlaceholder")} />
         </div>
       )}
       <div>
-        <label htmlFor="venueId" className={labelClass}>
-          Sala (opcional)
+        <label htmlFor="venueText" className={labelClass}>
+          {t("venue")}
         </label>
-        <select id="venueId" name="venueId" className={inputClass}>
-          <option value="">Sin sala / Por confirmar</option>
-          {venues.map((v) => (
-            <option key={v.id} value={v.id}>
-              {v.name}
-            </option>
-          ))}
-        </select>
-        {venues.length === 0 && (
-          <p className="mt-2 font-body text-sm text-punk-white/50">
-            No hay salas aprobadas. Puedes proponer el evento sin sala.
-          </p>
-        )}
+        <input
+          id="venueText"
+          name="venueText"
+          type="text"
+          className={inputClass}
+          placeholder={t("venuePlaceholder")}
+        />
       </div>
       <div>
         <label className={labelClass}>
-          Bandas (opcional)
+          {t("bands")}
         </label>
         <div className="mt-2 max-h-40 space-y-2 overflow-y-auto border-2 border-punk-white/20 p-4">
           {bands.map((b) => (
@@ -219,27 +215,27 @@ export function EventProposalForm({
           ))}
           {bands.length === 0 && (
             <p className="font-body text-sm text-punk-white/50">
-              No hay bandas aprobadas aún. Puedes proponer el evento sin bandas.
+              {t("bandsEmpty")}
             </p>
           )}
         </div>
       </div>
       <div>
         <label htmlFor="description" className={labelClass}>
-          Descripción
+          {t("description")}
         </label>
         <textarea id="description" name="description" rows={3} className={inputClass} />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="price" className={labelClass}>
-            Precio
+            {t("price")}
           </label>
-          <input id="price" name="price" type="text" className={inputClass} placeholder="10€ / Entrada libre" />
+          <input id="price" name="price" type="text" className={inputClass} placeholder={t("pricePlaceholder")} />
         </div>
         <div>
           <label htmlFor="ticketUrl" className={labelClass}>
-            URL entradas
+            {t("ticketUrl")}
           </label>
           <input id="ticketUrl" name="ticketUrl" type="url" className={inputClass} />
         </div>
@@ -254,10 +250,10 @@ export function EventProposalForm({
         disabled={loading}
         className="border-2 border-punk-pink bg-punk-pink px-8 py-3 font-punch text-sm uppercase tracking-widest text-punk-black transition-all hover:bg-punk-pink/90 disabled:opacity-50"
       >
-        {loading ? "Enviando..." : "Enviar propuesta"}
+        {loading ? t("submitting") : t("submit")}
       </button>
       <p className="font-body text-sm text-punk-white/50">
-        La propuesta será revisada por el administrador antes de publicarse en la agenda.
+        {t("reviewHint")}
       </p>
     </form>
   );

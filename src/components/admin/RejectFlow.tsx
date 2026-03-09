@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 type Props = {
-  entity: "band" | "venue" | "festival" | "association" | "promoter" | "organizer";
+  entity: "band" | "venue" | "festival" | "association" | "promoter" | "organizer" | "boardAnnouncement";
   id: string;
   onReject?: () => void;
 };

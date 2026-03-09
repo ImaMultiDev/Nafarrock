@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
-import { sendRequestRejectedEmail } from "@/lib/email";
+import { sendRequestRejectedEmail, sendBoardAnnouncementRejectedEmail } from "@/lib/email";
+import { createInboxMessage } from "@/lib/inbox";
 import { z } from "zod";
 
 const bodySchema = z.object({
-  entity: z.enum(["band", "venue", "festival", "association", "promoter", "organizer"]),
+  entity: z.enum(["band", "venue", "festival", "association", "promoter", "organizer", "boardAnnouncement"]),
   id: z.string().min(1),
   reason: z.string().max(2000).optional(),
 });
@@ -17,6 +18,7 @@ const ENTITY_TYPE_LABEL: Record<string, string> = {
   association: "ASOCIACION",
   promoter: "PROMOTOR",
   organizer: "ORGANIZADOR",
+  boardAnnouncement: "BOARD_ANNOUNCEMENT",
 };
 
 export async function POST(req: Request) {
@@ -81,6 +83,31 @@ export async function POST(req: Request) {
       entityName = organizer.name;
       userId = organizer.userId;
       await prisma.organizer.delete({ where: { id } });
+    } else if (entity === "boardAnnouncement") {
+      const announcement = await prisma.boardAnnouncement.findUnique({
+        where: { id },
+        include: { user: { select: { email: true, id: true } } },
+      });
+      if (!announcement) return NextResponse.json({ message: "Anuncio no encontrado" }, { status: 404 });
+      if (announcement.approved) return NextResponse.json({ message: "El anuncio ya está aprobado" }, { status: 400 });
+      email = announcement.user?.email ?? announcement.contactEmail;
+      entityName = announcement.title;
+      userId = announcement.userId;
+      if (userId) {
+        await createInboxMessage({
+          userId,
+          kind: "PROPOSAL_REJECTED",
+          entityType: "boardAnnouncement",
+          entityId: id,
+          entityName: announcement.title,
+          body: reason?.trim(),
+        });
+      }
+      await prisma.boardAnnouncement.delete({ where: { id } });
+      if (email) {
+        await sendBoardAnnouncementRejectedEmail(email, entityName, reason?.trim());
+      }
+      return NextResponse.json({ success: true });
     }
 
     if (userId) {

@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { uniqueSlug } from "@/lib/slug";
-import { canUserProposeEvent } from "@/lib/validated-event";
+import { canUserProposeEventFromDashboard } from "@/lib/validated-event";
 import { startOfToday } from "@/lib/date";
 import { z } from "zod";
 
@@ -15,7 +15,7 @@ const createSchema = z.object({
     { message: "La fecha del evento no puede ser anterior a hoy" }
   ),
   endDate: z.union([z.string(), z.coerce.date()]).optional(),
-  venueId: z.string().optional().nullable().or(z.literal("")),
+  venueText: z.string().optional().nullable().or(z.literal("")),
   doorsOpen: z.string().optional(),
   description: z.string().optional(),
   price: z.string().optional(),
@@ -63,24 +63,12 @@ export async function POST(req: Request) {
       );
     }
 
-    const check = await canUserProposeEvent(session.user.id, eventDate);
+    const check = await canUserProposeEventFromDashboard(session.user.id);
     if (!check.ok) {
       return NextResponse.json({ message: check.message }, { status: 403 });
     }
 
-    const venueId = (data.venueId && data.venueId.trim()) ? data.venueId : null;
-
-    if (venueId) {
-      const venue = await prisma.venue.findUnique({
-        where: { id: venueId },
-      });
-      if (!venue || !venue.approved) {
-        return NextResponse.json(
-          { message: "La sala seleccionada no existe o no está aprobada." },
-          { status: 400 }
-        );
-      }
-    }
+    const venueText = (data.venueText && data.venueText.trim()) ? data.venueText.trim() : null;
 
     const slug = await uniqueSlug(
       (s) => prisma.event.findUnique({ where: { slug: s } }).then(Boolean),
@@ -94,7 +82,7 @@ export async function POST(req: Request) {
         type: data.type,
         date: eventDate,
         endDate: eventEndDate,
-        venueId,
+        venueText,
         doorsOpen: data.doorsOpen || null,
         description: data.description || null,
         price: data.price || null,

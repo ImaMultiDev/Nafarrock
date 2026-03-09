@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin";
+import { createInboxMessage } from "@/lib/inbox";
 import { z } from "zod";
 import { uniqueSlug } from "@/lib/slug";
 import { bandLocationSchema } from "@/lib/band-locations";
@@ -83,6 +84,15 @@ export async function PATCH(
       if (data.approved) {
         updateData.approvedAt = new Date();
         updateData.approvedBy = session.user.id;
+        if (band.userId) {
+          await createInboxMessage({
+            userId: band.userId,
+            kind: "PROPOSAL_APPROVED",
+            entityType: "band",
+            entityId: band.id,
+            entityName: band.name,
+          });
+        }
       }
     }
     if (data.slug != null && data.slug !== band.slug) {

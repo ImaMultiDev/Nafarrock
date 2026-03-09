@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin";
+import { createInboxMessage } from "@/lib/inbox";
 import { z } from "zod";
 import { uniqueSlug } from "@/lib/slug";
 import { startOfToday } from "@/lib/date";
@@ -98,6 +99,15 @@ export async function PATCH(
       updateData.isApproved = data.isApproved;
       if (data.isApproved) {
         updateData.approvedAt = new Date();
+        if (event.createdByUserId) {
+          await createInboxMessage({
+            userId: event.createdByUserId,
+            kind: "PROPOSAL_APPROVED",
+            entityType: "event",
+            entityId: event.id,
+            entityName: event.title,
+          });
+        }
       }
     }
     if (data.eventLimitExempt != null) updateData.eventLimitExempt = data.eventLimitExempt;
@@ -168,6 +178,16 @@ export async function DELETE(
     const event = await prisma.event.findUnique({ where: { id } });
     if (!event) {
       return NextResponse.json({ message: "Evento no encontrado" }, { status: 404 });
+    }
+
+    if (event.createdByUserId) {
+      await createInboxMessage({
+        userId: event.createdByUserId,
+        kind: "PROPOSAL_REJECTED",
+        entityType: "event",
+        entityId: event.id,
+        entityName: event.title,
+      });
     }
 
     await prisma.event.delete({ where: { id } });

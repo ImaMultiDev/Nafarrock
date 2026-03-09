@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
@@ -17,6 +18,7 @@ export function ProfileForm({
   email: string;
 }) {
   const router = useRouter();
+  const t = useTranslations("dashboard.perfil.profileForm");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -54,7 +56,7 @@ export function ProfileForm({
       )}
       <div>
         <label htmlFor="email" className={labelClass}>
-          Email (no editable)
+          {t("email")}
         </label>
         <input
           id="email"
@@ -67,7 +69,7 @@ export function ProfileForm({
       <div className="grid gap-6 sm:grid-cols-2">
         <div>
           <label htmlFor="firstName" className={labelClass}>
-            Nombre
+            {t("firstName")}
           </label>
           <input
             id="firstName"
@@ -79,7 +81,7 @@ export function ProfileForm({
         </div>
         <div>
           <label htmlFor="lastName" className={labelClass}>
-            Apellidos
+            {t("lastName")}
           </label>
           <input
             id="lastName"
@@ -95,7 +97,7 @@ export function ProfileForm({
         disabled={loading}
         className="border-2 border-punk-green bg-punk-green px-8 py-3 font-punch text-sm uppercase tracking-widest text-punk-black transition-colors hover:bg-punk-green/90 disabled:opacity-50"
       >
-        {loading ? "Guardando..." : "Guardar"}
+        {loading ? t("saving") : t("save")}
       </button>
     </form>
   );
