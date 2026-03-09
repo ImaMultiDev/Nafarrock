@@ -27,7 +27,7 @@ export default async function ProponerEventoPage() {
           {t("subtitle")}
         </p>
       </div>
-      <EventProposalForm bands={bands} />
+      <EventProposalForm venues={[]} bands={bands} />
     </>
   );
 }
