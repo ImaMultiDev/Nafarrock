@@ -2,10 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin";
 import { createInboxMessage } from "@/lib/inbox";
-import {
-  sendBoardAnnouncementApprovedEmail,
-  sendBoardAnnouncementRejectedEmail,
-} from "@/lib/email";
+import { sendBoardAnnouncementApprovedEmail } from "@/lib/email";
 import { bandLocationSchema } from "@/lib/band-locations";
 import { z } from "zod";
 
@@ -71,6 +68,9 @@ export async function PATCH(
             entityName: announcement.title,
           });
         }
+      } else {
+        updateData.approvedAt = null;
+        updateData.approvedBy = null;
       }
     }
 
@@ -113,27 +113,12 @@ export async function DELETE(
 
     const announcement = await prisma.boardAnnouncement.findUnique({
       where: { id },
-      include: { user: { select: { email: true } } },
     });
     if (!announcement) {
       return NextResponse.json(
         { message: "Anuncio no encontrado" },
         { status: 404 }
       );
-    }
-
-    const email = announcement.user?.email ?? announcement.contactEmail;
-    if (email) {
-      await sendBoardAnnouncementRejectedEmail(email, announcement.title);
-    }
-    if (announcement.userId) {
-      await createInboxMessage({
-        userId: announcement.userId,
-        kind: "PROPOSAL_REJECTED",
-        entityType: "boardAnnouncement",
-        entityId: announcement.id,
-        entityName: announcement.title,
-      });
     }
 
     await prisma.boardAnnouncement.delete({ where: { id } });

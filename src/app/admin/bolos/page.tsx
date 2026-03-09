@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { BoardAnnouncementActions } from "./BoardAnnouncementActions";
 const CATEGORY_LABELS: Record<string, string> = {
   SE_BUSCA_MUSICO: "Se busca músico",
   SE_BUSCAN_BANDAS: "Se buscan bandas / Postulaciones",
@@ -101,12 +102,19 @@ export default async function AdminBolosPage() {
                   </span>
                 </td>
                 <td className="py-3">
-                  <Link
-                    href={`/admin/tablon/${a.id}/editar`}
-                    className="font-punch text-xs uppercase tracking-widest text-punk-yellow hover:text-punk-yellow/80"
-                  >
-                    Editar
-                  </Link>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <Link
+                      href={`/admin/tablon/${a.id}/editar`}
+                      className="font-punch text-xs uppercase tracking-widest text-punk-yellow hover:text-punk-yellow/80"
+                    >
+                      Editar
+                    </Link>
+                    <BoardAnnouncementActions
+                      id={a.id}
+                      title={a.title}
+                      approved={a.approved}
+                    />
+                  </div>
                 </td>
               </tr>
             ))}
