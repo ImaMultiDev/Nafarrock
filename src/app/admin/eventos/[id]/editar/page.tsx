@@ -12,17 +12,18 @@ export default async function EditarEventoPage({
     where: { id },
     include: {
       venue: true,
+      festival: true,
       bands: { include: { band: true } },
       links: true,
     },
   });
   if (!event) notFound();
 
-  const bands = await prisma.band.findMany({
-    orderBy: { name: "asc" },
-    where: { approved: true },
-    select: { id: true, name: true },
-  });
+  const [venues, festivals, bands] = await Promise.all([
+    prisma.venue.findMany({ orderBy: { name: "asc" }, where: { approved: true }, select: { id: true, name: true } }),
+    prisma.festival.findMany({ orderBy: { name: "asc" }, where: { approved: true }, select: { id: true, name: true } }),
+    prisma.band.findMany({ orderBy: { name: "asc" }, where: { approved: true }, select: { id: true, name: true } }),
+  ]);
 
   return (
     <>
@@ -32,7 +33,7 @@ export default async function EditarEventoPage({
       <p className="mt-2 font-body text-punk-white/60">
         {event.title}
       </p>
-      <EventEditForm event={event} bands={bands} />
+      <EventEditForm event={event} venues={venues} festivals={festivals} bands={bands} />
     </>
   );
 }

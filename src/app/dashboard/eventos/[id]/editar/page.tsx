@@ -18,6 +18,7 @@ export default async function EditarEventoDashboardPage({
     where: { id },
     include: {
       venue: true,
+      festival: true,
       bands: { include: { band: true }, orderBy: { order: "asc" } },
       links: true,
     },
@@ -28,8 +29,12 @@ export default async function EditarEventoDashboardPage({
     redirect("/dashboard/eventos");
   }
 
-  const [venues, bands] = await Promise.all([
+  const [venues, festivals, bands] = await Promise.all([
     prisma.venue.findMany({
+      orderBy: { name: "asc" },
+      where: { approved: true },
+    }),
+    prisma.festival.findMany({
       orderBy: { name: "asc" },
       where: { approved: true },
     }),
@@ -61,7 +66,7 @@ export default async function EditarEventoDashboardPage({
         <p className="mt-2 font-body text-punk-white/60">{event.title}</p>
       </div>
       <DashboardSection accent="red">
-        <EventEditForm event={event} venues={venuesForForm} bands={bands} />
+        <EventEditForm event={event} venues={venuesForForm} festivals={festivals} bands={bands} />
       </DashboardSection>
     </>
   );

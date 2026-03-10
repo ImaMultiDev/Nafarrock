@@ -16,6 +16,7 @@ const createSchema = z.object({
   ),
   endDate: z.union([z.string(), z.coerce.date()]).optional(),
   venueId: z.string().optional().nullable().or(z.literal("")),
+  venueOrFestival: z.string().optional().nullable().or(z.literal("")),
   doorsOpen: z.string().optional(),
   description: z.string().optional(),
   price: z.string().optional(),
@@ -81,7 +82,22 @@ export async function POST(req: Request) {
 
     const role = user?.role as string;
 
-    const venueId = (data.venueId && data.venueId.trim()) ? data.venueId : null;
+    let venueId: string | null = null;
+    let festivalId: string | null = role === "FESTIVAL" ? user?.festivalProfile?.id ?? null : null;
+
+    if (data.venueOrFestival !== undefined && data.venueOrFestival !== null) {
+      const val = String(data.venueOrFestival).trim();
+      if (val.startsWith("venue-")) {
+        venueId = val.slice(6);
+        festivalId = null;
+      } else if (val.startsWith("festival-")) {
+        festivalId = val.slice(9);
+        venueId = null;
+      }
+    } else if (data.venueId !== undefined) {
+      venueId = (data.venueId && data.venueId.trim()) ? data.venueId : null;
+      if (!venueId) festivalId = null;
+    }
 
     if (role === "SALA" && venueId) {
       const myVenue = user?.venueProfile;
@@ -105,6 +121,18 @@ export async function POST(req: Request) {
       }
     }
 
+    if (festivalId) {
+      const festival = await prisma.festival.findUnique({
+        where: { id: festivalId },
+      });
+      if (!festival || !festival.approved) {
+        return NextResponse.json(
+          { message: "El festival seleccionado no existe o no está aprobado." },
+          { status: 400 }
+        );
+      }
+    }
+
     const slug = await uniqueSlug(
       (s) => prisma.event.findUnique({ where: { slug: s } }).then(Boolean),
       `${data.title}-${eventDate.getFullYear()}`
@@ -117,7 +145,8 @@ export async function POST(req: Request) {
         type: data.type,
         date: eventDate,
         endDate: eventEndDate,
-        venueId,
+        venueId: venueId || undefined,
+        festivalId: festivalId || undefined,
         doorsOpen: data.doorsOpen || null,
         description: data.description || null,
         price: data.price || null,
@@ -129,7 +158,6 @@ export async function POST(req: Request) {
         createdByUserId: session.user.id,
         promoterId: role === "PROMOTOR" ? user?.promoterProfile?.id : undefined,
         organizerId: role === "ORGANIZADOR" ? user?.organizerProfile?.id : undefined,
-        festivalId: role === "FESTIVAL" ? user?.festivalProfile?.id : undefined,
         associationId: role === "ASOCIACION" ? user?.associationProfile?.id : undefined,
         bands: {
           create: (data.bandIds ?? []).map((bandId, i) => ({

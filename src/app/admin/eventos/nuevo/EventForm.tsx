@@ -7,15 +7,24 @@ import { ImageGallery } from "@/components/ui/ImageGallery";
 import { TranslateButton } from "@/components/admin/TranslateButton";
 import { BandSelector } from "@/components/admin/BandSelector";
 import { EventLinksBuilder, type EventLinkItem } from "@/components/admin/EventLinksBuilder";
+import { VenueFestivalSelect } from "@/components/admin/VenueFestivalSelect";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
 const labelClass = "block font-punch text-xs uppercase tracking-widest text-punk-white/70";
 
+type Venue = { id: string; name: string };
 type Festival = { id: string; name: string };
 type Band = { id: string; name: string };
 
-export function EventForm({ festivals, bands }: { festivals: Festival[]; bands: Band[] }) {
+function parseVenueOrFestival(val: string | null): { venueId: string | null; festivalId: string | null } {
+  if (!val || !val.trim()) return { venueId: null, festivalId: null };
+  if (val.startsWith("venue-")) return { venueId: val.slice(6), festivalId: null };
+  if (val.startsWith("festival-")) return { venueId: null, festivalId: val.slice(9) };
+  return { venueId: null, festivalId: null };
+}
+
+export function EventForm({ venues, festivals, bands }: { venues: Venue[]; festivals: Festival[]; bands: Band[] }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -47,9 +56,13 @@ export function EventForm({ festivals, bands }: { festivals: Festival[]; bands: 
       const el = form?.querySelector<HTMLInputElement>('[name="endDate"]');
       if (el) el.value = data.endDate as string;
     }
-    if (data.venueText) {
-      const el = form?.querySelector<HTMLInputElement>('[name="venueText"]');
-      if (el) el.value = data.venueText as string;
+    if (data.venueId) {
+      const el = form?.querySelector<HTMLSelectElement>('[name="venueOrFestival"]');
+      if (el) el.value = `venue-${data.venueId}`;
+    }
+    if (data.festivalId) {
+      const el = form?.querySelector<HTMLSelectElement>('[name="venueOrFestival"]');
+      if (el) el.value = `festival-${data.festivalId}`;
     }
     if (data.price) {
       const el = form?.querySelector<HTMLInputElement>('[name="price"]');
@@ -165,6 +178,8 @@ export function EventForm({ festivals, bands }: { festivals: Festival[]; bands: 
       endDate = end.toISOString();
     }
 
+    const { venueId, festivalId } = parseVenueOrFestival(formData.get("venueOrFestival") as string | null);
+
     const res = await fetch("/api/admin/events", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -173,8 +188,8 @@ export function EventForm({ festivals, bands }: { festivals: Festival[]; bands: 
         type: formData.get("type"),
         date: date.toISOString(),
         endDate,
-        venueText: formData.get("venueText") || undefined,
-        festivalId: formData.get("festivalId") || undefined,
+        venueId: venueId || undefined,
+        festivalId: festivalId || undefined,
         doorsOpen: formData.get("doorsOpen") || undefined,
         description: formData.get("description") || undefined,
         price: formData.get("price") || undefined,
@@ -317,36 +332,10 @@ export function EventForm({ festivals, bands }: { festivals: Festival[]; bands: 
           <input id="doorsOpen" name="doorsOpen" type="text" className={inputClass} placeholder="18:00 cada día" />
         </div>
       )}
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label htmlFor="venueText" className={labelClass}>
-            Sala / Recinto (opcional)
-          </label>
-          <input
-            id="venueText"
-            name="venueText"
-            type="text"
-            className={inputClass}
-            placeholder="Ej: Plaza de toros de Pamplona, Polideportivo..."
-          />
-        </div>
-        <div>
-          <label htmlFor="festivalId" className={labelClass}>
-            Festival (opcional)
-          </label>
-          <select id="festivalId" name="festivalId" className={inputClass}>
-            <option value="">Ninguno</option>
-            {festivals.map((f) => (
-              <option key={f.id} value={f.id}>
-                {f.name}
-              </option>
-            ))}
-          </select>
-          <p className="mt-1 font-body text-xs text-punk-white/50">
-            Si el evento forma parte de un festival, selecciónalo.
-          </p>
-        </div>
-      </div>
+      <VenueFestivalSelect
+        venues={venues}
+        festivals={festivals}
+      />
       <BandSelector bands={bands} value={bandIds} onChange={setBandIds} />
       <div>
         <label htmlFor="description" className={labelClass}>

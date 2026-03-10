@@ -11,11 +11,11 @@ export default async function ProponerEventoPage() {
 
   const t = await getTranslations("dashboard.proposals.event");
 
-  const bands = await prisma.band.findMany({
-    orderBy: { name: "asc" },
-    where: { approved: true },
-    select: { id: true, name: true },
-  });
+  const [venues, festivals, bands] = await Promise.all([
+    prisma.venue.findMany({ orderBy: { name: "asc" }, where: { approved: true }, select: { id: true, name: true } }),
+    prisma.festival.findMany({ orderBy: { name: "asc" }, where: { approved: true }, select: { id: true, name: true } }),
+    prisma.band.findMany({ orderBy: { name: "asc" }, where: { approved: true }, select: { id: true, name: true } }),
+  ]);
 
   return (
     <>
@@ -27,7 +27,7 @@ export default async function ProponerEventoPage() {
           {t("subtitle")}
         </p>
       </div>
-      <EventProposalForm venues={[]} bands={bands} />
+      <EventProposalForm venues={venues} festivals={festivals} bands={bands} />
     </>
   );
 }

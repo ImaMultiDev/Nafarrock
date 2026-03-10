@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 import { EventLinksBuilder, type EventLinkItem } from "@/components/admin/EventLinksBuilder";
+import { VenueFestivalSelect } from "@/components/admin/VenueFestivalSelect";
 
 const inputClass = "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
 const labelClass = "block font-punch text-xs uppercase tracking-widest text-punk-white/70";
@@ -23,19 +24,29 @@ type Event = {
   images: string[];
   isSoldOut: boolean;
   venueId: string | null;
+  festivalId: string | null;
   bands: { band: { id: string } }[];
   links?: { kind: string; url: string; label: string | null }[];
 };
 type Venue = { id: string; name: string };
+type Festival = { id: string; name: string };
 type Band = { id: string; name: string };
+
+function getVenueOrFestivalDefault(event: Event): string {
+  if (event.venueId) return `venue-${event.venueId}`;
+  if (event.festivalId) return `festival-${event.festivalId}`;
+  return "";
+}
 
 export function EventEditForm({
   event,
   venues,
+  festivals,
   bands,
 }: {
   event: Event;
   venues: Venue[];
+  festivals: Festival[];
   bands: Band[];
 }) {
   const router = useRouter();
@@ -90,7 +101,7 @@ export function EventEditForm({
         type: formData.get("type"),
         date: date.toISOString(),
         endDate,
-        venueId: formData.get("venueId"),
+        venueOrFestival: formData.get("venueOrFestival") || null,
         doorsOpen: formData.get("doorsOpen") || null,
         description: formData.get("description") || null,
         price: formData.get("price") || null,
@@ -173,15 +184,11 @@ export function EventEditForm({
           <input id="doorsOpen" name="doorsOpen" type="text" defaultValue={event.doorsOpen ?? ""} className={inputClass} placeholder="18:00 cada día" />
         </div>
       )}
-      <div>
-        <label htmlFor="venueId" className={labelClass}>Sala (opcional)</label>
-        <select id="venueId" name="venueId" defaultValue={event.venueId ?? ""} className={inputClass}>
-          <option value="">Sin sala / Por confirmar</option>
-          {venues.map((v) => (
-            <option key={v.id} value={v.id}>{v.name}</option>
-          ))}
-        </select>
-      </div>
+      <VenueFestivalSelect
+        venues={venues}
+        festivals={festivals}
+        defaultValue={getVenueOrFestivalDefault(event)}
+      />
       <div>
         <label className={labelClass}>Bandas (opcional)</label>
         <div className="mt-2 max-h-40 space-y-2 overflow-y-auto border-2 border-punk-white/20 p-4">

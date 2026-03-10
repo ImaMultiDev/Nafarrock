@@ -66,6 +66,9 @@ export async function POST(req: Request) {
       `${data.title}-${new Date(data.date).getFullYear()}`
     );
 
+    const venueId = data.venueId && data.venueId.trim() ? data.venueId : null;
+    const festivalId = data.festivalId && data.festivalId.trim() ? data.festivalId : null;
+
     const event = await prisma.event.create({
       data: {
         slug,
@@ -73,9 +76,9 @@ export async function POST(req: Request) {
         type: data.type,
         date: eventDate,
         endDate: eventEndDate,
-        venueId: null,
-        venueText: (data.venueText && data.venueText.trim()) ? data.venueText.trim() : null,
-        festivalId: data.festivalId || null,
+        venueId,
+        venueText: null,
+        festivalId,
         doorsOpen: data.doorsOpen || null,
         description: data.description || null,
         descriptionEu: data.descriptionEu || null,

@@ -24,8 +24,12 @@ export default async function DashboardEventosPage() {
     ? { createdByUserId: null }
     : { createdByUserId: session.user.id };
 
-  const [venues, bands, myEvents] = await Promise.all([
+  const [venues, festivals, bands, myEvents] = await Promise.all([
     prisma.venue.findMany({
+      orderBy: { name: "asc" },
+      where: { approved: true },
+    }),
+    prisma.festival.findMany({
       orderBy: { name: "asc" },
       where: { approved: true },
     }),
@@ -38,15 +42,22 @@ export default async function DashboardEventosPage() {
       orderBy: { date: "desc" },
       include: {
         venue: true,
+        festival: true,
         bands: { include: { band: true }, orderBy: { order: "asc" } },
       },
     }),
   ]);
 
-  const userVenue = await prisma.user.findUnique({
+  const userWithProfiles = await prisma.user.findUnique({
     where: { id: session.user.id },
-    include: { venueProfile: true },
-  }).then((u) => (u?.role === "SALA" && u?.venueProfile?.approved ? u.venueProfile : null));
+    include: { venueProfile: true, festivalProfile: true },
+  });
+  const userVenue = userWithProfiles?.role === "SALA" && userWithProfiles?.venueProfile?.approved
+    ? userWithProfiles.venueProfile
+    : null;
+  const userFestival = userWithProfiles?.role === "FESTIVAL" && userWithProfiles?.festivalProfile?.approved
+    ? userWithProfiles.festivalProfile
+    : null;
 
   const venuesForForm = userVenue
     ? venues.filter((v) => v.id === userVenue.id)
@@ -73,8 +84,10 @@ export default async function DashboardEventosPage() {
         <DashboardSection title="Crear evento" accent="red">
           <DashboardEventForm
             venues={venuesForForm}
+            festivals={festivals}
             bands={bands}
             defaultVenueId={userVenue?.id}
+            defaultFestivalId={userFestival?.id}
           />
         </DashboardSection>
       )}
@@ -97,7 +110,7 @@ export default async function DashboardEventosPage() {
                   {e.title}
                 </Link>
                 <p className="mt-1 font-body text-sm text-punk-white/60">
-                  {format(e.date, "d MMM yyyy", { locale: es })} · {e.venue?.name ?? "—"}
+                  {format(e.date, "d MMM yyyy", { locale: es })} · {e.venue?.name ?? e.festival?.name ?? "—"}
                 </p>
                 {e.bands.length > 0 && (
                   <p className="mt-1 font-punch text-xs text-punk-green/80">

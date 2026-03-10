@@ -5,6 +5,8 @@
       "events": "Eventos",
       "bands": "Bandas",
       "scene": "Escena",
+      "salas": "Salas",
+      "festivals": "Festivales",
       "guide": "Proyecto",
       "manual": "Manual",
       "contact": "Contacto",
@@ -38,6 +40,13 @@
     },
     "proposalLimitExceeded": "Solo puedes enviar una propuesta de este tipo cada 5 días. Por favor, espera antes de enviar otra.",
     "modalClose": "Aceptar"
+  },
+  "eventForm": {
+    "venueLabel": "Sala / Festival",
+    "venuePlaceholder": "Selecciona una sala o festival",
+    "venueEmpty": "Sin local / Por confirmar",
+    "venuesGroup": "Salas",
+    "festivalsGroup": "Festivales"
   },
   "home": {
     "tagline": "Nafarroa · Punk · Rock · Alternativo",

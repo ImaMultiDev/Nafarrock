@@ -18,6 +18,7 @@ const updateSchema = z.object({
     }),
   endDate: z.union([z.string(), z.coerce.date()]).optional().nullable(),
   venueId: z.string().optional().nullable().or(z.literal("")),
+  venueOrFestival: z.string().optional().nullable().or(z.literal("")),
   doorsOpen: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
   price: z.string().optional().nullable(),
@@ -50,7 +51,7 @@ export async function PATCH(
     const { id } = await params;
     const event = await prisma.event.findUnique({
       where: { id },
-      include: { venue: true },
+      include: { venue: true, festival: true },
     });
 
     if (!event) {
@@ -102,7 +103,41 @@ export async function PATCH(
       updateData.date = newDate;
     }
     if (newEndDate !== undefined) updateData.endDate = newEndDate;
-    if (data.venueId !== undefined) {
+    if (data.venueOrFestival !== undefined && data.venueOrFestival !== null) {
+      const val = String(data.venueOrFestival).trim();
+      if (val.startsWith("venue-")) {
+        const venueId = val.slice(6);
+        if (role === "SALA") {
+          const myVenue = user?.venueProfile;
+          if (!myVenue || myVenue.id !== venueId) {
+            return NextResponse.json(
+              { message: "Como sala, solo puedes usar tu propia sala." },
+              { status: 403 }
+            );
+          }
+        }
+        const venue = await prisma.venue.findUnique({ where: { id: venueId } });
+        if (!venue || !venue.approved) {
+          return NextResponse.json({ message: "Sala inválida" }, { status: 400 });
+        }
+        updateData.venueId = venueId;
+        updateData.festivalId = null;
+        updateData.venueText = null;
+      } else if (val.startsWith("festival-")) {
+        const festivalId = val.slice(9);
+        const festival = await prisma.festival.findUnique({ where: { id: festivalId } });
+        if (!festival || !festival.approved) {
+          return NextResponse.json({ message: "Festival inválido" }, { status: 400 });
+        }
+        updateData.festivalId = festivalId;
+        updateData.venueId = null;
+        updateData.venueText = null;
+      } else {
+        updateData.venueId = null;
+        updateData.festivalId = null;
+        updateData.venueText = null;
+      }
+    } else if (data.venueId !== undefined) {
       const venueId = (data.venueId && data.venueId.trim()) ? data.venueId : null;
       if (venueId) {
         if (role === "SALA") {
@@ -119,8 +154,12 @@ export async function PATCH(
           return NextResponse.json({ message: "Sala inválida" }, { status: 400 });
         }
         updateData.venueId = venueId;
+        updateData.festivalId = null;
+        updateData.venueText = null;
       } else {
         updateData.venueId = null;
+        updateData.festivalId = null;
+        updateData.venueText = null;
       }
     }
     if (data.doorsOpen !== undefined) updateData.doorsOpen = data.doorsOpen;

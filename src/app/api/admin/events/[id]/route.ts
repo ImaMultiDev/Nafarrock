@@ -19,6 +19,8 @@ const updateSchema = z.object({
   endDate: z.union([z.string(), z.coerce.date()]).optional().nullable().or(z.literal("")),
   venueId: z.string().optional().nullable().or(z.literal("")),
   venueText: z.string().optional().nullable().or(z.literal("")),
+  festivalId: z.string().optional().nullable().or(z.literal("")),
+  venueOrFestival: z.string().optional().nullable().or(z.literal("")),
   doorsOpen: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
   descriptionEu: z.string().optional().nullable(),
@@ -83,9 +85,21 @@ export async function PATCH(
     }
     if (newDate != null) updateData.date = newDate;
     if (newEndDate !== undefined) updateData.endDate = newEndDate;
-    if (data.venueText !== undefined) {
-      updateData.venueText = (data.venueText && data.venueText.trim()) ? data.venueText.trim() : null;
-      updateData.venueId = null;
+    if (data.venueOrFestival !== undefined && data.venueOrFestival !== null) {
+      const val = String(data.venueOrFestival).trim();
+      if (val.startsWith("venue-")) {
+        updateData.venueId = val.slice(6);
+        updateData.festivalId = null;
+        updateData.venueText = null;
+      } else if (val.startsWith("festival-")) {
+        updateData.festivalId = val.slice(9);
+        updateData.venueId = null;
+        updateData.venueText = null;
+      } else {
+        updateData.venueId = null;
+        updateData.festivalId = null;
+        updateData.venueText = null;
+      }
     }
     if (data.doorsOpen !== undefined) updateData.doorsOpen = data.doorsOpen;
     if (data.description !== undefined) updateData.description = data.description;

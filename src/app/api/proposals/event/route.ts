@@ -15,7 +15,8 @@ const createSchema = z.object({
     { message: "La fecha del evento no puede ser anterior a hoy" }
   ),
   endDate: z.union([z.string(), z.coerce.date()]).optional(),
-  venueText: z.string().optional().nullable().or(z.literal("")),
+  venueId: z.string().optional().nullable().or(z.literal("")),
+  festivalId: z.string().optional().nullable().or(z.literal("")),
   doorsOpen: z.string().optional(),
   description: z.string().optional(),
   price: z.string().optional(),
@@ -68,7 +69,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: check.message }, { status: 403 });
     }
 
-    const venueText = (data.venueText && data.venueText.trim()) ? data.venueText.trim() : null;
+    const venueId = data.venueId && data.venueId.trim() ? data.venueId : null;
+    const festivalId = data.festivalId && data.festivalId.trim() ? data.festivalId : null;
 
     const slug = await uniqueSlug(
       (s) => prisma.event.findUnique({ where: { slug: s } }).then(Boolean),
@@ -82,7 +84,9 @@ export async function POST(req: Request) {
         type: data.type,
         date: eventDate,
         endDate: eventEndDate,
-        venueText,
+        venueId,
+        festivalId,
+        venueText: null,
         doorsOpen: data.doorsOpen || null,
         description: data.description || null,
         price: data.price || null,

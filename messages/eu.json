@@ -5,6 +5,8 @@
       "events": "Ekitaldiak",
       "bands": "Taldeak",
       "scene": "Eskena",
+      "salas": "Aretoak",
+      "festivals": "Jaialdiak",
       "guide": "Proiektua",
       "manual": "Eskuliburua",
       "contact": "Kontaktua",
@@ -38,6 +40,13 @@
     },
     "proposalLimitExceeded": "Proposamen mota honetako bat bidal dezakezu 5 egunero. Mesedez, itxaron beste bat bidali aurretik.",
     "modalClose": "Onartu"
+  },
+  "eventForm": {
+    "venueLabel": "Aretoa / Jaialdia",
+    "venuePlaceholder": "Hautatu areto bat edo jaialdi bat",
+    "venueEmpty": "Lekurik gabe / Berresten",
+    "venuesGroup": "Aretoak",
+    "festivalsGroup": "Jaialdiak"
   },
   "home": {
     "tagline": "Nafarroa · Punk · Rock · Alternatiboa",

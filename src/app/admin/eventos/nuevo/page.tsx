@@ -2,8 +2,9 @@ import { prisma } from "@/lib/prisma";
 import { EventForm } from "./EventForm";
 
 export default async function NuevoEventoPage() {
-  const [festivals, bands] = await Promise.all([
-    prisma.festival.findMany({ orderBy: { name: "asc" }, where: { approved: true } }),
+  const [venues, festivals, bands] = await Promise.all([
+    prisma.venue.findMany({ orderBy: { name: "asc" }, where: { approved: true }, select: { id: true, name: true } }),
+    prisma.festival.findMany({ orderBy: { name: "asc" }, where: { approved: true }, select: { id: true, name: true } }),
     prisma.band.findMany({ orderBy: { name: "asc" }, where: { approved: true } }),
   ]);
 
@@ -15,7 +16,7 @@ export default async function NuevoEventoPage() {
       <p className="mt-2 font-body text-punk-white/60">
         Crear concierto o festival como admin (visible de inmediato)
       </p>
-      <EventForm festivals={festivals} bands={bands} />
+      <EventForm venues={venues} festivals={festivals} bands={bands} />
     </>
   );
 }

@@ -7,6 +7,7 @@ import { ImageGallery } from "@/components/ui/ImageGallery";
 import { TranslateButton } from "@/components/admin/TranslateButton";
 import { BandSelector } from "@/components/admin/BandSelector";
 import { EventLinksBuilder, type EventLinkItem } from "@/components/admin/EventLinksBuilder";
+import { VenueFestivalSelect } from "@/components/admin/VenueFestivalSelect";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
@@ -30,14 +31,24 @@ type Event = {
   isSoldOut: boolean;
   venueId: string | null;
   venueText: string | null;
+  festivalId: string | null;
   venue?: { name: string } | null;
+  festival?: { name: string } | null;
   bands?: { bandId: string; band?: { id: string; name: string } }[];
   links?: { kind: string; url: string; label: string | null }[];
 };
 
+type Venue = { id: string; name: string };
+type Festival = { id: string; name: string };
 type Band = { id: string; name: string };
 
-export function EventEditForm({ event, bands }: { event: Event; bands: Band[] }) {
+function getVenueOrFestivalDefault(event: Event): string {
+  if (event.venueId) return `venue-${event.venueId}`;
+  if (event.festivalId) return `festival-${event.festivalId}`;
+  return "";
+}
+
+export function EventEditForm({ event, venues, festivals, bands }: { event: Event; venues: Venue[]; festivals: Festival[]; bands: Band[] }) {
   const initialBandIds = (event.bands ?? []).map((be) => be.bandId);
   const initialLinks: EventLinkItem[] = (event.links ?? []).map((l) => ({
     kind: l.kind as EventLinkItem["kind"],
@@ -91,7 +102,7 @@ export function EventEditForm({ event, bands }: { event: Event; bands: Band[] })
         date: date.toISOString(),
         endDate,
         doorsOpen: formData.get("doorsOpen") || null,
-        venueText: formData.get("venueText") || null,
+        venueOrFestival: formData.get("venueOrFestival") || null,
         description: description || null,
         descriptionEu: descriptionEu || null,
         price: formData.get("price") || null,
@@ -200,19 +211,11 @@ export function EventEditForm({ event, bands }: { event: Event; bands: Band[] })
           <input id="doorsOpen" name="doorsOpen" type="text" defaultValue={event.doorsOpen ?? ""} className={inputClass} placeholder="18:00 cada día" />
         </div>
       )}
-      <div>
-        <label htmlFor="venueText" className={labelClass}>
-          Sala / Recinto (opcional)
-        </label>
-        <input
-          id="venueText"
-          name="venueText"
-          type="text"
-          className={inputClass}
-          defaultValue={event.venue?.name ?? event.venueText ?? ""}
-          placeholder="Ej: Plaza de toros de Pamplona, Polideportivo..."
-        />
-      </div>
+      <VenueFestivalSelect
+        venues={venues}
+        festivals={festivals}
+        defaultValue={getVenueOrFestivalDefault(event)}
+      />
       <BandSelector bands={bands} value={bandIds} onChange={setBandIds} />
       <div>
         <label htmlFor="description" className={labelClass}>

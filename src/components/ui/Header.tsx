@@ -6,21 +6,25 @@ import NextLink from "next/link";
 import Image from "next/image";
 import { createPortal } from "react-dom";
 import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { InboxBadge } from "@/components/InboxBadge";
 
-import { ESCENA_HIDDEN } from "@/lib/feature-flags";
-
 const navLinks = [
   { href: "/", labelKey: "home" as const },
   { href: "/eventos", labelKey: "events" as const },
-  { href: "/bandas", labelKey: "bands" as const },
+  {
+    labelKey: "scene" as const,
+    dropdown: [
+      { href: "/bandas", labelKey: "bands" as const },
+      { href: "/salas", labelKey: "salas" as const },
+      { href: "/festivales", labelKey: "festivals" as const },
+    ] as const,
+  },
   { href: "/tablon", labelKey: "tablon" as const },
-  ...(!ESCENA_HIDDEN ? [{ href: "/escena", labelKey: "scene" as const }] : []),
 ];
 
 const MANUAL_ROLES = [
@@ -60,9 +64,15 @@ function isActivePath(pathname: string, href: string): boolean {
     return pathname === "/bolos" || pathname.startsWith("/bolos/");
   if (href === "/bolos-nav")
     return pathname === "/bolos" || pathname.startsWith("/bolos/");
-  if (href === "/escena" && !ESCENA_HIDDEN) {
+  if (
+    href === "/escena" ||
+    href === "/bandas" ||
+    href === "/salas" ||
+    href === "/festivales"
+  ) {
     return (
       pathname === "/escena" ||
+      pathname.startsWith("/bandas") ||
       pathname.startsWith("/promotores") ||
       pathname.startsWith("/organizadores") ||
       pathname.startsWith("/festivales") ||
@@ -71,9 +81,22 @@ function isActivePath(pathname: string, href: string): boolean {
     );
   }
   if (href === "/guia") return pathname === "/guia";
-  if (href === "/tablon") return pathname === "/tablon" || pathname.startsWith("/tablon/");
+  if (href === "/tablon")
+    return pathname === "/tablon" || pathname.startsWith("/tablon/");
   if (href.startsWith("/manual")) return pathname.startsWith("/manual");
   return pathname === href || pathname.startsWith(href + "/");
+}
+
+function isEscenaActive(pathname: string): boolean {
+  return (
+    pathname === "/escena" ||
+    pathname.startsWith("/bandas") ||
+    pathname.startsWith("/salas") ||
+    pathname.startsWith("/festivales") ||
+    pathname.startsWith("/promotores") ||
+    pathname.startsWith("/organizadores") ||
+    pathname.startsWith("/asociaciones")
+  );
 }
 
 export function Header() {
@@ -83,11 +106,43 @@ export function Header() {
   const { data: session } = useSession();
   const isAdmin = pathname.startsWith("/admin");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [menuClosing, setMenuClosing] = useState(false);
+  const [sceneOpen, setSceneOpen] = useState(false);
+  const [sceneMobileOpen, setSceneMobileOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const sceneDropdownRef = useRef<HTMLDivElement>(null);
+
+  const MENU_TRANSITION_MS = 350;
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (!menuOpen) {
+      setMenuClosing(true);
+      const t = setTimeout(() => setMenuClosing(false), MENU_TRANSITION_MS);
+      return () => clearTimeout(t);
+    } else {
+      setMenuClosing(false);
+    }
+  }, [menuOpen]);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (
+        sceneDropdownRef.current &&
+        !sceneDropdownRef.current.contains(e.target as Node)
+      ) {
+        setSceneOpen(false);
+      }
+    }
+    if (sceneOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [sceneOpen]);
 
   useEffect(() => {
     if (menuOpen) {
@@ -95,14 +150,22 @@ export function Header() {
         window.innerWidth - document.documentElement.clientWidth;
       document.body.style.overflow = "hidden";
       document.body.style.paddingRight = `${scrollbarWidth}px`;
+      const onEscape = (e: KeyboardEvent) => {
+        if (e.key === "Escape") setMenuOpen(false);
+      };
+      window.addEventListener("keydown", onEscape);
+      return () => window.removeEventListener("keydown", onEscape);
     } else {
       document.body.style.overflow = "";
       document.body.style.paddingRight = "";
+      setSceneMobileOpen(false);
     }
   }, [menuOpen]);
 
   return (
-    <header className="sticky top-0 z-50 border-b-2 border-punk-red bg-punk-black/95 backdrop-blur-md">
+    <header
+      className={`sticky top-0 border-b-2 border-punk-red bg-punk-black/95 backdrop-blur-md ${menuOpen || menuClosing ? "z-[10000]" : "z-50"}`}
+    >
       {/* Letrero neón LASTER - en construcción, cruza el navbar */}
       <div
         className="neon-laster-badge pointer-events-none absolute bottom-0 left-1/2 z-10"
@@ -145,6 +208,49 @@ export function Header() {
         {/* Desktop: nav + redes + auth */}
         <div className="hidden items-center gap-6 nav:flex">
           {navLinks.map((link) => {
+            if ("dropdown" in link) {
+              const active = isEscenaActive(pathname);
+              return (
+                <div
+                  key={link.labelKey}
+                  className="relative"
+                  ref={sceneDropdownRef}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setSceneOpen(!sceneOpen)}
+                    className={`flex items-center gap-1 font-punch text-xs uppercase tracking-widest transition-colors hover:text-punk-green ${
+                      active ? "text-punk-red" : "text-punk-white/80"
+                    }`}
+                    aria-expanded={sceneOpen}
+                    aria-haspopup="true"
+                  >
+                    {t(link.labelKey)}
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform duration-200 ${sceneOpen ? "rotate-180" : ""}`}
+                    />
+                  </button>
+                  {sceneOpen && (
+                    <div className="absolute left-0 top-12 z-50 flex min-w-[240px] flex-nowrap gap-0 border-b-2 border-l-2 border-r-2 border-punk-red bg-punk-black py-2 shadow-lg">
+                      {(link.dropdown ?? []).map((sub) => (
+                        <Link
+                          key={sub.href}
+                          href={sub.href}
+                          onClick={() => setSceneOpen(false)}
+                          className={`whitespace-nowrap px-4 py-2 font-punch text-xs uppercase tracking-widest transition-colors hover:bg-punk-red/20 hover:text-punk-green ${
+                            isActivePath(pathname, sub.href)
+                              ? "bg-punk-red/10 text-punk-red"
+                              : "text-punk-white/90"
+                          }`}
+                        >
+                          {t(sub.labelKey)}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            }
             const active = isActivePath(pathname, link.href);
             const isEventos = link.href === "/eventos";
             if (isEventos) {
@@ -251,12 +357,35 @@ export function Header() {
       {mounted &&
         createPortal(
           <div
-            className={`fixed left-0 right-0 bottom-0 top-16 z-[9999] bg-punk-black backdrop-blur-lg transition-opacity duration-300 nav:hidden ${
-              menuOpen ? "opacity-100" : "pointer-events-none opacity-0"
+            className={`fixed left-0 right-0 bottom-0 top-14 z-[9999] overflow-hidden nav:hidden ${
+              menuOpen ? "pointer-events-auto" : "pointer-events-none"
             }`}
             aria-hidden={!menuOpen}
           >
-            <div className="flex h-full flex-col overflow-y-auto px-4 py-4 sm:px-6">
+            {/* Backdrop con transición suave - clic cierra el menú */}
+            <div
+              role="button"
+              tabIndex={-1}
+              onClick={() => setMenuOpen(false)}
+              onKeyDown={(e) => e.key === "Escape" && setMenuOpen(false)}
+              className={`absolute inset-0 bg-punk-black/95 backdrop-blur-lg transition-opacity duration-300 ease-out ${
+                menuOpen ? "opacity-100" : "opacity-0"
+              }`}
+              style={{ transitionDuration: `${MENU_TRANSITION_MS}ms` }}
+              aria-label={tCommon("menuClose")}
+            />
+            {/* Panel deslizante desde la derecha */}
+            <div
+              className={`absolute right-0 top-0 bottom-0 w-full max-w-sm bg-punk-black shadow-2xl transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                menuOpen ? "translate-x-0" : "translate-x-full"
+              }`}
+              style={{ transitionDuration: `${MENU_TRANSITION_MS}ms` }}
+            >
+            <div
+              className={`flex h-full flex-col overflow-y-auto px-4 py-4 sm:px-6 transition-opacity duration-200 ${
+                menuOpen ? "opacity-100 delay-75" : "opacity-0 delay-0"
+              }`}
+            >
               <div className="mb-4 h-px bg-punk-red" />
 
               {/* Idioma en móvil */}
@@ -269,6 +398,62 @@ export function Header() {
               {/* Nav links */}
               <nav className="flex flex-col gap-1 mt-2">
                 {navLinks.map((link) => {
+                  if ("dropdown" in link) {
+                    const isSceneActive = isEscenaActive(pathname);
+                    return (
+                      <div
+                        key={link.labelKey}
+                        className="border-l-4 border-transparent"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => setSceneMobileOpen(!sceneMobileOpen)}
+                          className={`flex w-full items-center justify-between rounded-r px-4 py-3 font-punch text-sm uppercase tracking-widest transition-colors hover:bg-punk-white/10 hover:text-punk-green ${
+                            isSceneActive
+                              ? "border-l-4 border-punk-red bg-punk-red/10 text-punk-red"
+                              : "border-l-4 border-transparent text-punk-white/90"
+                          }`}
+                          aria-expanded={sceneMobileOpen}
+                        >
+                          {t(link.labelKey)}
+                          <ChevronDown
+                            className={`h-4 w-4 shrink-0 transition-transform duration-200 ${
+                              sceneMobileOpen ? "rotate-180" : ""
+                            }`}
+                          />
+                        </button>
+                        <div
+                          className={`grid transition-[grid-template-rows] duration-300 ease-out ${
+                            sceneMobileOpen
+                              ? "grid-rows-[1fr]"
+                              : "grid-rows-[0fr]"
+                          }`}
+                        >
+                          <div className="overflow-hidden">
+                            <div className="flex flex-col">
+                              {(link.dropdown ?? []).map((sub) => (
+                                <Link
+                                  key={sub.href}
+                                  href={sub.href}
+                                  onClick={() => {
+                                    setMenuOpen(false);
+                                    setSceneMobileOpen(false);
+                                  }}
+                                  className={`block rounded-r px-6 py-2 font-punch text-sm uppercase tracking-widest transition-colors hover:bg-punk-white/10 hover:text-punk-green ${
+                                    isActivePath(pathname, sub.href)
+                                      ? "border-l-4 border-punk-red bg-punk-red/10 text-punk-red"
+                                      : "text-punk-white/90"
+                                  }`}
+                                >
+                                  {t(sub.labelKey)}
+                                </Link>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
                   const active = isActivePath(pathname, link.href);
                   const isEventos = link.href === "/eventos";
                   if (isEventos) {
@@ -367,6 +552,7 @@ export function Header() {
                   </div>
                 )}
               </nav>
+            </div>
             </div>
           </div>,
           document.body,

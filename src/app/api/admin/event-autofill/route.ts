@@ -18,6 +18,8 @@ export type EventAutofillData = {
   endDate?: string;
   doorsOpen?: string;
   venueText?: string;
+  venueId?: string;
+  festivalId?: string;
   price?: string;
   ticketUrl?: string;
   webUrl?: string;
@@ -105,7 +107,24 @@ export async function POST(req: Request) {
     if (parsedData.endDate) data.endDate = toDatetimeLocal(parsedData.endDate);
 
     if (parsedData.venueName) {
-      data.venueText = parsedData.venueName.trim();
+      const venueName = parsedData.venueName.trim();
+      const [venue, festival] = await Promise.all([
+        prisma.venue.findFirst({
+          where: { approved: true, name: { equals: venueName, mode: "insensitive" } },
+          select: { id: true },
+        }),
+        prisma.festival.findFirst({
+          where: { approved: true, name: { equals: venueName, mode: "insensitive" } },
+          select: { id: true },
+        }),
+      ]);
+      if (venue) {
+        data.venueId = venue.id;
+      } else if (festival) {
+        data.festivalId = festival.id;
+      } else {
+        data.venueText = venueName;
+      }
     }
 
     await prisma.eventAutofillCache.create({

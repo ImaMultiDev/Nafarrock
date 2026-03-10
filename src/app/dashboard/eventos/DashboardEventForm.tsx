@@ -5,22 +5,34 @@ import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 import { EventLinksBuilder, type EventLinkItem } from "@/components/admin/EventLinksBuilder";
+import { VenueFestivalSelect } from "@/components/admin/VenueFestivalSelect";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
 const labelClass = "block font-punch text-xs uppercase tracking-widest text-punk-white/70";
 
 type Venue = { id: string; name: string };
+type Festival = { id: string; name: string };
 type Band = { id: string; name: string };
+
+function getDefaultVenueOrFestival(defaultVenueId?: string, defaultFestivalId?: string): string {
+  if (defaultVenueId) return `venue-${defaultVenueId}`;
+  if (defaultFestivalId) return `festival-${defaultFestivalId}`;
+  return "";
+}
 
 export function DashboardEventForm({
   venues,
+  festivals,
   bands,
   defaultVenueId,
+  defaultFestivalId,
 }: {
   venues: Venue[];
+  festivals: Festival[];
   bands: Band[];
   defaultVenueId?: string;
+  defaultFestivalId?: string;
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -189,29 +201,11 @@ export function DashboardEventForm({
           <input id="doorsOpen" name="doorsOpen" type="text" className={inputClass} placeholder="18:00 cada día" />
         </div>
       )}
-      <div>
-        <label htmlFor="venueId" className={labelClass}>
-          Sala (opcional)
-        </label>
-        <select
-          id="venueId"
-          name="venueId"
-          className={inputClass}
-          defaultValue={defaultVenueId ?? ""}
-        >
-          <option value="">Sin sala / Por confirmar</option>
-          {venues.map((v) => (
-            <option key={v.id} value={v.id}>
-              {v.name}
-            </option>
-          ))}
-        </select>
-        {venues.length === 0 && (
-          <p className="mt-2 font-body text-sm text-punk-white/50">
-            No hay salas aprobadas. Puedes crear el evento sin sala.
-          </p>
-        )}
-      </div>
+      <VenueFestivalSelect
+        venues={venues}
+        festivals={festivals}
+        defaultValue={getDefaultVenueOrFestival(defaultVenueId, defaultFestivalId)}
+      />
       <div>
         <label className={labelClass}>
           Bandas (opcional)
