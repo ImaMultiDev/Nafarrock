@@ -8,6 +8,8 @@ const updateSchema = z.object({
   name: z.string().min(1).optional(),
   description: z.string().optional().nullable(),
   location: z.string().optional().nullable(),
+  latitude: z.number().optional().nullable(),
+  longitude: z.number().optional().nullable(),
   foundedYear: z.coerce.number().optional().nullable(),
   websiteUrl: z.string().url().optional().nullable().or(z.literal("")),
   instagramUrl: z.string().url().optional().nullable().or(z.literal("")),
@@ -48,6 +50,8 @@ export async function PATCH(req: Request) {
     if (data.name != null) updateData.name = data.name;
     if (data.description !== undefined) updateData.description = data.description;
     if (data.location !== undefined) updateData.location = data.location;
+    if (data.latitude !== undefined) updateData.latitude = data.latitude;
+    if (data.longitude !== undefined) updateData.longitude = data.longitude;
     if (data.foundedYear !== undefined) updateData.foundedYear = data.foundedYear;
     if (data.websiteUrl !== undefined) updateData.websiteUrl = cleanUrl(data.websiteUrl);
     if (data.instagramUrl !== undefined) updateData.instagramUrl = cleanUrl(data.instagramUrl);

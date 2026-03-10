@@ -5,13 +5,21 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { SalaForm } from "./SalaForm";
 import { DashboardSection } from "@/components/dashboard/DashboardSection";
+import { Pagination } from "@/components/ui/Pagination";
 
-export default async function DashboardSalaPage() {
+const PAGE_SIZE = 12;
+
+type Props = { searchParams: Promise<Record<string, string | undefined>> };
+
+export default async function DashboardSalaPage({ searchParams }: Props) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/auth/login");
   if ((session.user?.effectiveRole ?? session.user?.role) === "USUARIO") redirect("/dashboard");
 
   const isAdmin = session.user?.role === "ADMIN";
+  const params = await searchParams;
+  const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
+  const skip = (page - 1) * PAGE_SIZE;
 
   const venue = isAdmin
     ? null
@@ -19,13 +27,18 @@ export default async function DashboardSalaPage() {
         where: { userId: session.user.id },
       });
 
-  const nafarrockVenues =
-    isAdmin
-      ? await prisma.venue.findMany({
-          where: { userId: null },
+  const nafarrockVenuesWhere = { userId: null };
+  const [nafarrockVenues, nafarrockVenuesTotal] = isAdmin
+    ? await Promise.all([
+        prisma.venue.findMany({
+          where: nafarrockVenuesWhere,
           orderBy: { name: "asc" },
-        })
-      : [];
+          skip,
+          take: PAGE_SIZE,
+        }),
+        prisma.venue.count({ where: nafarrockVenuesWhere }),
+      ])
+    : [[], 0];
 
   const pendingClaim = !venue
     ? await prisma.profileClaim.findFirst({
@@ -48,7 +61,7 @@ export default async function DashboardSalaPage() {
           )}
         </div>
         {isAdmin && nafarrockVenues.length > 0 ? (
-          <DashboardSection accent="pink" title={`Salas Nafarrock (${nafarrockVenues.length})`}>
+          <DashboardSection accent="pink" title={`Salas Nafarrock (${nafarrockVenuesTotal})`}>
             <ul className="space-y-3">
               {nafarrockVenues.map((v) => (
                 <li
@@ -78,6 +91,7 @@ export default async function DashboardSalaPage() {
                 </li>
               ))}
             </ul>
+            <Pagination page={page} totalItems={nafarrockVenuesTotal} pageSize={PAGE_SIZE} />
           </DashboardSection>
         ) : isAdmin ? (
           <p className="font-body text-punk-white/60">

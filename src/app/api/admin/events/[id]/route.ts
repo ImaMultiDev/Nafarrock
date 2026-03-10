@@ -95,6 +95,10 @@ export async function PATCH(
         updateData.festivalId = val.slice(9);
         updateData.venueId = null;
         updateData.venueText = null;
+      } else if (val === "text") {
+        updateData.venueId = null;
+        updateData.festivalId = null;
+        updateData.venueText = (data.venueText && String(data.venueText).trim()) || null;
       } else {
         updateData.venueId = null;
         updateData.festivalId = null;

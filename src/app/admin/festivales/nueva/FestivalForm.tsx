@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 import { TranslateButton } from "@/components/admin/TranslateButton";
+import { MapPickerWrapper } from "@/components/mapa/MapPickerWrapper";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-red focus:outline-none";
@@ -18,6 +19,8 @@ export function FestivalForm() {
   const [descriptionEu, setDescriptionEu] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
   const [images, setImages] = useState<string[]>([]);
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -109,6 +112,24 @@ export function FestivalForm() {
           Localización
         </label>
         <input id="location" name="location" type="text" className={inputClass} placeholder="Nafarroa" />
+      </div>
+      <div>
+        <label className={labelClass}>
+          Ubicación en el mapa
+        </label>
+        <p className="mt-1 font-body text-sm text-punk-white/60">
+          Coloca el marcador en el mapa para que aparezca en la página del mapa.
+        </p>
+        <div className="mt-2">
+          <MapPickerWrapper
+            variant="festival"
+            value={latitude != null && longitude != null ? { lat: latitude, lng: longitude } : null}
+            onChange={(lat, lng) => {
+              setLatitude(lat);
+              setLongitude(lng);
+            }}
+          />
+        </div>
       </div>
       <div>
         <label htmlFor="foundedYear" className={labelClass}>

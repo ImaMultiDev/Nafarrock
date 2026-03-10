@@ -197,6 +197,8 @@ model Venue {
   descriptionEu String? @db.Text // Traducción euskera (asistida por IA)
   address     String?
   city        String
+  latitude    Float?
+  longitude   Float?
   foundedYear Int?
   imageUrl    String?
   logoUrl     String?
@@ -238,6 +240,8 @@ model Festival {
   description String?  @db.Text
   descriptionEu String? @db.Text // Traducción euskera (asistida por IA)
   location    String?
+  latitude    Float?
+  longitude   Float?
   foundedYear Int?
   logoUrl     String?
   images      String[]

@@ -45,6 +45,7 @@ type Band = { id: string; name: string };
 function getVenueOrFestivalDefault(event: Event): string {
   if (event.venueId) return `venue-${event.venueId}`;
   if (event.festivalId) return `festival-${event.festivalId}`;
+  if (event.venueText) return "text";
   return "";
 }
 
@@ -103,6 +104,7 @@ export function EventEditForm({ event, venues, festivals, bands }: { event: Even
         endDate,
         doorsOpen: formData.get("doorsOpen") || null,
         venueOrFestival: formData.get("venueOrFestival") || null,
+        venueText: formData.get("venueText") || null,
         description: description || null,
         descriptionEu: descriptionEu || null,
         price: formData.get("price") || null,
@@ -215,6 +217,7 @@ export function EventEditForm({ event, venues, festivals, bands }: { event: Even
         venues={venues}
         festivals={festivals}
         defaultValue={getVenueOrFestivalDefault(event)}
+        defaultVenueText={event.venueText ?? ""}
       />
       <BandSelector bands={bands} value={bandIds} onChange={setBandIds} />
       <div>

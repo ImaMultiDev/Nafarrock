@@ -65,27 +65,63 @@ export async function getBands(filters: BandFilters = {}) {
   return { items, total, page, pageSize };
 }
 
-export async function getBandBySlug(slug: string, approvedOnly = true) {
-  return prisma.band.findUnique({
+const EVENTS_PAGE_SIZE = 10;
+
+export async function getBandBySlug(
+  slug: string,
+  approvedOnly = true,
+  eventsPage?: number,
+  eventsPageSize = EVENTS_PAGE_SIZE
+) {
+  const band = await prisma.band.findUnique({
     where: approvedOnly ? { slug, approved: true } : { slug },
     include: {
-      events: {
-        where: {
-          event: {
-            isApproved: true,
-            date: { gte: startOfToday() },
-          },
-        },
+      user: { select: { name: true, email: true } },
+      members: { orderBy: { order: "asc" } },
+    },
+  });
+  if (!band) return null;
+
+  const eventsWhere = {
+    bandId: band.id,
+    event: { isApproved: true, date: { gte: startOfToday() } },
+  };
+
+  if (eventsPage != null && eventsPage >= 1) {
+    const page = Math.max(1, eventsPage);
+    const skip = (page - 1) * eventsPageSize;
+    const [bandEvents, total] = await Promise.all([
+      prisma.bandEvent.findMany({
+        where: eventsWhere,
         orderBy: { event: { date: "asc" } },
+        skip,
+        take: eventsPageSize,
         include: {
           event: {
             include: { venue: true },
           },
         },
+      }),
+      prisma.bandEvent.count({ where: eventsWhere }),
+    ]);
+    return {
+      ...band,
+      events: bandEvents,
+      eventsTotal: total,
+      eventsPage: page,
+      eventsPageSize,
+    };
+  }
+
+  const events = await prisma.bandEvent.findMany({
+    where: eventsWhere,
+    orderBy: { event: { date: "asc" } },
+    include: {
+      event: {
+        include: { venue: true },
       },
-      user: { select: { name: true, email: true } },
-      members: { orderBy: { order: "asc" } },
     },
   });
+  return { ...band, events };
 }
 

@@ -51,15 +51,56 @@ export async function getVenues(filters: VenueFilters = {}) {
   return { items, total, page, pageSize };
 }
 
-export async function getVenueBySlug(slug: string) {
-  return prisma.venue.findUnique({
+const EVENTS_PAGE_SIZE = 10;
+
+export async function getVenueBySlug(
+  slug: string,
+  eventsPage?: number,
+  eventsPageSize = EVENTS_PAGE_SIZE
+) {
+  const venue = await prisma.venue.findUnique({
     where: { slug, approved: true },
-    include: {
-      events: {
-        where: { isApproved: true, date: { gte: startOfToday() } },
+  });
+  if (!venue) return null;
+
+  const eventsWhere = {
+    venueId: venue.id,
+    isApproved: true,
+    date: { gte: startOfToday() },
+  };
+
+  if (eventsPage != null && eventsPage >= 1) {
+    const page = Math.max(1, eventsPage);
+    const skip = (page - 1) * eventsPageSize;
+    const [events, total] = await Promise.all([
+      prisma.event.findMany({
+        where: eventsWhere,
         orderBy: { date: "asc" },
-        include: { bands: { include: { band: true } } },
-      },
+        skip,
+        take: eventsPageSize,
+        include: {
+          bands: { include: { band: true } },
+          venue: true,
+        },
+      }),
+      prisma.event.count({ where: eventsWhere }),
+    ]);
+    return {
+      ...venue,
+      events,
+      eventsTotal: total,
+      eventsPage: page,
+      eventsPageSize,
+    };
+  }
+
+  const events = await prisma.event.findMany({
+    where: eventsWhere,
+    orderBy: { date: "asc" },
+    include: {
+      bands: { include: { band: true } },
+      venue: true,
     },
   });
+  return { ...venue, events };
 }

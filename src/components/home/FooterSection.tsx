@@ -7,12 +7,22 @@ import { motion } from "framer-motion";
 import NextLink from "next/link";
 import { Link } from "@/i18n/navigation";
 
+import { useLocale } from "next-intl";
 import { ESCENA_HIDDEN } from "@/lib/feature-flags";
+import { SocialLinks } from "@/components/ui/SocialLinks";
+import type { SocialLinkItem } from "@/components/ui/SocialLinks";
 
 export function FooterSection() {
   const { data: session } = useSession();
+  const locale = useLocale();
   const t = useTranslations("home.footer");
   const tNav = useTranslations("common.nav");
+
+  const footerSocialLinks: SocialLinkItem[] = [
+    { kind: "instagram", url: "https://instagram.com/nafarrock", label: "Instagram" },
+    { kind: "facebook", url: "https://facebook.com/nafarrock", label: "Facebook" },
+    { kind: "email", url: `/${locale}/contacto`, label: "Contacto (harremanak@nafarrock.com)" },
+  ];
   return (
     <footer className="relative overflow-hidden border-t-2 border-punk-green bg-punk-black py-10 px-4 sm:py-12 sm:px-12 lg:py-14 lg:px-20 max-[299px]:px-3 max-[299px]:py-8">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,200,83,0.03)_0%,transparent_70%)]" />
@@ -88,6 +98,21 @@ export function FooterSection() {
             )}
           </motion.div>
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.15 }}
+          className="mt-8 flex justify-center lg:mt-10"
+        >
+          <SocialLinks
+            links={footerSocialLinks}
+            variant="green"
+            showLabels={false}
+            className="justify-center"
+          />
+        </motion.div>
 
         <motion.div
           initial={{ opacity: 0 }}

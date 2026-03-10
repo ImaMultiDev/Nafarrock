@@ -3,17 +3,20 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
+import { MapPickerWrapper } from "@/components/mapa/MapPickerWrapper";
 
 const inputClass = "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
 const labelClass = "block font-punch text-xs uppercase tracking-widest text-punk-white/70";
 
-type Festival = { id: string; name: string; description: string | null; location: string | null; foundedYear: number | null; websiteUrl: string | null; instagramUrl: string | null; facebookUrl: string | null; logoUrl: string | null };
+type Festival = { id: string; name: string; description: string | null; location: string | null; latitude: number | null; longitude: number | null; foundedYear: number | null; websiteUrl: string | null; instagramUrl: string | null; facebookUrl: string | null; logoUrl: string | null };
 
 export function FestivalForm({ festival }: { festival: Festival }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [logoUrl, setLogoUrl] = useState(festival.logoUrl ?? "");
+  const [latitude, setLatitude] = useState<number | null>(festival.latitude ?? null);
+  const [longitude, setLongitude] = useState<number | null>(festival.longitude ?? null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -29,6 +32,8 @@ export function FestivalForm({ festival }: { festival: Festival }) {
         name: formData.get("name"),
         description: formData.get("description") || null,
         location: formData.get("location") || null,
+        latitude: latitude ?? null,
+        longitude: longitude ?? null,
         foundedYear: formData.get("foundedYear") ? Number(formData.get("foundedYear")) : null,
         websiteUrl: formData.get("websiteUrl") || null,
         instagramUrl: formData.get("instagramUrl") || null,
@@ -72,6 +77,22 @@ export function FestivalForm({ festival }: { festival: Festival }) {
         <div>
           <label htmlFor="foundedYear" className={labelClass}>Año fundación</label>
           <input id="foundedYear" name="foundedYear" type="number" min={1900} defaultValue={festival.foundedYear ?? ""} className={inputClass} />
+        </div>
+      </div>
+      <div>
+        <label className={labelClass}>Ubicación en el mapa</label>
+        <p className="mt-1 font-body text-sm text-punk-white/60">
+          Coloca el marcador en el mapa para que aparezca en la página del mapa.
+        </p>
+        <div className="mt-2">
+          <MapPickerWrapper
+            variant="festival"
+            value={latitude != null && longitude != null ? { lat: latitude, lng: longitude } : null}
+            onChange={(lat, lng) => {
+              setLatitude(lat);
+              setLongitude(lng);
+            }}
+          />
         </div>
       </div>
       <div>

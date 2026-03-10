@@ -122,7 +122,7 @@ export function SocialLinks({ links, variant = "green", showLabels = true, class
   return (
     <div className={`flex flex-wrap items-center gap-3 ${className}`} role="group" aria-label="Redes y enlaces">
       {links.map(({ kind, url, label }) => {
-        const isExternal = !url.startsWith("mailto:");
+        const isExternal = !url.startsWith("mailto:") && !url.startsWith("/");
         const ariaLabel = label ?? kindLabels[kind];
         return (
           <a

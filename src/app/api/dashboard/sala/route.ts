@@ -14,6 +14,8 @@ const updateSchema = z.object({
   capacity: z.coerce.number().positive().optional().nullable(),
   websiteUrl: z.string().url().optional().nullable().or(z.literal("")),
   mapUrl: z.string().url().optional().nullable().or(z.literal("")),
+  latitude: z.number().optional().nullable(),
+  longitude: z.number().optional().nullable(),
   instagramUrl: z.string().url().optional().nullable().or(z.literal("")),
   facebookUrl: z.string().url().optional().nullable().or(z.literal("")),
   logoUrl: z.string().optional().nullable(),
@@ -59,6 +61,8 @@ export async function PATCH(req: Request) {
     if (data.capacity !== undefined) updateData.capacity = data.capacity;
     if (data.websiteUrl !== undefined) updateData.websiteUrl = cleanUrl(data.websiteUrl);
     if (data.mapUrl !== undefined) updateData.mapUrl = cleanUrl(data.mapUrl);
+    if (data.latitude !== undefined) updateData.latitude = data.latitude;
+    if (data.longitude !== undefined) updateData.longitude = data.longitude;
     if (data.instagramUrl !== undefined) updateData.instagramUrl = cleanUrl(data.instagramUrl);
     if (data.facebookUrl !== undefined) updateData.facebookUrl = cleanUrl(data.facebookUrl);
     if (data.logoUrl !== undefined) updateData.logoUrl = data.logoUrl;

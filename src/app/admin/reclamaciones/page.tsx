@@ -2,20 +2,34 @@ import Link from "next/link";
 import { requireAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { ClaimActions } from "./ClaimActions";
+import { Pagination } from "@/components/ui/Pagination";
 
-export default async function AdminReclamacionesPage() {
+const PAGE_SIZE = 20;
+
+type Props = { searchParams: Promise<Record<string, string | undefined>> };
+
+export default async function AdminReclamacionesPage({ searchParams }: Props) {
   await requireAdmin();
 
-  const claims = await prisma.profileClaim.findMany({
-    where: { status: "PENDING_CLAIM" },
-    include: {
-      user: { select: { id: true, email: true, name: true } },
-      band: { select: { id: true, name: true, slug: true } },
-      venue: { select: { id: true, name: true, slug: true, city: true } },
-      festival: { select: { id: true, name: true, slug: true } },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  const params = await searchParams;
+  const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
+  const skip = (page - 1) * PAGE_SIZE;
+
+  const [claims, total] = await Promise.all([
+    prisma.profileClaim.findMany({
+      where: { status: "PENDING_CLAIM" },
+      include: {
+        user: { select: { id: true, email: true, name: true } },
+        band: { select: { id: true, name: true, slug: true } },
+        venue: { select: { id: true, name: true, slug: true, city: true } },
+        festival: { select: { id: true, name: true, slug: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      skip,
+      take: PAGE_SIZE,
+    }),
+    prisma.profileClaim.count({ where: { status: "PENDING_CLAIM" } }),
+  ]);
 
   const getEntityInfo = (c: (typeof claims)[0]) => {
     if (c.band) return { name: c.band.name, slug: c.band.slug, type: "Banda", url: `/bandas/${c.band.slug}` };
@@ -33,7 +47,7 @@ export default async function AdminReclamacionesPage() {
             RECLAMACIONES
           </h1>
           <p className="mt-2 font-body text-punk-white/60">
-            {claims.length} solicitudes pendientes de aprobar
+            {total} solicitudes pendientes de aprobar
           </p>
         </div>
         <Link
@@ -100,6 +114,7 @@ export default async function AdminReclamacionesPage() {
           </table>
         )}
       </div>
+      <Pagination page={page} totalItems={total} pageSize={PAGE_SIZE} />
     </>
   );
 }

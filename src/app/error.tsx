@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import Link from "next/link";
 
 export default function Error({
@@ -10,9 +9,8 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  useEffect(() => {
-    console.error("Error:", error);
-  }, [error]);
+  // No usar console.error aquí: Next.js intercepta y dispara el overlay
+  // de forma recursiva. El error ya se muestra en la UI (pre tag abajo).
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-punk-black">

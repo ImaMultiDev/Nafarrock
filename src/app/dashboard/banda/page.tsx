@@ -5,7 +5,9 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { BandForm } from "./BandForm";
 import { DashboardSection } from "@/components/dashboard/DashboardSection";
+import { Pagination } from "@/components/ui/Pagination";
 
+const PAGE_SIZE = 12;
 const GENRES = [
   "punk",
   "rock urbano",
@@ -16,12 +18,17 @@ const GENRES = [
   "metal",
 ];
 
-export default async function DashboardBandaPage() {
+type Props = { searchParams: Promise<Record<string, string | undefined>> };
+
+export default async function DashboardBandaPage({ searchParams }: Props) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/auth/login");
   if ((session.user?.effectiveRole ?? session.user?.role) === "USUARIO") redirect("/dashboard");
 
   const isAdmin = session.user?.role === "ADMIN";
+  const params = await searchParams;
+  const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
+  const skip = (page - 1) * PAGE_SIZE;
 
   const band = isAdmin
     ? null
@@ -30,13 +37,18 @@ export default async function DashboardBandaPage() {
         include: { members: { orderBy: { order: "asc" } } },
       });
 
-  const nafarrockBands =
-    isAdmin
-      ? await prisma.band.findMany({
-          where: { userId: null },
+  const nafarrockBandsWhere = { userId: null };
+  const [nafarrockBands, nafarrockBandsTotal] = isAdmin
+    ? await Promise.all([
+        prisma.band.findMany({
+          where: nafarrockBandsWhere,
           orderBy: { name: "asc" },
-        })
-      : [];
+          skip,
+          take: PAGE_SIZE,
+        }),
+        prisma.band.count({ where: nafarrockBandsWhere }),
+      ])
+    : [[], 0];
 
   const pendingClaim = !band
     ? await prisma.profileClaim.findFirst({
@@ -59,7 +71,7 @@ export default async function DashboardBandaPage() {
           )}
         </div>
         {isAdmin && nafarrockBands.length > 0 ? (
-          <DashboardSection accent="green" title={`Bandas Nafarrock (${nafarrockBands.length})`}>
+          <DashboardSection accent="green" title={`Bandas Nafarrock (${nafarrockBandsTotal})`}>
             <ul className="space-y-3">
               {nafarrockBands.map((b) => (
                 <li
@@ -89,6 +101,7 @@ export default async function DashboardBandaPage() {
                 </li>
               ))}
             </ul>
+            <Pagination page={page} totalItems={nafarrockBandsTotal} pageSize={PAGE_SIZE} />
           </DashboardSection>
         ) : isAdmin ? (
           <p className="font-body text-punk-white/60">

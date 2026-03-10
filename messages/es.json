@@ -7,6 +7,7 @@
       "scene": "Escena",
       "salas": "Salas",
       "festivals": "Festivales",
+      "map": "Mapa",
       "guide": "Proyecto",
       "manual": "Manual",
       "contact": "Contacto",
@@ -46,7 +47,10 @@
     "venuePlaceholder": "Selecciona una sala o festival",
     "venueEmpty": "Sin local / Por confirmar",
     "venuesGroup": "Salas",
-    "festivalsGroup": "Festivales"
+    "festivalsGroup": "Festivales",
+    "venueTextFree": "Sala no registrada (texto libre)",
+    "venueTextLabel": "Nombre del local",
+    "venueTextPlaceholder": "Ej: Bar La Kasa, Sala Totem..."
   },
   "home": {
     "tagline": "Nafarroa · Punk · Rock · Alternativo",
@@ -138,6 +142,12 @@
       "title": "Eventos",
       "description": "Conciertos y festivales en Nafarroa"
     }
+  },
+  "map": {
+    "title": "MAPA",
+    "description": "Mapa interactivo de salas y festivales de la escena rock nafarroa.",
+    "subtitle": "Salas y festivales en el mapa. {count} ubicaciones.",
+    "subtitle_other": "Salas y festivales en el mapa. {count} ubicaciones."
   },
   "scene": {
     "title": "ESCENA",
@@ -352,6 +362,9 @@
     "from": "Desde {year}",
     "capacity": "Aforo: {count} personas",
     "upcoming": "Próximos eventos",
+    "concert": "Concierto",
+    "festival": "Festival",
+    "soldOut": "SOLD OUT",
     "toConfirm": "Por confirmar"
   },
   "promoterDetail": {

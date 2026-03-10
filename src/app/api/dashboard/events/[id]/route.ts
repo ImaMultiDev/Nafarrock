@@ -18,6 +18,7 @@ const updateSchema = z.object({
     }),
   endDate: z.union([z.string(), z.coerce.date()]).optional().nullable(),
   venueId: z.string().optional().nullable().or(z.literal("")),
+  venueText: z.string().optional().nullable().or(z.literal("")),
   venueOrFestival: z.string().optional().nullable().or(z.literal("")),
   doorsOpen: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
@@ -132,6 +133,10 @@ export async function PATCH(
         updateData.festivalId = festivalId;
         updateData.venueId = null;
         updateData.venueText = null;
+      } else if (val === "text") {
+        updateData.venueId = null;
+        updateData.festivalId = null;
+        updateData.venueText = (data.venueText && String(data.venueText).trim()) || null;
       } else {
         updateData.venueId = null;
         updateData.festivalId = null;

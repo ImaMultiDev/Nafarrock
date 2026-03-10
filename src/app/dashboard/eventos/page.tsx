@@ -6,11 +6,16 @@ import { canUserCreateEvent } from "@/lib/validated-event";
 import { DashboardEventForm } from "./DashboardEventForm";
 import { DeleteEventButton } from "@/components/dashboard/DeleteEventButton";
 import { DashboardSection } from "@/components/dashboard/DashboardSection";
+import { Pagination } from "@/components/ui/Pagination";
 import Link from "next/link";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
-export default async function DashboardEventosPage() {
+const PAGE_SIZE = 12;
+
+type Props = { searchParams: Promise<Record<string, string | undefined>> };
+
+export default async function DashboardEventosPage({ searchParams }: Props) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/auth/login");
   const effectiveRole = session.user?.effectiveRole ?? session.user?.role;
@@ -24,7 +29,11 @@ export default async function DashboardEventosPage() {
     ? { createdByUserId: null }
     : { createdByUserId: session.user.id };
 
-  const [venues, festivals, bands, myEvents] = await Promise.all([
+  const params = await searchParams;
+  const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
+  const skip = (page - 1) * PAGE_SIZE;
+
+  const [venues, festivals, bands, myEvents, myEventsTotal] = await Promise.all([
     prisma.venue.findMany({
       orderBy: { name: "asc" },
       where: { approved: true },
@@ -40,12 +49,15 @@ export default async function DashboardEventosPage() {
     prisma.event.findMany({
       where: eventFilter,
       orderBy: { date: "desc" },
+      skip,
+      take: PAGE_SIZE,
       include: {
         venue: true,
         festival: true,
         bands: { include: { band: true }, orderBy: { order: "asc" } },
       },
     }),
+    prisma.event.count({ where: eventFilter }),
   ]);
 
   const userWithProfiles = await prisma.user.findUnique({
@@ -93,7 +105,7 @@ export default async function DashboardEventosPage() {
       )}
 
       <DashboardSection
-        title={isAdmin ? `Eventos Nafarrock (${myEvents.length})` : `Tus eventos (${myEvents.length})`}
+        title={isAdmin ? `Eventos Nafarrock (${myEventsTotal})` : `Tus eventos (${myEventsTotal})`}
         accent="red"
       >
         <div className="space-y-3">
@@ -139,6 +151,7 @@ export default async function DashboardEventosPage() {
             </div>
           ))}
         </div>
+        <Pagination page={page} totalItems={myEventsTotal} pageSize={PAGE_SIZE} />
         {myEvents.length === 0 && (
           <p className="py-8 font-body text-center text-punk-white/50">
             {isAdmin

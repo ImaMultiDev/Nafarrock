@@ -7,6 +7,7 @@
       "scene": "Eskena",
       "salas": "Aretoak",
       "festivals": "Jaialdiak",
+      "map": "Mapa",
       "guide": "Proiektua",
       "manual": "Eskuliburua",
       "contact": "Kontaktua",
@@ -46,7 +47,10 @@
     "venuePlaceholder": "Hautatu areto bat edo jaialdi bat",
     "venueEmpty": "Lekurik gabe / Berresten",
     "venuesGroup": "Aretoak",
-    "festivalsGroup": "Jaialdiak"
+    "festivalsGroup": "Jaialdiak",
+    "venueTextFree": "Erregistratu gabeko aretoa (testu librea)",
+    "venueTextLabel": "Lekuaren izena",
+    "venueTextPlaceholder": "Adib: Bar La Kasa, Sala Totem..."
   },
   "home": {
     "tagline": "Nafarroa · Punk · Rock · Alternatiboa",
@@ -138,6 +142,12 @@
       "title": "Ekitaldiak",
       "description": "Kontzertuak eta jaialdiak Nafarroan"
     }
+  },
+  "map": {
+    "title": "MAPA",
+    "description": "Nafarroako rock eskenako aretoen eta jaialdien mapa interaktiboa.",
+    "subtitle": "Aretoak eta jaialdiak mapan. {count} kokaleku.",
+    "subtitle_other": "Aretoak eta jaialdiak mapan. {count} kokaleku."
   },
   "scene": {
     "title": "ESKENA",
@@ -352,6 +362,9 @@
     "from": "{year} urtetik",
     "capacity": "Edukiera: {count} lagun",
     "upcoming": "Hurrengo ekitaldiak",
+    "concert": "Kontzertua",
+    "festival": "Jaialdia",
+    "soldOut": "SOLD OUT",
     "toConfirm": "Baieztatzeke"
   },
   "promoterDetail": {

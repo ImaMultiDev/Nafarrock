@@ -1,11 +1,25 @@
 import { prisma } from "@/lib/prisma";
 import { ApproveButton } from "@/components/admin/ApproveButton";
+import { Pagination } from "@/components/ui/Pagination";
 
-export default async function AdminPromotoresPage() {
-  const promoters = await prisma.promoter.findMany({
-    orderBy: { name: "asc" },
-    include: { user: { select: { email: true } } },
-  });
+const PAGE_SIZE = 20;
+
+type Props = { searchParams: Promise<Record<string, string | undefined>> };
+
+export default async function AdminPromotoresPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
+  const skip = (page - 1) * PAGE_SIZE;
+
+  const [promoters, total] = await Promise.all([
+    prisma.promoter.findMany({
+      orderBy: { name: "asc" },
+      include: { user: { select: { email: true } } },
+      skip,
+      take: PAGE_SIZE,
+    }),
+    prisma.promoter.count(),
+  ]);
 
   const pending = promoters.filter((p) => !p.approved);
 
@@ -17,7 +31,7 @@ export default async function AdminPromotoresPage() {
             PROMOTORES
           </h1>
           <p className="mt-2 font-body text-punk-white/60">
-            {promoters.length} promotores · {pending.length} pendientes de aprobar
+            {total} promotores · {pending.length} pendientes de aprobar en esta página
           </p>
         </div>
       </div>
@@ -65,6 +79,7 @@ export default async function AdminPromotoresPage() {
         </table>
       </div>
 
+      <Pagination page={page} totalItems={total} pageSize={PAGE_SIZE} />
       {promoters.length === 0 && (
         <div className="mt-12 border-2 border-dashed border-punk-white/20 p-12 text-center">
           <p className="font-body text-punk-white/60">

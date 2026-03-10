@@ -5,13 +5,22 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { FestivalForm } from "./FestivalForm";
 import { DashboardSection } from "@/components/dashboard/DashboardSection";
+import { Pagination } from "@/components/ui/Pagination";
 
-export default async function DashboardFestivalPage() {
+const PAGE_SIZE = 12;
+
+type Props = { searchParams: Promise<Record<string, string | undefined>> };
+
+export default async function DashboardFestivalPage({ searchParams }: Props) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect("/auth/login");
   if ((session.user?.effectiveRole ?? session.user?.role) === "USUARIO") redirect("/dashboard");
 
   const isAdmin = session.user?.role === "ADMIN";
+
+  const params = await searchParams;
+  const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
+  const skip = (page - 1) * PAGE_SIZE;
 
   const festival = isAdmin
     ? null
@@ -19,13 +28,18 @@ export default async function DashboardFestivalPage() {
         where: { userId: session.user.id },
       });
 
-  const nafarrockFestivals =
-    isAdmin
-      ? await prisma.festival.findMany({
-          where: { userId: null },
+  const nafarrockFestivalsWhere = { userId: null };
+  const [nafarrockFestivals, nafarrockFestivalsTotal] = isAdmin
+    ? await Promise.all([
+        prisma.festival.findMany({
+          where: nafarrockFestivalsWhere,
           orderBy: { name: "asc" },
-        })
-      : [];
+          skip,
+          take: PAGE_SIZE,
+        }),
+        prisma.festival.count({ where: nafarrockFestivalsWhere }),
+      ])
+    : [[], 0];
 
   const pendingClaim = !festival
     ? await prisma.profileClaim.findFirst({
@@ -48,7 +62,7 @@ export default async function DashboardFestivalPage() {
           )}
         </div>
         {isAdmin && nafarrockFestivals.length > 0 ? (
-          <DashboardSection accent="red" title={`Festivales Nafarrock (${nafarrockFestivals.length})`}>
+          <DashboardSection accent="red" title={`Festivales Nafarrock (${nafarrockFestivalsTotal})`}>
             <ul className="space-y-3">
               {nafarrockFestivals.map((f) => (
                 <li
@@ -78,6 +92,7 @@ export default async function DashboardFestivalPage() {
                 </li>
               ))}
             </ul>
+            <Pagination page={page} totalItems={nafarrockFestivalsTotal} pageSize={PAGE_SIZE} />
           </DashboardSection>
         ) : isAdmin ? (
           <p className="font-body text-punk-white/60">

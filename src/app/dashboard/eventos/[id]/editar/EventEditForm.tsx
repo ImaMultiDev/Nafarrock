@@ -24,6 +24,7 @@ type Event = {
   images: string[];
   isSoldOut: boolean;
   venueId: string | null;
+  venueText: string | null;
   festivalId: string | null;
   bands: { band: { id: string } }[];
   links?: { kind: string; url: string; label: string | null }[];
@@ -35,6 +36,7 @@ type Band = { id: string; name: string };
 function getVenueOrFestivalDefault(event: Event): string {
   if (event.venueId) return `venue-${event.venueId}`;
   if (event.festivalId) return `festival-${event.festivalId}`;
+  if (event.venueText) return "text";
   return "";
 }
 
@@ -102,6 +104,7 @@ export function EventEditForm({
         date: date.toISOString(),
         endDate,
         venueOrFestival: formData.get("venueOrFestival") || null,
+        venueText: formData.get("venueText") || null,
         doorsOpen: formData.get("doorsOpen") || null,
         description: formData.get("description") || null,
         price: formData.get("price") || null,
@@ -188,6 +191,7 @@ export function EventEditForm({
         venues={venues}
         festivals={festivals}
         defaultValue={getVenueOrFestivalDefault(event)}
+        defaultVenueText={event.venueText ?? ""}
       />
       <div>
         <label className={labelClass}>Bandas (opcional)</label>

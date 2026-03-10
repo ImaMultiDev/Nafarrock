@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
+import { MapPickerWrapper } from "@/components/mapa/MapPickerWrapper";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
@@ -19,6 +20,8 @@ type Venue = {
   capacity: number | null;
   websiteUrl: string | null;
   mapUrl: string | null;
+  latitude: number | null;
+  longitude: number | null;
   instagramUrl: string | null;
   facebookUrl: string | null;
   logoUrl: string | null;
@@ -31,6 +34,8 @@ export function SalaForm({ venue }: { venue: Venue }) {
   const [error, setError] = useState<string | null>(null);
   const [logoUrl, setLogoUrl] = useState(venue.logoUrl ?? "");
   const [images, setImages] = useState<string[]>(venue.images ?? []);
+  const [latitude, setLatitude] = useState<number | null>(venue.latitude ?? null);
+  const [longitude, setLongitude] = useState<number | null>(venue.longitude ?? null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -55,6 +60,8 @@ export function SalaForm({ venue }: { venue: Venue }) {
           : null,
         websiteUrl: formData.get("websiteUrl") || null,
         mapUrl: formData.get("mapUrl") || null,
+        latitude: latitude ?? null,
+        longitude: longitude ?? null,
         instagramUrl: formData.get("instagramUrl") || null,
         facebookUrl: formData.get("facebookUrl") || null,
         logoUrl: logoUrl || null,
@@ -183,6 +190,23 @@ export function SalaForm({ venue }: { venue: Venue }) {
           defaultValue={venue.websiteUrl ?? ""}
           className={inputClass}
         />
+      </div>
+      <div>
+        <label className={labelClass}>
+          Ubicación en el mapa
+        </label>
+        <p className="mt-1 font-body text-sm text-punk-white/60">
+          Coloca el marcador en el mapa para que aparezca en la página del mapa.
+        </p>
+        <div className="mt-2">
+          <MapPickerWrapper
+            value={latitude != null && longitude != null ? { lat: latitude, lng: longitude } : null}
+            onChange={(lat, lng) => {
+              setLatitude(lat);
+              setLongitude(lng);
+            }}
+          />
+        </div>
       </div>
       <div>
         <label htmlFor="mapUrl" className={labelClass}>

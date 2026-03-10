@@ -3,6 +3,9 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { BoardAnnouncementActions } from "./BoardAnnouncementActions";
+import { Pagination } from "@/components/ui/Pagination";
+
+const PAGE_SIZE = 20;
 const CATEGORY_LABELS: Record<string, string> = {
   SE_BUSCA_MUSICO: "Se busca músico",
   SE_BUSCAN_BANDAS: "Se buscan bandas / Postulaciones",
@@ -12,10 +15,21 @@ const CATEGORY_LABELS: Record<string, string> = {
   OTROS: "Otros",
 };
 
-export default async function AdminBolosPage() {
-  const announcements = await prisma.boardAnnouncement.findMany({
-    orderBy: { createdAt: "desc" },
-  });
+type Props = { searchParams: Promise<Record<string, string | undefined>> };
+
+export default async function AdminBolosPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
+  const skip = (page - 1) * PAGE_SIZE;
+
+  const [announcements, total] = await Promise.all([
+    prisma.boardAnnouncement.findMany({
+      orderBy: { createdAt: "desc" },
+      skip,
+      take: PAGE_SIZE,
+    }),
+    prisma.boardAnnouncement.count(),
+  ]);
 
   const pending = announcements.filter((a) => !a.approved);
 
@@ -27,7 +41,7 @@ export default async function AdminBolosPage() {
             ANUNCIOS
           </h1>
           <p className="mt-2 font-body text-punk-white/60">
-            {announcements.length} anuncios · {pending.length} pendientes de aprobar
+            {total} anuncios · {pending.length} pendientes de aprobar en esta página
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
@@ -122,6 +136,7 @@ export default async function AdminBolosPage() {
         </table>
       </div>
 
+      <Pagination page={page} totalItems={total} pageSize={PAGE_SIZE} />
       {announcements.length === 0 && (
         <div className="mt-12 border-2 border-dashed border-punk-white/20 p-12 text-center">
           <p className="font-body text-punk-white/60">No hay anuncios aún.</p>

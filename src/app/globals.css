@@ -2,6 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Mapbox GL JS */
+@import "mapbox-gl/dist/mapbox-gl.css";
+@import "@mapbox/mapbox-gl-geocoder/lib/mapbox-gl-geocoder.css";
+
+/* Popup del mapa: botón cerrar visible (negro) y rojo al hover */
+.mapboxgl-popup .mapboxgl-popup-close-button {
+  font-size: 24px !important;
+  padding: 4px 8px !important;
+  color: var(--punk-black) !important;
+  opacity: 1;
+}
+.mapboxgl-popup .mapboxgl-popup-close-button:hover {
+  color: var(--punk-red) !important;
+}
+
+/* Geocoder: adaptar al tema oscuro Nafarrock */
+.mapboxgl-ctrl-geocoder {
+  background-color: var(--punk-black) !important;
+  border: 2px solid rgba(248, 248, 248, 0.2) !important;
+}
+.mapboxgl-ctrl-geocoder--input {
+  color: var(--punk-white) !important;
+}
+.mapboxgl-ctrl-geocoder--input::placeholder {
+  color: rgba(248, 248, 248, 0.4) !important;
+}
+.mapboxgl-ctrl-geocoder .suggestions {
+  background-color: var(--punk-black) !important;
+  border: 2px solid rgba(248, 248, 248, 0.2) !important;
+}
+.mapboxgl-ctrl-geocoder .suggestions > li > a {
+  color: var(--punk-white) !important;
+}
+.mapboxgl-ctrl-geocoder .suggestions > .active > a,
+.mapboxgl-ctrl-geocoder .suggestions > li > a:hover {
+  background-color: rgba(0, 200, 83, 0.2) !important;
+  color: var(--punk-green) !important;
+}
+
 /* ============================================
    NAFARROCK - Estética punk-rock brutal
    ============================================ */

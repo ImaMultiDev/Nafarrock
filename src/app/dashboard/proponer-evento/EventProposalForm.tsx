@@ -16,11 +16,12 @@ type Venue = { id: string; name: string };
 type Festival = { id: string; name: string };
 type Band = { id: string; name: string };
 
-function parseVenueOrFestival(val: string | null): { venueId: string | null; festivalId: string | null } {
-  if (!val || !val.trim()) return { venueId: null, festivalId: null };
-  if (val.startsWith("venue-")) return { venueId: val.slice(6), festivalId: null };
-  if (val.startsWith("festival-")) return { venueId: null, festivalId: val.slice(9) };
-  return { venueId: null, festivalId: null };
+function parseVenueOrFestival(val: string | null): { venueId: string | null; festivalId: string | null; useText: boolean } {
+  if (!val || !val.trim()) return { venueId: null, festivalId: null, useText: false };
+  if (val.startsWith("venue-")) return { venueId: val.slice(6), festivalId: null, useText: false };
+  if (val.startsWith("festival-")) return { venueId: null, festivalId: val.slice(9), useText: false };
+  if (val === "text") return { venueId: null, festivalId: null, useText: true };
+  return { venueId: null, festivalId: null, useText: false };
 }
 
 export function EventProposalForm({
@@ -69,7 +70,8 @@ export function EventProposalForm({
       endDate = end.toISOString();
     }
 
-    const { venueId, festivalId } = parseVenueOrFestival(formData.get("venueOrFestival") as string | null);
+    const { venueId, festivalId, useText } = parseVenueOrFestival(formData.get("venueOrFestival") as string | null);
+    const venueText = useText ? (formData.get("venueText") as string)?.trim() || null : null;
 
     const res = await fetch("/api/proposals/event", {
       method: "POST",
@@ -81,6 +83,7 @@ export function EventProposalForm({
         endDate,
         venueId: venueId || undefined,
         festivalId: festivalId || undefined,
+        venueText: venueText || undefined,
         doorsOpen: formData.get("doorsOpen") || undefined,
         description: formData.get("description") || undefined,
         price: formData.get("price") || undefined,

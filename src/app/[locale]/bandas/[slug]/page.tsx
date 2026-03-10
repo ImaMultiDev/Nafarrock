@@ -9,8 +9,11 @@ import { PageLayout } from "@/components/ui/PageLayout";
 import { ImageLightbox } from "@/components/ui/ImageLightbox";
 import { SocialLinks, type SocialLinkItem } from "@/components/ui/SocialLinks";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
+import { Pagination } from "@/components/ui/Pagination";
 import { getYouTubeEmbedUrl } from "@/lib/video-embed";
 import { getSiteUrl } from "@/lib/site-url";
+
+const EVENTS_PAGE_SIZE = 10;
 
 export async function generateMetadata({
   params,
@@ -51,12 +54,18 @@ export async function generateMetadata({
 
 export default async function BandPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<Record<string, string | undefined>>;
 }) {
   const { slug } = await params;
-  const band = await getBandBySlug(slug);
+  const sp = await searchParams;
+  const eventsPage = Math.max(1, parseInt(sp.page ?? "1", 10) || 1);
+  const band = await getBandBySlug(slug, true, eventsPage, EVENTS_PAGE_SIZE);
   if (!band) notFound();
+
+  const eventsTotal = "eventsTotal" in band ? band.eventsTotal : band.events?.length ?? 0;
 
   const locale = await getLocale();
   const dateLocale = getDateLocale(locale);
@@ -200,7 +209,7 @@ export default async function BandPage({
             </div>
           )}
 
-          {band.events && band.events.length > 0 && (
+          {(band.events?.length ?? 0) > 0 && (
             <div className="mt-16">
               <h2 className="font-display text-2xl tracking-tighter text-punk-white">
                 {t("upcoming")}
@@ -269,6 +278,13 @@ export default async function BandPage({
                   );
                 })}
               </div>
+              {eventsTotal > EVENTS_PAGE_SIZE && (
+                <Pagination
+                  page={eventsPage}
+                  totalItems={eventsTotal}
+                  pageSize={EVENTS_PAGE_SIZE}
+                />
+              )}
             </div>
           )}
         </div>

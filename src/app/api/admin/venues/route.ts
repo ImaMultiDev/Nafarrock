@@ -17,6 +17,8 @@ const createSchema = z.object({
   images: z.array(z.string().url()).optional().default([]),
   websiteUrl: z.string().url().optional().or(z.literal("")),
   mapUrl: z.string().url().optional().or(z.literal("")),
+  latitude: z.number().optional().nullable(),
+  longitude: z.number().optional().nullable(),
   instagramUrl: z.string().url().optional().or(z.literal("")),
   facebookUrl: z.string().url().optional().or(z.literal("")),
 });
@@ -54,6 +56,8 @@ export async function POST(req: Request) {
         images: data.images ?? [],
         websiteUrl: data.websiteUrl || null,
         mapUrl: data.mapUrl || null,
+        latitude: data.latitude ?? null,
+        longitude: data.longitude ?? null,
         instagramUrl: data.instagramUrl || null,
         facebookUrl: data.facebookUrl || null,
         approved: true,

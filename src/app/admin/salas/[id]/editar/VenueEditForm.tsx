@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 import { TranslateButton } from "@/components/admin/TranslateButton";
+import { MapPickerWrapper } from "@/components/mapa/MapPickerWrapper";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
@@ -24,6 +25,8 @@ type Venue = {
   images: string[];
   websiteUrl: string | null;
   mapUrl: string | null;
+  latitude: number | null;
+  longitude: number | null;
   instagramUrl: string | null;
   facebookUrl: string | null;
   approved: boolean;
@@ -38,6 +41,8 @@ export function VenueEditForm({ venue }: { venue: Venue }) {
   const [logoUrl, setLogoUrl] = useState(venue.logoUrl ?? "");
   const [imageUrl, setImageUrl] = useState(venue.imageUrl ?? "");
   const [images, setImages] = useState<string[]>(venue.images ?? []);
+  const [latitude, setLatitude] = useState<number | null>(venue.latitude ?? null);
+  const [longitude, setLongitude] = useState<number | null>(venue.longitude ?? null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -59,6 +64,8 @@ export function VenueEditForm({ venue }: { venue: Venue }) {
         capacity: formData.get("capacity") ? Number(formData.get("capacity")) : null,
         websiteUrl: formData.get("websiteUrl") || null,
         mapUrl: formData.get("mapUrl") || null,
+        latitude: latitude ?? null,
+        longitude: longitude ?? null,
         instagramUrl: formData.get("instagramUrl") || null,
         facebookUrl: formData.get("facebookUrl") || null,
         approved: formData.get("approved") === "on",
@@ -160,6 +167,21 @@ export function VenueEditForm({ venue }: { venue: Venue }) {
       <div>
         <label htmlFor="websiteUrl" className={labelClass}>Web</label>
         <input id="websiteUrl" name="websiteUrl" type="url" defaultValue={venue.websiteUrl ?? ""} className={inputClass} />
+      </div>
+      <div>
+        <label className={labelClass}>Ubicación en el mapa</label>
+        <p className="mt-1 font-body text-sm text-punk-white/60">
+          Coloca el marcador en el mapa para que aparezca en la página del mapa.
+        </p>
+        <div className="mt-2">
+          <MapPickerWrapper
+            value={latitude != null && longitude != null ? { lat: latitude, lng: longitude } : null}
+            onChange={(lat, lng) => {
+              setLatitude(lat);
+              setLongitude(lng);
+            }}
+          />
+        </div>
       </div>
       <div>
         <label htmlFor="mapUrl" className={labelClass}>Enlace mapa</label>

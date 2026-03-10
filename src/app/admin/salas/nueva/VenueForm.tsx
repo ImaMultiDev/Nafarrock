@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 import { TranslateButton } from "@/components/admin/TranslateButton";
+import { MapPickerWrapper } from "@/components/mapa/MapPickerWrapper";
 
 const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
@@ -19,6 +20,8 @@ export function VenueForm() {
   const [logoUrl, setLogoUrl] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [images, setImages] = useState<string[]>([]);
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -42,6 +45,8 @@ export function VenueForm() {
         capacity: formData.get("capacity") ? Number(formData.get("capacity")) : undefined,
         websiteUrl: formData.get("websiteUrl") || undefined,
         mapUrl: formData.get("mapUrl") || undefined,
+        latitude: latitude ?? undefined,
+        longitude: longitude ?? undefined,
         instagramUrl: formData.get("instagramUrl") || undefined,
         facebookUrl: formData.get("facebookUrl") || undefined,
         logoUrl: logoUrl || undefined,
@@ -151,6 +156,23 @@ export function VenueForm() {
           Web
         </label>
         <input id="websiteUrl" name="websiteUrl" type="url" className={inputClass} />
+      </div>
+      <div>
+        <label className={labelClass}>
+          Ubicación en el mapa
+        </label>
+        <p className="mt-1 font-body text-sm text-punk-white/60">
+          Coloca el marcador en el mapa para que aparezca en la página del mapa.
+        </p>
+        <div className="mt-2">
+          <MapPickerWrapper
+            value={latitude != null && longitude != null ? { lat: latitude, lng: longitude } : null}
+            onChange={(lat, lng) => {
+              setLatitude(lat);
+              setLongitude(lng);
+            }}
+          />
+        </div>
       </div>
       <div>
         <label htmlFor="mapUrl" className={labelClass}>

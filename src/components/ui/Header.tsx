@@ -22,6 +22,7 @@ const navLinks = [
       { href: "/bandas", labelKey: "bands" as const },
       { href: "/salas", labelKey: "salas" as const },
       { href: "/festivales", labelKey: "festivals" as const },
+      { href: "/mapa", labelKey: "map" as const },
     ] as const,
   },
   { href: "/tablon", labelKey: "tablon" as const },
@@ -68,7 +69,8 @@ function isActivePath(pathname: string, href: string): boolean {
     href === "/escena" ||
     href === "/bandas" ||
     href === "/salas" ||
-    href === "/festivales"
+    href === "/festivales" ||
+    href === "/mapa"
   ) {
     return (
       pathname === "/escena" ||
@@ -77,7 +79,8 @@ function isActivePath(pathname: string, href: string): boolean {
       pathname.startsWith("/organizadores") ||
       pathname.startsWith("/festivales") ||
       pathname.startsWith("/asociaciones") ||
-      pathname.startsWith("/salas")
+      pathname.startsWith("/salas") ||
+      pathname.startsWith("/mapa")
     );
   }
   if (href === "/guia") return pathname === "/guia";
@@ -93,10 +96,16 @@ function isEscenaActive(pathname: string): boolean {
     pathname.startsWith("/bandas") ||
     pathname.startsWith("/salas") ||
     pathname.startsWith("/festivales") ||
+    pathname.startsWith("/mapa") ||
     pathname.startsWith("/promotores") ||
     pathname.startsWith("/organizadores") ||
     pathname.startsWith("/asociaciones")
   );
+}
+
+/** Solo el ítem concreto del desplegable ESCENA está activo (ej: en /bandas solo BANDAS) */
+function isEscenaSubActive(pathname: string, href: string): boolean {
+  return pathname === href || pathname.startsWith(href + "/");
 }
 
 export function Header() {
@@ -209,7 +218,6 @@ export function Header() {
         <div className="hidden items-center gap-6 nav:flex">
           {navLinks.map((link) => {
             if ("dropdown" in link) {
-              const active = isEscenaActive(pathname);
               return (
                 <div
                   key={link.labelKey}
@@ -219,9 +227,7 @@ export function Header() {
                   <button
                     type="button"
                     onClick={() => setSceneOpen(!sceneOpen)}
-                    className={`flex items-center gap-1 font-punch text-xs uppercase tracking-widest transition-colors hover:text-punk-green ${
-                      active ? "text-punk-red" : "text-punk-white/80"
-                    }`}
+                    className="flex items-center gap-1 font-punch text-xs uppercase tracking-widest text-punk-white/80 transition-colors hover:text-punk-green"
                     aria-expanded={sceneOpen}
                     aria-haspopup="true"
                   >
@@ -237,9 +243,9 @@ export function Header() {
                           key={sub.href}
                           href={sub.href}
                           onClick={() => setSceneOpen(false)}
-                          className={`whitespace-nowrap px-4 py-2 font-punch text-xs uppercase tracking-widest transition-colors hover:bg-punk-red/20 hover:text-punk-green ${
-                            isActivePath(pathname, sub.href)
-                              ? "bg-punk-red/10 text-punk-red"
+                          className={`relative whitespace-nowrap px-4 py-2 font-punch text-xs uppercase tracking-widest transition-colors hover:bg-punk-green/20 hover:text-punk-green ${
+                            isEscenaSubActive(pathname, sub.href)
+                              ? "text-punk-red after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:skew-x-[-12deg] after:bg-punk-red after:content-['']"
                               : "text-punk-white/90"
                           }`}
                         >
@@ -399,7 +405,6 @@ export function Header() {
               <nav className="flex flex-col gap-1 mt-2">
                 {navLinks.map((link) => {
                   if ("dropdown" in link) {
-                    const isSceneActive = isEscenaActive(pathname);
                     return (
                       <div
                         key={link.labelKey}
@@ -408,11 +413,7 @@ export function Header() {
                         <button
                           type="button"
                           onClick={() => setSceneMobileOpen(!sceneMobileOpen)}
-                          className={`flex w-full items-center justify-between rounded-r px-4 py-3 font-punch text-sm uppercase tracking-widest transition-colors hover:bg-punk-white/10 hover:text-punk-green ${
-                            isSceneActive
-                              ? "border-l-4 border-punk-red bg-punk-red/10 text-punk-red"
-                              : "border-l-4 border-transparent text-punk-white/90"
-                          }`}
+                          className="flex w-full items-center justify-between rounded-r px-4 py-3 font-punch text-sm uppercase tracking-widest text-punk-white/90 transition-colors hover:bg-punk-white/10 hover:text-punk-green"
                           aria-expanded={sceneMobileOpen}
                         >
                           {t(link.labelKey)}
@@ -440,9 +441,9 @@ export function Header() {
                                     setSceneMobileOpen(false);
                                   }}
                                   className={`block rounded-r px-6 py-2 font-punch text-sm uppercase tracking-widest transition-colors hover:bg-punk-white/10 hover:text-punk-green ${
-                                    isActivePath(pathname, sub.href)
+                                    isEscenaSubActive(pathname, sub.href)
                                       ? "border-l-4 border-punk-red bg-punk-red/10 text-punk-red"
-                                      : "text-punk-white/90"
+                                      : "border-l-4 border-transparent text-punk-white/90"
                                   }`}
                                 >
                                   {t(sub.labelKey)}

@@ -16,6 +16,7 @@ const createSchema = z.object({
   ),
   endDate: z.union([z.string(), z.coerce.date()]).optional(),
   venueId: z.string().optional().nullable().or(z.literal("")),
+  venueText: z.string().optional().nullable().or(z.literal("")),
   festivalId: z.string().optional().nullable().or(z.literal("")),
   doorsOpen: z.string().optional(),
   description: z.string().optional(),
@@ -71,6 +72,7 @@ export async function POST(req: Request) {
 
     const venueId = data.venueId && data.venueId.trim() ? data.venueId : null;
     const festivalId = data.festivalId && data.festivalId.trim() ? data.festivalId : null;
+    const venueText = data.venueText && data.venueText.trim() ? data.venueText.trim() : null;
 
     const slug = await uniqueSlug(
       (s) => prisma.event.findUnique({ where: { slug: s } }).then(Boolean),
@@ -84,9 +86,9 @@ export async function POST(req: Request) {
         type: data.type,
         date: eventDate,
         endDate: eventEndDate,
-        venueId,
-        festivalId,
-        venueText: null,
+        venueId: venueId || null,
+        festivalId: festivalId || null,
+        venueText,
         doorsOpen: data.doorsOpen || null,
         description: data.description || null,
         price: data.price || null,
