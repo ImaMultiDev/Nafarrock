@@ -197,37 +197,37 @@ export function Header() {
             href="/"
             className="flex shrink-0 items-center transition-opacity hover:opacity-90"
           >
-            {pathname === "/mapa" || pathname.endsWith("/mapa") ? (
+            {pathname.startsWith("/mapa") ? (
               <span className="neon-mapa-sign">
                 <span className="neon-mapa-text font-display text-2xl tracking-tighter sm:text-3xl">
                   {t("map")}
                 </span>
               </span>
-            ) : pathname === "/eventos" || pathname.endsWith("/eventos") ? (
+            ) : pathname.startsWith("/eventos") ? (
               <span className="neon-mapa-sign">
                 <span className="neon-mapa-text font-display text-2xl tracking-tighter sm:text-3xl">
                   {t("events")}
                 </span>
               </span>
-            ) : pathname === "/bandas" || pathname.endsWith("/bandas") ? (
+            ) : pathname.startsWith("/bandas") ? (
               <span className="neon-mapa-sign">
                 <span className="neon-mapa-text font-display text-2xl tracking-tighter sm:text-3xl">
                   {t("bands")}
                 </span>
               </span>
-            ) : pathname === "/salas" || pathname.endsWith("/salas") ? (
+            ) : pathname.startsWith("/salas") ? (
               <span className="neon-mapa-sign">
                 <span className="neon-mapa-text font-display text-2xl tracking-tighter sm:text-3xl">
                   {t("salas")}
                 </span>
               </span>
-            ) : pathname === "/festivales" || pathname.endsWith("/festivales") ? (
+            ) : pathname.startsWith("/festivales") ? (
               <span className="neon-mapa-sign">
                 <span className="neon-mapa-text font-display text-2xl tracking-tighter sm:text-3xl">
                   {t("festivals")}
                 </span>
               </span>
-            ) : pathname === "/tablon" || pathname.endsWith("/tablon") ? (
+            ) : pathname.startsWith("/tablon") ? (
               <span className="neon-mapa-sign">
                 <span className="neon-mapa-text font-display text-2xl tracking-tighter sm:text-3xl">
                   {t("tablon")}
