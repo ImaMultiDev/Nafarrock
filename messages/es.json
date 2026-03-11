@@ -156,7 +156,12 @@
     "description": "Mapa interactivo de espacios y festivales de la escena rock nafarroa.",
     "subtitle": "Espacios y festivales en el mapa. {count} ubicaciones.",
     "subtitle_other": "Espacios y festivales en el mapa. {count} ubicaciones.",
+    "search": {
+      "show": "Buscar",
+      "hide": "Ocultar"
+    },
     "filter": {
+      "show": "Filtrar",
       "label": "Filtrar por",
       "all": "Todos",
       "TABERNA_BAR": "Tabernas",

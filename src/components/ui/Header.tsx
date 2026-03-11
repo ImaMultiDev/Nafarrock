@@ -197,14 +197,22 @@ export function Header() {
             href="/"
             className="flex shrink-0 items-center transition-opacity hover:opacity-90"
           >
-            <Image
-              src="/logo.png"
-              alt={tCommon("logoAlt")}
-              width={64}
-              height={64}
-              className="h-10 w-auto sm:h-12"
-              priority
-            />
+            {pathname === "/mapa" || pathname.endsWith("/mapa") ? (
+              <span className="neon-mapa-sign">
+                <span className="neon-mapa-text font-display text-2xl tracking-tighter sm:text-3xl">
+                  {t("map")}
+                </span>
+              </span>
+            ) : (
+              <Image
+                src="/logo.png"
+                alt={tCommon("logoAlt")}
+                width={64}
+                height={64}
+                className="h-10 w-auto sm:h-12"
+                priority
+              />
+            )}
           </Link>
           <Link
             href="/"

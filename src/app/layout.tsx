@@ -7,7 +7,7 @@ import { Providers } from "@/components/providers/Providers";
 import { Header } from "@/components/ui/Header";
 import { BandVerificationBanner } from "@/components/BandVerificationBanner";
 import { InboxBanner } from "@/components/InboxBanner";
-import { FooterSection } from "@/components/home/FooterSection";
+import { ConditionalFooter } from "@/components/ConditionalFooter";
 import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
@@ -73,7 +73,7 @@ export default async function RootLayout({
             <BandVerificationBanner />
             <InboxBanner />
             {children}
-            <FooterSection />
+            <ConditionalFooter />
           </Providers>
         </NextIntlClientProvider>
       </body>

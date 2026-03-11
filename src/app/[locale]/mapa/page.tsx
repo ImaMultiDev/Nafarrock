@@ -1,9 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { getCoordinatesForCity } from "@/lib/city-coordinates";
-import { PageLayout } from "@/components/ui/PageLayout";
 import { MapaWrapper } from "@/components/mapa/MapaWrapper";
+import { MapPageBodyOverflow } from "@/components/mapa/MapPageBodyOverflow";
 import type { MapPoint } from "@/components/mapa/MapaInteractivo";
-import { EscenaBackNav } from "@/components/escena/EscenaBackNav";
 import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata() {
@@ -124,14 +123,30 @@ export default async function MapaPage() {
   const points = [...venuePoints, ...festivalPoints];
 
   return (
-    <PageLayout>
-      <div className="mb-10 sm:mb-16">
-        <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl lg:text-7xl">
-          {t("title")}
-        </h1>
+    <>
+      <MapPageBodyOverflow />
+      <main className="relative h-[calc(100dvh-3.5rem)] min-h-0 overflow-hidden bg-punk-black md:min-h-screen md:h-auto md:overflow-visible">
+      {/* Grid sutil de fondo */}
+      <div
+        className="absolute inset-0 opacity-[0.04]"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(0,200,83,0.5) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,200,83,0.5) 1px, transparent 1px)
+          `,
+          backgroundSize: "60px 60px",
+        }}
+      />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(230,0,38,0.08)_0%,transparent_50%)]" />
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-0 py-0 md:px-6 md:py-12 lg:px-20 lg:py-20 2xl:max-w-content-wide">
+        <div className="mb-10 sm:mb-16 hidden md:block">
+          <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl lg:text-7xl">
+            {t("title")}
+          </h1>
+        </div>
+        <MapaWrapper points={points} />
       </div>
-
-      <MapaWrapper points={points} />
-    </PageLayout>
+    </main>
+    </>
   );
 }

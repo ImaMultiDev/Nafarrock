@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Map, { Marker, Popup } from "react-map-gl/mapbox";
 import type { MapRef } from "react-map-gl/mapbox";
+import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
+import mapboxgl from "mapbox-gl";
 import Link from "next/link";
 import Image from "next/image";
 import { MapPin, Music } from "lucide-react";
@@ -24,14 +26,18 @@ export type MapPoint = {
 
 type Props = {
   points: MapPoint[];
+  className?: string;
+  /** Ref para inyectar el geocoder (ej: en barra inferior móvil) */
+  geocoderContainerRef?: React.RefObject<HTMLDivElement | null>;
 };
 
 const NAVARRA_CENTER = { longitude: -1.65, latitude: 42.8, zoom: 9 };
 
-export function MapaInteractivo({ points }: Props) {
+export function MapaInteractivo({ points, className = "", geocoderContainerRef }: Props) {
   const [popupInfo, setPopupInfo] = useState<MapPoint | null>(null);
   const mapRef = useRef<MapRef | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const geocoderInstanceRef = useRef<MapboxGeocoder | null>(null);
 
   const resizeMap = useCallback(() => {
     const map = mapRef.current?.getMap();
@@ -54,13 +60,39 @@ export function MapaInteractivo({ points }: Props) {
     return () => window.removeEventListener("resize", handleResize);
   }, [resizeMap]);
 
+  const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+
   const onMapLoad = useCallback(() => {
     requestAnimationFrame(() => {
       resizeMap();
-      // Segundo resize tras un frame: en móvil el layout puede no estar listo al primer paint
       requestAnimationFrame(() => resizeMap());
     });
-  }, [resizeMap]);
+
+    // Geocoder: inyectar en contenedor externo si se proporciona
+    if (geocoderContainerRef?.current && mapRef.current && token) {
+      const geocoder = new MapboxGeocoder({
+        accessToken: token,
+        mapboxgl,
+        marker: false,
+        countries: "es",
+        placeholder: "Buscar dirección o local…",
+        types: "address,place,poi",
+      });
+      geocoder.on("result", (e: { result: { center: [number, number] } }) => {
+        const [lng, lat] = e.result.center;
+        mapRef.current?.getMap()?.flyTo({ center: [lng, lat], zoom: 15 });
+      });
+      geocoderContainerRef.current.appendChild(geocoder.onAdd(mapRef.current.getMap()));
+      geocoderInstanceRef.current = geocoder;
+    }
+  }, [resizeMap, geocoderContainerRef, token]);
+
+  useEffect(() => {
+    return () => {
+      geocoderInstanceRef.current?.onRemove();
+      geocoderInstanceRef.current = null;
+    };
+  }, []);
 
   const validPoints = points.filter(
     (p) =>
@@ -70,7 +102,6 @@ export function MapaInteractivo({ points }: Props) {
       !Number.isNaN(p.lng)
   );
 
-  const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
   if (!token) {
     return (
       <div className="flex min-h-[400px] items-center justify-center border-2 border-punk-red bg-punk-black/60">
@@ -103,7 +134,7 @@ export function MapaInteractivo({ points }: Props) {
   return (
     <div
       ref={containerRef}
-      className="h-[500px] min-h-[400px] w-full overflow-hidden rounded border-2 border-punk-red"
+      className={`w-full overflow-hidden ${className || "h-[500px] min-h-[400px] rounded border-2 border-punk-red"}`}
     >
       <Map
         ref={(ref) => {
