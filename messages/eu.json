@@ -11,9 +11,9 @@
       "guide": "Proiektua",
       "manual": "Eskuliburua",
       "contact": "Kontaktua",
-      "panel": "Panela",
+      "panel": "PANELA",
       "myProfile": "Nire profila",
-      "inbox": "Postontzia",
+      "inbox": "POSTONTZIA",
       "logout": "Irten",
       "login": "Sartu",
       "claim": "Eskatu",
@@ -206,6 +206,7 @@
     "festivals": {
       "label": "Jaialdiak",
       "desc": "Eskenako jaialdiak",
+      "empty": "Oraindik ez da jaialdirik erregistratu. Laster edukia egongo da. Bitartean, arakatu ekitaldiak eta sustatzaileak.",
       "metadata": {
         "title": "Jaialdiak",
         "description": "Nafarroako rock jaialdiak"
@@ -355,6 +356,22 @@
       "searchPlaceholder": "Izena, generoa...",
       "territory": "Lurraldea",
       "all": "Guztiak",
+      "searchButton": "Bilatu"
+    },
+    "salas": {
+      "search": "Bilatu",
+      "searchPlaceholder": "Izena edo hiria...",
+      "all": "Guztiak",
+      "TABERNA_BAR": "Tabernak",
+      "SALA_CONCIERTOS": "Kontzertu aretoak",
+      "RECINTO_ABIERTO": "Leku irekiak",
+      "GAZTETXE": "Gaztetxe",
+      "SIN_CATEGORIA": "Bestelakoak",
+      "searchButton": "Bilatu"
+    },
+    "festivales": {
+      "search": "Bilatu",
+      "searchPlaceholder": "Jaialdiaren izena...",
       "searchButton": "Bilatu"
     }
   },

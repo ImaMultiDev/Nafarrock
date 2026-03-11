@@ -2,6 +2,7 @@ import { getEvents } from "@/services/event.service";
 import { Link } from "@/i18n/navigation";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { EventosFilters } from "@/components/buscador/EventosFilters";
+import { EventosMobilePanel } from "@/components/eventos/EventosMobilePanel";
 import { Pagination } from "@/components/ui/Pagination";
 import { EventosList } from "@/components/eventos/EventosList";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
@@ -32,8 +33,12 @@ export default async function EventosPage({ searchParams }: Props) {
 
   return (
     <PageLayout>
+      {/* Mobile: panel inferior fijo */}
+      <EventosMobilePanel />
+
+      {/* Título y descripción: solo desktop */}
       <AnimatedSection>
-        <div className="mb-10 sm:mb-16">
+        <div className="mb-10 hidden sm:mb-16 md:block">
           <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl lg:text-7xl">
             {t("title")}
           </h1>
@@ -43,40 +48,47 @@ export default async function EventosPage({ searchParams }: Props) {
         </div>
       </AnimatedSection>
 
+      {/* Filtros: solo desktop */}
       <AnimatedSection delay={0.1}>
-        <EventosFilters />
+        <div className="hidden md:block">
+          <EventosFilters />
+        </div>
       </AnimatedSection>
 
-      {events.length > 0 && <EventosList events={events} />}
+      {/* Cards, paginación y empty: en mobile empiezan desde arriba; padding-bottom para el panel fijo */}
+      <div className="pb-24 md:pb-0">
+        {events.length > 0 && <EventosList events={events} />}
 
-      <Pagination
-        page={page}
-        totalItems={total}
-        searchParams={
-          Object.fromEntries(
-            Object.entries({
-              search: params.search,
-              type: params.type,
-            }).filter((entry): entry is [string, string] => {
-          const v = entry[1];
-          return v != null && v !== "";
-        })
-          ) as Record<string, string>
-        }
-      />
+        <Pagination
+          page={page}
+          totalItems={total}
+          searchParams={
+            Object.fromEntries(
+              Object.entries({
+                search: params.search,
+                type: params.type,
+              }).filter((entry): entry is [string, string] => {
+                const v = entry[1];
+                return v != null && v !== "";
+              })
+            ) as Record<string, string>
+          }
+        />
 
-      {events.length === 0 && (
-        <AnimatedSection delay={0.15}>
-        <div className="border-2 border-punk-white/20 border-dashed p-16 text-center">
-          <p className="font-body text-punk-white/60">
-            {t("empty")}
-          </p>
-          <Link href="/" className="mt-4 inline-block font-punch text-sm uppercase tracking-widest text-punk-red hover:text-punk-red/80 transition-colors">
-            {tActions("backToHome")}
-          </Link>
-        </div>
-        </AnimatedSection>
-      )}
+        {events.length === 0 && (
+          <AnimatedSection delay={0.15}>
+            <div className="border-2 border-punk-white/20 border-dashed p-16 text-center">
+              <p className="font-body text-punk-white/60">{t("empty")}</p>
+              <Link
+                href="/"
+                className="mt-4 inline-block font-punch text-sm uppercase tracking-widest text-punk-red transition-colors hover:text-punk-red/80"
+              >
+                {tActions("backToHome")}
+              </Link>
+            </div>
+          </AnimatedSection>
+        )}
+      </div>
     </PageLayout>
   );
 }

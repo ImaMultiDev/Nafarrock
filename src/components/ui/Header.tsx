@@ -203,6 +203,48 @@ export function Header() {
                   {t("map")}
                 </span>
               </span>
+            ) : pathname === "/eventos" || pathname.endsWith("/eventos") ? (
+              <span className="neon-mapa-sign">
+                <span className="neon-mapa-text font-display text-2xl tracking-tighter sm:text-3xl">
+                  {t("events")}
+                </span>
+              </span>
+            ) : pathname === "/bandas" || pathname.endsWith("/bandas") ? (
+              <span className="neon-mapa-sign">
+                <span className="neon-mapa-text font-display text-2xl tracking-tighter sm:text-3xl">
+                  {t("bands")}
+                </span>
+              </span>
+            ) : pathname === "/salas" || pathname.endsWith("/salas") ? (
+              <span className="neon-mapa-sign">
+                <span className="neon-mapa-text font-display text-2xl tracking-tighter sm:text-3xl">
+                  {t("salas")}
+                </span>
+              </span>
+            ) : pathname === "/festivales" || pathname.endsWith("/festivales") ? (
+              <span className="neon-mapa-sign">
+                <span className="neon-mapa-text font-display text-2xl tracking-tighter sm:text-3xl">
+                  {t("festivals")}
+                </span>
+              </span>
+            ) : pathname === "/tablon" || pathname.endsWith("/tablon") ? (
+              <span className="neon-mapa-sign">
+                <span className="neon-mapa-text font-display text-2xl tracking-tighter sm:text-3xl">
+                  {t("tablon")}
+                </span>
+              </span>
+            ) : pathname === "/dashboard/buzon" || pathname.startsWith("/dashboard/buzon/") ? (
+              <span className="neon-mapa-sign">
+                <span className="neon-mapa-text font-display text-2xl tracking-tighter sm:text-3xl">
+                  {t("inbox")}
+                </span>
+              </span>
+            ) : pathname === "/dashboard" || pathname === "/dashboard/" ? (
+              <span className="neon-mapa-sign">
+                <span className="neon-mapa-text font-display text-2xl tracking-tighter sm:text-3xl">
+                  {t("panel")}
+                </span>
+              </span>
             ) : (
               <Image
                 src="/logo.png"

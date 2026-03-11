@@ -2,6 +2,7 @@ import { getBands } from "@/services/band.service";
 import { getTranslations } from "next-intl/server";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { BandasFilters } from "@/components/buscador/BandasFilters";
+import { BandasMobilePanel } from "@/components/bandas/BandasMobilePanel";
 import { Pagination } from "@/components/ui/Pagination";
 import { BandasList } from "@/components/bandas/BandasList";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
@@ -33,8 +34,12 @@ export default async function BandasPage({ searchParams }: Props) {
 
   return (
     <PageLayout>
+      {/* Mobile: panel inferior fijo */}
+      <BandasMobilePanel />
+
+      {/* Título y descripción: solo desktop */}
       <AnimatedSection>
-        <div className="mb-10 sm:mb-16">
+        <div className="mb-10 hidden sm:mb-16 md:block">
           <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl lg:text-7xl">
             {t("title")}
           </h1>
@@ -44,41 +49,48 @@ export default async function BandasPage({ searchParams }: Props) {
         </div>
       </AnimatedSection>
 
+      {/* Filtros: solo desktop */}
       <AnimatedSection delay={0.1}>
-        <BandasFilters />
+        <div className="hidden md:block">
+          <BandasFilters />
+        </div>
       </AnimatedSection>
 
-      {bands.length > 0 && <BandasList bands={bands} />}
+      {/* Cards, paginación y empty: en mobile empiezan desde arriba; padding-bottom para el panel fijo */}
+      <div className="pb-24 md:pb-0">
+        {bands.length > 0 && <BandasList bands={bands} />}
 
-      <Pagination
-        page={page}
-        totalItems={total}
-        searchParams={
-          Object.fromEntries(
-            Object.entries({
-              search: params.search,
-              genre: params.genre,
-              location: params.location,
-            }).filter((entry): entry is [string, string] => {
-          const v = entry[1];
-          return v != null && v !== "";
-        })
-          ) as Record<string, string>
-        }
-      />
+        <Pagination
+          page={page}
+          totalItems={total}
+          searchParams={
+            Object.fromEntries(
+              Object.entries({
+                search: params.search,
+                genre: params.genre,
+                location: params.location,
+              }).filter((entry): entry is [string, string] => {
+                const v = entry[1];
+                return v != null && v !== "";
+              })
+            ) as Record<string, string>
+          }
+        />
 
-      {bands.length === 0 && (
-        <AnimatedSection delay={0.15}>
-        <div className="border-2 border-punk-white/20 border-dashed p-16 text-center">
-          <p className="font-body text-punk-white/60">
-            {t("empty")}
-          </p>
-          <Link href="/" className="mt-4 inline-block font-punch text-sm uppercase tracking-widest text-punk-green hover:text-punk-green/80 transition-colors">
-            ← {tActions("backToHome")}
-          </Link>
-        </div>
-        </AnimatedSection>
-      )}
+        {bands.length === 0 && (
+          <AnimatedSection delay={0.15}>
+            <div className="border-2 border-punk-white/20 border-dashed p-16 text-center">
+              <p className="font-body text-punk-white/60">{t("empty")}</p>
+              <Link
+                href="/"
+                className="mt-4 inline-block font-punch text-sm uppercase tracking-widest text-punk-green transition-colors hover:text-punk-green/80"
+              >
+                ← {tActions("backToHome")}
+              </Link>
+            </div>
+          </AnimatedSection>
+        )}
+      </div>
     </PageLayout>
   );
 }

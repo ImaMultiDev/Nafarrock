@@ -489,6 +489,12 @@
   }
 }
 
+/* Panel inferior móvil - extender 2px abajo para cubrir hueco de sub-píxel en el borde */
+.neon-map-bottom-bar {
+  bottom: -2px !important;
+  padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px) + 2px) !important;
+}
+
 /* Filtros mapa - botones rectos sin curvatura */
 .map-filter-btn {
   padding: 0.4rem 0.65rem;

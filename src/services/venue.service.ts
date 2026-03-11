@@ -5,6 +5,7 @@ export type VenueFilters = {
   city?: string;
   capacityMin?: number;
   capacityMax?: number;
+  category?: string;
   isActive?: boolean;
   approved?: boolean;
   search?: string;
@@ -14,25 +15,36 @@ export type VenueFilters = {
 
 const DEFAULT_PAGE_SIZE = 12;
 
+const VENUE_CATEGORIES = ["TABERNA_BAR", "SALA_CONCIERTOS", "RECINTO_ABIERTO", "GAZTETXE"] as const;
+
 export async function getVenues(filters: VenueFilters = {}) {
-  const where: Record<string, unknown> = { approved: true };
-  if (filters.city) where.city = { contains: filters.city, mode: "insensitive" };
+  const andConditions: Record<string, unknown>[] = [{ approved: true }];
+  if (filters.city) andConditions.push({ city: { contains: filters.city, mode: "insensitive" } });
+  if (filters.category) {
+    if (filters.category === "SIN_CATEGORIA") {
+      andConditions.push({ category: null });
+    } else if (VENUE_CATEGORIES.includes(filters.category as (typeof VENUE_CATEGORIES)[number])) {
+      andConditions.push({ category: filters.category });
+    }
+  }
   if (filters.capacityMin != null || filters.capacityMax != null) {
-    where.capacity = {};
-    if (filters.capacityMin != null)
-      (where.capacity as Record<string, number>).gte = filters.capacityMin;
-    if (filters.capacityMax != null)
-      (where.capacity as Record<string, number>).lte = filters.capacityMax;
+    const cap: Record<string, number> = {};
+    if (filters.capacityMin != null) cap.gte = filters.capacityMin;
+    if (filters.capacityMax != null) cap.lte = filters.capacityMax;
+    andConditions.push({ capacity: cap });
   }
-  if (typeof filters.isActive === "boolean") where.isActive = filters.isActive;
-  if (typeof filters.approved === "boolean") where.approved = filters.approved;
+  if (typeof filters.isActive === "boolean") andConditions.push({ isActive: filters.isActive });
+  if (typeof filters.approved === "boolean") andConditions.push({ approved: filters.approved });
   if (filters.search) {
-    where.OR = [
-      { name: { contains: filters.search, mode: "insensitive" } },
-      { city: { contains: filters.search, mode: "insensitive" } },
-      { description: { contains: filters.search, mode: "insensitive" } },
-    ];
+    andConditions.push({
+      OR: [
+        { name: { contains: filters.search, mode: "insensitive" } },
+        { city: { contains: filters.search, mode: "insensitive" } },
+        { description: { contains: filters.search, mode: "insensitive" } },
+      ],
+    });
   }
+  const where = andConditions.length === 1 ? andConditions[0] : { AND: andConditions };
 
   const pageSize = filters.pageSize ?? DEFAULT_PAGE_SIZE;
   const page = Math.max(1, filters.page ?? 1);

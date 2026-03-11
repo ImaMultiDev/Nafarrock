@@ -1,7 +1,7 @@
 import { getFestivals } from "@/services/festival.service";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { PageLayout } from "@/components/ui/PageLayout";
-import { EscenaBackNav } from "@/components/escena/EscenaBackNav";
+import { FestivalesMobilePanel } from "@/components/festivales/FestivalesMobilePanel";
 import { Pagination } from "@/components/ui/Pagination";
 import { getTranslations } from "next-intl/server";
 
@@ -18,11 +18,19 @@ type Props = { searchParams: Promise<Record<string, string | undefined>> };
 export default async function FestivalesPage({ searchParams }: Props) {
   const params = await searchParams;
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
-  const { items: festivals, total } = await getFestivals({ page }, true);
+  const t = await getTranslations("scene.festivals");
+  const { items: festivals, total } = await getFestivals(
+    { page, search: params.search || undefined },
+    true,
+  );
 
   return (
     <PageLayout>
-      <div className="mb-10 sm:mb-16">
+      {/* Mobile: panel inferior fijo con buscador */}
+      <FestivalesMobilePanel />
+
+      {/* Título y descripción: solo desktop */}
+      <div className="mb-10 hidden sm:mb-16 md:block">
         <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl lg:text-7xl">
           FESTIVALES
         </h1>
@@ -31,6 +39,8 @@ export default async function FestivalesPage({ searchParams }: Props) {
         </p>
       </div>
 
+      {/* Cards, paginación y empty: en mobile empiezan desde arriba; padding-bottom para el panel fijo */}
+      <div className="pb-24 md:pb-0">
       <div className="grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
         {festivals.map((festival) => (
           <Link
@@ -68,18 +78,31 @@ export default async function FestivalesPage({ searchParams }: Props) {
         ))}
       </div>
 
-      <Pagination page={page} totalItems={total} />
+        <Pagination
+          page={page}
+          totalItems={total}
+          searchParams={
+            Object.fromEntries(
+              Object.entries({ search: params.search }).filter((entry): entry is [string, string] => {
+                const v = entry[1];
+                return v != null && v !== "";
+              })
+            ) as Record<string, string>
+          }
+        />
 
-      {festivals.length === 0 && (
-        <div className="border-2 border-dashed border-punk-white/20 p-16 text-center">
-          <p className="font-body text-punk-white/60">
-            Aún no hay festivales registrados. Pronto habrá contenido. Mientras tanto, explora eventos y promotores.
-          </p>
-          <Link href="/escena" className="mt-4 inline-block font-punch text-sm uppercase tracking-widest text-punk-red hover:text-punk-red/80">
-            ← Volver a Escena
-          </Link>
-        </div>
-      )}
+        {festivals.length === 0 && (
+          <div className="border-2 border-dashed border-punk-white/20 p-16 text-center">
+            <p className="font-body text-punk-white/60">{t("empty")}</p>
+            <Link
+              href="/escena"
+              className="mt-4 inline-block font-punch text-sm uppercase tracking-widest text-punk-red transition-colors hover:text-punk-red/80"
+            >
+              ← Volver a Escena
+            </Link>
+          </div>
+        )}
+      </div>
     </PageLayout>
   );
 }

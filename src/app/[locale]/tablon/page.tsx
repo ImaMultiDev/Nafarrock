@@ -2,6 +2,7 @@ import { getBoardAnnouncements } from "@/services/board-announcement.service";
 import { getTranslations } from "next-intl/server";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { TablonFilters } from "@/components/tablon/TablonFilters";
+import { TablonMobilePanel } from "@/components/tablon/TablonMobilePanel";
 import { TablonList } from "@/components/tablon/TablonList";
 import { Pagination } from "@/components/ui/Pagination";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
@@ -33,8 +34,12 @@ export default async function TablonPage({ searchParams }: Props) {
 
   return (
     <PageLayout>
+      {/* Mobile: panel inferior fijo */}
+      <TablonMobilePanel />
+
+      {/* Título y descripción: solo desktop */}
       <AnimatedSection>
-        <div className="mb-10 sm:mb-16">
+        <div className="mb-10 hidden sm:mb-16 md:block">
           <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl lg:text-7xl">
             {t("title")}
           </h1>
@@ -44,41 +49,47 @@ export default async function TablonPage({ searchParams }: Props) {
         </div>
       </AnimatedSection>
 
+      {/* Filtros: solo desktop */}
       <AnimatedSection delay={0.1}>
-        <TablonFilters />
+        <div className="hidden md:block">
+          <TablonFilters />
+        </div>
       </AnimatedSection>
 
-      {announcements.length > 0 && <TablonList announcements={announcements} />}
+      {/* Cards, paginación y empty: en mobile empiezan desde arriba; padding-bottom para el panel fijo */}
+      <div className="pb-24 md:pb-0">
+        {announcements.length > 0 && <TablonList announcements={announcements} />}
 
-      <Pagination
-        page={page}
-        totalItems={total}
-        searchParams={
-          Object.fromEntries(
-            Object.entries({
-              category: params.category,
-              territory: params.territory,
-            }).filter((entry): entry is [string, string] => {
-              const v = entry[1];
-              return v != null && v !== "";
-            })
-          ) as Record<string, string>
-        }
-      />
+        <Pagination
+          page={page}
+          totalItems={total}
+          searchParams={
+            Object.fromEntries(
+              Object.entries({
+                category: params.category,
+                territory: params.territory,
+              }).filter((entry): entry is [string, string] => {
+                const v = entry[1];
+                return v != null && v !== "";
+              })
+            ) as Record<string, string>
+          }
+        />
 
-      {announcements.length === 0 && (
-        <AnimatedSection delay={0.15}>
-          <div className="border-2 border-punk-white/20 border-dashed p-16 text-center">
-            <p className="font-body text-punk-white/60">{t("empty")}</p>
-            <Link
-              href="/"
-              className="mt-4 inline-block font-punch text-sm uppercase tracking-widest text-punk-yellow transition-colors hover:text-punk-yellow/80"
-            >
-              ← {tActions("backToHome")}
-            </Link>
-          </div>
-        </AnimatedSection>
-      )}
+        {announcements.length === 0 && (
+          <AnimatedSection delay={0.15}>
+            <div className="border-2 border-punk-white/20 border-dashed p-16 text-center">
+              <p className="font-body text-punk-white/60">{t("empty")}</p>
+              <Link
+                href="/"
+                className="mt-4 inline-block font-punch text-sm uppercase tracking-widest text-punk-yellow transition-colors hover:text-punk-yellow/80"
+              >
+                ← {tActions("backToHome")}
+              </Link>
+            </div>
+          </AnimatedSection>
+        )}
+      </div>
     </PageLayout>
   );
 }

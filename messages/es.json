@@ -11,9 +11,9 @@
       "guide": "Proyecto",
       "manual": "Manual",
       "contact": "Contacto",
-      "panel": "Panel",
+      "panel": "PANEL",
       "myProfile": "Mi perfil",
-      "inbox": "Buzón",
+      "inbox": "BUZÓN",
       "logout": "Salir",
       "login": "Entrar",
       "claim": "Reclamar",
@@ -206,6 +206,7 @@
     "festivals": {
       "label": "Festivales",
       "desc": "Festivales de la escena",
+      "empty": "Aún no hay festivales registrados. Pronto habrá contenido. Mientras tanto, explora eventos y promotores.",
       "metadata": {
         "title": "Festivales",
         "description": "Festivales de rock en Nafarroa"
@@ -355,6 +356,22 @@
       "searchPlaceholder": "Nombre, género...",
       "territory": "Territorio",
       "all": "Todos",
+      "searchButton": "Buscar"
+    },
+    "salas": {
+      "search": "Buscar",
+      "searchPlaceholder": "Nombre o ciudad...",
+      "all": "Todos",
+      "TABERNA_BAR": "Tabernas",
+      "SALA_CONCIERTOS": "Salas de Conciertos",
+      "RECINTO_ABIERTO": "Espacios Abiertos",
+      "GAZTETXE": "Gaztetxe",
+      "SIN_CATEGORIA": "Otros",
+      "searchButton": "Buscar"
+    },
+    "festivales": {
+      "search": "Buscar",
+      "searchPlaceholder": "Nombre del festival...",
       "searchButton": "Buscar"
     }
   },

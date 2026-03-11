@@ -123,15 +123,6 @@ export default async function DashboardPage({ searchParams }: Props) {
 
   return (
     <>
-      <div className="mb-2">
-        <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
-          {t("title")}
-        </h1>
-        <p className="mt-2 font-body text-punk-white/60">
-          {t("hello", { name: session.user?.name ?? session.user?.email ?? "" })}
-        </p>
-      </div>
-
       {deletionCancelled && (
         <div className="mb-8 rounded-xl border-2 border-punk-green bg-punk-green/10 p-6">
           <p className="font-body text-punk-green">
