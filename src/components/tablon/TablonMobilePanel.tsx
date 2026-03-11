@@ -59,7 +59,7 @@ export function TablonMobilePanel() {
               id="tablon-mobile-category"
               name="category"
               defaultValue={searchParams.get("category") ?? ""}
-              className="mt-1 w-full min-w-0 border-2 border-punk-green bg-punk-black px-3 py-2 font-body text-sm text-punk-white focus:border-punk-green focus:outline-none"
+              className="mt-1 w-full min-w-0 min-h-[44px] border-2 border-punk-green bg-punk-black px-3 py-2.5 font-body text-sm text-punk-white focus:border-punk-green focus:outline-none"
             >
               <option value="">{tFilters("all")}</option>
               {CATEGORIES.map((c) => (
@@ -80,7 +80,7 @@ export function TablonMobilePanel() {
               id="tablon-mobile-territory"
               name="territory"
               defaultValue={searchParams.get("territory") ?? ""}
-              className="mt-1 w-full min-w-0 border-2 border-punk-green bg-punk-black px-3 py-2 font-body text-sm text-punk-white focus:border-punk-green focus:outline-none"
+              className="mt-1 w-full min-w-0 min-h-[44px] border-2 border-punk-green bg-punk-black px-3 py-2.5 font-body text-sm text-punk-white focus:border-punk-green focus:outline-none"
             >
               <option value="">{tFilters("allTerritories")}</option>
               {BAND_LOCATIONS.map((loc) => (

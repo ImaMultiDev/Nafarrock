@@ -495,10 +495,10 @@
   padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px) + 2px) !important;
 }
 
-/* Filtros mapa - botones rectos sin curvatura */
+/* Filtros mapa - botones rectos sin curvatura (44px min para UX táctil) */
 .map-filter-btn {
-  padding: 0.4rem 0.65rem;
-  min-height: 36px;
+  padding: 0.5rem 0.75rem;
+  min-height: 44px;
   background: linear-gradient(180deg, #0d1a0d 0%, #050a05 100%);
   border: 2px solid var(--punk-green);
   box-shadow:

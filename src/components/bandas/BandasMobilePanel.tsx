@@ -53,7 +53,7 @@ export function BandasMobilePanel() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t("searchPlaceholder")}
-            className="min-h-[36px] min-w-0 flex-1 border-2 border-punk-green bg-punk-black px-3 py-2 font-body text-punk-white placeholder:text-punk-white/40 focus:outline-none"
+            className="min-h-[44px] min-w-0 flex-1 border-2 border-punk-green bg-punk-black px-3 py-2.5 font-body text-punk-white placeholder:text-punk-white/40 focus:outline-none"
             aria-label={t("search")}
           />
           <button
