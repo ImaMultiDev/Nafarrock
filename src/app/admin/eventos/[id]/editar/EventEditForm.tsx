@@ -35,7 +35,9 @@ type Event = {
   venue?: { name: string } | null;
   festival?: { name: string } | null;
   bands?: { bandId: string; band?: { id: string; name: string } }[];
-  links?: { kind: string; url: string; label: string | null }[];
+  websiteUrl?: string | null;
+  instagramUrl?: string | null;
+  facebookUrl?: string | null;
 };
 
 type Venue = { id: string; name: string };
@@ -103,7 +105,9 @@ export function EventEditForm({ event, venues, festivals, bands }: { event: Even
         descriptionEu: descriptionEu || null,
         price: formData.get("price") || null,
         ticketUrl: formData.get("ticketUrl") || null,
-        links: links.filter((l) => l.url?.trim()).map((l) => ({ kind: l.kind, url: l.url.trim(), label: l.label || "" })),
+        websiteUrl: formData.get("websiteUrl") || null,
+        instagramUrl: formData.get("instagramUrl") || null,
+        facebookUrl: formData.get("facebookUrl") || null,
         imageUrl: imageUrl || null,
         images,
         bandIds,
