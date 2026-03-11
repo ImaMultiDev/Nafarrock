@@ -5,9 +5,12 @@ import { prisma } from "@/lib/prisma";
 import { uniqueSlug } from "@/lib/slug";
 import { z } from "zod";
 
+const VENUE_CATEGORIES = ["TABERNA_BAR", "SALA_CONCIERTOS", "RECINTO_ABIERTO", "GAZTETXE"] as const;
+
 const updateSchema = z.object({
   name: z.string().min(1).optional(),
   description: z.string().optional().nullable(),
+  category: z.enum(VENUE_CATEGORIES).optional().nullable(),
   address: z.string().optional().nullable(),
   city: z.string().min(1).optional(),
   foundedYear: z.coerce.number().optional().nullable(),
@@ -39,7 +42,7 @@ export async function PATCH(req: Request) {
       where: { userId: session.user.id },
     });
     if (!venue) {
-      return NextResponse.json({ message: "No tienes una sala asociada" }, { status: 404 });
+      return NextResponse.json({ message: "No tienes un espacio asociado" }, { status: 404 });
     }
 
     const body = await req.json();
@@ -86,7 +89,7 @@ export async function PATCH(req: Request) {
   } catch (e) {
     console.error("Dashboard update venue:", e);
     return NextResponse.json(
-      { message: "Error al actualizar la sala" },
+      { message: "Error al actualizar el espacio" },
       { status: 500 }
     );
   }

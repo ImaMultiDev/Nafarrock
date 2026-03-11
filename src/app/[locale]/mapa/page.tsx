@@ -15,8 +15,18 @@ export async function generateMetadata() {
 }
 
 function toMapPoint(
-  v: { id: string; name: string; slug: string; city: string; latitude: number | null; longitude: number | null; logoUrl?: string | null },
-  type: "venue" | "festival"
+  v: {
+    id: string;
+    name: string;
+    slug: string;
+    city: string;
+    address?: string | null;
+    category?: string | null;
+    latitude: number | null;
+    longitude: number | null;
+    logoUrl?: string | null;
+  },
+  type: "venue" | "festival",
 ): MapPoint | null {
   let lat: number;
   let lng: number;
@@ -37,6 +47,8 @@ function toMapPoint(
     lat,
     lng,
     city: v.city,
+    address: v.address ?? undefined,
+    category: v.category ?? undefined,
     logoUrl: v.logoUrl ?? undefined,
   };
 }
@@ -47,19 +59,45 @@ export default async function MapaPage() {
   const [venues, festivals] = await Promise.all([
     prisma.venue.findMany({
       where: { approved: true, isActive: true },
-      select: { id: true, name: true, slug: true, city: true, latitude: true, longitude: true, logoUrl: true },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        city: true,
+        address: true,
+        category: true,
+        latitude: true,
+        longitude: true,
+        logoUrl: true,
+      },
     }),
     prisma.festival.findMany({
       where: { approved: true },
-      select: { id: true, name: true, slug: true, location: true, latitude: true, longitude: true, logoUrl: true },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        location: true,
+        latitude: true,
+        longitude: true,
+        logoUrl: true,
+      },
     }),
   ]);
 
   const venuePoints: MapPoint[] = [];
   for (const v of venues) {
     const point = toMapPoint(
-      { ...v, city: v.city, latitude: v.latitude, longitude: v.longitude, logoUrl: v.logoUrl },
-      "venue"
+      {
+        ...v,
+        city: v.city,
+        address: v.address,
+        category: v.category,
+        latitude: v.latitude,
+        longitude: v.longitude,
+        logoUrl: v.logoUrl,
+      },
+      "venue",
     );
     if (point) venuePoints.push(point);
   }
@@ -73,11 +111,12 @@ export default async function MapaPage() {
         name: f.name,
         slug: f.slug,
         city,
+        address: f.location,
         latitude: f.latitude,
         longitude: f.longitude,
         logoUrl: f.logoUrl,
       },
-      "festival"
+      "festival",
     );
     if (point) festivalPoints.push(point);
   }
@@ -86,14 +125,10 @@ export default async function MapaPage() {
 
   return (
     <PageLayout>
-      <EscenaBackNav />
       <div className="mb-10 sm:mb-16">
         <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl lg:text-7xl">
           {t("title")}
         </h1>
-        <p className="mt-3 max-w-xl font-body text-punk-white/60 sm:mt-4">
-          {t("subtitle", { count: points.length })}
-        </p>
       </div>
 
       <MapaWrapper points={points} />

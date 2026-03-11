@@ -1,0 +1,201 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { ImageUpload } from "@/components/ui/ImageUpload";
+import { ImageGallery } from "@/components/ui/ImageGallery";
+import { TranslateButton } from "@/components/admin/TranslateButton";
+import { MapPickerWrapper } from "@/components/mapa/MapPickerWrapper";
+
+const inputClass =
+  "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
+const labelClass = "block font-punch text-xs uppercase tracking-widest text-punk-white/70";
+
+type Festival = {
+  id: string;
+  name: string;
+  description: string | null;
+  descriptionEu: string | null;
+  location: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  foundedYear: number | null;
+  logoUrl: string | null;
+  images: string[];
+  websiteUrl: string | null;
+  instagramUrl: string | null;
+  facebookUrl: string | null;
+  approved: boolean;
+};
+
+export function FestivalEditForm({ festival }: { festival: Festival }) {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [description, setDescription] = useState(festival.description ?? "");
+  const [descriptionEu, setDescriptionEu] = useState(festival.descriptionEu ?? "");
+  const [logoUrl, setLogoUrl] = useState(festival.logoUrl ?? "");
+  const [images, setImages] = useState<string[]>(festival.images ?? []);
+  const [latitude, setLatitude] = useState<number | null>(festival.latitude ?? null);
+  const [longitude, setLongitude] = useState<number | null>(festival.longitude ?? null);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    const res = await fetch(`/api/admin/festivals/${festival.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: formData.get("name"),
+        description: description || null,
+        descriptionEu: descriptionEu || null,
+        location: formData.get("location") || null,
+        foundedYear: formData.get("foundedYear") ? Number(formData.get("foundedYear")) : null,
+        websiteUrl: formData.get("websiteUrl") || null,
+        instagramUrl: formData.get("instagramUrl") || null,
+        facebookUrl: formData.get("facebookUrl") || null,
+        logoUrl: logoUrl || null,
+        images,
+        latitude: latitude ?? null,
+        longitude: longitude ?? null,
+        approved: formData.get("approved") === "on",
+      }),
+    });
+
+    const data = await res.json();
+    setLoading(false);
+    if (!res.ok) {
+      setError(data.message ?? "Error al actualizar");
+      return;
+    }
+    router.push("/admin/festivales");
+    router.refresh();
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="mt-10 max-w-2xl space-y-6">
+      {error && (
+        <div className="border-2 border-punk-red bg-punk-red/10 p-4">
+          <p className="font-body text-punk-red">{error}</p>
+        </div>
+      )}
+      <div>
+        <label htmlFor="name" className={labelClass}>
+          Nombre *
+        </label>
+        <input id="name" name="name" type="text" required defaultValue={festival.name} className={inputClass} />
+      </div>
+      <div>
+        <label htmlFor="description" className={labelClass}>
+          Descripción
+        </label>
+        <textarea id="description" name="description" rows={3} value={description} onChange={(e) => setDescription(e.target.value)} className={inputClass} />
+      </div>
+      <div>
+        <label htmlFor="descriptionEu" className={labelClass}>
+          Descripción (Euskera)
+        </label>
+        <div className="mt-2 flex flex-wrap items-start gap-2">
+          <textarea id="descriptionEu" name="descriptionEu" rows={3} value={descriptionEu} onChange={(e) => setDescriptionEu(e.target.value)} className={inputClass} placeholder="Traducción al euskera batua" />
+          <TranslateButton sourceText={description} onTranslated={setDescriptionEu} />
+        </div>
+      </div>
+      <div>
+        <ImageUpload
+          folder="festivals"
+          type="logo"
+          entityId={festival.id}
+          value={logoUrl}
+          onChange={setLogoUrl}
+          onRemove={() => setLogoUrl("")}
+          label="Logo (opcional)"
+        />
+      </div>
+      <div>
+        <ImageGallery
+          folder="festivals"
+          entityId={festival.id}
+          images={images}
+          onChange={setImages}
+          label="Galería (máx. 3)"
+          maxImages={3}
+        />
+      </div>
+      <div>
+        <label htmlFor="location" className={labelClass}>
+          Localización
+        </label>
+        <input id="location" name="location" type="text" defaultValue={festival.location ?? ""} className={inputClass} placeholder="Nafarroa" />
+      </div>
+      <div>
+        <label className={labelClass}>
+          Ubicación en el mapa
+        </label>
+        <p className="mt-1 font-body text-sm text-punk-white/60">
+          Coloca el marcador en el mapa para que aparezca en la página del mapa.
+        </p>
+        <div className="mt-2">
+          <MapPickerWrapper
+            variant="festival"
+            value={latitude != null && longitude != null ? { lat: latitude, lng: longitude } : null}
+            onChange={(lat, lng) => {
+              setLatitude(lat);
+              setLongitude(lng);
+            }}
+          />
+        </div>
+      </div>
+      <div>
+        <label htmlFor="foundedYear" className={labelClass}>
+          Año fundación
+        </label>
+        <input id="foundedYear" name="foundedYear" type="number" min={1900} defaultValue={festival.foundedYear ?? ""} className={inputClass} />
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label htmlFor="websiteUrl" className={labelClass}>
+            Web
+          </label>
+          <input id="websiteUrl" name="websiteUrl" type="url" defaultValue={festival.websiteUrl ?? ""} className={inputClass} />
+        </div>
+        <div>
+          <label htmlFor="instagramUrl" className={labelClass}>
+            Instagram
+          </label>
+          <input id="instagramUrl" name="instagramUrl" type="url" defaultValue={festival.instagramUrl ?? ""} className={inputClass} />
+        </div>
+      </div>
+      <div>
+        <label htmlFor="facebookUrl" className={labelClass}>
+          Facebook
+        </label>
+        <input id="facebookUrl" name="facebookUrl" type="url" defaultValue={festival.facebookUrl ?? ""} className={inputClass} />
+      </div>
+      <div>
+        <label className="flex cursor-pointer items-center gap-2">
+          <input type="checkbox" name="approved" defaultChecked={festival.approved} className="accent-punk-green" />
+          <span className={labelClass}>Aprobado</span>
+        </label>
+      </div>
+      <div className="flex gap-4">
+        <button
+          type="submit"
+          disabled={loading}
+          className="border-2 border-punk-red bg-punk-red px-8 py-3 font-punch text-sm uppercase tracking-widest text-punk-black transition-all hover:bg-punk-red/90 disabled:opacity-50"
+        >
+          {loading ? "Guardando..." : "Guardar"}
+        </button>
+        <a
+          href="/admin/festivales"
+          className="border-2 border-punk-white/30 px-8 py-3 font-punch text-sm uppercase tracking-widest text-punk-white/70 hover:border-punk-white"
+        >
+          Cancelar
+        </a>
+      </div>
+    </form>
+  );
+}

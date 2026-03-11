@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
-import { EventLinksBuilder, type EventLinkItem } from "@/components/admin/EventLinksBuilder";
+import { EventSocialLinksFields } from "@/components/admin/EventSocialLinksFields";
 import { VenueFestivalSelect } from "@/components/admin/VenueFestivalSelect";
 
 const inputClass =
@@ -40,7 +40,6 @@ export function EventProposalForm({
   const [imageUrl, setImageUrl] = useState("");
   const [images, setImages] = useState<string[]>([]);
   const [isMultiDay, setIsMultiDay] = useState(false);
-  const [links, setLinks] = useState<EventLinkItem[]>([]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -246,7 +245,7 @@ export function EventProposalForm({
           <input id="ticketUrl" name="ticketUrl" type="url" className={inputClass} />
         </div>
       </div>
-      <EventLinksBuilder value={links} onChange={setLinks} />
+      <EventSocialLinksFields />
       <label className="flex cursor-pointer items-center gap-2">
         <input type="checkbox" name="isSoldOut" className="accent-punk-red" />
         <span className={labelClass}>Entradas agotadas (SOLD OUT)</span>

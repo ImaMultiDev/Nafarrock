@@ -4,9 +4,12 @@ import { requireAdmin } from "@/lib/admin";
 import { z } from "zod";
 import { uniqueSlug } from "@/lib/slug";
 
+const VENUE_CATEGORIES = ["TABERNA_BAR", "SALA_CONCIERTOS", "RECINTO_ABIERTO", "GAZTETXE"] as const;
+
 const createSchema = z.object({
   name: z.string().min(1),
   city: z.string().min(1),
+  category: z.enum(VENUE_CATEGORIES).optional().nullable(),
   address: z.string().optional(),
   description: z.string().optional(),
   descriptionEu: z.string().optional(),
@@ -46,6 +49,7 @@ export async function POST(req: Request) {
         slug,
         name: data.name,
         city: data.city,
+        category: data.category ?? null,
         address: data.address || null,
         description: data.description || null,
         descriptionEu: data.descriptionEu || null,
@@ -75,7 +79,7 @@ export async function POST(req: Request) {
     }
     console.error("Admin create venue:", e);
     return NextResponse.json(
-      { message: "Error al crear la sala" },
+      { message: "Error al crear el espacio" },
       { status: 500 }
     );
   }

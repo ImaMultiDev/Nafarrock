@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Map, { Marker } from "react-map-gl/mapbox";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import mapboxgl from "mapbox-gl";
-import { GuitarPickMarkerVenue, GuitarPickMarkerFestival } from "./guitarPickMarker";
+import { VenueMarker, FestivalMarker } from "./mapMarkers";
 
 const NAVARRA_CENTER = { longitude: -1.65, latitude: 42.8, zoom: 10 };
 
@@ -14,6 +14,8 @@ type Props = {
   height?: number;
   zoom?: number;
   variant?: "venue" | "festival";
+  /** Categoría del espacio (solo para variant="venue"). Actualiza el icono del marcador. */
+  category?: string | null;
 };
 
 export function MapPicker({
@@ -22,6 +24,7 @@ export function MapPicker({
   height = 280,
   zoom = 10,
   variant = "venue",
+  category,
 }: Props) {
   const [mounted, setMounted] = useState(false);
   const [position, setPosition] = useState<{ lat: number; lng: number } | null>(
@@ -139,9 +142,9 @@ export function MapPicker({
               }}
             >
               {variant === "festival" ? (
-                <GuitarPickMarkerFestival />
+                <FestivalMarker />
               ) : (
-                <GuitarPickMarkerVenue />
+                <VenueMarker category={category} />
               )}
             </Marker>
           )}

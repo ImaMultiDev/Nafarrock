@@ -34,19 +34,68 @@ export async function getFestivals(filters: FestivalFilters = {}, approvedOnly =
   return { items, total, page, pageSize };
 }
 
-export async function getFestivalBySlug(slug: string, approvedOnly = true) {
-  return prisma.festival.findUnique({
+const EVENTS_PAGE_SIZE = 10;
+
+export async function getFestivalBySlug(
+  slug: string,
+  approvedOnly = true,
+  eventsPage?: number,
+  eventsPageSize = EVENTS_PAGE_SIZE
+) {
+  const festival = await prisma.festival.findUnique({
     where: approvedOnly ? { slug, approved: true } : { slug },
     include: {
       user: { select: { name: true } },
-      events: {
-        where: { isApproved: true, date: { gte: startOfToday() } },
+    },
+  });
+  if (!festival) return null;
+
+  const eventsWhere = {
+    festivalId: festival.id,
+    isApproved: true,
+    date: { gte: startOfToday() },
+  };
+
+  if (eventsPage != null && eventsPage >= 1) {
+    const page = Math.max(1, eventsPage);
+    const skip = (page - 1) * eventsPageSize;
+    const [events, total, nextEvent] = await Promise.all([
+      prisma.event.findMany({
+        where: eventsWhere,
         orderBy: { date: "asc" },
+        skip,
+        take: eventsPageSize,
         include: {
           venue: true,
           bands: { include: { band: true }, orderBy: { order: "asc" } },
         },
-      },
+      }),
+      prisma.event.count({ where: eventsWhere }),
+      page > 1
+        ? prisma.event.findFirst({
+            where: eventsWhere,
+            orderBy: { date: "asc" },
+            include: { venue: true },
+          })
+        : null,
+    ]);
+    return {
+      ...festival,
+      events,
+      eventsTotal: total,
+      eventsPage: page,
+      eventsPageSize,
+      nextEvent: page === 1 ? (events[0] ?? null) : (nextEvent ?? null),
+    };
+  }
+
+  const events = await prisma.event.findMany({
+    where: eventsWhere,
+    orderBy: { date: "asc" },
+    include: {
+      venue: true,
+      bands: { include: { band: true }, orderBy: { order: "asc" } },
     },
   });
+  return { ...festival, events, nextEvent: events[0] ?? null };
 }

@@ -26,7 +26,7 @@ export default async function AdminLayout({
           <Link href="/admin/solicitudes" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Solicitudes</Link>
           <Link href="/admin/bandas" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Bandas</Link>
           <Link href="/admin/importacion-bandas" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Importar bandas</Link>
-          <Link href="/admin/salas" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Salas</Link>
+          <Link href="/admin/salas" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Espacios</Link>
           <Link href="/admin/eventos" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Eventos</Link>
           <Link href="/admin/festivales" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Festivales</Link>
           <Link href="/admin/usuarios" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Usuarios</Link>

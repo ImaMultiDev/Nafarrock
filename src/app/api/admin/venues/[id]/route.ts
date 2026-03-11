@@ -4,10 +4,13 @@ import { requireAdmin } from "@/lib/admin";
 import { z } from "zod";
 import { uniqueSlug } from "@/lib/slug";
 
+const VENUE_CATEGORIES = ["TABERNA_BAR", "SALA_CONCIERTOS", "RECINTO_ABIERTO", "GAZTETXE"] as const;
+
 const updateSchema = z.object({
   name: z.string().min(1).optional(),
   slug: z.string().optional(),
   city: z.string().min(1).optional(),
+  category: z.enum(VENUE_CATEGORIES).optional().nullable(),
   address: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
   descriptionEu: z.string().optional().nullable(),
@@ -50,12 +53,13 @@ export async function PATCH(
 
     const venue = await prisma.venue.findUnique({ where: { id } });
     if (!venue) {
-      return NextResponse.json({ message: "Sala no encontrada" }, { status: 404 });
+      return NextResponse.json({ message: "Espacio no encontrado" }, { status: 404 });
     }
 
     const updateData: Record<string, unknown> = {};
     if (data.name != null) updateData.name = data.name;
     if (data.city != null) updateData.city = data.city;
+    if (data.category !== undefined) updateData.category = data.category;
     if (data.address !== undefined) updateData.address = data.address;
     if (data.description !== undefined) updateData.description = data.description;
     if (data.descriptionEu !== undefined) updateData.descriptionEu = data.descriptionEu;
@@ -98,7 +102,7 @@ export async function PATCH(
     }
     console.error("Admin update venue:", e);
     return NextResponse.json(
-      { message: "Error al actualizar la sala" },
+      { message: "Error al actualizar el espacio" },
       { status: 500 }
     );
   }
@@ -114,7 +118,7 @@ export async function DELETE(
 
     const venue = await prisma.venue.findUnique({ where: { id } });
     if (!venue) {
-      return NextResponse.json({ message: "Sala no encontrada" }, { status: 404 });
+      return NextResponse.json({ message: "Espacio no encontrado" }, { status: 404 });
     }
 
     await prisma.venue.delete({ where: { id } });
@@ -125,7 +129,7 @@ export async function DELETE(
     }
     console.error("Admin delete venue:", e);
     return NextResponse.json(
-      { message: "Error al eliminar la sala" },
+      { message: "Error al eliminar el espacio" },
       { status: 500 }
     );
   }

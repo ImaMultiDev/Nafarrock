@@ -33,7 +33,7 @@ export default async function AdminReclamacionesPage({ searchParams }: Props) {
 
   const getEntityInfo = (c: (typeof claims)[0]) => {
     if (c.band) return { name: c.band.name, slug: c.band.slug, type: "Banda", url: `/bandas/${c.band.slug}` };
-    if (c.venue) return { name: c.venue.name, slug: c.venue.slug, type: "Sala", url: `/salas/${c.venue.slug}` };
+    if (c.venue) return { name: c.venue.name, slug: c.venue.slug, type: "Espacio", url: `/salas/${c.venue.slug}` };
     if (c.festival) return { name: c.festival.name, slug: c.festival.slug, type: "Festival", url: `/festivales/${c.festival.slug}` };
     if (c.entityType === "ASOCIACION") return { name: "—", slug: "", type: "Asociación", url: "/admin/asociaciones" };
     return { name: "—", slug: "", type: "—", url: "#" };

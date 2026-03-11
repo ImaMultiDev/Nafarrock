@@ -6,7 +6,7 @@ import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 import { TranslateButton } from "@/components/admin/TranslateButton";
 import { BandSelector } from "@/components/admin/BandSelector";
-import { EventLinksBuilder, type EventLinkItem } from "@/components/admin/EventLinksBuilder";
+import { EventSocialLinksFields } from "@/components/admin/EventSocialLinksFields";
 import { VenueFestivalSelect } from "@/components/admin/VenueFestivalSelect";
 
 const inputClass =
@@ -51,16 +51,10 @@ function getVenueOrFestivalDefault(event: Event): string {
 
 export function EventEditForm({ event, venues, festivals, bands }: { event: Event; venues: Venue[]; festivals: Festival[]; bands: Band[] }) {
   const initialBandIds = (event.bands ?? []).map((be) => be.bandId);
-  const initialLinks: EventLinkItem[] = (event.links ?? []).map((l) => ({
-    kind: l.kind as EventLinkItem["kind"],
-    url: l.url,
-    label: l.label ?? "",
-  }));
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [bandIds, setBandIds] = useState<string[]>(initialBandIds);
-  const [links, setLinks] = useState<EventLinkItem[]>(initialLinks);
   const [description, setDescription] = useState(event.description ?? "");
   const [descriptionEu, setDescriptionEu] = useState(event.descriptionEu ?? "");
   const [imageUrl, setImageUrl] = useState(event.imageUrl ?? "");
@@ -249,7 +243,11 @@ export function EventEditForm({ event, venues, festivals, bands }: { event: Even
           <input id="ticketUrl" name="ticketUrl" type="url" defaultValue={event.ticketUrl ?? ""} className={inputClass} />
         </div>
       </div>
-      <EventLinksBuilder value={links} onChange={setLinks} />
+      <EventSocialLinksFields
+        defaultWebsiteUrl={event.websiteUrl ?? ""}
+        defaultInstagramUrl={event.instagramUrl ?? ""}
+        defaultFacebookUrl={event.facebookUrl ?? ""}
+      />
       <label className="flex cursor-pointer items-center gap-2">
         <input type="checkbox" name="isSoldOut" defaultChecked={event.isSoldOut} className="accent-punk-red" />
         <span className={labelClass}>Entradas agotadas (SOLD OUT)</span>

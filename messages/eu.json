@@ -5,7 +5,7 @@
       "events": "Ekitaldiak",
       "bands": "Taldeak",
       "scene": "Eskena",
-      "salas": "Aretoak",
+      "salas": "Guneak",
       "festivals": "Jaialdiak",
       "map": "Mapa",
       "guide": "Proiektua",
@@ -43,18 +43,18 @@
     "modalClose": "Onartu"
   },
   "eventForm": {
-    "venueLabel": "Aretoa / Jaialdia",
-    "venuePlaceholder": "Hautatu areto bat edo jaialdi bat",
+    "venueLabel": "Gunea / Jaialdia",
+    "venuePlaceholder": "Hautatu gune bat edo jaialdi bat",
     "venueEmpty": "Lekurik gabe / Berresten",
-    "venuesGroup": "Aretoak",
+    "venuesGroup": "Guneak",
     "festivalsGroup": "Jaialdiak",
-    "venueTextFree": "Erregistratu gabeko aretoa (testu librea)",
-    "venueTextLabel": "Lekuaren izena",
+    "venueTextFree": "Erregistratu gabeko gunea (testu librea)",
+    "venueTextLabel": "Gunearen izena",
     "venueTextPlaceholder": "Adib: Bar La Kasa, Sala Totem..."
   },
   "home": {
-    "tagline": "Nafarroa · Punk · Rock · Alternatiboa",
-    "subtitle": "Punk rock, rock urbano eta eskena alternatibo nafarroarraren radar kulturala. <green>Taldeak</green>, <red>ekitaldiak</red>, <pink>aretoak</pink> eta jaialdiak. Memoria kulturala eta eskena bizia.",
+    "tagline": "NAFARROA · EH · PUNK · ROCK",
+    "subtitle": "Nafarroa eta EHko rockaren radarra. <green>Taldeak</green>, <red>ekitaldiak</red>, <pink>guneak</pink> eta <yellow>jaialdiak</yellow> leku berean.",
     "cta": {
       "exploreEvents": "Arakatu ekitaldiak",
       "viewBands": "Ikusi taldeak",
@@ -63,6 +63,10 @@
     "upcomingEvents": {
       "title": "HURREngo EKITALDIAK",
       "viewAll": "Denak ikusi"
+    },
+    "featuredEvents": {
+      "title": "NABARMENDUTAKO EKITALDIAK",
+      "badge": "NABARMENDUA"
     },
     "explore": {
       "bands": {
@@ -76,6 +80,10 @@
       "announcements": {
         "title": "IRAGARKIAK",
         "desc": "Deialdiak, bilaketak eta aukerak"
+      },
+      "map": {
+        "title": "MAPA",
+        "desc": "Guneak eta jaialdiak mapan"
       },
       "scene": {
         "title": "ESKENA",
@@ -107,25 +115,25 @@
     },
     "metadata": {
       "title": "Nafarrock | Nafarroako rock gida",
-      "description": "Punk rock, rock urbano eta nafarroako eskena alternatiboko erreferentzia gida eta plataforma. Taldeak, jaialdiak, kontzertuak eta aretoak."
+      "description": "Punk rock, rock urbano eta nafarroako eskena alternatiboko erreferentzia gida eta plataforma. Taldeak, jaialdiak, kontzertuak eta guneak."
     }
   },
   "search": {
-    "placeholder": "Bilatu taldeak, ekitaldiak, aretoak, eskena...",
-    "hint": "Taldeak · Ekitaldiak · Aretoak · Jaialdiak",
-    "hintFull": "Taldeak · Ekitaldiak · Aretoak · Jaialdiak · Sustatzaileak · Antolatzaileak",
-    "label": "Bilatu taldeak, ekitaldiak, aretoak eta jaialdiak",
-    "labelFull": "Bilatu taldeak, ekitaldiak, aretoak, jaialdiak, sustatzaileak, antolatzaileak",
+    "placeholder": "Bilatu taldeak, ekitaldiak, guneak, eskena...",
+    "hint": "Taldeak · Ekitaldiak · Guneak · Jaialdiak",
+    "hintFull": "Taldeak · Ekitaldiak · Guneak · Jaialdiak · Sustatzaileak · Antolatzaileak",
+    "label": "Bilatu taldeak, ekitaldiak, guneak eta jaialdiak",
+    "labelFull": "Bilatu taldeak, ekitaldiak, guneak, jaialdiak, sustatzaileak, antolatzaileak",
     "metadata": {
       "title": "Bilatzailea",
-      "description": "Bilatu taldeak, ekitaldiak, aretoak, jaialdiak, sustatzaileak eta antolatzaileak"
+      "description": "Bilatu taldeak, ekitaldiak, guneak, jaialdiak, sustatzaileak eta antolatzaileak"
     }
   },
   "bands": {
     "title": "TALDEAK",
     "count": "{count} talde eskenan.",
     "count_other": "{count} talde eskenan.",
-    "empty": "Oraindik ez da talderik erregistratu. Laster edukia egongo da. Bitartean, arakatu ekitaldiak eta aretoak.",
+    "empty": "Oraindik ez da talderik erregistratu. Laster edukia egongo da. Bitartean, arakatu ekitaldiak eta guneak.",
     "metadata": {
       "title": "Taldeak",
       "description": "Nafarroako eskenako taldeak"
@@ -145,20 +153,33 @@
   },
   "map": {
     "title": "MAPA",
-    "description": "Nafarroako rock eskenako aretoen eta jaialdien mapa interaktiboa.",
-    "subtitle": "Aretoak eta jaialdiak mapan. {count} kokaleku.",
-    "subtitle_other": "Aretoak eta jaialdiak mapan. {count} kokaleku."
+    "description": "Nafarroako rock eskenako guneen eta jaialdien mapa interaktiboa.",
+    "subtitle": "Guneak eta jaialdiak mapan. {count} kokaleku.",
+    "subtitle_other": "Guneak eta jaialdiak mapan. {count} kokaleku.",
+    "filter": {
+      "label": "Filtratu",
+      "all": "Guztiak",
+      "TABERNA_BAR": "Tabernak",
+      "SALA_CONCIERTOS": "Kontzertu aretoak",
+      "RECINTO_ABIERTO": "Leku irekiak",
+      "GAZTETXE": "Gaztetxe",
+      "festival": "Jaialdiak",
+      "SIN_CATEGORIA": "Bestelakoak"
+    }
   },
   "scene": {
     "title": "ESKENA",
-    "subtitle": "Nafarroako rock eskenako aretoak eta jaialdiak.",
-    "subtitleFull": "Nafarroako rock eskena posible egiten duten aretoak, sustatzaileak, antolatzaileak, jaialdiak eta elkarteak.",
+    "subtitle": "Nafarroako rock eskenako guneak eta jaialdiak.",
+    "subtitleFull": "Nafarroako rock eskena posible egiten duten guneak, sustatzaileak, antolatzaileak, jaialdiak eta elkarteak.",
     "venues": {
-      "label": "Aretoak / Lekuak",
+      "label": "Guneak",
       "desc": "Eskena soinu egiten duen espazioak",
+      "count": "{count} gune Nafarroan.",
+      "count_other": "{count} gune Nafarroan.",
+      "empty": "Oraindik ez da gunerik erregistratu. Laster edukia egongo da. Bitartean, arakatu ekitaldiak eta taldeak.",
       "metadata": {
-        "title": "Aretoak eta espazioak",
-        "description": "Nafarroako rock eskenako kontzertu aretoak eta espazioak"
+        "title": "Guneak",
+        "description": "Nafarroako rock eskenako kontzertu guneak"
       }
     },
     "promoters": {
@@ -195,7 +216,7 @@
     },
     "metadata": {
       "title": "Eskena",
-      "description": "Nafarroako rock eskenako aretoak, sustatzaileak, antolatzaileak eta jaialdiak"
+      "description": "Nafarroako rock eskenako guneak, sustatzaileak, antolatzaileak eta jaialdiak"
     }
   },
   "guide": {
@@ -253,7 +274,7 @@
       "verificationExpired": "Egiaztapen esteka iraungitu da. Eskatu berri bat erregistrotik.",
       "verificationInvalid": "Egiaztapen esteka ez da baliozkoa. Dagoeneko erabili duzu agian.",
       "registered": "✓ Erregistroa osatuta. Hasi saioa zure panela atzitzeko.",
-      "registeredHint": "Talde, areto, jaialdi, sustatzaile edo antolatzaile bat erregistratu baduzu, administratzaileak zure eskaera onartzen duenean posta bat jasoko duzu.",
+      "registeredHint": "Talde, gune, jaialdi, sustatzaile edo antolatzaile bat erregistratu baduzu, administratzaileak zure eskaera onartzen duenean posta bat jasoko duzu.",
       "pendingDeletion": "Kontu hau ezabatzeko prozesuan dago",
       "pendingDeletionDate": " ({date}-(e)rako programatuta)",
       "pendingDeletionHint": "Orain sartzen bazara, ezabatze prozesua bertan behera geratuko da eta zure kontua mantenduko da.",
@@ -268,7 +289,7 @@
       "submit": "Sartu",
       "noAccount": "Ez duzu konturik?",
       "register": "Erregistratu",
-      "claimProfile": "Zure taldea, aretoa edo jaialdia Nafarrocken dago jada?",
+      "claimProfile": "Zure taldea, gunea edo jaialdia Nafarrocken dago jada?",
       "claimProfileLink": "Eskatu profila",
       "resendVerification": "Bidali berriro egiaztapen posta →",
       "continueWithGoogle": "Google bidez jarraitu",
@@ -316,7 +337,7 @@
   "filters": {
     "eventos": {
       "search": "Bilatu",
-      "searchPlaceholder": "Izenburua edo lekua (aretoa, hiria)...",
+      "searchPlaceholder": "Izenburua edo lekua (gunea, hiria)...",
       "type": "Mota",
       "all": "Guztiak",
       "concert": "Kontzertua",
@@ -354,11 +375,22 @@
     "registeredByNafarrock": "NAFARROCKEK ERREGISTRATUTAKO JAIALDIA",
     "from": "{year} urtetik",
     "upcoming": "Hurrengo ekitaldiak",
-    "toConfirm": "Baieztatzeke"
+    "toConfirm": "Baieztatzeke",
+    "nextEvent": "Hurrengo ekitaldia",
+    "buyTickets": "Sarrerak erosi",
+    "concert": "Kontzertua",
+    "festival": "Jaialdia",
+    "soldOut": "SOLD OUT"
+  },
+  "venueCategories": {
+    "TABERNA_BAR": "Taberna / Bar",
+    "SALA_CONCIERTOS": "Kontzertu aretoa",
+    "RECINTO_ABIERTO": "Leku irekia",
+    "GAZTETXE": "Gaztetxe"
   },
   "venueDetail": {
-    "backToVenues": "← Itzuli aretoetara",
-    "registeredByNafarrock": "NAFARROCKEK ERREGISTRATUTAKO ARETOA",
+    "backToVenues": "← Itzuli guneetara",
+    "registeredByNafarrock": "NAFARROCKEK ERREGISTRATUTAKO GUNEA",
     "from": "{year} urtetik",
     "capacity": "Edukiera: {count} lagun",
     "upcoming": "Hurrengo ekitaldiak",
@@ -468,7 +500,7 @@
       "inbox": "Postontzia",
       "inboxDesc": "Zure proposamenen jakinarazpenak",
       "admin": "Administrazioa",
-      "adminDesc": "CRUD taldeak, ekitaldiak, aretoak, erabiltzaileak",
+      "adminDesc": "CRUD taldeak, ekitaldiak, guneak, erabiltzaileak",
       "myBand": "Nire taldea",
       "myBandDesc": "Editatu profila, logotipoa, estekak",
       "myFestival": "Nire jaialdia",
@@ -479,8 +511,12 @@
       "myOrganizerDesc": "Editatu profila, logotipoa, sareak",
       "myPromoter": "Nire sustatzailea",
       "myPromoterDesc": "Editatu profila, logotipoa, sareak",
-      "myVenue": "Nire aretoa",
+      "myVenue": "Nire gunea",
       "myVenueDesc": "Editatu profila, logotipoa, sareak",
+      "nafarrockVenuesDesc": "Nafarrockek sortutako guneak (jabe gabe, eskaera jasotzen)",
+      "nafarrockVenuesTitle": "Nafarrock guneak ({count})",
+      "noVenuesNafarrock": "Ez da Nafarrockek sortutako gunerik. Sortu hemen",
+      "noVenueAssociated": "Ez duzu gune loturik. Erregistratu gune gisa zure profila sortzeko.",
       "myEvents": "Nire ekitaldiak",
       "myEventsDesc": "Sortu eta kudeatu kontzertuak",
       "proposeBand": "Taldea proposatu",
@@ -521,7 +557,7 @@
       "noName": "Izenik gabe",
       "entityType": {
         "band": "Taldea",
-        "venue": "Aretoa",
+        "venue": "Gunea",
         "festival": "Jaialdia",
         "association": "Elkartea",
         "organizer": "Antolatzailea",
@@ -616,7 +652,7 @@
           "doorsOptional": "Ateak (aukerakoa)",
           "doorsPlaceholder": "20:00",
           "doorsMultiPlaceholder": "18:00 egunero",
-          "venue": "Aretoa / Lekua (aukerakoa)",
+          "venue": "Gunea / Lekua (aukerakoa)",
           "venuePlaceholder": "Adib: Iruñeko zezen-plaza, Kirol-gunea...",
           "bands": "Taldeak (aukerakoa)",
           "bandsEmpty": "Ez da oraindik onartutako talderik. Ekitaldia talderik gabe proposa dezakezu.",
@@ -642,7 +678,7 @@
             "twitter": "X (Twitter)",
             "web": "Web"
           },
-          "typeLabel": "Etiketa (adib: Taldea, Aretoa)",
+          "typeLabel": "Etiketa (adib: Taldea, Gunea)",
           "typePlaceholder": "Taldearen Instagram",
           "url": "URLa",
           "urlPlaceholder": "https://instagram.com/...",
@@ -659,7 +695,7 @@
     "publishedByNafarrock": "NAFARROCKEK ARGITARATUTAKO EKITALDIA",
     "buyTickets": "Erosi sarrerak",
     "venue": "Lekua",
-    "viewVenue": "Ikusi aretoa →",
+    "viewVenue": "Ikusi gunea →",
     "viewOnMap": "Ikusi mapan →",
     "networksAndLinks": "Sareak eta estekak",
     "description": "Deskribapena",

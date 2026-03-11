@@ -65,7 +65,14 @@ export default async function AdminFestivalesPage({ searchParams }: Props) {
           <tbody>
             {festivals.map((f) => (
               <tr key={f.id} className="border-b border-punk-white/10">
-                <td className="py-3 font-display text-punk-white">{f.name}</td>
+                <td className="py-3">
+                  <Link
+                    href={`/festivales/${f.slug}`}
+                    className="font-display text-punk-white hover:text-punk-red"
+                  >
+                    {f.name}
+                  </Link>
+                </td>
                 <td className="py-3 font-body text-punk-white/70">
                   {f.user?.email ?? (
                     <span className="text-punk-red">Nafarrock</span>
@@ -85,6 +92,12 @@ export default async function AdminFestivalesPage({ searchParams }: Props) {
                 <td className="py-3">
                   <div className="flex flex-wrap items-center gap-2">
                     <ApproveButton entity="festival" id={f.id} approved={f.approved} />
+                    <Link
+                      href={`/admin/festivales/${f.id}/editar`}
+                      className="border-2 border-punk-white/30 px-3 py-1 font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:border-punk-pink hover:text-punk-pink"
+                    >
+                      Editar
+                    </Link>
                     <DeleteButton entity="festival" id={f.id} label="Borrar" />
                   </div>
                 </td>

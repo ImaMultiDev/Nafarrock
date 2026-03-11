@@ -6,6 +6,7 @@ import { PageLayout } from "@/components/ui/PageLayout";
 import { prisma } from "@/lib/prisma";
 import { DashboardNav, type NavItem } from "@/components/dashboard/DashboardNav";
 import { DashboardBackNav } from "@/components/dashboard/DashboardBackNav";
+import { DashboardContentAnimator } from "@/components/dashboard/DashboardContentAnimator";
 
 export default async function DashboardLayout({
   children,
@@ -75,9 +76,11 @@ export default async function DashboardLayout({
         <DashboardNav items={navItems} />
         <div className="min-w-0 flex-1">
           <DashboardBackNav />
-          <div className="rounded-xl border border-punk-white/5 bg-gradient-to-b from-punk-black/80 to-punk-black/40 p-6 shadow-inner sm:p-8 lg:p-10">
-            {children}
-          </div>
+          <DashboardContentAnimator>
+            <div className="rounded-xl border border-punk-white/5 bg-gradient-to-b from-punk-black/80 to-punk-black/40 p-6 shadow-inner sm:p-8 lg:p-10">
+              {children}
+            </div>
+          </DashboardContentAnimator>
         </div>
       </div>
     </PageLayout>

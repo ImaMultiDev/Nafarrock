@@ -11,10 +11,19 @@ const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
 const labelClass = "block font-punch text-xs uppercase tracking-widest text-punk-white/70";
 
+const VENUE_CATEGORIES = [
+  { value: "", label: "— Sin categoría —" },
+  { value: "TABERNA_BAR", label: "Taberna / Bar" },
+  { value: "SALA_CONCIERTOS", label: "Sala de conciertos" },
+  { value: "RECINTO_ABIERTO", label: "Recinto abierto" },
+  { value: "GAZTETXE", label: "Gaztetxe" },
+] as const;
+
 type Venue = {
   id: string;
   name: string;
   city: string;
+  category: string | null;
   address: string | null;
   description: string | null;
   descriptionEu?: string | null;
@@ -41,6 +50,7 @@ export function VenueEditForm({ venue }: { venue: Venue }) {
   const [logoUrl, setLogoUrl] = useState(venue.logoUrl ?? "");
   const [imageUrl, setImageUrl] = useState(venue.imageUrl ?? "");
   const [images, setImages] = useState<string[]>(venue.images ?? []);
+  const [category, setCategory] = useState(venue.category ?? "");
   const [latitude, setLatitude] = useState<number | null>(venue.latitude ?? null);
   const [longitude, setLongitude] = useState<number | null>(venue.longitude ?? null);
 
@@ -57,6 +67,10 @@ export function VenueEditForm({ venue }: { venue: Venue }) {
       body: JSON.stringify({
         name: formData.get("name"),
         city: formData.get("city"),
+        category: (() => {
+          const c = formData.get("category") as string;
+          return c && c.trim() ? c : null;
+        })(),
         address: formData.get("address") || null,
         description: description || null,
         descriptionEu: descriptionEu || null,
@@ -99,6 +113,22 @@ export function VenueEditForm({ venue }: { venue: Venue }) {
       <div>
         <label htmlFor="city" className={labelClass}>Ciudad *</label>
         <input id="city" name="city" type="text" required defaultValue={venue.city} className={inputClass} />
+      </div>
+      <div>
+        <label htmlFor="category" className={labelClass}>Categoría</label>
+        <select
+          id="category"
+          name="category"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className={inputClass}
+        >
+          {VENUE_CATEGORIES.map((c) => (
+            <option key={c.value || "empty"} value={c.value}>
+              {c.label}
+            </option>
+          ))}
+        </select>
       </div>
       <div>
         <label htmlFor="address" className={labelClass}>Dirección</label>
@@ -175,6 +205,8 @@ export function VenueEditForm({ venue }: { venue: Venue }) {
         </p>
         <div className="mt-2">
           <MapPickerWrapper
+            variant="venue"
+            category={category || undefined}
             value={latitude != null && longitude != null ? { lat: latitude, lng: longitude } : null}
             onChange={(lat, lng) => {
               setLatitude(lat);

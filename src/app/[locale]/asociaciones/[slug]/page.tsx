@@ -93,6 +93,11 @@ export default async function AsociacionPage({
           <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
             {association.name}
           </h1>
+          {links.length > 0 && (
+            <div className="mt-2">
+              <SocialLinks links={links} variant="yellow" />
+            </div>
+          )}
           {!association.userId && association.createdByNafarrock && (
             <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-yellow/90">
               {t("createdByNafarrock")}
@@ -121,11 +126,6 @@ export default async function AsociacionPage({
                   thumbnailClassName="h-24 w-24 object-cover border-2 border-punk-yellow/50 cursor-pointer"
                 />
               ))}
-            </div>
-          )}
-          {links.length > 0 && (
-            <div className="mt-6">
-              <SocialLinks links={links} variant="yellow" />
             </div>
           )}
         </div>

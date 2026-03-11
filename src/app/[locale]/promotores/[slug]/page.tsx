@@ -94,15 +94,15 @@ export default async function PromoterPage({
           <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
             {promoter.name}
           </h1>
+          {links.length > 0 && (
+            <div className="mt-2">
+              <SocialLinks links={links} variant="pink" />
+            </div>
+          )}
           {promoter.description && (
             <p className="mt-4 font-body leading-relaxed text-punk-white/80">
               {promoter.description}
             </p>
-          )}
-          {links.length > 0 && (
-            <div className="mt-6">
-              <SocialLinks links={links} variant="pink" />
-            </div>
           )}
         </div>
       </div>

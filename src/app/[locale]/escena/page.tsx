@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getPromoters } from "@/services/promoter.service";
@@ -22,6 +23,8 @@ export async function generateMetadata() {
 const RESTRICTED_TIPOS = ["promotor", "organizador", "asociacion"];
 
 export default async function EscenaPage() {
+  // Página no visible/ruteable por el momento - redirigir a inicio
+  redirect("/");
   const session = await getServerSession(authOptions);
   const showRestricted = canViewRestrictedEscena(session);
 

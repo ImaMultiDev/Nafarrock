@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getEventBySlug } from "@/services/event.service";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
+import Image from "next/image";
 import { format } from "date-fns";
 import { getTranslations, getLocale } from "next-intl/server";
 import { getDateLocale } from "@/lib/date-locale";
@@ -73,11 +74,20 @@ export default async function EventPage({
     ...(event.images ?? []),
   ];
 
-  const links: SocialLinkItem[] = (event.links ?? []).map((l) => ({
-    kind: l.kind as SocialLinkItem["kind"],
-    url: l.url,
-    label: l.label ?? undefined,
-  }));
+  const links: SocialLinkItem[] = [
+    ...(event.websiteUrl ? [{ kind: "web" as const, url: event.websiteUrl }] : []),
+    ...(event.instagramUrl ? [{ kind: "instagram" as const, url: event.instagramUrl }] : []),
+    ...(event.facebookUrl ? [{ kind: "facebook" as const, url: event.facebookUrl }] : []),
+    ...(event.links ?? [])
+      .filter((l) => l.url?.trim())
+      .filter((l) => {
+        if (l.kind === "web") return !event.websiteUrl;
+        if (l.kind === "instagram") return !event.instagramUrl;
+        if (l.kind === "facebook") return !event.facebookUrl;
+        return true;
+      })
+      .map((l) => ({ kind: l.kind as SocialLinkItem["kind"], url: l.url, label: l.label ?? undefined })),
+  ];
 
   return (
     <PageLayout>
@@ -112,6 +122,11 @@ export default async function EventPage({
             <h1 className="mt-4 font-display text-4xl tracking-tighter text-punk-white sm:text-5xl lg:text-6xl">
               {event.title}
             </h1>
+            {links.length > 0 && (
+              <div className="mt-2">
+                <SocialLinks links={links} variant="red" />
+              </div>
+            )}
             {event.createdByNafarrock && (
               <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-red/90">
                 {tEvent("publishedByNafarrock")}
@@ -226,19 +241,46 @@ export default async function EventPage({
           </div>
         )}
 
-        {/* Lugar */}
-        {(event.venue || event.venueText) && (
+        {/* Lugar / Festival */}
+        {(event.venue || event.venueText || event.festival) && (
           <div className="mt-12 border-l-4 border-punk-red bg-punk-black/50 p-6">
             <h2 className="font-punch text-xs uppercase tracking-widest text-punk-red/80">
-              {tEvent("venue")}
+              {event.venue || event.venueText ? tEvent("venue") : tEvent("festival")}
             </h2>
-            <p className="mt-2 font-display text-xl text-punk-white">
-              {event.venue ? event.venue.name : event.venueText}
-            </p>
+            <div className="mt-2 flex flex-wrap items-center gap-3">
+              {event.festival && !event.venue && (
+                <Link
+                  href={`/festivales/${event.festival.slug}`}
+                  className="block shrink-0 overflow-hidden rounded border-2 border-punk-red/50 bg-punk-black transition-all hover:border-punk-red"
+                >
+                  {event.festival.logoUrl ? (
+                    <Image
+                      src={event.festival.logoUrl}
+                      alt={event.festival.name}
+                      width={48}
+                      height={48}
+                      className="h-12 w-12 object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-12 w-12 items-center justify-center font-display text-lg text-punk-red/60">
+                      {event.festival.name.charAt(0)}
+                    </div>
+                  )}
+                </Link>
+              )}
+              <div>
+                <p className="font-display text-xl text-punk-white">
+                  {event.venue ? event.venue.name : event.venueText ?? (event.festival ? event.festival.name : "")}
+                </p>
+                {event.festival?.location && !event.venue && (
+                  <p className="mt-1 font-body text-punk-white/70">{event.festival.location}</p>
+                )}
+              </div>
+            </div>
             {event.venue && (
               <>
                 {event.venue.address && (
-                  <p className="font-body text-punk-white/70">{event.venue.address}</p>
+                  <p className="mt-2 font-body text-punk-white/70">{event.venue.address}</p>
                 )}
                 <p className="font-body text-punk-white/70">{event.venue.city}</p>
                 <div className="mt-4 flex flex-wrap gap-3">
@@ -264,17 +306,9 @@ export default async function EventPage({
           </div>
         )}
 
-        {/* Promotor / Festival / Organizador */}
-        {(event.festival || event.promoter || event.organizer) && (
+        {/* Promotor / Organizador (festival ya mostrado en Lugar con logo) */}
+        {(event.promoter || event.organizer) && (
           <div className="mt-10 flex flex-wrap gap-3">
-            {event.festival && (
-              <Link
-                href={`/festivales/${event.festival.slug}`}
-                className="border-2 border-punk-red/50 bg-punk-red/10 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-red transition-all hover:border-punk-red hover:bg-punk-red hover:text-punk-black"
-              >
-                Festival: {event.festival.name}
-              </Link>
-            )}
             {event.promoter && (
               <Link
                 href={`/promotores/${event.promoter.slug}`}
@@ -291,18 +325,6 @@ export default async function EventPage({
                 Organizador: {event.organizer.name}
               </Link>
             )}
-          </div>
-        )}
-
-        {/* Redes y enlaces */}
-        {links.length > 0 && (
-          <div className="mt-10">
-            <h2 className="font-punch text-xs uppercase tracking-widest text-punk-red/80">
-              {tEvent("networksAndLinks")}
-            </h2>
-            <div className="mt-3">
-              <SocialLinks links={links} variant="red" />
-            </div>
           </div>
         )}
 

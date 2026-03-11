@@ -5,7 +5,7 @@
       "events": "Eventos",
       "bands": "Bandas",
       "scene": "Escena",
-      "salas": "Salas",
+      "salas": "Espacios",
       "festivals": "Festivales",
       "map": "Mapa",
       "guide": "Proyecto",
@@ -43,18 +43,18 @@
     "modalClose": "Aceptar"
   },
   "eventForm": {
-    "venueLabel": "Sala / Festival",
-    "venuePlaceholder": "Selecciona una sala o festival",
+    "venueLabel": "Espacio / Festival",
+    "venuePlaceholder": "Selecciona un espacio o festival",
     "venueEmpty": "Sin local / Por confirmar",
-    "venuesGroup": "Salas",
+    "venuesGroup": "Espacios",
     "festivalsGroup": "Festivales",
-    "venueTextFree": "Sala no registrada (texto libre)",
-    "venueTextLabel": "Nombre del local",
+    "venueTextFree": "Espacio no registrado (texto libre)",
+    "venueTextLabel": "Nombre del espacio",
     "venueTextPlaceholder": "Ej: Bar La Kasa, Sala Totem..."
   },
   "home": {
-    "tagline": "Nafarroa · Punk · Rock · Alternativo",
-    "subtitle": "El radar cultural del punk rock, rock urbano y escena alternativa nafarroa. <green>Bandas</green>, <red>eventos</red>, <pink>salas</pink> y festivales. Memoria cultural y escena viva.",
+    "tagline": "NAFARROA · EH · PUNK · ROCK",
+    "subtitle": "El radar del rock en Nafarroa y EH. <green>Bandas</green>, <red>eventos</red>, <pink>espacios</pink> y <yellow>festivales</yellow> en un mismo lugar.",
     "cta": {
       "exploreEvents": "Explorar eventos",
       "viewBands": "Ver bandas",
@@ -63,6 +63,10 @@
     "upcomingEvents": {
       "title": "PRÓXIMOS EVENTOS",
       "viewAll": "Ver todos"
+    },
+    "featuredEvents": {
+      "title": "EVENTOS DESTACADOS",
+      "badge": "DESTACADO"
     },
     "explore": {
       "bands": {
@@ -77,10 +81,14 @@
         "title": "ANUNCIOS",
         "desc": "Convocatorias, búsquedas y oportunidades"
       },
+      "map": {
+        "title": "MAPA",
+        "desc": "Espacios y festivales en el mapa"
+      },
       "scene": {
         "title": "ESCENA",
-        "desc": "Salas y festivales",
-        "descFull": "Salas, promotores, organizadores, festivales"
+        "desc": "Espacios y festivales",
+        "descFull": "Espacios, promotores, organizadores, festivales"
       },
       "guide": {
         "title": "NAFARROCK",
@@ -107,25 +115,25 @@
     },
     "metadata": {
       "title": "Nafarrock | Guía del rock en Nafarroa",
-      "description": "La guía y plataforma de referencia del punk rock, rock urbano y escena alternativa nafarroa. Bandas, festivales, conciertos y salas."
+      "description": "La guía y plataforma de referencia del punk rock, rock urbano y escena alternativa nafarroa. Bandas, festivales, conciertos y espacios."
     }
   },
   "search": {
-    "placeholder": "Buscar bandas, eventos, salas, escena...",
-    "hint": "Bandas · Eventos · Salas · Festivales",
-    "hintFull": "Bandas · Eventos · Salas · Festivales · Promotores · Organizadores",
-    "label": "Buscar bandas, eventos, salas y festivales",
-    "labelFull": "Buscar bandas, eventos, salas, festivales, promotores, organizadores",
+    "placeholder": "Buscar bandas, eventos, espacios, escena...",
+    "hint": "Bandas · Eventos · Espacios · Festivales",
+    "hintFull": "Bandas · Eventos · Espacios · Festivales · Promotores · Organizadores",
+    "label": "Buscar bandas, eventos, espacios y festivales",
+    "labelFull": "Buscar bandas, eventos, espacios, festivales, promotores, organizadores",
     "metadata": {
       "title": "Buscador",
-      "description": "Busca bandas, eventos, salas, festivales, promotores y organizadores"
+      "description": "Busca bandas, eventos, espacios, festivales, promotores y organizadores"
     }
   },
   "bands": {
     "title": "BANDAS",
     "count": "{count} banda en la escena.",
     "count_other": "{count} bandas en la escena.",
-    "empty": "Aún no hay bandas registradas. Pronto habrá contenido. Mientras tanto, explora eventos y salas.",
+    "empty": "Aún no hay bandas registradas. Pronto habrá contenido. Mientras tanto, explora eventos y espacios.",
     "metadata": {
       "title": "Bandas",
       "description": "Bandas nafarroas de la escena"
@@ -145,20 +153,33 @@
   },
   "map": {
     "title": "MAPA",
-    "description": "Mapa interactivo de salas y festivales de la escena rock nafarroa.",
-    "subtitle": "Salas y festivales en el mapa. {count} ubicaciones.",
-    "subtitle_other": "Salas y festivales en el mapa. {count} ubicaciones."
+    "description": "Mapa interactivo de espacios y festivales de la escena rock nafarroa.",
+    "subtitle": "Espacios y festivales en el mapa. {count} ubicaciones.",
+    "subtitle_other": "Espacios y festivales en el mapa. {count} ubicaciones.",
+    "filter": {
+      "label": "Filtrar por",
+      "all": "Todos",
+      "TABERNA_BAR": "Tabernas",
+      "SALA_CONCIERTOS": "Salas de Conciertos",
+      "RECINTO_ABIERTO": "Espacios Abiertos",
+      "GAZTETXE": "Gaztetxe",
+      "festival": "Festivales",
+      "SIN_CATEGORIA": "Otros"
+    }
   },
   "scene": {
     "title": "ESCENA",
-    "subtitle": "Salas y festivales de la escena rock nafarroa.",
-    "subtitleFull": "Salas, promotores, organizadores, festivales y asociaciones que hacen posible la escena rock nafarroa.",
+    "subtitle": "Espacios y festivales de la escena rock nafarroa.",
+    "subtitleFull": "Espacios, promotores, organizadores, festivales y asociaciones que hacen posible la escena rock nafarroa.",
     "venues": {
-      "label": "Salas / Recintos",
+      "label": "Espacios",
       "desc": "Espacios donde suena la escena",
+      "count": "{count} espacio en Nafarroa.",
+      "count_other": "{count} espacios en Nafarroa.",
+      "empty": "Aún no hay espacios registrados. Pronto habrá contenido. Mientras tanto, explora eventos y bandas.",
       "metadata": {
-        "title": "Salas y espacios",
-        "description": "Salas de conciertos y espacios de la escena rock nafarroa"
+        "title": "Espacios",
+        "description": "Espacios de conciertos de la escena rock nafarroa"
       }
     },
     "promoters": {
@@ -195,7 +216,7 @@
     },
     "metadata": {
       "title": "Escena",
-      "description": "Salas, promotores, organizadores y festivales de la escena rock nafarroa"
+      "description": "Espacios, promotores, organizadores y festivales de la escena rock nafarroa"
     }
   },
   "guide": {
@@ -253,7 +274,7 @@
       "verificationExpired": "El enlace de verificación ha expirado. Solicita uno nuevo desde el registro.",
       "verificationInvalid": "Enlace de verificación no válido. Puede que ya lo hayas usado.",
       "registered": "✓ Registro completado. Inicia sesión para acceder a tu panel.",
-      "registeredHint": "Si registraste una banda, sala, festival, promotor u organizador, recibirás un email cuando el admin apruebe tu solicitud.",
+      "registeredHint": "Si registraste una banda, espacio, festival, promotor u organizador, recibirás un email cuando el admin apruebe tu solicitud.",
       "pendingDeletion": "Esta cuenta está en proceso de eliminación",
       "pendingDeletionDate": " (programada para el {date})",
       "pendingDeletionHint": "Si accedes ahora, el proceso de eliminación se cancelará y tu cuenta seguirá existiendo.",
@@ -268,7 +289,7 @@
       "submit": "Entrar",
       "noAccount": "¿No tienes cuenta?",
       "register": "Regístrate",
-      "claimProfile": "¿Tu banda, sala o festival ya está en Nafarrock?",
+      "claimProfile": "¿Tu banda, espacio o festival ya está en Nafarrock?",
       "claimProfileLink": "Reclamar perfil",
       "resendVerification": "Reenviar email de verificación →",
       "continueWithGoogle": "Continuar con Google",
@@ -316,7 +337,7 @@
   "filters": {
     "eventos": {
       "search": "Buscar",
-      "searchPlaceholder": "Título o lugar (sala, ciudad)...",
+      "searchPlaceholder": "Título o lugar (espacio, ciudad)...",
       "type": "Tipo",
       "all": "Todos",
       "concert": "Concierto",
@@ -354,11 +375,22 @@
     "registeredByNafarrock": "FESTIVAL REGISTRADO POR NAFARROCK",
     "from": "Desde {year}",
     "upcoming": "Próximos eventos",
-    "toConfirm": "Por confirmar"
+    "toConfirm": "Por confirmar",
+    "nextEvent": "Próximo evento",
+    "buyTickets": "Comprar entradas",
+    "concert": "Concierto",
+    "festival": "Festival",
+    "soldOut": "SOLD OUT"
+  },
+  "venueCategories": {
+    "TABERNA_BAR": "Taberna / Bar",
+    "SALA_CONCIERTOS": "Sala de conciertos",
+    "RECINTO_ABIERTO": "Recinto abierto",
+    "GAZTETXE": "Gaztetxe"
   },
   "venueDetail": {
-    "backToVenues": "← Volver a salas",
-    "registeredByNafarrock": "SALA REGISTRADA POR NAFARROCK",
+    "backToVenues": "← Volver a espacios",
+    "registeredByNafarrock": "ESPACIO REGISTRADO POR NAFARROCK",
     "from": "Desde {year}",
     "capacity": "Aforo: {count} personas",
     "upcoming": "Próximos eventos",
@@ -468,7 +500,7 @@
       "inbox": "Buzón",
       "inboxDesc": "Notificaciones sobre tus propuestas",
       "admin": "Administración",
-      "adminDesc": "CRUD bandas, eventos, salas, usuarios",
+      "adminDesc": "CRUD bandas, eventos, espacios, usuarios",
       "myBand": "Mi banda",
       "myBandDesc": "Editar perfil, logo, enlaces",
       "myFestival": "Mi festival",
@@ -479,8 +511,12 @@
       "myOrganizerDesc": "Editar perfil, logo, redes",
       "myPromoter": "Mi promotor",
       "myPromoterDesc": "Editar perfil, logo, redes",
-      "myVenue": "Mi sala",
+      "myVenue": "Mi espacio",
       "myVenueDesc": "Editar perfil, logo, redes",
+      "nafarrockVenuesDesc": "Espacios creados por Nafarrock (sin propietario, sujetos a reclamación)",
+      "nafarrockVenuesTitle": "Espacios Nafarrock ({count})",
+      "noVenuesNafarrock": "No hay espacios creados por Nafarrock. Créalos desde",
+      "noVenueAssociated": "No tienes un espacio asociado. Regístrate como espacio para crear tu perfil.",
       "myEvents": "Mis eventos",
       "myEventsDesc": "Crear y gestionar conciertos",
       "proposeBand": "Proponer banda",
@@ -521,7 +557,7 @@
       "noName": "Sin nombre",
       "entityType": {
         "band": "Banda",
-        "venue": "Sala",
+        "venue": "Espacio",
         "festival": "Festival",
         "association": "Asociación",
         "organizer": "Organizador",
@@ -616,7 +652,7 @@
           "doorsOptional": "Puertas (opcional)",
           "doorsPlaceholder": "20:00",
           "doorsMultiPlaceholder": "18:00 cada día",
-          "venue": "Sala / Recinto (opcional)",
+          "venue": "Espacio / Recinto (opcional)",
           "venuePlaceholder": "Ej: Plaza de toros de Pamplona, Polideportivo...",
           "bands": "Bandas (opcional)",
           "bandsEmpty": "No hay bandas aprobadas aún. Puedes proponer el evento sin bandas.",
@@ -659,7 +695,7 @@
     "publishedByNafarrock": "EVENTO PUBLICADO POR NAFARROCK",
     "buyTickets": "Comprar entradas",
     "venue": "Lugar",
-    "viewVenue": "Ver sala →",
+    "viewVenue": "Ver espacio →",
     "viewOnMap": "Ver en mapa →",
     "networksAndLinks": "Redes y enlaces",
     "description": "Descripción",

@@ -54,6 +54,7 @@ async function main() {
       name: "Sala Zentral",
       city: "Pamplona",
       address: "Calle ejemplo 1",
+      category: "SALA_CONCIERTOS",
       capacity: 400,
       isActive: true,
     },

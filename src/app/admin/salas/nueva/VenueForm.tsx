@@ -11,6 +11,14 @@ const inputClass =
   "mt-2 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-3 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-green focus:outline-none";
 const labelClass = "block font-punch text-xs uppercase tracking-widest text-punk-white/70";
 
+const VENUE_CATEGORIES = [
+  { value: "", label: "— Sin categoría —" },
+  { value: "TABERNA_BAR", label: "Taberna / Bar" },
+  { value: "SALA_CONCIERTOS", label: "Sala de conciertos" },
+  { value: "RECINTO_ABIERTO", label: "Recinto abierto" },
+  { value: "GAZTETXE", label: "Gaztetxe" },
+] as const;
+
 export function VenueForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -20,6 +28,7 @@ export function VenueForm() {
   const [logoUrl, setLogoUrl] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [images, setImages] = useState<string[]>([]);
+  const [category, setCategory] = useState("");
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
 
@@ -36,6 +45,10 @@ export function VenueForm() {
       body: JSON.stringify({
         name: formData.get("name"),
         city: formData.get("city"),
+        category: (() => {
+          const c = formData.get("category") as string;
+          return c && c.trim() ? c : undefined;
+        })(),
         address: formData.get("address") || undefined,
         description: description || undefined,
         descriptionEu: descriptionEu || undefined,
@@ -166,6 +179,8 @@ export function VenueForm() {
         </p>
         <div className="mt-2">
           <MapPickerWrapper
+            variant="venue"
+            category={category || undefined}
             value={latitude != null && longitude != null ? { lat: latitude, lng: longitude } : null}
             onChange={(lat, lng) => {
               setLatitude(lat);
@@ -200,7 +215,7 @@ export function VenueForm() {
           disabled={loading}
           className="border-2 border-punk-pink bg-punk-pink px-8 py-3 font-punch text-sm uppercase tracking-widest text-punk-black transition-all hover:bg-punk-pink/90 disabled:opacity-50"
         >
-          {loading ? "Creando..." : "Crear sala"}
+          {loading ? "Creando..." : "Crear espacio"}
         </button>
         <a
           href="/admin/salas"

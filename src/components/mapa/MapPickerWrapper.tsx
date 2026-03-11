@@ -12,6 +12,7 @@ type Props = {
   height?: number;
   zoom?: number;
   variant?: "venue" | "festival";
+  category?: string | null;
 };
 
 export function MapPickerWrapper(props: Props) {

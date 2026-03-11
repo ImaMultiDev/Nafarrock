@@ -30,17 +30,17 @@ export default async function AdminSalasPage({ searchParams }: Props) {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl">
-            SALAS
+            ESPACIOS
           </h1>
           <p className="mt-2 font-body text-punk-white/60">
-            {total} salas y espacios · {pending.length} pendientes de aprobar en esta página
+            {total} espacios · {pending.length} pendientes de aprobar en esta página
           </p>
         </div>
         <Link
           href="/admin/salas/nueva"
           className="border-2 border-punk-pink bg-punk-pink px-6 py-3 font-punch text-sm uppercase tracking-widest text-punk-black transition-all hover:bg-punk-pink/90"
         >
-          Registrar sala
+          Registrar espacio
         </Link>
       </div>
 
@@ -114,7 +114,7 @@ export default async function AdminSalasPage({ searchParams }: Props) {
       {venues.length === 0 && (
         <div className="mt-12 border-2 border-dashed border-punk-white/20 p-12 text-center">
           <p className="font-body text-punk-white/60">
-            No hay salas. Crea una con el botón "Registrar sala".
+            No hay espacios. Crea uno con el botón "Registrar espacio".
           </p>
         </div>
       )}

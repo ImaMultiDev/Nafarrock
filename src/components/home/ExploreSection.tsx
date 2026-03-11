@@ -5,10 +5,6 @@ import { useRef } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
-import { ESCENA_HIDDEN } from "@/lib/feature-flags";
-
-const EDITORIAL_MVP_MODE = true;
-
 export function ExploreSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
@@ -17,19 +13,27 @@ export function ExploreSection() {
 
   const links = [
     {
-      href: "/bandas",
-      titleKey: "bands.title" as const,
-      descKey: "bands.desc" as const,
-      color: "punk-green",
-      delay: 0,
-      size: "large",
-    },
-    {
       href: "/eventos",
       titleKey: "events.title" as const,
       descKey: "events.desc" as const,
       color: "punk-red",
+      delay: 0,
+      size: "large",
+    },
+    {
+      href: "/bandas",
+      titleKey: "bands.title" as const,
+      descKey: "bands.desc" as const,
+      color: "punk-green",
       delay: 0.1,
+      size: "small",
+    },
+    {
+      href: "/mapa",
+      titleKey: "map.title" as const,
+      descKey: "map.desc" as const,
+      color: "punk-acid",
+      delay: 0.15,
       size: "small",
     },
     {
@@ -37,28 +41,8 @@ export function ExploreSection() {
       titleKey: "announcements.title" as const,
       descKey: "announcements.desc" as const,
       color: "punk-yellow",
-      delay: 0.15,
+      delay: 0.2,
       size: "small",
-    },
-    ...(!ESCENA_HIDDEN
-      ? [
-          {
-            href: "/escena",
-            titleKey: "scene.title" as const,
-            descKey: EDITORIAL_MVP_MODE ? "scene.desc" : "scene.descFull",
-            color: "punk-acid",
-            delay: 0.2,
-            size: "small",
-          },
-        ]
-      : []),
-    {
-      href: "/guia",
-      titleKey: "guide.title" as const,
-      descKey: "guide.desc" as const,
-      color: "punk-pink",
-      delay: 0.35,
-      size: "large",
     },
   ];
 

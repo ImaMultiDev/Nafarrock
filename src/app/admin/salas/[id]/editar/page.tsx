@@ -14,7 +14,7 @@ export default async function EditarSalaPage({
   return (
     <>
       <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
-        Editar sala
+        Editar espacio
       </h1>
       <p className="mt-2 font-body text-punk-white/60">
         {venue.name}

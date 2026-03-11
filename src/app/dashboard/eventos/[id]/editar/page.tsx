@@ -20,7 +20,6 @@ export default async function EditarEventoDashboardPage({
       venue: true,
       festival: true,
       bands: { include: { band: true }, orderBy: { order: "asc" } },
-      links: true,
     },
   });
 

@@ -40,10 +40,10 @@ export default function AdminPage() {
           className="block border-2 border-punk-pink bg-punk-black p-6 transition-all hover:border-punk-pink hover:shadow-[0_0_30px_rgba(255,0,110,0.2)]"
         >
           <h2 className="font-display text-xl tracking-tighter text-punk-pink">
-            Salas
+            Espacios
           </h2>
           <p className="mt-2 font-body text-sm text-punk-white/70">
-            Espacios y venues
+            Salas, bares, gaztetxes y recintos
           </p>
         </Link>
         <Link

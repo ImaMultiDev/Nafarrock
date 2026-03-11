@@ -137,6 +137,11 @@ export default async function BandPage({
           <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
             {band.name}
           </h1>
+          {links.length > 0 && (
+            <div className="mt-2">
+              <SocialLinks links={links} variant="green" />
+            </div>
+          )}
           {!band.userId && band.createdByNafarrock && (
             <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-red/90">
               {t("registeredByNafarrock")}
@@ -186,12 +191,6 @@ export default async function BandPage({
               </ul>
             </div>
           )}
-          {links.length > 0 && (
-            <div className="mt-6">
-              <SocialLinks links={links} variant="green" />
-            </div>
-          )}
-
           {band.featuredVideoUrl && getYouTubeEmbedUrl(band.featuredVideoUrl) && (
             <div className="mt-6">
               <h3 className="font-display text-lg tracking-tighter text-punk-white">

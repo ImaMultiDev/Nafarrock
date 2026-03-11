@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
-import { EventLinksBuilder, type EventLinkItem } from "@/components/admin/EventLinksBuilder";
+import { EventSocialLinksFields } from "@/components/admin/EventSocialLinksFields";
 import { VenueFestivalSelect } from "@/components/admin/VenueFestivalSelect";
 
 const inputClass =
@@ -40,7 +40,6 @@ export function DashboardEventForm({
   const [imageUrl, setImageUrl] = useState("");
   const [images, setImages] = useState<string[]>([]);
   const [isMultiDay, setIsMultiDay] = useState(false);
-  const [links, setLinks] = useState<EventLinkItem[]>([]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -83,7 +82,9 @@ export function DashboardEventForm({
         description: formData.get("description") || undefined,
         price: formData.get("price") || undefined,
         ticketUrl: formData.get("ticketUrl") || undefined,
-        links: links.filter((l) => l.url?.trim()).map((l) => ({ kind: l.kind, url: l.url.trim(), label: l.label || "" })),
+        websiteUrl: formData.get("websiteUrl") || undefined,
+        instagramUrl: formData.get("instagramUrl") || undefined,
+        facebookUrl: formData.get("facebookUrl") || undefined,
         imageUrl: imageUrl || undefined,
         images: images,
         isSoldOut: (formData.get("isSoldOut") as string) === "on",
@@ -242,7 +243,7 @@ export function DashboardEventForm({
           <input id="ticketUrl" name="ticketUrl" type="url" className={inputClass} />
         </div>
       </div>
-      <EventLinksBuilder value={links} onChange={setLinks} />
+      <EventSocialLinksFields />
       <label className="flex cursor-pointer items-center gap-2">
         <input type="checkbox" name="isSoldOut" className="accent-punk-red" />
         <span className={labelClass}>Entradas agotadas (SOLD OUT)</span>

@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { SalaForm } from "./SalaForm";
 import { DashboardSection } from "@/components/dashboard/DashboardSection";
 import { Pagination } from "@/components/ui/Pagination";
+import { getTranslations } from "next-intl/server";
 
 const PAGE_SIZE = 12;
 
@@ -47,21 +48,23 @@ export default async function DashboardSalaPage({ searchParams }: Props) {
       })
     : null;
 
+  const t = await getTranslations("dashboard.cards");
+
   if (!venue) {
     return (
       <>
         <div className="mb-8">
           <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
-            Mi sala
+            {t("myVenue")}
           </h1>
           {isAdmin && (
             <p className="mt-2 font-body text-punk-white/60">
-              Salas creadas por Nafarrock (sin propietario, sujetas a reclamación)
+              {t("nafarrockVenuesDesc")}
             </p>
           )}
         </div>
         {isAdmin && nafarrockVenues.length > 0 ? (
-          <DashboardSection accent="pink" title={`Salas Nafarrock (${nafarrockVenuesTotal})`}>
+          <DashboardSection accent="pink" title={t("nafarrockVenuesTitle", { count: nafarrockVenuesTotal })}>
             <ul className="space-y-3">
               {nafarrockVenues.map((v) => (
                 <li
@@ -95,7 +98,7 @@ export default async function DashboardSalaPage({ searchParams }: Props) {
           </DashboardSection>
         ) : isAdmin ? (
           <p className="font-body text-punk-white/60">
-            No hay salas creadas por Nafarrock. Créalas desde{" "}
+            {t("noVenuesNafarrock")}{" "}
             <Link href="/admin/salas/nueva" className="text-punk-pink hover:underline">
               Administración
             </Link>
@@ -110,7 +113,7 @@ export default async function DashboardSalaPage({ searchParams }: Props) {
           </div>
         ) : (
           <p className="font-body text-punk-white/60">
-            No tienes una sala asociada. Regístrate como sala para crear tu perfil.
+            {t("noVenueAssociated")}
           </p>
         )}
       </>
@@ -121,7 +124,7 @@ export default async function DashboardSalaPage({ searchParams }: Props) {
     <>
       <div className="mb-8">
         <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
-          Mi sala
+          {t("myVenue")}
         </h1>
         <p className="mt-2 font-body text-punk-white/60">
           {venue.name}

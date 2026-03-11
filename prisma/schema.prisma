@@ -186,13 +186,21 @@ model BandMember {
 }
 
 // ============================================
-// SALAS Y ESPACIOS
+// ESPACIOS (antes Salas)
 // ============================================
+
+enum VenueCategory {
+  TABERNA_BAR
+  SALA_CONCIERTOS
+  RECINTO_ABIERTO
+  GAZTETXE
+}
 
 model Venue {
   id          String   @id @default(cuid())
   slug        String   @unique
   name        String
+  category    VenueCategory?
   description String?  @db.Text
   descriptionEu String? @db.Text // Traducción euskera (asistida por IA)
   address     String?
@@ -226,6 +234,7 @@ model Venue {
   @@index([city])
   @@index([isActive])
   @@index([approved])
+  @@index([category])
   @@map("venues")
 }
 
@@ -346,10 +355,14 @@ model Event {
   images           String[]  // Imágenes adicionales del cartel
   ticketUrl        String?
   price            String?
+  websiteUrl       String?
+  instagramUrl     String?
+  facebookUrl      String?
   abonos           String?   // Info de abonos
   capacity         Int?      // Aforo del evento
   isSoldOut        Boolean   @default(false)  // Sin entradas (SALA, FESTIVAL, ORGANIZADOR, PROMOTOR)
   isApproved       Boolean   @default(false)
+  isFeatured       Boolean   @default(false)  // Destacado en Hero (monetización)
   approvedAt       DateTime?
   createdByNafarrock Boolean @default(false)
   // Límite 1 evento cada 5 días - admin puede eximir
@@ -378,6 +391,7 @@ model Event {
   @@index([type])
   @@index([venueId])
   @@index([isApproved])
+  @@index([isFeatured])
   @@index([createdByUserId])
   @@map("events")
 }

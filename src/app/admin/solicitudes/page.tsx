@@ -75,7 +75,7 @@ export default async function AdminSolicitudesPage({ searchParams }: Props) {
 
   const typeLabels: Record<string, string> = {
     band: "Banda",
-    venue: "Sala",
+    venue: "Espacio",
     festival: "Festival",
     association: "Asociación",
     promoter: "Promotor",

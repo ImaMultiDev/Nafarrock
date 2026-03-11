@@ -3,7 +3,24 @@ import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin";
 import { z } from "zod";
 
+function cleanUrl(s: string | null | undefined): string | null {
+  if (s == null || s.trim() === "") return null;
+  return s;
+}
+
 const updateSchema = z.object({
+  name: z.string().min(1).optional(),
+  description: z.string().optional().nullable(),
+  descriptionEu: z.string().optional().nullable(),
+  location: z.string().optional().nullable(),
+  latitude: z.number().optional().nullable(),
+  longitude: z.number().optional().nullable(),
+  foundedYear: z.coerce.number().optional().nullable(),
+  logoUrl: z.string().url().optional().nullable().or(z.literal("")),
+  images: z.array(z.string().url()).optional(),
+  websiteUrl: z.string().url().optional().nullable().or(z.literal("")),
+  instagramUrl: z.string().url().optional().nullable().or(z.literal("")),
+  facebookUrl: z.string().url().optional().nullable().or(z.literal("")),
   approved: z.boolean().optional(),
 });
 
@@ -12,7 +29,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    await requireAdmin();
+    const session = await requireAdmin();
     const { id } = await params;
     const body = await req.json();
     const parsed = updateSchema.safeParse(body);
@@ -30,10 +47,23 @@ export async function PATCH(
     }
 
     const updateData: Record<string, unknown> = {};
+    if (data.name != null) updateData.name = data.name;
+    if (data.description !== undefined) updateData.description = data.description;
+    if (data.descriptionEu !== undefined) updateData.descriptionEu = data.descriptionEu;
+    if (data.location !== undefined) updateData.location = data.location;
+    if (data.latitude !== undefined) updateData.latitude = data.latitude;
+    if (data.longitude !== undefined) updateData.longitude = data.longitude;
+    if (data.foundedYear !== undefined) updateData.foundedYear = data.foundedYear;
+    if (data.logoUrl !== undefined) updateData.logoUrl = cleanUrl(data.logoUrl);
+    if (data.images !== undefined) updateData.images = data.images ?? [];
+    if (data.websiteUrl !== undefined) updateData.websiteUrl = cleanUrl(data.websiteUrl);
+    if (data.instagramUrl !== undefined) updateData.instagramUrl = cleanUrl(data.instagramUrl);
+    if (data.facebookUrl !== undefined) updateData.facebookUrl = cleanUrl(data.facebookUrl);
     if (data.approved != null) {
       updateData.approved = data.approved;
       if (data.approved) {
         updateData.approvedAt = new Date();
+        updateData.approvedBy = session.user.id;
       }
     }
 

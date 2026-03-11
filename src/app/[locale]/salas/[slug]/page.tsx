@@ -106,12 +106,28 @@ export default async function VenuePage({
           <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
             {venue.name}
           </h1>
+          {(() => {
+            const venueLinks: SocialLinkItem[] = [
+              ...(venue.websiteUrl ? [{ kind: "web" as const, url: venue.websiteUrl, label: "Web oficial" }] : []),
+              ...(venue.mapUrl ? [{ kind: "map" as const, url: venue.mapUrl, label: "Ver en mapa" }] : []),
+              ...(venue.instagramUrl ? [{ kind: "instagram" as const, url: venue.instagramUrl }] : []),
+              ...(venue.facebookUrl ? [{ kind: "facebook" as const, url: venue.facebookUrl }] : []),
+            ];
+            return venueLinks.length > 0 ? (
+              <div className="mt-2">
+                <SocialLinks links={venueLinks} variant="pink" />
+              </div>
+            ) : null;
+          })()}
           {!venue.userId && venue.createdByNafarrock && (
             <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-red/90">
               {t("registeredByNafarrock")}
             </p>
           )}
           <p className="mt-3 font-body text-punk-white/70">{venue.city}</p>
+        {venue.address && (
+          <p className="mt-2 font-body text-punk-white/70">📍 {venue.address}</p>
+        )}
         {venue.capacity && (
           <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-pink">
             {t("capacity", { count: venue.capacity })}
@@ -122,25 +138,6 @@ export default async function VenuePage({
           <p className="mt-8 font-body leading-relaxed text-punk-white/80">
             {displayDesc}
           </p>
-        )}
-
-        {(venue.address || venue.websiteUrl || venue.mapUrl || venue.instagramUrl || venue.facebookUrl) && (
-          <div className="mt-8 space-y-3">
-            {venue.address && (
-              <p className="font-body text-punk-white/70">📍 {venue.address}</p>
-            )}
-            {(() => {
-              const links: SocialLinkItem[] = [
-                ...(venue.websiteUrl ? [{ kind: "web" as const, url: venue.websiteUrl, label: "Web oficial" }] : []),
-                ...(venue.mapUrl ? [{ kind: "map" as const, url: venue.mapUrl, label: "Ver en mapa" }] : []),
-                ...(venue.instagramUrl ? [{ kind: "instagram" as const, url: venue.instagramUrl }] : []),
-                ...(venue.facebookUrl ? [{ kind: "facebook" as const, url: venue.facebookUrl }] : []),
-              ];
-              return links.length > 0 ? (
-                <SocialLinks links={links} variant="pink" />
-              ) : null;
-            })()}
-          </div>
         )}
 
         {(venue.events?.length ?? 0) > 0 && (

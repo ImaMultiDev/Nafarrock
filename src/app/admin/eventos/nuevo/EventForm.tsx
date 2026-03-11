@@ -6,7 +6,7 @@ import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 import { TranslateButton } from "@/components/admin/TranslateButton";
 import { BandSelector } from "@/components/admin/BandSelector";
-import { EventLinksBuilder, type EventLinkItem } from "@/components/admin/EventLinksBuilder";
+import { EventSocialLinksFields } from "@/components/admin/EventSocialLinksFields";
 import { VenueFestivalSelect } from "@/components/admin/VenueFestivalSelect";
 
 const inputClass =
@@ -31,7 +31,6 @@ export function EventForm({ venues, festivals, bands }: { venues: Venue[]; festi
   const [error, setError] = useState<string | null>(null);
   const [description, setDescription] = useState("");
   const [bandIds, setBandIds] = useState<string[]>([]);
-  const [links, setLinks] = useState<EventLinkItem[]>([]);
   const [descriptionEu, setDescriptionEu] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [images, setImages] = useState<string[]>([]);
@@ -74,7 +73,8 @@ export function EventForm({ venues, festivals, bands }: { venues: Venue[]; festi
       if (el) el.value = data.ticketUrl as string;
     }
     if (data.webUrl) {
-      setLinks([{ kind: "web", url: data.webUrl as string, label: "Web del evento" }]);
+      const el = form?.querySelector<HTMLInputElement>('[name="websiteUrl"]');
+      if (el) el.value = data.webUrl as string;
     }
   };
 
@@ -197,7 +197,9 @@ export function EventForm({ venues, festivals, bands }: { venues: Venue[]; festi
         description: formData.get("description") || undefined,
         price: formData.get("price") || undefined,
         ticketUrl: formData.get("ticketUrl") || undefined,
-        links: links.filter((l) => l.url?.trim()).map((l) => ({ kind: l.kind, url: l.url.trim(), label: l.label || "" })),
+        websiteUrl: formData.get("websiteUrl") || undefined,
+        instagramUrl: formData.get("instagramUrl") || undefined,
+        facebookUrl: formData.get("facebookUrl") || undefined,
         imageUrl: imageUrl || undefined,
         images,
         isSoldOut: (formData.get("isSoldOut") as string) === "on",
@@ -369,7 +371,7 @@ export function EventForm({ venues, festivals, bands }: { venues: Venue[]; festi
           <input id="ticketUrl" name="ticketUrl" type="url" className={inputClass} />
         </div>
       </div>
-      <EventLinksBuilder value={links} onChange={setLinks} />
+      <EventSocialLinksFields />
       <label className="flex cursor-pointer items-center gap-2">
         <input type="checkbox" name="isSoldOut" className="accent-punk-red" />
         <span className={labelClass}>Entradas agotadas (SOLD OUT)</span>

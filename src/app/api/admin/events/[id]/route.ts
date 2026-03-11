@@ -26,19 +26,14 @@ const updateSchema = z.object({
   descriptionEu: z.string().optional().nullable(),
   price: z.string().optional().nullable(),
   ticketUrl: z.string().url().optional().nullable().or(z.literal("")),
-  links: z
-    .array(
-      z.object({
-        kind: z.enum(["instagram", "facebook", "twitter", "web"]),
-        url: z.string().url(),
-        label: z.string().optional().default(""),
-      })
-    )
-    .optional(),
+  websiteUrl: z.string().url().optional().nullable().or(z.literal("")),
+  instagramUrl: z.string().url().optional().nullable().or(z.literal("")),
+  facebookUrl: z.string().url().optional().nullable().or(z.literal("")),
   imageUrl: z.string().optional().nullable(),
   images: z.array(z.string()).optional(),
   isSoldOut: z.boolean().optional(),
   isApproved: z.boolean().optional(),
+  isFeatured: z.boolean().optional(),
   eventLimitExempt: z.boolean().optional(),
   bandIds: z.array(z.string()).optional(),
 });
@@ -128,6 +123,7 @@ export async function PATCH(
         }
       }
     }
+    if (data.isFeatured != null) updateData.isFeatured = data.isFeatured;
     if (data.eventLimitExempt != null) updateData.eventLimitExempt = data.eventLimitExempt;
 
     if (data.bandIds !== undefined) {
@@ -139,21 +135,6 @@ export async function PATCH(
             bandId,
             order: idx,
             isHeadliner: idx === 0,
-          })),
-        });
-      }
-    }
-
-    if (data.links !== undefined) {
-      await prisma.eventLink.deleteMany({ where: { eventId: id } });
-      const validLinks = data.links.filter((l) => l.url?.trim());
-      if (validLinks.length > 0) {
-        await prisma.eventLink.createMany({
-          data: validLinks.map((l) => ({
-            eventId: id,
-            kind: l.kind,
-            url: l.url.trim(),
-            label: l.label?.trim() || null,
           })),
         });
       }

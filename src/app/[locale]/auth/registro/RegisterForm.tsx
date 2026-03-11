@@ -32,7 +32,7 @@ const EDITORIAL_MVP_MODE = true;
 const ROLES = [
   { value: "USUARIO", label: "Usuario", desc: "Cuenta básica" },
   { value: "BANDA", label: "Banda", desc: "Requiere aprobación del admin" },
-  { value: "SALA", label: "Sala / Espacio", desc: "Requiere aprobación" },
+  { value: "SALA", label: "Espacio", desc: "Requiere aprobación" },
   { value: "FESTIVAL", label: "Festival", desc: "Requiere aprobación" },
   {
     value: "ASOCIACION",

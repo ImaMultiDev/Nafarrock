@@ -5,6 +5,7 @@ import { es } from "date-fns/locale";
 import { isValid } from "date-fns";
 import { ApproveButton } from "@/components/admin/ApproveButton";
 import { DeleteButton } from "@/components/admin/DeleteButton";
+import { FeaturedToggleButton } from "@/components/admin/FeaturedToggleButton";
 import { Pagination } from "@/components/ui/Pagination";
 
 const PAGE_SIZE = 20;
@@ -94,6 +95,7 @@ export default async function AdminEventosPage({ searchParams }: Props) {
               >
                 {e.isApproved ? "Aprobado" : "Pendiente"}
               </span>
+              <FeaturedToggleButton eventId={e.id} featured={e.isFeatured} />
               <ApproveButton entity="event" id={e.id} approved={e.isApproved} />
               <Link
                 href={`/admin/eventos/${e.id}/editar`}

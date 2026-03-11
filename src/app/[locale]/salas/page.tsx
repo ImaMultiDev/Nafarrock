@@ -29,14 +29,16 @@ export default async function SalasPage({ searchParams }: Props) {
     page,
   });
 
+  const t = await getTranslations("scene.venues");
+
   return (
     <PageLayout>
       <div className="mb-10 sm:mb-16">
         <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl lg:text-7xl">
-          SALAS
+          {t("metadata.title").toUpperCase()}
         </h1>
         <p className="mt-3 max-w-xl font-body text-punk-white/60 sm:mt-4">
-          Espacios de la escena. {total} {total === 1 ? "sala" : "salas"} en Nafarroa.
+          {t("desc")}. {t(total === 1 ? "count" : "count_other", { count: total })}
         </p>
       </div>
 
@@ -98,7 +100,7 @@ export default async function SalasPage({ searchParams }: Props) {
       {venues.length === 0 && (
         <div className="border-2 border-punk-white/20 border-dashed p-16 text-center">
           <p className="font-body text-punk-white/60">
-            Aún no hay salas registradas. Pronto habrá contenido. Mientras tanto, explora eventos y bandas.
+            {t("empty")}
           </p>
           <Link href="/escena" className="mt-4 inline-block font-punch text-sm uppercase tracking-widest text-punk-pink hover:text-punk-pink/80 transition-colors">
             ← Volver a Escena

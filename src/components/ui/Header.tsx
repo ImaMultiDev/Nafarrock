@@ -8,6 +8,8 @@ import { createPortal } from "react-dom";
 import { useSession } from "next-auth/react";
 import { useState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
+import { signOut } from "next-auth/react";
+import { useLocale } from "next-intl";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
@@ -110,6 +112,7 @@ function isEscenaSubActive(pathname: string, href: string): boolean {
 
 export function Header() {
   const pathname = usePathname();
+  const locale = useLocale();
   const t = useTranslations("common.nav");
   const tCommon = useTranslations("common");
   const { data: session } = useSession();
@@ -227,7 +230,9 @@ export function Header() {
                   <button
                     type="button"
                     onClick={() => setSceneOpen(!sceneOpen)}
-                    className="flex items-center gap-1 font-punch text-xs uppercase tracking-widest text-punk-white/80 transition-colors hover:text-punk-green"
+                    className={`flex items-center gap-1 font-punch text-xs uppercase tracking-widest transition-colors hover:text-punk-green ${
+                      isEscenaActive(pathname) ? "nav-link-active text-punk-red" : "text-punk-white/80"
+                    }`}
                     aria-expanded={sceneOpen}
                     aria-haspopup="true"
                   >
@@ -245,7 +250,7 @@ export function Header() {
                           onClick={() => setSceneOpen(false)}
                           className={`relative whitespace-nowrap px-4 py-2 font-punch text-xs uppercase tracking-widest transition-colors hover:bg-punk-green/20 hover:text-punk-green ${
                             isEscenaSubActive(pathname, sub.href)
-                              ? "text-punk-red after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:skew-x-[-12deg] after:bg-punk-red after:content-['']"
+                              ? "nav-link-active text-punk-red after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:skew-x-[-12deg] after:bg-punk-red after:content-['']"
                               : "text-punk-white/90"
                           }`}
                         >
@@ -258,29 +263,13 @@ export function Header() {
               );
             }
             const active = isActivePath(pathname, link.href);
-            const isEventos = link.href === "/eventos";
-            if (isEventos) {
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`nav-link-special relative font-punch text-xs uppercase tracking-widest transition-colors hover:text-punk-green ${
-                    active
-                      ? "text-punk-red after:absolute after:bottom-[-4px] after:left-0 after:right-0 after:h-[2px] after:skew-x-[-12deg] after:bg-punk-red after:content-['']"
-                      : "text-punk-white"
-                  }`}
-                >
-                  {t(link.labelKey)}
-                </Link>
-              );
-            }
             return (
               <Link
                 key={link.href}
                 href={link.href}
                 className={`relative font-punch text-xs uppercase tracking-widest transition-colors hover:text-punk-green ${
                   active
-                    ? "text-punk-red after:absolute after:bottom-[-4px] after:left-0 after:right-0 after:h-[2px] after:skew-x-[-12deg] after:bg-punk-red after:content-['']"
+                    ? "nav-link-active text-punk-red after:absolute after:bottom-[-4px] after:left-0 after:right-0 after:h-[2px] after:skew-x-[-12deg] after:bg-punk-red after:content-['']"
                     : "text-punk-white/80"
                 }`}
               >
@@ -291,10 +280,10 @@ export function Header() {
           {session && !EDITORIAL_MVP_MODE && (
             <Link
               href="/bolos"
-              className={`nav-link-special relative shrink-0 font-punch text-xs uppercase tracking-widest transition-colors hover:text-punk-green ${
+              className={`relative shrink-0 font-punch text-xs uppercase tracking-widest transition-colors hover:text-punk-green ${
                 isActivePath(pathname, "/bolos-nav")
-                  ? "text-punk-red after:absolute after:bottom-[-4px] after:left-0 after:right-0 after:h-[2px] after:skew-x-[-12deg] after:bg-punk-red after:content-['']"
-                  : "text-punk-white"
+                  ? "nav-link-active text-punk-red after:absolute after:bottom-[-4px] after:left-0 after:right-0 after:h-[2px] after:skew-x-[-12deg] after:bg-punk-red after:content-['']"
+                  : "text-punk-white/80"
               }`}
             >
               {t("bolos")}
@@ -308,7 +297,7 @@ export function Header() {
                 href={guideLink.href}
                 className={`relative font-punch text-xs uppercase tracking-widest transition-colors hover:text-punk-green ${
                   active
-                    ? "text-punk-red after:absolute after:bottom-[-4px] after:left-0 after:right-0 after:h-[2px] after:skew-x-[-12deg] after:bg-punk-red after:content-['']"
+                    ? "nav-link-active text-punk-red after:absolute after:bottom-[-4px] after:left-0 after:right-0 after:h-[2px] after:skew-x-[-12deg] after:bg-punk-red after:content-['']"
                     : "text-punk-white/80"
                 }`}
               >
@@ -410,12 +399,14 @@ export function Header() {
                         key={link.labelKey}
                         className="border-l-4 border-transparent"
                       >
-                        <button
-                          type="button"
-                          onClick={() => setSceneMobileOpen(!sceneMobileOpen)}
-                          className="flex w-full items-center justify-between rounded-r px-4 py-3 font-punch text-sm uppercase tracking-widest text-punk-white/90 transition-colors hover:bg-punk-white/10 hover:text-punk-green"
-                          aria-expanded={sceneMobileOpen}
-                        >
+<button
+                        type="button"
+                        onClick={() => setSceneMobileOpen(!sceneMobileOpen)}
+                        className={`flex w-full items-center justify-between rounded-r px-4 py-3 font-punch text-sm uppercase tracking-widest transition-colors hover:bg-punk-white/10 hover:text-punk-green ${
+                          isEscenaActive(pathname) ? "nav-link-active text-punk-red" : "text-punk-white/90"
+                        }`}
+                        aria-expanded={sceneMobileOpen}
+                      >
                           {t(link.labelKey)}
                           <ChevronDown
                             className={`h-4 w-4 shrink-0 transition-transform duration-200 ${
@@ -442,7 +433,7 @@ export function Header() {
                                   }}
                                   className={`block rounded-r px-6 py-2 font-punch text-sm uppercase tracking-widest transition-colors hover:bg-punk-white/10 hover:text-punk-green ${
                                     isEscenaSubActive(pathname, sub.href)
-                                      ? "border-l-4 border-punk-red bg-punk-red/10 text-punk-red"
+                                      ? "nav-link-active border-l-4 border-punk-red bg-punk-red/10 text-punk-red"
                                       : "border-l-4 border-transparent text-punk-white/90"
                                   }`}
                                 >
@@ -456,23 +447,6 @@ export function Header() {
                     );
                   }
                   const active = isActivePath(pathname, link.href);
-                  const isEventos = link.href === "/eventos";
-                  if (isEventos) {
-                    return (
-                      <Link
-                        key={link.href}
-                        href={link.href}
-                        onClick={() => setMenuOpen(false)}
-                        className={`nav-link-special relative rounded px-4 py-3 font-punch text-sm uppercase tracking-widest transition-colors hover:bg-punk-white/10 hover:text-punk-green ${
-                          active
-                            ? "border-l-4 border-punk-red bg-punk-red/10 text-punk-red"
-                            : "border-l-4 border-transparent text-punk-white"
-                        }`}
-                      >
-                        {t(link.labelKey)}
-                      </Link>
-                    );
-                  }
                   return (
                     <Link
                       key={link.href}
@@ -480,8 +454,8 @@ export function Header() {
                       onClick={() => setMenuOpen(false)}
                       className={`rounded px-4 py-3 font-punch text-sm uppercase tracking-widest transition-colors hover:bg-punk-white/10 hover:text-punk-green ${
                         active
-                          ? "border-l-4 border-punk-red bg-punk-red/10 text-punk-red"
-                          : "text-punk-white/90"
+                          ? "nav-link-active border-l-4 border-punk-red bg-punk-red/10 text-punk-red"
+                          : "border-l-4 border-transparent text-punk-white/90"
                       }`}
                     >
                       {t(link.labelKey)}
@@ -492,10 +466,10 @@ export function Header() {
                   <Link
                     href="/bolos"
                     onClick={() => setMenuOpen(false)}
-                    className={`nav-link-special relative rounded px-4 py-3 font-punch text-sm uppercase tracking-widest transition-colors hover:bg-punk-white/10 hover:text-punk-green ${
+                    className={`rounded px-4 py-3 font-punch text-sm uppercase tracking-widest transition-colors hover:bg-punk-white/10 hover:text-punk-green ${
                       isActivePath(pathname, "/bolos-nav")
-                        ? "border-l-4 border-punk-red bg-punk-red/10 text-punk-red"
-                        : "border-l-4 border-transparent text-punk-white"
+                        ? "nav-link-active border-l-4 border-punk-red bg-punk-red/10 text-punk-red"
+                        : "border-l-4 border-transparent text-punk-white/90"
                     }`}
                   >
                     {t("bolos")}
@@ -510,7 +484,7 @@ export function Header() {
                       onClick={() => setMenuOpen(false)}
                       className={`rounded px-4 py-3 font-punch text-sm uppercase tracking-widest transition-colors hover:bg-punk-white/10 hover:text-punk-green ${
                         active
-                          ? "border-l-4 border-punk-red bg-punk-red/10 text-punk-red"
+                          ? "nav-link-active border-l-4 border-punk-red bg-punk-red/10 text-punk-red"
                           : "text-punk-white/90"
                       }`}
                     >
@@ -523,7 +497,7 @@ export function Header() {
                     <NextLink
                       href="/dashboard"
                       onClick={() => setMenuOpen(false)}
-                      className="mt-2 rounded border-2 border-punk-red bg-punk-red px-4 py-3 text-center font-punch text-xs uppercase tracking-widest text-punk-white"
+                      className="mt-2 rounded border-2 border-punk-green bg-punk-green px-4 py-3 text-center font-punch text-xs uppercase tracking-widest text-punk-white transition-colors hover:bg-transparent hover:text-punk-green"
                     >
                       {t("panel")}
                     </NextLink>
@@ -531,6 +505,16 @@ export function Header() {
                       variant="mobile-list"
                       onNavigate={() => setMenuOpen(false)}
                     />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        signOut({ callbackUrl: locale === "eu" ? "/eu" : "/" });
+                      }}
+                      className="mt-4 rounded border-2 border-punk-red bg-punk-red px-4 py-3 text-center font-punch text-xs uppercase tracking-widest text-punk-white transition-colors hover:bg-transparent hover:text-punk-red"
+                    >
+                      {t("logout")}
+                    </button>
                   </>
                 ) : (
                   <div className="mt-2 flex flex-col gap-2">

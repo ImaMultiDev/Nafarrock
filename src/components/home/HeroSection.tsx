@@ -4,7 +4,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { UpcomingEventsHero } from "./UpcomingEventsHero";
+import { FeaturedEventsHero } from "./FeaturedEventsHero";
 
 const EDITORIAL_MVP_MODE = true;
 
@@ -21,12 +21,11 @@ type EventItem = {
 };
 
 type Props = {
-  upcomingEvents?: EventItem[];
+  featuredEvents?: EventItem[];
 };
 
-export function HeroSection({ upcomingEvents = [] }: Props) {
+export function HeroSection({ featuredEvents = [] }: Props) {
   const t = useTranslations("home");
-  const tActions = useTranslations("common.actions");
   return (
     <section className="relative min-h-0 overflow-hidden bg-punk-black sm:min-h-hero-cap">
       {/* Grid sutil de fondo */}
@@ -96,7 +95,7 @@ export function HeroSection({ upcomingEvents = [] }: Props) {
       </div>
 
       {/* Contenido principal - misma estructura que EXPLORA: padding fuera, max-w-7xl sin padding */}
-      <div className="relative z-10 flex min-h-0 flex-col justify-start px-6 pt-14 pb-section-gap sm:min-h-hero-cap sm:px-12 sm:pt-20 sm:pb-section-gap lg:px-20 lg:pt-24 lg:pb-section-gap max-[299px]:px-3 max-[299px]:pt-10">
+      <div className="relative z-10 flex min-h-0 flex-col justify-start px-6 pt-14 pb-6 sm:min-h-hero-cap sm:px-12 sm:pt-20 sm:pb-8 lg:px-20 lg:pt-24 lg:pb-8 max-[299px]:px-3 max-[299px]:pt-10">
         <div className="mx-auto w-full max-w-7xl 2xl:max-w-content-wide">
           <div className="flex flex-col gap-10 lg:flex-row lg:items-start lg:justify-between lg:gap-12">
           <motion.div
@@ -145,15 +144,18 @@ export function HeroSection({ upcomingEvents = [] }: Props) {
               pink: (chunks) => (
                 <span className="font-bold text-punk-pink">{chunks}</span>
               ),
+              yellow: (chunks) => (
+                <span className="font-bold text-punk-yellow">{chunks}</span>
+              ),
             })}
           </motion.p>
 
-          {/* CTA buttons - centrados en mobile */}
+          {/* CTA: primario sólido + secundario ghost (jerarquía visual) */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.5, duration: 0.5 }}
-            className="mt-10 flex flex-wrap justify-center gap-4 sm:mt-12 sm:gap-5 lg:justify-start"
+            className="mt-6 flex flex-wrap justify-center gap-4 sm:mt-8 sm:gap-5 lg:justify-start"
           >
             <Link
               href="/eventos"
@@ -163,7 +165,7 @@ export function HeroSection({ upcomingEvents = [] }: Props) {
             </Link>
             <Link
               href="/bandas"
-              className="border-2 border-punk-green bg-transparent px-8 py-4 font-punch text-sm uppercase tracking-widest text-punk-green transition-all duration-300 hover:bg-punk-green hover:text-punk-black hover:scale-105"
+              className="border-2 border-punk-green bg-transparent px-8 py-4 font-punch text-sm uppercase tracking-widest text-punk-green transition-all duration-300 hover:bg-punk-green/10 hover:text-punk-green"
             >
               {t("cta.viewBands")}
             </Link>
@@ -178,39 +180,11 @@ export function HeroSection({ upcomingEvents = [] }: Props) {
           </motion.div>
           </motion.div>
 
-          {upcomingEvents.length > 0 && (
-            <UpcomingEventsHero
-              events={upcomingEvents}
-              title={t("upcomingEvents.title")}
-              viewAllLabel={t("upcomingEvents.viewAll")}
-            />
+          {featuredEvents.length > 0 && (
+            <FeaturedEventsHero events={featuredEvents} />
           )}
           </div>
 
-          {/* Scroll indicator - centrado horizontalmente en la sección, en el flujo */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 2, duration: 0.5 }}
-            className="mt-section-gap flex w-full justify-center"
-          >
-            <motion.div
-              animate={{ y: [0, 8, 0] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="flex flex-col items-center gap-2"
-            >
-              <span className="font-punch text-xs uppercase tracking-widest text-punk-white/50">
-                {tActions("explore")}
-              </span>
-              <div className="h-10 w-6 rounded-full border-2 border-punk-white/30 p-1">
-                <motion.div
-                  animate={{ y: [0, 12, 0], opacity: [1, 0, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="mx-auto h-1.5 w-1.5 rounded-full bg-punk-green"
-                />
-              </div>
-            </motion.div>
-          </motion.div>
         </div>
       </div>
 

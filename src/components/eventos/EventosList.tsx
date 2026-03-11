@@ -17,6 +17,7 @@ type EventItem = {
   imageUrl: string | null;
   venue: { name: string; city: string } | null;
   venueText: string | null;
+  festival: { name: string; slug: string; location: string | null } | null;
   isSoldOut?: boolean;
 };
 
@@ -93,7 +94,7 @@ export function EventosList({ events }: Props) {
                   <p className="mt-1 font-body text-punk-white/70">
                     {event.venue
                       ? `${event.venue.name} · ${event.venue.city}`
-                      : event.venueText ?? ""}
+                      : event.festival?.location ?? event.venueText ?? ""}
                   </p>
                 </div>
                 <div className="flex shrink-0 flex-wrap gap-2">

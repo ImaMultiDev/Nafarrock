@@ -52,6 +52,7 @@ export async function getEvents(filters: EventFilters = {}) {
       orderBy: { date: "asc" },
       include: {
         venue: true,
+        festival: true,
         bands: { include: { band: true } },
         links: true,
       },
@@ -62,6 +63,19 @@ export async function getEvents(filters: EventFilters = {}) {
   ]);
 
   return { items, total, page, pageSize };
+}
+
+/** Eventos destacados para el Hero (máx. 4, los más próximos) */
+export async function getFeaturedEvents(limit = 4) {
+  return prisma.event.findMany({
+    where: { isApproved: true, isFeatured: true, date: { gte: startOfToday() } },
+    orderBy: { date: "asc" },
+    take: limit,
+    include: {
+      venue: true,
+      bands: { include: { band: true }, orderBy: { order: "asc" } },
+    },
+  });
 }
 
 export async function getEventBySlug(slug: string) {

@@ -21,16 +21,9 @@ const createSchema = z.object({
   descriptionEu: z.string().optional(),
   price: z.string().optional(),
   ticketUrl: z.string().url().optional().or(z.literal("")),
-  links: z
-    .array(
-      z.object({
-        kind: z.enum(["instagram", "facebook", "twitter", "web"]),
-        url: z.string().url(),
-        label: z.string().optional().default(""),
-      })
-    )
-    .optional()
-    .default([]),
+  websiteUrl: z.string().url().optional().nullable().or(z.literal("")),
+  instagramUrl: z.string().url().optional().nullable().or(z.literal("")),
+  facebookUrl: z.string().url().optional().nullable().or(z.literal("")),
   imageUrl: z.string().optional().nullable(),
   images: z.array(z.string()).optional().default([]),
   isSoldOut: z.boolean().optional().default(false),
@@ -85,6 +78,9 @@ export async function POST(req: Request) {
         descriptionEu: data.descriptionEu || null,
         price: data.price || null,
         ticketUrl: data.ticketUrl || null,
+        websiteUrl: data.websiteUrl?.trim() || null,
+        instagramUrl: data.instagramUrl?.trim() || null,
+        facebookUrl: data.facebookUrl?.trim() || null,
         imageUrl: data.imageUrl || null,
         images: data.images ?? [],
         isSoldOut: data.isSoldOut ?? false,
@@ -98,15 +94,6 @@ export async function POST(req: Request) {
             order: idx,
             isHeadliner: idx === 0,
           })),
-        },
-        links: {
-          create: (data.links ?? [])
-            .filter((l) => l.url?.trim())
-            .map((l) => ({
-              kind: l.kind,
-              url: l.url.trim(),
-              label: l.label?.trim() || null,
-            })),
         },
       },
     });

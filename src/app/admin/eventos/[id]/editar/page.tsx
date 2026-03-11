@@ -14,7 +14,6 @@ export default async function EditarEventoPage({
       venue: true,
       festival: true,
       bands: { include: { band: true } },
-      links: true,
     },
   });
   if (!event) notFound();

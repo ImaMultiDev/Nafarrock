@@ -83,15 +83,15 @@ export function DashboardNav({ items }: { items: NavItem[] }) {
           <button
             type="button"
             onClick={() => signOut({ callbackUrl: signOutCallbackUrl })}
-            className="mt-4 flex items-center gap-3 rounded-lg border-2 border-punk-white/20 px-4 py-3 font-punch text-sm uppercase tracking-widest text-punk-white/60 transition-colors hover:border-punk-red/50 hover:bg-punk-red/5 hover:text-punk-red"
+            className="mt-4 flex items-center gap-3 rounded-lg border-2 border-punk-red bg-punk-red px-4 py-3 font-punch text-sm uppercase tracking-widest text-punk-white transition-colors hover:bg-transparent hover:text-punk-red"
           >
-            Salir
+            {t("logout")}
           </button>
         </nav>
       </aside>
 
-      {/* Mobile: botones que envuelven en varias filas */}
-      <div className="mb-6 flex flex-wrap gap-2 lg:hidden">
+      {/* Mobile: ocultos (redundantes con las tarjetas del dashboard) */}
+      <div className="mb-6 hidden flex-wrap gap-2 lg:hidden">
         {items.map((item) => {
           const Icon = ICONS[item.icon];
           const accent = item.accent ?? "green";
