@@ -194,7 +194,25 @@ export function Header() {
         {/* Logo a la izquierda + NAFARROCK centrado y más grande en mobile */}
         <div className="flex flex-1 items-center nav:flex-initial">
           <Link
-            href="/"
+            href={
+              pathname.startsWith("/mapa")
+                ? "/mapa"
+                : pathname.startsWith("/eventos")
+                  ? "/eventos"
+                  : pathname.startsWith("/bandas")
+                    ? "/bandas"
+                    : pathname.startsWith("/salas")
+                      ? "/salas"
+                      : pathname.startsWith("/festivales")
+                        ? "/festivales"
+                        : pathname.startsWith("/tablon")
+                          ? "/tablon"
+                          : pathname.startsWith("/dashboard/buzon")
+                            ? "/dashboard/buzon"
+                            : pathname === "/dashboard" || pathname === "/dashboard/"
+                              ? "/dashboard"
+                              : "/"
+            }
             className="flex shrink-0 items-center transition-opacity hover:opacity-90"
           >
             {pathname.startsWith("/mapa") ? (

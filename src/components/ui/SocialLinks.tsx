@@ -91,6 +91,8 @@ type SocialLinksProps = {
   variant?: "green" | "pink" | "red" | "yellow";
   /** Mostrar texto junto al icono (por defecto true para mejor UX) */
   showLabels?: boolean;
+  /** Solo iconos, tamaño táctil para mobile (min 44px) */
+  iconOnly?: boolean;
   className?: string;
 };
 
@@ -114,13 +116,18 @@ const kindLabels: Record<SocialLinkKind, string> = {
   merch: "Tienda",
 };
 
-export function SocialLinks({ links, variant = "green", showLabels = true, className = "" }: SocialLinksProps) {
+export function SocialLinks({ links, variant = "green", showLabels = true, iconOnly = false, className = "" }: SocialLinksProps) {
   if (links.length === 0) return null;
 
   const style = variantStyles[variant];
+  const showText = showLabels && !iconOnly;
+  const linkClass = iconOnly
+    ? "inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded border-2 p-3 transition-all hover:scale-105 [&>svg]:h-6 [&>svg]:w-6"
+    : "inline-flex items-center justify-center gap-2 rounded border-2 px-4 py-2.5 transition-all hover:scale-105";
+  const wrapperGap = iconOnly ? "gap-4" : "gap-3";
 
   return (
-    <div className={`flex flex-wrap items-center gap-3 ${className}`} role="group" aria-label="Redes y enlaces">
+    <div className={`flex flex-wrap items-center ${wrapperGap} ${className}`} role="group" aria-label="Redes y enlaces">
       {links.map(({ kind, url, label }) => {
         const isExternal = !url.startsWith("mailto:") && !url.startsWith("/");
         const ariaLabel = label ?? kindLabels[kind];
@@ -130,7 +137,7 @@ export function SocialLinks({ links, variant = "green", showLabels = true, class
             href={url}
             target={isExternal ? "_blank" : undefined}
             rel={isExternal ? "noopener noreferrer" : undefined}
-            className={`inline-flex items-center justify-center gap-2 rounded border-2 px-4 py-2.5 transition-all hover:scale-105 ${style}`}
+            className={`${linkClass} ${style}`}
             aria-label={ariaLabel}
             title={ariaLabel}
           >
@@ -144,7 +151,7 @@ export function SocialLinks({ links, variant = "green", showLabels = true, class
             {kind === "map" && <MapIcon />}
             {kind === "email" && <EmailIcon />}
             {kind === "merch" && <MerchIcon />}
-            {showLabels && (
+            {showText && (
               <span className="font-punch text-xs uppercase tracking-widest">{ariaLabel}</span>
             )}
           </a>

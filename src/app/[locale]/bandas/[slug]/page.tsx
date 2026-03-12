@@ -90,22 +90,197 @@ export default async function BandPage({
         : t("status.active");
   const statusKey = band.status === "INACTIVE" ? "inactive" : band.status === "PAUSED" ? "paused" : "active";
 
+  const mainImg = band.logoUrl || band.imageUrl || (band.images && band.images[0]);
+  const gallery = band.images && band.images.length > 0
+    ? (mainImg === band.images[0] ? band.images.slice(1) : band.images)
+    : [];
+
   return (
     <PageLayout>
       <AnimatedSection>
+        {/* Volver: solo desktop */}
         <Link
           href="/bandas"
-          className="font-punch text-xs uppercase tracking-widest text-punk-green transition-colors hover:text-punk-green/80"
+          className="hidden font-punch text-xs uppercase tracking-widest text-punk-green transition-colors hover:text-punk-green/80 md:inline-block"
         >
           ← {t("backToBands")}
         </Link>
 
-        <div className="mt-8 flex flex-col gap-8 md:flex-row">
+        {/* Mobile: header con estilo original - nombre neon ancho completo, metadata + status */}
+        <div className="mt-4 space-y-6 md:hidden">
+          {/* Nombre como letrero neón - ancho completo */}
+          <h1 className="neon-band-name-sign w-full">
+            <span className="neon-band-name-text font-display text-xl tracking-tighter sm:text-2xl">
+              {band.name}
+            </span>
+          </h1>
+          {/* Metadata: territorio · año (izq) + status (derecha) */}
+          <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-0.5 border-l-2 border-punk-green/40 pl-3">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+              {band.location && (
+                <span className="font-body text-sm text-punk-green/90">📍 {band.location}</span>
+              )}
+              {band.location && band.foundedYear && (
+                <span className="text-punk-green/40 font-punch">·</span>
+              )}
+              {band.foundedYear && (
+                <span className="font-punch text-xs uppercase tracking-widest text-punk-green/80">
+                  {t("from", { year: band.foundedYear })}
+                </span>
+              )}
+            </div>
+            <span
+              className={`shrink-0 border px-2.5 py-1 font-punch text-[10px] uppercase tracking-widest ${
+                statusKey === "active"
+                  ? "border-punk-green/50 bg-punk-green/10 text-punk-green"
+                  : statusKey === "paused"
+                    ? "border-punk-yellow/50 bg-punk-yellow/10 text-punk-yellow"
+                    : "border-punk-white/30 bg-punk-white/10 text-punk-white/70"
+              }`}
+            >
+              {statusLabel}
+            </span>
+          </div>
+          {/* Redes: solo iconos, separación táctil */}
+          {links.length > 0 && (
+            <div className="flex items-center gap-4">
+              <SocialLinks links={links} variant="green" iconOnly showLabels={false} />
+            </div>
+          )}
+          {/* Fotos: 1 principal + 2 horizontal debajo */}
+          <div className="space-y-2">
+            <div className="aspect-[16/10] w-full overflow-hidden border-2 border-punk-green">
+              {mainImg ? (
+                <ImageLightbox
+                  src={mainImg}
+                  alt={band.name}
+                  thumbnailClassName="h-full w-full object-cover cursor-pointer"
+                />
+              ) : (
+                <div className="flex h-full items-center justify-center bg-punk-black font-display text-5xl text-punk-green/40">
+                  {band.name.charAt(0)}
+                </div>
+              )}
+            </div>
+            {gallery.length > 0 && (
+              <div className="grid grid-cols-2 gap-2">
+                {gallery.slice(0, 2).map((url, i) => (
+                  <ImageLightbox
+                    key={i}
+                    src={url}
+                    alt={`${band.name} ${i + 2}`}
+                    thumbnailClassName="aspect-[4/3] w-full object-cover border-2 border-punk-green/50 cursor-pointer"
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+          {displayBio && (
+            <p className="font-body leading-relaxed text-punk-white/80">{displayBio}</p>
+          )}
+          {band.featuredVideoUrl && getYouTubeEmbedUrl(band.featuredVideoUrl) && (
+            <div>
+              <h3 className="font-display text-base tracking-tighter text-punk-green">
+                {t("featuredVideo")}
+              </h3>
+              <div className="mt-2 aspect-video w-full overflow-hidden border-2 border-punk-green/50">
+                <iframe
+                  src={getYouTubeEmbedUrl(band.featuredVideoUrl)!}
+                  title={t("featuredVideo")}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="h-full w-full"
+                />
+              </div>
+            </div>
+          )}
+          {(band.events?.length ?? 0) > 0 && (
+            <div>
+              <h2 className="font-display text-xl tracking-tighter text-punk-green">
+                {t("upcoming")}
+              </h2>
+              <div className="mt-4 space-y-3">
+                {band.events.map((be) => {
+                  const event = be.event;
+                  return (
+                    <Link
+                      key={be.id}
+                      href={`/eventos/${event.slug}`}
+                      className="group relative block overflow-hidden border-2 border-punk-red bg-punk-black p-4 transition-all duration-300 hover:scale-[1.01] hover:shadow-[0_0_40px_rgba(230,0,38,0.15)]"
+                    >
+                      {event.imageUrl && (
+                        <>
+                          <div
+                            className="absolute inset-0 opacity-[0.15] bg-cover bg-[position:center_top]"
+                            style={{ backgroundImage: `url(${event.imageUrl})` }}
+                          />
+                          <div
+                            className="pointer-events-none absolute inset-0 bg-gradient-to-r from-punk-black via-punk-black/70 to-transparent"
+                            aria-hidden
+                          />
+                        </>
+                      )}
+                      <div className="absolute right-0 top-0 h-12 w-12 border-t-2 border-r-2 border-punk-red" style={{ clipPath: "polygon(100% 0, 100% 100%, 0 0)" }} />
+                      <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-center">
+                        <div className="shrink-0 border-2 border-punk-red/50 bg-punk-red/10 px-4 py-2 text-center">
+                          <span className="block font-display text-2xl leading-none text-punk-red">
+                            {event.endDate
+                              ? `${format(event.date, "d", { locale: dateLocale })}-${format(event.endDate, "d", { locale: dateLocale })}`
+                              : format(event.date, "dd", { locale: dateLocale })}
+                          </span>
+                          <span className="block font-punch text-[10px] uppercase tracking-widest text-punk-white/70">
+                            {format(event.date, "MMM", { locale: dateLocale })}
+                          </span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-display text-lg tracking-tighter text-punk-white group-hover:text-punk-red transition-colors">
+                            {event.title}
+                          </h3>
+                          {(event.venue || event.venueText) && (
+                            <p className="mt-0.5 font-body text-sm text-punk-white/70">
+                              {event.venue ? `${event.venue.name} · ${event.venue.city}` : event.venueText ?? ""}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex shrink-0 flex-wrap gap-2">
+                          <span
+                            className={`border-2 px-3 py-1.5 font-punch text-[10px] uppercase tracking-widest ${
+                              event.type === "FESTIVAL"
+                                ? "border-punk-red bg-punk-red/20 text-punk-red"
+                                : "border-punk-white/40 bg-punk-black text-punk-white/90"
+                            }`}
+                          >
+                            {event.type === "FESTIVAL" ? t("festival") : t("concert")}
+                          </span>
+                          {event.isSoldOut && (
+                            <span className="border-2 border-punk-red bg-punk-red/30 px-3 py-1.5 font-punch text-[10px] uppercase tracking-widest text-punk-red">
+                              {t("soldOut")}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+              {eventsTotal > EVENTS_PAGE_SIZE && (
+                <Pagination
+                  page={eventsPage}
+                  totalItems={eventsTotal}
+                  pageSize={EVENTS_PAGE_SIZE}
+                />
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Desktop: layout clásico */}
+        <div className="mt-8 hidden flex-col gap-8 md:flex md:flex-row">
         <div className="min-w-0 shrink-0 space-y-4">
           <div className="aspect-square w-full max-w-64 overflow-hidden border-2 border-punk-green">
-            {(band.logoUrl || band.imageUrl || (band.images && band.images[0])) ? (
+            {mainImg ? (
               <ImageLightbox
-                src={band.logoUrl || band.imageUrl || band.images[0]}
+                src={mainImg}
                 alt={band.name}
                 thumbnailClassName="h-full w-full object-cover cursor-pointer"
               />
@@ -115,23 +290,18 @@ export default async function BandPage({
               </div>
             )}
           </div>
-          {band.images && band.images.length > 0 && (() => {
-            const mainImg = band.logoUrl || band.imageUrl || band.images[0];
-            const gallery = mainImg === band.images[0] ? band.images.slice(1) : band.images;
-            if (gallery.length === 0) return null;
-            return (
-              <div className="flex flex-wrap gap-2">
-                {gallery.map((url, i) => (
-                  <ImageLightbox
-                    key={i}
-                    src={url}
-                    alt={`${band.name} ${i + 2}`}
-                    thumbnailClassName="h-20 w-20 object-cover border-2 border-punk-green/50 cursor-pointer"
-                  />
-                ))}
-              </div>
-            );
-          })()}
+          {gallery.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {gallery.map((url, i) => (
+                <ImageLightbox
+                  key={i}
+                  src={url}
+                  alt={`${band.name} ${i + 2}`}
+                  thumbnailClassName="h-20 w-20 object-cover border-2 border-punk-green/50 cursor-pointer"
+                />
+              ))}
+            </div>
+          )}
         </div>
         <div className="flex-1">
           <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
@@ -141,11 +311,6 @@ export default async function BandPage({
             <div className="mt-2">
               <SocialLinks links={links} variant="green" />
             </div>
-          )}
-          {!band.userId && band.createdByNafarrock && (
-            <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-red/90">
-              {t("registeredByNafarrock")}
-            </p>
           )}
           <div className="mt-4 flex flex-wrap gap-2">
             <span

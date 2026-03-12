@@ -89,17 +89,239 @@ export default async function EventPage({
       .map((l) => ({ kind: l.kind as SocialLinkItem["kind"], url: l.url, label: l.label ?? undefined })),
   ];
 
+  const formattedDate = event.endDate
+    ? locale === "eu"
+      ? (() => {
+          const year = format(event.date, "yyyy", { locale: dateLocale });
+          const month = format(event.date, "MMMM", { locale: dateLocale });
+          const monthGenitive = month.endsWith("a") ? month.slice(0, -1) + "aren" : month + "ren";
+          const startDay = format(event.date, "d", { locale: dateLocale });
+          const endDay = format(event.endDate!, "d", { locale: dateLocale });
+          return `${year}ko ${monthGenitive} ${startDay}tik ${endDay}ra`;
+        })()
+      : `Del ${format(event.date, "d 'de' MMMM", { locale: dateLocale })} al ${format(event.endDate, "d 'de' MMMM, yyyy", { locale: dateLocale })}`
+    : locale === "eu"
+      ? (() => {
+          const year = format(event.date, "yyyy", { locale: dateLocale });
+          const month = format(event.date, "MMMM", { locale: dateLocale });
+          const monthGenitive = month.endsWith("a") ? month.slice(0, -1) + "aren" : month + "ren";
+          const day = format(event.date, "d", { locale: dateLocale });
+          return `${year}ko ${monthGenitive} ${day}a`;
+        })()
+      : format(event.date, "EEEE d 'de' MMMM, yyyy", { locale: dateLocale });
+
+  const venueName = event.venue?.name ?? event.venueText ?? (event.festival?.name ?? "");
+
   return (
     <PageLayout>
       <AnimatedSection>
+        {/* Volver: solo desktop */}
         <Link
           href="/eventos"
-          className="font-punch text-xs uppercase tracking-widest text-punk-red transition-colors hover:text-punk-red/80"
+          className="hidden font-punch text-xs uppercase tracking-widest text-punk-red transition-colors hover:text-punk-red/80 md:inline-block"
         >
           {t("backToEvents")}
         </Link>
 
-        <article className="mt-10">
+        {/* Mobile: layout optimizado similar a bandas */}
+        <div className="mt-4 space-y-6 md:hidden">
+          {/* Título neon - ancho completo */}
+          <h1 className="neon-event-name-sign w-full">
+            <span className="neon-event-name-text font-display text-xl tracking-tighter sm:text-2xl">
+              {event.title}
+            </span>
+          </h1>
+          {/* Metadata: tipo · fechas (izq) + SOLD OUT (derecha) */}
+          <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-0.5 border-l-2 border-punk-red/40 pl-3">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+              <span
+                className={`border px-2.5 py-1 font-punch text-[10px] uppercase tracking-widest ${
+                  event.type === "FESTIVAL"
+                    ? "border-punk-red/50 bg-punk-red/10 text-punk-red"
+                    : "border-punk-white/40 bg-punk-white/10 text-punk-white/90"
+                }`}
+              >
+                {event.type === "FESTIVAL" ? tEvent("festival") : tEvent("concert")}
+              </span>
+              <span className="text-punk-red/40 font-punch">·</span>
+              <span className="font-body text-sm text-punk-white/80">{formattedDate}</span>
+              {event.doorsOpen && (
+                <>
+                  <span className="text-punk-red/40 font-punch">·</span>
+                  <span className="font-body text-sm text-punk-white/70">{tEvent("doors")}: {event.doorsOpen}</span>
+                </>
+              )}
+            </div>
+            {event.isSoldOut && (
+              <span className="shrink-0 border border-punk-red bg-punk-red/20 px-2.5 py-1 font-punch text-[10px] uppercase tracking-widest text-punk-red">
+                {tEvent("soldOut")}
+              </span>
+            )}
+          </div>
+          {/* Redes: solo iconos */}
+          {links.length > 0 && (
+            <div className="flex items-center gap-4">
+              <SocialLinks links={links} variant="red" iconOnly showLabels={false} />
+            </div>
+          )}
+          {/* Lugar */}
+          {venueName && (
+            <p className="font-body text-sm text-punk-red/90">📍 {venueName}{event.venue?.city ? ` · ${event.venue.city}` : ""}</p>
+          )}
+          {/* CTA entradas */}
+          {(event.price || event.ticketUrl || event.isSoldOut) && (
+            <div>
+              {event.isSoldOut ? (
+                <div className="border-2 border-punk-red bg-punk-red/20 px-6 py-4 text-center">
+                  <span className="font-punch text-base uppercase tracking-widest text-punk-red">
+                    SOLD OUT
+                  </span>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-3 border-2 border-punk-red/50 bg-punk-black p-4">
+                  {event.price && (
+                    <span className="font-display text-xl text-punk-white">{event.price}</span>
+                  )}
+                  {event.ticketUrl && (
+                    <a
+                      href={event.ticketUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block border-2 border-punk-red bg-punk-red px-6 py-3 text-center font-punch text-sm uppercase tracking-widest text-punk-white transition-all hover:bg-punk-blood hover:border-punk-blood hover:shadow-[0_0_30px_rgba(230,0,38,0.4)]"
+                    >
+                      {tEvent("buyTickets")}
+                    </a>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+          {/* Fotos: 1 principal + 2 horizontal */}
+          {allImages.length > 0 && (
+            <div className="space-y-2">
+              <div className="aspect-[16/10] w-full overflow-hidden border-2 border-punk-red/50">
+                <ImageLightbox
+                  src={allImages[0]}
+                  alt={`Cartel ${event.title}`}
+                  thumbnailClassName="h-full w-full object-cover cursor-pointer"
+                />
+              </div>
+              {allImages.length > 1 && (
+                <div className="grid grid-cols-2 gap-2">
+                  {allImages.slice(1, 3).map((src, i) => (
+                    <ImageLightbox
+                      key={i}
+                      src={src}
+                      alt={`Imagen ${i + 2} - ${event.title}`}
+                      thumbnailClassName="aspect-[4/3] w-full object-cover border-2 border-punk-red/50 cursor-pointer"
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+          {/* Lugar / Festival (detalle) */}
+          {(event.venue || event.venueText || event.festival) && (
+            <div className="border-l-2 border-punk-red/40 pl-3">
+              <h3 className="font-display text-base tracking-tighter text-punk-red">
+                {event.venue || event.venueText ? tEvent("venue") : tEvent("festival")}
+              </h3>
+              <div className="mt-2 flex flex-wrap items-center gap-3">
+                {event.festival && !event.venue && (
+                  <Link
+                    href={`/festivales/${event.festival.slug}`}
+                    className="block shrink-0 overflow-hidden rounded border-2 border-punk-red/50 bg-punk-black transition-all hover:border-punk-red"
+                  >
+                    {event.festival.logoUrl ? (
+                      <Image
+                        src={event.festival.logoUrl}
+                        alt={event.festival.name}
+                        width={48}
+                        height={48}
+                        className="h-12 w-12 object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-12 w-12 items-center justify-center font-display text-lg text-punk-red/60">
+                        {event.festival.name.charAt(0)}
+                      </div>
+                    )}
+                  </Link>
+                )}
+                <div>
+                  <p className="font-display text-lg text-punk-white">
+                    {venueName}
+                  </p>
+                  {event.festival?.location && !event.venue && (
+                    <p className="mt-0.5 font-body text-sm text-punk-white/70">{event.festival.location}</p>
+                  )}
+                </div>
+              </div>
+              {event.venue && (
+                <>
+                  {event.venue.address && (
+                    <p className="mt-2 font-body text-sm text-punk-white/70">{event.venue.address}</p>
+                  )}
+                  {event.venue.city && (
+                    <p className="font-body text-sm text-punk-white/70">{event.venue.city}</p>
+                  )}
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Link
+                      href={`/salas/${event.venue.slug}`}
+                      className="inline-block border-2 border-punk-red px-3 py-2 font-punch text-[10px] uppercase tracking-widest text-punk-red transition-all hover:bg-punk-red hover:text-punk-black"
+                    >
+                      {tEvent("viewVenue")}
+                    </Link>
+                    {event.venue.mapUrl && (
+                      <a
+                        href={event.venue.mapUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block border-2 border-punk-white/40 px-3 py-2 font-punch text-[10px] uppercase tracking-widest text-punk-white/80 transition-all hover:border-punk-green hover:text-punk-green"
+                      >
+                        {tEvent("viewOnMap")}
+                      </a>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+          {/* Promotor / Organizador */}
+          {(event.promoter || event.organizer) && (
+            <div className="flex flex-wrap gap-2">
+              {event.promoter && (
+                <Link
+                  href={`/promotores/${event.promoter.slug}`}
+                  className="border-2 border-punk-pink/50 bg-punk-pink/10 px-3 py-2 font-punch text-[10px] uppercase tracking-widest text-punk-pink transition-all hover:border-punk-pink"
+                >
+                  {event.promoter.name}
+                </Link>
+              )}
+              {event.organizer && (
+                <Link
+                  href={`/organizadores/${event.organizer.slug}`}
+                  className="border-2 border-punk-green/50 bg-punk-green/10 px-3 py-2 font-punch text-[10px] uppercase tracking-widest text-punk-green transition-all hover:border-punk-green"
+                >
+                  {event.organizer.name}
+                </Link>
+              )}
+            </div>
+          )}
+          {/* Descripción */}
+          {displayDesc && (
+            <div>
+              <h3 className="font-display text-base tracking-tighter text-punk-red">
+                {tEvent("description")}
+              </h3>
+              <p className="mt-3 whitespace-pre-wrap font-body leading-relaxed text-punk-white/80">
+                {displayDesc}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Desktop: layout clásico */}
+        <article className="mt-10 hidden md:block">
         {/* Hero: título + CTA entradas arriba a la derecha */}
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
           <div className="min-w-0 flex-1">

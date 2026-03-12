@@ -2,7 +2,7 @@ import { getBoardAnnouncements } from "@/services/board-announcement.service";
 import { getTranslations } from "next-intl/server";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { TablonFilters } from "@/components/tablon/TablonFilters";
-import { TablonMobilePanel } from "@/components/tablon/TablonMobilePanel";
+import { TablonMobileView } from "@/components/tablon/TablonMobileView";
 import { TablonList } from "@/components/tablon/TablonList";
 import { Pagination } from "@/components/ui/Pagination";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
@@ -34,8 +34,8 @@ export default async function TablonPage({ searchParams }: Props) {
 
   return (
     <PageLayout>
-      {/* Mobile: panel inferior fijo */}
-      <TablonMobilePanel />
+      {/* Mobile: panel + lista virtual con "Cargar más" y scroll hide/show */}
+      <TablonMobileView />
 
       {/* Título y descripción: solo desktop */}
       <AnimatedSection>
@@ -56,8 +56,8 @@ export default async function TablonPage({ searchParams }: Props) {
         </div>
       </AnimatedSection>
 
-      {/* Cards, paginación y empty: en mobile empiezan desde arriba; padding-bottom para el panel fijo */}
-      <div className="pb-24 md:pb-0">
+      {/* Desktop: cards + paginación clásica */}
+      <div className="hidden pb-24 md:block md:pb-0">
         {announcements.length > 0 && <TablonList announcements={announcements} />}
 
         <Pagination

@@ -2,7 +2,7 @@ import { getBands } from "@/services/band.service";
 import { getTranslations } from "next-intl/server";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { BandasFilters } from "@/components/buscador/BandasFilters";
-import { BandasMobilePanel } from "@/components/bandas/BandasMobilePanel";
+import { BandasMobileView } from "@/components/bandas/BandasMobileView";
 import { Pagination } from "@/components/ui/Pagination";
 import { BandasList } from "@/components/bandas/BandasList";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
@@ -34,8 +34,8 @@ export default async function BandasPage({ searchParams }: Props) {
 
   return (
     <PageLayout>
-      {/* Mobile: panel inferior fijo */}
-      <BandasMobilePanel />
+      {/* Mobile: panel + lista virtual con "Cargar más" y scroll hide/show */}
+      <BandasMobileView />
 
       {/* Título y descripción: solo desktop */}
       <AnimatedSection>
@@ -56,8 +56,8 @@ export default async function BandasPage({ searchParams }: Props) {
         </div>
       </AnimatedSection>
 
-      {/* Cards, paginación y empty: en mobile empiezan desde arriba; padding-bottom para el panel fijo */}
-      <div className="pb-24 md:pb-0">
+      {/* Desktop: cards + paginación clásica */}
+      <div className="hidden pb-24 md:block md:pb-0">
         {bands.length > 0 && <BandasList bands={bands} />}
 
         <Pagination

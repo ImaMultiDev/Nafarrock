@@ -17,42 +17,79 @@ const FILTER_OPTIONS: { value: FilterValue; labelKey: string }[] = [
   { value: "SIN_CATEGORIA", labelKey: "SIN_CATEGORIA" },
 ];
 
-export function SalasMobilePanel() {
+type SalasMobilePanelProps = {
+  controlled?: boolean;
+  category?: FilterValue;
+  onCategoryChange?: (v: FilterValue) => void;
+  search?: string;
+  onSearchChange?: (v: string) => void;
+  onSubmit?: (search: string) => void;
+  visible?: boolean;
+};
+
+export function SalasMobilePanel({
+  controlled = false,
+  category: controlledCategory,
+  onCategoryChange,
+  search: controlledSearch,
+  onSearchChange,
+  onSubmit,
+  visible = true,
+}: SalasMobilePanelProps = {}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations("filters.salas");
 
-  const [search, setSearch] = useState(searchParams.get("search") ?? "");
-  const currentCategory = (searchParams.get("category") as FilterValue) ?? "";
+  const [search, setSearch] = useState(controlledSearch ?? searchParams.get("search") ?? "");
+  const currentCategory = controlled ? (controlledCategory ?? "") : (searchParams.get("category") as FilterValue) ?? "";
 
   useEffect(() => {
-    setSearch(searchParams.get("search") ?? "");
-  }, [searchParams]);
+    if (!controlled) setSearch(searchParams.get("search") ?? "");
+  }, [controlled, searchParams]);
+
+  useEffect(() => {
+    if (controlled && controlledSearch !== undefined) setSearch(controlledSearch);
+  }, [controlled, controlledSearch]);
 
   const applyFilters = useCallback(
     (newSearch: string, newCategory: FilterValue) => {
-      const params = new URLSearchParams();
-      if (newSearch.trim()) params.set("search", newSearch.trim());
-      if (newCategory) params.set("category", newCategory);
-      router.push(`/salas?${params.toString()}`);
+      if (controlled) {
+        onCategoryChange?.(newCategory);
+        onSubmit?.(newSearch);
+      } else {
+        const params = new URLSearchParams();
+        if (newSearch.trim()) params.set("search", newSearch.trim());
+        if (newCategory) params.set("category", newCategory);
+        router.push(`/salas?${params.toString()}`);
+      }
     },
-    [router],
+    [controlled, onCategoryChange, onSubmit, router],
   );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    applyFilters(search, currentCategory);
+    if (controlled) {
+      onSearchChange?.(search);
+      onSubmit?.(search);
+    } else {
+      applyFilters(search, currentCategory as FilterValue);
+    }
   };
 
   const handleFilterClick = (category: FilterValue) => {
-    applyFilters(search, category);
+    if (controlled) {
+      onCategoryChange?.(category);
+    } else {
+      applyFilters(search, category);
+    }
   };
 
   return (
     <div
-      className="neon-map-bottom-bar fixed bottom-0 left-0 right-0 z-30 flex flex-col gap-2 border-t-2 border-punk-green bg-punk-black/95 py-2 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] backdrop-blur-sm md:hidden"
+      className="neon-map-bottom-bar fixed bottom-0 left-0 right-0 z-30 flex flex-col gap-2 border-t-2 border-punk-green bg-punk-black/95 py-2 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] backdrop-blur-sm transition-transform duration-300 ease-out md:hidden"
       style={{
         boxShadow: "0 -4px 20px rgba(0, 200, 83, 0.25), 0 0 30px rgba(0, 200, 83, 0.1)",
+        transform: visible ? "translateY(0)" : "translateY(100%)",
       }}
     >
       {/* Buscador (nombre o ciudad) + filtros por categoría */}
@@ -60,8 +97,12 @@ export function SalasMobilePanel() {
         <div className="flex items-center gap-2">
           <input
             type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={controlled ? (controlledSearch ?? search) : search}
+            onChange={(e) => {
+              const v = e.target.value;
+              setSearch(v);
+              if (controlled) onSearchChange?.(v);
+            }}
             placeholder={t("searchPlaceholder")}
             className="min-h-[44px] min-w-0 flex-1 border-2 border-punk-green bg-punk-black px-3 py-2.5 font-body text-punk-white placeholder:text-punk-white/40 focus:outline-none"
             aria-label={t("search")}

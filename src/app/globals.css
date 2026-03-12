@@ -489,6 +489,50 @@
   }
 }
 
+/* Letrero nombre banda - estilo neon verde para detalle de banda (mobile) */
+.neon-band-name-sign {
+  display: inline-block;
+  padding: 0.35rem 0.5rem 0.4rem;
+  background: linear-gradient(180deg, #0d1a0d 0%, #050a05 100%);
+  border: 2px solid var(--punk-green);
+  box-shadow:
+    0 0 12px rgba(0, 200, 83, 0.5),
+    0 0 24px rgba(0, 200, 83, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.neon-band-name-text {
+  display: block;
+  color: var(--punk-green);
+  font-weight: 400;
+  text-shadow:
+    0 0 8px var(--punk-green),
+    0 0 16px rgba(0, 200, 83, 0.7),
+    0 0 24px rgba(0, 200, 83, 0.4);
+}
+
+/* Letrero nombre evento - estilo neon rojo para detalle de evento (mobile) */
+.neon-event-name-sign {
+  display: inline-block;
+  padding: 0.35rem 0.5rem 0.4rem;
+  background: linear-gradient(180deg, #1a0a0a 0%, #0a0505 100%);
+  border: 2px solid var(--punk-red);
+  box-shadow:
+    0 0 12px rgba(230, 0, 38, 0.5),
+    0 0 24px rgba(230, 0, 38, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.neon-event-name-text {
+  display: block;
+  color: var(--punk-red);
+  font-weight: 400;
+  text-shadow:
+    0 0 8px var(--punk-red),
+    0 0 16px rgba(230, 0, 38, 0.7),
+    0 0 24px rgba(230, 0, 38, 0.4);
+}
+
 /* Panel inferior móvil - extender 2px abajo para cubrir hueco de sub-píxel en el borde */
 .neon-map-bottom-bar {
   bottom: -2px !important;

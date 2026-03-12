@@ -134,6 +134,9 @@
     "count": "{count} talde eskenan.",
     "count_other": "{count} talde eskenan.",
     "empty": "Oraindik ez da talderik erregistratu. Laster edukia egongo da. Bitartean, arakatu ekitaldiak eta guneak.",
+    "loading": "Taldeak kargatzen...",
+    "loadMore": "Kargatu gehiago",
+    "error": "Errorea taldeak kargatzean. Saiatu berriro.",
     "metadata": {
       "title": "Taldeak",
       "description": "Nafarroako eskenako taldeak"
@@ -144,6 +147,9 @@
     "subtitle": "Kontzertuak eta jaialdiak. {count} ekitaldi nafarroako eskenan.",
     "subtitle_other": "Kontzertuak eta jaialdiak. {count} ekitaldi nafarroako eskenan.",
     "empty": "Ez da hurrengo ekitaldirik. Laster edukia egongo da. Bitartean, arakatu taldeak eta eskena.",
+    "loading": "Ekitaldiak kargatzen...",
+    "loadMore": "Kargatu gehiago",
+    "error": "Errorea ekitaldiak kargatzean. Saiatu berriro.",
     "backToEvents": "← Itzuli ekitaldietara",
     "upcoming": "Hurrengo ekitaldiak",
     "metadata": {
@@ -182,6 +188,9 @@
       "count": "{count} gune Nafarroan.",
       "count_other": "{count} gune Nafarroan.",
       "empty": "Oraindik ez da gunerik erregistratu. Laster edukia egongo da. Bitartean, arakatu ekitaldiak eta taldeak.",
+      "loading": "Guneak kargatzen...",
+      "loadMore": "Kargatu gehiago",
+      "error": "Errorea guneak kargatzean. Saiatu berriro.",
       "metadata": {
         "title": "Guneak",
         "description": "Nafarroako rock eskenako kontzertu guneak"
@@ -207,6 +216,9 @@
       "label": "Jaialdiak",
       "desc": "Eskenako jaialdiak",
       "empty": "Oraindik ez da jaialdirik erregistratu. Laster edukia egongo da. Bitartean, arakatu ekitaldiak eta sustatzaileak.",
+      "loading": "Jaialdiak kargatzen...",
+      "loadMore": "Kargatu gehiago",
+      "error": "Errorea jaialdiak kargatzean. Saiatu berriro.",
       "metadata": {
         "title": "Jaialdiak",
         "description": "Nafarroako rock jaialdiak"
@@ -453,6 +465,9 @@
     "title": "Iragarki-taula",
     "subtitle": "Deialdiak, bilaketak eta rock eskenako aukerak.",
     "empty": "Ez da argitaratutako iragarkirik. Laster edukia egongo da.",
+    "loading": "Iragarkiak kargatzen...",
+    "loadMore": "Kargatu gehiago",
+    "error": "Errorea iragarkiak kargatzean. Saiatu berriro.",
     "propose": {
       "title": "Proposatu iragarkia",
       "subtitle": "Argitaratu zure iragarkia taulan. Administratzaileak argitaratu aurretik berrikusiko du.",

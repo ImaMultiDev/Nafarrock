@@ -2,7 +2,7 @@ import { getEvents } from "@/services/event.service";
 import { Link } from "@/i18n/navigation";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { EventosFilters } from "@/components/buscador/EventosFilters";
-import { EventosMobilePanel } from "@/components/eventos/EventosMobilePanel";
+import { EventosMobileView } from "@/components/eventos/EventosMobileView";
 import { Pagination } from "@/components/ui/Pagination";
 import { EventosList } from "@/components/eventos/EventosList";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
@@ -33,8 +33,8 @@ export default async function EventosPage({ searchParams }: Props) {
 
   return (
     <PageLayout>
-      {/* Mobile: panel inferior fijo */}
-      <EventosMobilePanel />
+      {/* Mobile: panel + lista virtual con "Cargar más" */}
+      <EventosMobileView />
 
       {/* Título y descripción: solo desktop */}
       <AnimatedSection>
@@ -55,8 +55,8 @@ export default async function EventosPage({ searchParams }: Props) {
         </div>
       </AnimatedSection>
 
-      {/* Cards, paginación y empty: en mobile empiezan desde arriba; padding-bottom para el panel fijo */}
-      <div className="pb-24 md:pb-0">
+      {/* Desktop: cards + paginación clásica */}
+      <div className="hidden pb-24 md:block md:pb-0">
         {events.length > 0 && <EventosList events={events} />}
 
         <Pagination

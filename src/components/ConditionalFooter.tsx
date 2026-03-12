@@ -5,12 +5,12 @@ import { FooterSection } from "@/components/home/FooterSection";
 
 export function ConditionalFooter() {
   const pathname = usePathname();
-  const isMapPage = pathname === "/mapa" || pathname.endsWith("/mapa");
-  const isEventosPage = pathname === "/eventos" || pathname.endsWith("/eventos");
-  const isBandasPage = pathname === "/bandas" || pathname.endsWith("/bandas");
-  const isSalasPage = pathname === "/salas" || pathname.endsWith("/salas");
-  const isFestivalesPage = pathname === "/festivales" || pathname.endsWith("/festivales");
-  const isTablonPage = pathname === "/tablon" || pathname.endsWith("/tablon");
+  const isMapPage = pathname === "/mapa" || pathname.startsWith("/mapa");
+  const isEventosPage = pathname.startsWith("/eventos");
+  const isBandasPage = pathname.startsWith("/bandas");
+  const isSalasPage = pathname.startsWith("/salas");
+  const isFestivalesPage = pathname.startsWith("/festivales");
+  const isTablonPage = pathname.startsWith("/tablon");
 
   if (isMapPage || isEventosPage || isBandasPage || isSalasPage || isFestivalesPage || isTablonPage) return null;
   return <FooterSection />;

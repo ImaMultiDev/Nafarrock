@@ -2,7 +2,7 @@ import { getVenues } from "@/services/venue.service";
 import { Link } from "@/i18n/navigation";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { SalasFilters } from "@/components/buscador/SalasFilters";
-import { SalasMobilePanel } from "@/components/salas/SalasMobilePanel";
+import { SalasMobileView } from "@/components/salas/SalasMobileView";
 import { Pagination } from "@/components/ui/Pagination";
 import { getTranslations } from "next-intl/server";
 
@@ -34,8 +34,8 @@ export default async function SalasPage({ searchParams }: Props) {
 
   return (
     <PageLayout>
-      {/* Mobile: panel inferior fijo */}
-      <SalasMobilePanel />
+      {/* Mobile: panel + lista virtual con "Cargar más" y scroll hide/show */}
+      <SalasMobileView />
 
       {/* Título y descripción: solo desktop */}
       <div className="mb-10 hidden sm:mb-16 md:block">
@@ -52,8 +52,8 @@ export default async function SalasPage({ searchParams }: Props) {
         <SalasFilters />
       </div>
 
-      {/* Cards, paginación y empty: en mobile empiezan desde arriba; padding-bottom para el panel fijo */}
-      <div className="pb-24 md:pb-0">
+      {/* Desktop: cards + paginación clásica */}
+      <div className="hidden pb-24 md:block md:pb-0">
       <div className="grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
         {venues.map((venue) => (
           <Link

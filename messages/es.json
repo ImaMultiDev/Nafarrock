@@ -134,6 +134,9 @@
     "count": "{count} banda en la escena.",
     "count_other": "{count} bandas en la escena.",
     "empty": "Aún no hay bandas registradas. Pronto habrá contenido. Mientras tanto, explora eventos y espacios.",
+    "loading": "Cargando bandas...",
+    "loadMore": "Cargar más",
+    "error": "Error al cargar bandas. Inténtalo de nuevo.",
     "metadata": {
       "title": "Bandas",
       "description": "Bandas nafarroas de la escena"
@@ -144,6 +147,9 @@
     "subtitle": "Conciertos y festivales. {count} evento en la escena nafarroa.",
     "subtitle_other": "Conciertos y festivales. {count} eventos en la escena nafarroa.",
     "empty": "No hay eventos próximos. Pronto habrá contenido. Mientras tanto, explora bandas y la escena.",
+    "loading": "Cargando eventos...",
+    "loadMore": "Cargar más",
+    "error": "Error al cargar eventos. Inténtalo de nuevo.",
     "backToEvents": "← Volver a eventos",
     "upcoming": "Próximos eventos",
     "metadata": {
@@ -182,6 +188,9 @@
       "count": "{count} espacio en Nafarroa.",
       "count_other": "{count} espacios en Nafarroa.",
       "empty": "Aún no hay espacios registrados. Pronto habrá contenido. Mientras tanto, explora eventos y bandas.",
+      "loading": "Cargando espacios...",
+      "loadMore": "Cargar más",
+      "error": "Error al cargar espacios. Inténtalo de nuevo.",
       "metadata": {
         "title": "Espacios",
         "description": "Espacios de conciertos de la escena rock nafarroa"
@@ -207,6 +216,9 @@
       "label": "Festivales",
       "desc": "Festivales de la escena",
       "empty": "Aún no hay festivales registrados. Pronto habrá contenido. Mientras tanto, explora eventos y promotores.",
+      "loading": "Cargando festivales...",
+      "loadMore": "Cargar más",
+      "error": "Error al cargar festivales. Inténtalo de nuevo.",
       "metadata": {
         "title": "Festivales",
         "description": "Festivales de rock en Nafarroa"
@@ -453,6 +465,9 @@
     "title": "TABLÓN DE ANUNCIOS",
     "subtitle": "Convocatorias, búsquedas y oportunidades de la escena rock.",
     "empty": "No hay anuncios publicados. Pronto habrá contenido.",
+    "loading": "Cargando anuncios...",
+    "loadMore": "Cargar más",
+    "error": "Error al cargar anuncios. Inténtalo de nuevo.",
     "propose": {
       "title": "Proponer anuncio",
       "subtitle": "Publica tu anuncio en el tablón. El administrador lo revisará antes de publicarlo.",
