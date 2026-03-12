@@ -10,6 +10,7 @@ import { useLocale } from "next-intl";
 import { getDateLocale } from "@/lib/date-locale";
 import type { Locale } from "date-fns";
 import { EventosMobilePanel } from "./EventosMobilePanel";
+import { PunkLoadingIndicator } from "@/components/ui/PunkLoadingIndicator";
 
 type FilterValue = "" | "CONCIERTO" | "FESTIVAL";
 
@@ -209,10 +210,7 @@ export function EventosMobileView() {
       />
       <div className="flex flex-col pb-24 md:hidden">
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-16">
-            <div className="h-8 w-8 animate-spin rounded-full border-2 border-punk-red border-t-transparent" />
-            <p className="mt-4 font-body text-punk-white/60">{t("loading") || "Cargando..."}</p>
-          </div>
+          <PunkLoadingIndicator label={t("loading") || "Cargando eventos"} />
         ) : isError ? (
           <div className="border-2 border-punk-white/20 border-dashed p-16 text-center">
             <p className="font-body text-punk-white/60">{t("error") || "Error al cargar eventos"}</p>
@@ -269,10 +267,7 @@ export function EventosMobileView() {
                   className="map-filter-btn flex items-center gap-2 font-punch text-xs uppercase tracking-widest"
                 >
                   {isFetchingNextPage ? (
-                    <>
-                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-punk-green border-t-transparent" />
-                      {t("loading") || "Cargando..."}
-                    </>
+                    <PunkLoadingIndicator label={t("loading") || "Cargando"} variant="inline" />
                   ) : (
                     t("loadMore") || "Cargar más"
                   )}

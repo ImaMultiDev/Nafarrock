@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { PunkLoadingIndicator } from "@/components/ui/PunkLoadingIndicator";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -54,8 +55,8 @@ export function BolosList() {
 
   if (loading) {
     return (
-      <div className="mt-8 font-body text-punk-white/60">
-        Cargando anuncios...
+      <div className="mt-8">
+        <PunkLoadingIndicator label="Cargando anuncios" />
       </div>
     );
   }

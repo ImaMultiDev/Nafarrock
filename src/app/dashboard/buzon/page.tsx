@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { InboxList } from "./InboxList";
+import { BuzonHeader } from "@/components/dashboard/BuzonHeader";
 import { Inbox } from "lucide-react";
 
 export default async function BuzonPage() {
@@ -30,7 +31,10 @@ export default async function BuzonPage() {
           </p>
         </div>
       ) : (
-        <InboxList messages={messages} />
+        <>
+          <BuzonHeader />
+          <InboxList messages={messages} />
+        </>
       )}
     </>
   );

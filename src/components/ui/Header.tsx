@@ -209,9 +209,17 @@ export function Header() {
                           ? "/tablon"
                           : pathname.startsWith("/dashboard/buzon")
                             ? "/dashboard/buzon"
-                            : pathname === "/dashboard" || pathname === "/dashboard/"
-                              ? "/dashboard"
-                              : "/"
+                            : pathname.includes("/dashboard/perfil")
+                              ? "/dashboard/perfil"
+                              : pathname.includes("/dashboard/proponer-banda")
+                                ? "/dashboard/proponer-banda"
+                                : pathname.includes("/dashboard/proponer-evento")
+                                  ? "/dashboard/proponer-evento"
+                                  : pathname.includes("/dashboard/proponer-anuncio")
+                                    ? "/dashboard/proponer-anuncio"
+                                    : pathname === "/dashboard" || pathname === "/dashboard/"
+                                      ? "/dashboard"
+                                      : "/"
             }
             className="flex shrink-0 items-center transition-opacity hover:opacity-90"
           >
@@ -261,6 +269,30 @@ export function Header() {
               <span className="neon-mapa-sign">
                 <span className="neon-mapa-text font-display text-2xl tracking-tighter sm:text-3xl">
                   {t("panel")}
+                </span>
+              </span>
+            ) : pathname.includes("/dashboard/perfil") ? (
+              <span className="neon-mapa-sign">
+                <span className="neon-mapa-text font-display text-2xl tracking-tighter sm:text-3xl">
+                  {t("myProfileNeon")}
+                </span>
+              </span>
+            ) : pathname.includes("/dashboard/proponer-banda") ? (
+              <span className="neon-mapa-sign">
+                <span className="neon-mapa-text font-display text-2xl tracking-tighter sm:text-3xl">
+                  {t("bandsNeon")}
+                </span>
+              </span>
+            ) : pathname.includes("/dashboard/proponer-evento") ? (
+              <span className="neon-mapa-sign">
+                <span className="neon-mapa-text font-display text-2xl tracking-tighter sm:text-3xl">
+                  {t("eventsNeon")}
+                </span>
+              </span>
+            ) : pathname.includes("/dashboard/proponer-anuncio") ? (
+              <span className="neon-mapa-sign">
+                <span className="neon-mapa-text font-display text-2xl tracking-tighter sm:text-3xl">
+                  {t("tablon")}
                 </span>
               </span>
             ) : (

@@ -4,6 +4,8 @@
       "home": "Inicio",
       "events": "Eventos",
       "bands": "Bandas",
+      "bandsNeon": "BANDAS",
+      "eventsNeon": "EVENTOS",
       "scene": "Escena",
       "salas": "Espacios",
       "festivals": "Festivales",
@@ -13,6 +15,7 @@
       "contact": "Contacto",
       "panel": "PANEL",
       "myProfile": "Mi perfil",
+      "myProfileNeon": "MI PERFIL",
       "inbox": "BUZÓN",
       "logout": "Salir",
       "login": "Entrar",
@@ -482,7 +485,7 @@
       "formTitle": "Datos del anuncio",
       "submit": "Enviar propuesta",
       "submitting": "Enviando...",
-      "cancel": "Cancelar",
+      "reviewHint": "La propuesta será revisada por el administrador antes de publicarse en el tablón.",
       "success": "Propuesta de anuncio enviada. El administrador la revisará y te notificará.",
       "successModal": "Anuncio enviado para verificación. Recibirás un correo electrónico una vez sea revisado por nuestro equipo.",
       "errorSend": "Error al enviar"
@@ -678,7 +681,7 @@
           "featuredVideoHint": "Canción o vídeo representativo de la banda (YouTube)",
           "submit": "Enviar propuesta",
           "submitting": "Enviando...",
-          "cancel": "Cancelar",
+          "reviewHint": "La propuesta será revisada por el administrador antes de publicarse en el radar.",
           "errorSend": "Error al enviar",
           "urlPlaceholder": "https://..."
         }

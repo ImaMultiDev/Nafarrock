@@ -6,6 +6,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { FestivalesMobilePanel } from "./FestivalesMobilePanel";
+import { PunkLoadingIndicator } from "@/components/ui/PunkLoadingIndicator";
 
 type FestivalItem = {
   id: string;
@@ -140,10 +141,7 @@ export function FestivalesMobileView() {
       />
       <div className="flex flex-col pb-24 md:hidden">
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-16">
-            <div className="h-8 w-8 animate-spin rounded-full border-2 border-punk-red border-t-transparent" />
-            <p className="mt-4 font-body text-punk-white/60">{t("loading") || "Cargando festivales..."}</p>
-          </div>
+          <PunkLoadingIndicator label={t("loading") || "Cargando festivales"} />
         ) : isError ? (
           <div className="border-2 border-punk-white/20 border-dashed p-16 text-center">
             <p className="font-body text-punk-white/60">{t("error") || "Error al cargar festivales"}</p>
@@ -196,10 +194,7 @@ export function FestivalesMobileView() {
                   className="map-filter-btn flex items-center gap-2 font-punch text-xs uppercase tracking-widest"
                 >
                   {isFetchingNextPage ? (
-                    <>
-                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-punk-red border-t-transparent" />
-                      {t("loading") || "Cargando..."}
-                    </>
+                    <PunkLoadingIndicator label={t("loading") || "Cargando"} variant="inline" />
                   ) : (
                     t("loadMore") || "Cargar más"
                   )}

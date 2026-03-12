@@ -8,6 +8,7 @@ import { PageLayout } from "@/components/ui/PageLayout";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
+import { AuthPunkIcon } from "@/components/auth/AuthPunkIcon";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 import { isValidEmail, isPasswordValid } from "@/lib/validation";
 import { BAND_LOCATIONS } from "@/lib/band-locations";
@@ -272,16 +273,19 @@ export function RegisterForm({
             <h1 className="mt-6 font-display text-5xl tracking-tighter text-punk-white sm:text-6xl">
               {t("claimTitle")}
             </h1>
-            <p className="mt-3 font-body text-punk-white/60">
+            <p className="mt-3 max-w-[75%] font-body text-punk-white/60 sm:max-w-none">
               {t("claimSubtitle", { name: claimName ?? "" })}
             </p>
           </>
         ) : (
           <>
-            <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl">
-              {t("title")}
-            </h1>
-            <p className="mt-3 font-body text-punk-white/60">
+            <div className="flex items-center justify-between gap-4">
+              <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl">
+                {t("title")}
+              </h1>
+              <AuthPunkIcon />
+            </div>
+            <p className="mt-3 max-w-[75%] font-body text-punk-white/60 sm:max-w-none">
               {t("subtitle")}
             </p>
           </>

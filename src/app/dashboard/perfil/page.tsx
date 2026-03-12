@@ -8,6 +8,7 @@ import { ProfileForm } from "./ProfileForm";
 import { ChangePasswordForm } from "./ChangePasswordForm";
 import { DeleteAccountSection } from "./DeleteAccountSection";
 import { DashboardSection } from "@/components/dashboard/DashboardSection";
+import { PerfilHeader } from "@/components/dashboard/PerfilHeader";
 
 export default async function PerfilPage() {
   const session = await getServerSession(authOptions);
@@ -67,14 +68,7 @@ export default async function PerfilPage() {
 
   return (
     <>
-      <div className="mb-8">
-        <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl">
-          Mi perfil
-        </h1>
-        <p className="mt-2 font-body text-punk-white/60">
-          Gestiona tus datos personales y el estado de tu entidad
-        </p>
-      </div>
+      <PerfilHeader />
 
       <div className="space-y-8">
         <DashboardSection title="Datos personales" accent="pink">

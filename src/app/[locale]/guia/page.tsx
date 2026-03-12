@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
+import { NafarrockSocialLinks } from "@/components/guide/NafarrockSocialLinks";
 
 export async function generateMetadata() {
   const t = await getTranslations("guide.metadata");
@@ -26,6 +27,7 @@ export default async function NafarrockPage() {
           <p className="mt-3 font-punch text-xs uppercase tracking-widest text-punk-red">
             {t("subtitle")}
           </p>
+          <NafarrockSocialLinks />
         </AnimatedSection>
 
         <AnimatedSection delay={0.1}>

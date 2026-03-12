@@ -599,6 +599,22 @@
     0 0 24px rgba(255, 214, 10, 0.4);
 }
 
+/* Animación flotante para loading - cabeza punk */
+@keyframes loading-punk-float {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(8px);
+    opacity: 0.9;
+  }
+}
+
+.animate-loading-punk-float {
+  animation: loading-punk-float 1.8s ease-in-out infinite;
+}
+
 /* Panel inferior móvil - extender 2px abajo para cubrir hueco de sub-píxel en el borde */
 .neon-map-bottom-bar {
   bottom: -2px !important;

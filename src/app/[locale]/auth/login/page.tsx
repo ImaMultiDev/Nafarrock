@@ -8,6 +8,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
+import { AuthPunkIcon } from "@/components/auth/AuthPunkIcon";
 
 const EDITORIAL_MVP_MODE = true;
 
@@ -107,10 +108,13 @@ function LoginForm() {
   return (
     <PageLayout>
       <div className="mx-auto max-w-md">
-        <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl">
-          {t("title")}
-        </h1>
-        <p className="mt-3 font-body text-punk-white/60">
+        <div className="flex items-center justify-between gap-4">
+          <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl">
+            {t("title")}
+          </h1>
+          <AuthPunkIcon />
+        </div>
+        <p className="mt-3 max-w-[75%] font-body text-punk-white/60 sm:max-w-none">
           {t("subtitle")}
         </p>
 

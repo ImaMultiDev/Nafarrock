@@ -4,7 +4,6 @@ import { useState } from "react";
 import { BAND_LOCATIONS } from "@/lib/band-locations";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { ImageGallery } from "@/components/ui/ImageGallery";
 
@@ -208,21 +207,16 @@ export function BandProposalForm({ genres }: { genres: string[] }) {
           </p>
         </div>
       </div>
-      <div className="flex gap-4">
-        <button
-          type="submit"
-          disabled={loading}
-          className="border-2 border-punk-green bg-punk-green px-8 py-3 font-punch text-sm uppercase tracking-widest text-punk-black transition-all hover:bg-punk-green/90 disabled:opacity-50"
-        >
-          {loading ? t("submitting") : t("submit")}
-        </button>
-        <Link
-          href="/dashboard"
-          className="border-2 border-punk-white/30 px-8 py-3 font-punch text-sm uppercase tracking-widest text-punk-white/70 hover:border-punk-white"
-        >
-          {t("cancel")}
-        </Link>
-      </div>
+      <button
+        type="submit"
+        disabled={loading}
+        className="border-2 border-punk-green bg-punk-green px-8 py-3 font-punch text-sm uppercase tracking-widest text-punk-black transition-all hover:bg-punk-green/90 disabled:opacity-50"
+      >
+        {loading ? t("submitting") : t("submit")}
+      </button>
+      <p className="font-body text-sm text-punk-white/50">
+        {t("reviewHint")}
+      </p>
     </form>
   );
 }

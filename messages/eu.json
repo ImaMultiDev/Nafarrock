@@ -4,6 +4,8 @@
       "home": "Hasiera",
       "events": "Ekitaldiak",
       "bands": "Taldeak",
+      "bandsNeon": "TALDEAK",
+      "eventsNeon": "EKITALDIAK",
       "scene": "Eskena",
       "salas": "Guneak",
       "festivals": "Jaialdiak",
@@ -13,6 +15,7 @@
       "contact": "Kontaktua",
       "panel": "PANELA",
       "myProfile": "Nire profila",
+      "myProfileNeon": "NIRE PROFILA",
       "inbox": "POSTONTZIA",
       "logout": "Irten",
       "login": "Sartu",
@@ -482,7 +485,7 @@
       "formTitle": "Iragarkiaren datuak",
       "submit": "Bidali proposamena",
       "submitting": "Bidaltzen...",
-      "cancel": "Utzi",
+      "reviewHint": "Administratzaileak proposamena berrikusiko du taulan argitaratu aurretik.",
       "success": "Iragarki proposamena bidali da. Administratzaileak berrikusiko du eta jakinaraziko dizu.",
       "successModal": "Iragarkia bidali da egiaztatzeko. Gure taldeak berrikusi ondoren posta elektroniko bat jasoko duzu.",
       "errorSend": "Errorea bidaltzean"
@@ -678,7 +681,7 @@
           "featuredVideoHint": "Taldearen abesti edo bideo adierazgarria (YouTube)",
           "submit": "Bidali proposamena",
           "submitting": "Bidaltzen...",
-          "cancel": "Utzi",
+          "reviewHint": "Administratzaileak proposamena berrikusiko du erradarrean argitaratu aurretik.",
           "errorSend": "Errorea bidaltzean",
           "urlPlaceholder": "https://..."
         }

@@ -23,10 +23,22 @@ export function DashboardBackNav() {
     backHref = parentSegments.length > 0 ? `/dashboard/${parentSegments.join("/")}` : "/dashboard";
   }
 
+  const isPerfil = pathname.includes("/dashboard/perfil");
+  const isBuzon = pathname.includes("/dashboard/buzon");
+  const isProponerBanda = pathname.includes("/dashboard/proponer-banda");
+  const isProponerEvento = pathname.includes("/dashboard/proponer-evento");
+  const isProponerAnuncio = pathname.includes("/dashboard/proponer-anuncio");
+  const hideOnMobile =
+    isPerfil ||
+    isBuzon ||
+    isProponerBanda ||
+    isProponerEvento ||
+    isProponerAnuncio;
+
   return (
     <Link
       href={backHref}
-      className="mb-6 block font-punch text-xs uppercase tracking-widest text-punk-green hover:text-punk-green/80"
+      className={`mb-6 block font-punch text-xs uppercase tracking-widest text-punk-green hover:text-punk-green/80 ${hideOnMobile ? "hidden lg:block" : ""}`}
     >
       {t("back")}
     </Link>
