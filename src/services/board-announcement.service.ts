@@ -33,3 +33,9 @@ export async function getBoardAnnouncements(
 
   return { items, total, page, pageSize };
 }
+
+export async function getBoardAnnouncementById(id: string) {
+  return prisma.boardAnnouncement.findUnique({
+    where: { id, approved: true },
+  });
+}

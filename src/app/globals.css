@@ -533,6 +533,72 @@
     0 0 24px rgba(230, 0, 38, 0.4);
 }
 
+/* Letrero nombre sala/espacio - estilo neon rosa para detalle de sala (mobile) */
+.neon-venue-name-sign {
+  display: inline-block;
+  padding: 0.35rem 0.5rem 0.4rem;
+  background: linear-gradient(180deg, #1a0a0a 0%, #0a0505 100%);
+  border: 2px solid var(--punk-pink);
+  box-shadow:
+    0 0 12px rgba(255, 0, 110, 0.5),
+    0 0 24px rgba(255, 0, 110, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.neon-venue-name-text {
+  display: block;
+  color: var(--punk-pink);
+  font-weight: 400;
+  text-shadow:
+    0 0 8px var(--punk-pink),
+    0 0 16px rgba(255, 0, 110, 0.7),
+    0 0 24px rgba(255, 0, 110, 0.4);
+}
+
+/* Letrero nombre festival - estilo neon rojo para detalle de festival (mobile) */
+.neon-festival-name-sign {
+  display: inline-block;
+  padding: 0.35rem 0.5rem 0.4rem;
+  background: linear-gradient(180deg, #1a0a0a 0%, #0a0505 100%);
+  border: 2px solid var(--punk-red);
+  box-shadow:
+    0 0 12px rgba(230, 0, 38, 0.5),
+    0 0 24px rgba(230, 0, 38, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.neon-festival-name-text {
+  display: block;
+  color: var(--punk-red);
+  font-weight: 400;
+  text-shadow:
+    0 0 8px var(--punk-red),
+    0 0 16px rgba(230, 0, 38, 0.7),
+    0 0 24px rgba(230, 0, 38, 0.4);
+}
+
+/* Letrero nombre anuncio - estilo neon amarillo para detalle de tablón (mobile) */
+.neon-announcement-name-sign {
+  display: inline-block;
+  padding: 0.35rem 0.5rem 0.4rem;
+  background: linear-gradient(180deg, #1a1805 0%, #0a0905 100%);
+  border: 2px solid var(--punk-yellow);
+  box-shadow:
+    0 0 12px rgba(255, 214, 10, 0.5),
+    0 0 24px rgba(255, 214, 10, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.neon-announcement-name-text {
+  display: block;
+  color: var(--punk-yellow);
+  font-weight: 400;
+  text-shadow:
+    0 0 8px var(--punk-yellow),
+    0 0 16px rgba(255, 214, 10, 0.7),
+    0 0 24px rgba(255, 214, 10, 0.4);
+}
+
 /* Panel inferior móvil - extender 2px abajo para cubrir hueco de sub-píxel en el borde */
 .neon-map-bottom-bar {
   bottom: -2px !important;

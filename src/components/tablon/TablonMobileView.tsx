@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { format } from "date-fns";
 import { getDateLocale } from "@/lib/date-locale";
 import { useLocale } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { TablonMobilePanel } from "./TablonMobilePanel";
 
 type AnnouncementItem = {
@@ -50,31 +51,30 @@ function AnnouncementCard({
   dateLocale: import("date-fns").Locale;
 }) {
   return (
-    <article className="overflow-hidden border-2 border-punk-yellow/50 bg-punk-black p-4 transition-all duration-300 hover:border-punk-yellow/80">
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="border border-punk-yellow/50 bg-punk-yellow/10 px-2 py-0.5 font-punch text-xs uppercase tracking-widest text-punk-yellow">
-          {t(`categories.${a.category}`)}
+    <Link href={`/tablon/${a.id}`}>
+      <article className="block overflow-hidden border-2 border-punk-yellow/50 bg-punk-black p-4 transition-all duration-300 hover:border-punk-yellow/80 active:scale-[0.99]">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="border border-punk-yellow/50 bg-punk-yellow/10 px-2 py-0.5 font-punch text-xs uppercase tracking-widest text-punk-yellow">
+            {t(`categories.${a.category}`)}
+          </span>
+          {a.territory && (
+            <span className="font-body text-sm text-punk-white/60">{a.territory}</span>
+          )}
+        </div>
+        <h2 className="mt-2 font-display text-lg tracking-tighter text-punk-white line-clamp-2">
+          {a.title}
+        </h2>
+        <p className="mt-2 line-clamp-2 font-body text-sm text-punk-white/80">
+          {a.description}
+        </p>
+        <span className="mt-2 block font-punch text-xs uppercase tracking-widest text-punk-yellow transition-colors">
+          {t("contact")}: {a.contactEmail} →
         </span>
-        {a.territory && (
-          <span className="font-body text-sm text-punk-white/60">{a.territory}</span>
-        )}
-      </div>
-      <h2 className="mt-2 font-display text-lg tracking-tighter text-punk-white line-clamp-2">
-        {a.title}
-      </h2>
-      <p className="mt-2 line-clamp-2 font-body text-sm text-punk-white/80">
-        {a.description}
-      </p>
-      <a
-        href={`mailto:${a.contactEmail}`}
-        className="mt-2 block font-punch text-xs uppercase tracking-widest text-punk-yellow transition-colors hover:text-punk-yellow/80"
-      >
-        {t("contact")}: {a.contactEmail}
-      </a>
-      <p className="mt-1 font-body text-xs text-punk-white/50">
-        {format(new Date(a.createdAt), "d MMM yyyy", { locale: dateLocale })}
-      </p>
-    </article>
+        <p className="mt-1 font-body text-xs text-punk-white/50">
+          {format(new Date(a.createdAt), "d MMM yyyy", { locale: dateLocale })}
+        </p>
+      </article>
+    </Link>
   );
 }
 

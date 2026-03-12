@@ -408,6 +408,10 @@
     "backToFestivals": "← Volver a festivales",
     "registeredByNafarrock": "FESTIVAL REGISTRADO POR NAFARROCK",
     "from": "Desde {year}",
+    "location": "Ubicación",
+    "description": "Descripción",
+    "officialWeb": "Web oficial",
+    "viewOnMap": "Ver en mapa",
     "upcoming": "Próximos eventos",
     "toConfirm": "Por confirmar",
     "nextEvent": "Próximo evento",
@@ -431,7 +435,11 @@
     "concert": "Concierto",
     "festival": "Festival",
     "soldOut": "SOLD OUT",
-    "toConfirm": "Por confirmar"
+    "toConfirm": "Por confirmar",
+    "location": "Ubicación",
+    "description": "Descripción",
+    "officialWeb": "Web oficial",
+    "viewOnMap": "Ver en mapa"
   },
   "promoterDetail": {
     "backToPromoters": "← Volver a promotores",
@@ -508,6 +516,12 @@
     "metadata": {
       "title": "Tablón de anuncios",
       "description": "Convocatorias, búsquedas de músicos y oportunidades de la escena rock en Nafarroa"
+    },
+    "detail": {
+      "backToTablon": "← Volver al tablón",
+      "description": "Descripción",
+      "contact": "Contacto",
+      "publishedOn": "Publicado el"
     }
   },
   "dashboard": {

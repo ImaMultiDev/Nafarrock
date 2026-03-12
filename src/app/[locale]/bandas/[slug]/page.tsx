@@ -272,6 +272,12 @@ export default async function BandPage({
               )}
             </div>
           )}
+          {/* Registrado por Nafarrock: al final, estilo discreto */}
+          {!band.userId && band.createdByNafarrock && (
+            <p className="pt-6 font-punch text-[10px] uppercase tracking-widest text-punk-green/50">
+              {t("registeredByNafarrock")}
+            </p>
+          )}
         </div>
 
         {/* Desktop: layout clásico */}
@@ -450,6 +456,12 @@ export default async function BandPage({
                 />
               )}
             </div>
+          )}
+          {/* Registrado por Nafarrock: al final, estilo discreto */}
+          {!band.userId && band.createdByNafarrock && (
+            <p className="mt-16 pt-8 font-punch text-[10px] uppercase tracking-widest text-punk-green/50">
+              {t("registeredByNafarrock")}
+            </p>
           )}
         </div>
       </div>

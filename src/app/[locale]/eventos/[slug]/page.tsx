@@ -20,10 +20,10 @@ export async function generateMetadata({
   const { slug } = await params;
   const event = await getEventBySlug(slug);
   if (!event) return {};
-  const venueName = event.venue?.name ?? event.venueText ?? "";
+  const venueForMeta = event.venue?.name ?? event.venueText ?? event.festival?.location ?? event.festival?.name ?? "";
   const description =
     event.description ??
-    (venueName ? `${event.title} en ${venueName}` : event.title);
+    (venueForMeta ? `${event.title} en ${venueForMeta}` : event.title);
   const imageUrl = event.imageUrl ?? (event.images && event.images[0]);
   const canonicalUrl = `${getSiteUrl()}/eventos/${slug}`;
 
@@ -110,7 +110,10 @@ export default async function EventPage({
         })()
       : format(event.date, "EEEE d 'de' MMMM, yyyy", { locale: dateLocale });
 
-  const venueName = event.venue?.name ?? event.venueText ?? (event.festival?.name ?? "");
+  // Ubicación: venue (sala) > venueText (texto libre) > festival.location (lugar real) > festival.name (fallback)
+  const locationDisplay = event.venue
+    ? `${event.venue.name}${event.venue.city ? ` · ${event.venue.city}` : ""}`
+    : event.venueText ?? event.festival?.location ?? event.festival?.name ?? "";
 
   return (
     <PageLayout>
@@ -131,7 +134,7 @@ export default async function EventPage({
               {event.title}
             </span>
           </h1>
-          {/* Metadata: tipo · fechas (izq) + SOLD OUT (derecha) */}
+          {/* Metadata: tipo · fechas (SOLD OUT solo si no hay bloque CTA) */}
           <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-0.5 border-l-2 border-punk-red/40 pl-3">
             <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
               <span
@@ -152,7 +155,8 @@ export default async function EventPage({
                 </>
               )}
             </div>
-            {event.isSoldOut && (
+            {/* Badge SOLD OUT solo cuando no hay bloque CTA (evita redundancia con bloque grande) */}
+            {event.isSoldOut && !(event.price || event.ticketUrl || event.isSoldOut) && (
               <span className="shrink-0 border border-punk-red bg-punk-red/20 px-2.5 py-1 font-punch text-[10px] uppercase tracking-widest text-punk-red">
                 {tEvent("soldOut")}
               </span>
@@ -164,9 +168,9 @@ export default async function EventPage({
               <SocialLinks links={links} variant="red" iconOnly showLabels={false} />
             </div>
           )}
-          {/* Lugar */}
-          {venueName && (
-            <p className="font-body text-sm text-punk-red/90">📍 {venueName}{event.venue?.city ? ` · ${event.venue.city}` : ""}</p>
+          {/* Ubicación (venue, venueText o festival.location) */}
+          {locationDisplay && (
+            <p className="font-body text-sm text-punk-red/90">📍 {locationDisplay}</p>
           )}
           {/* CTA entradas */}
           {(event.price || event.ticketUrl || event.isSoldOut) && (
@@ -220,7 +224,7 @@ export default async function EventPage({
               )}
             </div>
           )}
-          {/* Lugar / Festival (detalle) */}
+          {/* Lugar / Festival (detalle): venue con dirección y links, o festival con enlace */}
           {(event.venue || event.venueText || event.festival) && (
             <div className="border-l-2 border-punk-red/40 pl-3">
               <h3 className="font-display text-base tracking-tighter text-punk-red">
@@ -249,7 +253,7 @@ export default async function EventPage({
                 )}
                 <div>
                   <p className="font-display text-lg text-punk-white">
-                    {venueName}
+                    {event.venue ? event.venue.name : event.venueText ?? event.festival?.name ?? ""}
                   </p>
                   {event.festival?.location && !event.venue && (
                     <p className="mt-0.5 font-body text-sm text-punk-white/70">{event.festival.location}</p>
@@ -318,6 +322,12 @@ export default async function EventPage({
               </p>
             </div>
           )}
+          {/* Publicado por Nafarrock: al final, estilo discreto */}
+          {event.createdByNafarrock && (
+            <p className="pt-6 font-punch text-[10px] uppercase tracking-widest text-punk-red/50">
+              {tEvent("publishedByNafarrock")}
+            </p>
+          )}
         </div>
 
         {/* Desktop: layout clásico */}
@@ -335,7 +345,8 @@ export default async function EventPage({
               >
                 {event.type === "FESTIVAL" ? tEvent("festival") : tEvent("concert")}
               </span>
-              {event.isSoldOut && (
+              {/* Badge SOLD OUT solo cuando no hay bloque CTA (evita redundancia) */}
+              {event.isSoldOut && !(event.price || event.ticketUrl || event.isSoldOut) && (
                 <span className="inline-block border-2 border-punk-red bg-punk-red/30 px-4 py-2 font-punch text-xs uppercase tracking-widest text-punk-red">
                   {tEvent("soldOut")}
                 </span>
@@ -348,11 +359,6 @@ export default async function EventPage({
               <div className="mt-2">
                 <SocialLinks links={links} variant="red" />
               </div>
-            )}
-            {event.createdByNafarrock && (
-              <p className="mt-2 font-punch text-xs uppercase tracking-widest text-punk-red/90">
-                {tEvent("publishedByNafarrock")}
-              </p>
             )}
             <p className="mt-4 font-body text-lg text-punk-white/70">
               {event.endDate ? (
@@ -492,7 +498,7 @@ export default async function EventPage({
               )}
               <div>
                 <p className="font-display text-xl text-punk-white">
-                  {event.venue ? event.venue.name : event.venueText ?? (event.festival ? event.festival.name : "")}
+                  {event.venue ? event.venue.name : event.venueText ?? event.festival?.name ?? ""}
                 </p>
                 {event.festival?.location && !event.venue && (
                   <p className="mt-1 font-body text-punk-white/70">{event.festival.location}</p>
@@ -560,6 +566,12 @@ export default async function EventPage({
               {displayDesc}
             </p>
           </div>
+        )}
+        {/* Publicado por Nafarrock: al final, estilo discreto */}
+        {event.createdByNafarrock && (
+          <p className="mt-16 pt-8 font-punch text-[10px] uppercase tracking-widest text-punk-red/50">
+            {tEvent("publishedByNafarrock")}
+          </p>
         )}
       </article>
       </AnimatedSection>

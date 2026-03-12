@@ -22,7 +22,7 @@ type VenueItem = {
 };
 
 const PAGE_SIZE = 12;
-const CARD_HEIGHT_ESTIMATE = 180;
+const CARD_HEIGHT_ESTIMATE = 100;
 const CARD_GAP = 12;
 
 async function fetchSalas(
@@ -44,13 +44,13 @@ function VenueCard({ venue }: { venue: VenueItem }) {
   return (
     <Link
       href={`/salas/${venue.slug}`}
-      className="group relative block min-w-0 overflow-hidden border-2 border-punk-pink bg-punk-black p-4 transition-all duration-300 active:scale-[0.99] hover:shadow-[0_0_40px_rgba(255,0,110,0.2)]"
+      className="group relative flex items-stretch overflow-hidden border-2 border-punk-pink bg-punk-black transition-all duration-300 active:scale-[0.99] hover:shadow-[0_0_40px_rgba(255,0,110,0.15)]"
     >
       <div
         className="absolute right-0 top-0 h-12 w-12 border-t-2 border-r-2 border-punk-pink"
         style={{ clipPath: "polygon(100% 0, 100% 100%, 0 0)" }}
       />
-      <div className="aspect-[4/3] min-h-0 min-w-0 overflow-hidden border border-punk-white/10">
+      <div className="h-20 w-20 shrink-0 overflow-hidden border-r-2 border-punk-pink/30">
         {venue.logoUrl || venue.imageUrl || (venue.images && venue.images[0]) ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -59,20 +59,24 @@ function VenueCard({ venue }: { venue: VenueItem }) {
             className="h-full w-full object-cover transition group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full items-center justify-center bg-punk-black/80 font-display text-4xl text-punk-pink/50">
+          <div className="flex h-full w-full items-center justify-center bg-punk-black/80 font-display text-2xl text-punk-pink/50">
             {venue.name.charAt(0)}
           </div>
         )}
       </div>
-      <h2 className="mt-3 font-display text-lg tracking-tighter text-punk-white transition-colors group-hover:text-punk-pink">
-        {venue.name}
-      </h2>
-      <p className="mt-1 font-body text-sm text-punk-white/70">{venue.city}</p>
-      {venue.capacity && (
-        <p className="mt-1 font-punch text-xs uppercase tracking-widest text-punk-pink/80">
-          Aforo: {venue.capacity} personas
-        </p>
-      )}
+      <div className="flex min-w-0 flex-1 flex-col justify-center px-4 py-3">
+        <h2 className="font-display text-base font-medium tracking-tighter text-punk-white transition-colors group-hover:text-punk-pink line-clamp-2">
+          {venue.name}
+        </h2>
+        {venue.city && (
+          <p className="mt-0.5 font-body text-sm text-punk-white/60">{venue.city}</p>
+        )}
+        {venue.capacity && (
+          <p className="mt-0.5 font-punch text-[10px] uppercase tracking-widest text-punk-pink/80">
+            Aforo: {venue.capacity} personas
+          </p>
+        )}
+      </div>
     </Link>
   );
 }

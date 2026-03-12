@@ -408,6 +408,10 @@
     "backToFestivals": "← Itzuli jaialdietara",
     "registeredByNafarrock": "NAFARROCKEK ERREGISTRATUTAKO JAIALDIA",
     "from": "{year} urtetik",
+    "location": "Kokalekua",
+    "description": "Deskribapena",
+    "officialWeb": "Web ofiziala",
+    "viewOnMap": "Ikusi mapan",
     "upcoming": "Hurrengo ekitaldiak",
     "toConfirm": "Baieztatzeke",
     "nextEvent": "Hurrengo ekitaldia",
@@ -425,6 +429,10 @@
   "venueDetail": {
     "backToVenues": "← Itzuli guneetara",
     "registeredByNafarrock": "NAFARROCKEK ERREGISTRATUTAKO GUNEA",
+    "location": "Kokalekua",
+    "description": "Deskribapena",
+    "officialWeb": "Web ofiziala",
+    "viewOnMap": "Ikusi mapan",
     "from": "{year} urtetik",
     "capacity": "Edukiera: {count} lagun",
     "upcoming": "Hurrengo ekitaldiak",
@@ -508,6 +516,12 @@
     "metadata": {
       "title": "Iragarki-taula",
       "description": "Deialdiak, musikari bilaketak eta Nafarroako rock eskenako aukerak"
+    },
+    "detail": {
+      "backToTablon": "← Itzuli taulara",
+      "description": "Deskribapena",
+      "contact": "Kontaktua",
+      "publishedOn": "Argitaratua"
     }
   },
   "dashboard": {
