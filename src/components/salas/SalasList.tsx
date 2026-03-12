@@ -55,7 +55,7 @@ export function SalasList({ venues }: Props) {
                 {venue.logoUrl || venue.imageUrl || (venue.images && venue.images[0]) ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
-                    src={venue.logoUrl || venue.imageUrl || venue.images?.[0] ?? ""}
+                    src={(venue.logoUrl || venue.imageUrl || venue.images?.[0]) ?? ""}
                     alt={venue.name}
                     className="h-full w-full object-cover transition group-hover:scale-105"
                   />

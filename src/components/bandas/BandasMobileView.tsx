@@ -52,7 +52,7 @@ function BandCard({ band }: { band: BandItem }) {
         {band.logoUrl || band.imageUrl || (band.images && band.images[0]) ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={band.logoUrl || band.imageUrl || band.images?.[0] ?? ""}
+            src={(band.logoUrl || band.imageUrl || band.images?.[0]) ?? ""}
             alt={band.name}
             className="h-full w-full object-cover transition group-hover:scale-105"
           />
