@@ -39,6 +39,10 @@ export async function getEvents(filters: EventFilters = {}) {
       { description: { contains: term, mode: "insensitive" } },
       { venue: { name: { contains: term, mode: "insensitive" } } },
       { venue: { city: { contains: term, mode: "insensitive" } } },
+      { venueText: { contains: term, mode: "insensitive" } },
+      { bands: { some: { band: { name: { contains: term, mode: "insensitive" } } } } },
+      { festival: { name: { contains: term, mode: "insensitive" } } },
+      { festival: { location: { contains: term, mode: "insensitive" } } },
     ];
   }
 

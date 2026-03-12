@@ -1,6 +1,13 @@
 const PUNK_SVG_FILTER =
   "brightness(0) saturate(100%) invert(36%) sepia(100%) saturate(5000%) hue-rotate(310deg)";
 
+/** Dimensiones unificadas para carga full (página y listas) */
+const FULL_LOADING_CLASSES = {
+  wrapper: "flex min-h-[45vh] flex-col items-center justify-center gap-8",
+  icon: "h-20 w-20 object-contain",
+  text: "font-display text-xl tracking-[0.2em] sm:text-2xl sm:tracking-[0.3em]",
+} as const;
+
 type Props = {
   label: string;
   variant?: "full" | "inline";
@@ -28,19 +35,19 @@ export function PunkLoadingIndicator({ label, variant = "full" }: Props) {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center gap-6 py-16">
+    <div className={FULL_LOADING_CLASSES.wrapper}>
       <div className="animate-loading-punk-float" aria-hidden>
         <img
           src="/svg/punk-svgrepo-com.svg"
           alt=""
-          width={64}
-          height={64}
-          className="h-16 w-16 object-contain"
+          width={80}
+          height={80}
+          className={FULL_LOADING_CLASSES.icon}
           style={{ filter: PUNK_SVG_FILTER }}
         />
       </div>
       <div className="neon-mapa-sign">
-        <span className="neon-mapa-text font-display text-lg tracking-[0.15em] sm:text-xl sm:tracking-[0.2em]">
+        <span className={`neon-mapa-text ${FULL_LOADING_CLASSES.text}`}>
           {labelUpper}
         </span>
       </div>

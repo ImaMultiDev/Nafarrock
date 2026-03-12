@@ -128,25 +128,32 @@ export default async function EventPage({
 
         {/* Mobile: layout optimizado similar a bandas */}
         <div className="mt-4 space-y-6 md:hidden">
-          {/* Título neon - ancho completo */}
-          <h1 className="neon-event-name-sign w-full">
-            <span className="neon-event-name-text font-display text-xl tracking-tighter sm:text-2xl">
-              {event.title}
+          {/* Título neon con badge CONCIERTO/FESTIVAL arriba-derecha, inclinado */}
+          <div className="relative w-full">
+            <span
+              className={`absolute -top-1 right-2 z-10 rotate-6 border-2 px-2.5 py-1 font-punch text-[10px] uppercase tracking-widest shadow-lg ${
+                event.type === "FESTIVAL"
+                  ? "border-punk-yellow bg-punk-black text-punk-yellow"
+                  : "border-punk-white bg-punk-black text-punk-white"
+              }`}
+            >
+              {event.type === "FESTIVAL" ? tEvent("festival") : tEvent("concert")}
             </span>
-          </h1>
-          {/* Metadata: tipo · fechas (SOLD OUT solo si no hay bloque CTA) */}
+            <h1 className="neon-event-name-sign w-full">
+              <span className="neon-event-name-text font-display text-xl tracking-tighter sm:text-2xl">
+                {event.title}
+              </span>
+            </h1>
+          </div>
+          {/* Redes: justo debajo del título, encima de la fecha */}
+          {links.length > 0 && (
+            <div className="flex items-center gap-4">
+              <SocialLinks links={links} variant="red" iconOnly showLabels={false} />
+            </div>
+          )}
+          {/* Fecha y puertas */}
           <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-0.5 border-l-2 border-punk-red/40 pl-3">
             <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-              <span
-                className={`border px-2.5 py-1 font-punch text-[10px] uppercase tracking-widest ${
-                  event.type === "FESTIVAL"
-                    ? "border-punk-red/50 bg-punk-red/10 text-punk-red"
-                    : "border-punk-white/40 bg-punk-white/10 text-punk-white/90"
-                }`}
-              >
-                {event.type === "FESTIVAL" ? tEvent("festival") : tEvent("concert")}
-              </span>
-              <span className="text-punk-red/40 font-punch">·</span>
               <span className="font-body text-sm text-punk-white/80">{formattedDate}</span>
               {event.doorsOpen && (
                 <>
@@ -155,24 +162,17 @@ export default async function EventPage({
                 </>
               )}
             </div>
-            {/* Badge SOLD OUT solo cuando no hay bloque CTA (evita redundancia con bloque grande) */}
-            {event.isSoldOut && !(event.price || event.ticketUrl || event.isSoldOut) && (
+            {event.isSoldOut && !(event.price || event.ticketUrl) && (
               <span className="shrink-0 border border-punk-red bg-punk-red/20 px-2.5 py-1 font-punch text-[10px] uppercase tracking-widest text-punk-red">
                 {tEvent("soldOut")}
               </span>
             )}
           </div>
-          {/* Redes: solo iconos */}
-          {links.length > 0 && (
-            <div className="flex items-center gap-4">
-              <SocialLinks links={links} variant="red" iconOnly showLabels={false} />
-            </div>
-          )}
           {/* Ubicación (venue, venueText o festival.location) */}
           {locationDisplay && (
             <p className="font-body text-sm text-punk-red/90">📍 {locationDisplay}</p>
           )}
-          {/* CTA entradas */}
+          {/* CTA entradas: precio a la izquierda + botón con ticket SVG */}
           {(event.price || event.ticketUrl || event.isSoldOut) && (
             <div>
               {event.isSoldOut ? (
@@ -182,20 +182,35 @@ export default async function EventPage({
                   </span>
                 </div>
               ) : (
-                <div className="flex flex-col gap-3 border-2 border-punk-red/50 bg-punk-black p-4">
-                  {event.price && (
-                    <span className="font-display text-xl text-punk-white">{event.price}</span>
-                  )}
-                  {event.ticketUrl && (
-                    <a
-                      href={event.ticketUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block border-2 border-punk-red bg-punk-red px-6 py-3 text-center font-punch text-sm uppercase tracking-widest text-punk-white transition-all hover:bg-punk-blood hover:border-punk-blood hover:shadow-[0_0_30px_rgba(230,0,38,0.4)]"
-                    >
-                      {tEvent("buyTickets")}
-                    </a>
-                  )}
+                <div className="overflow-hidden border-2 border-punk-red/60 bg-gradient-to-b from-punk-black to-punk-black/95 p-4 shadow-[0_0_20px_rgba(230,0,38,0.15)]">
+                  <div className={`flex items-center gap-4 ${!event.ticketUrl ? "justify-center" : ""}`}>
+                    {event.price && (
+                      <p className="shrink-0 font-display text-2xl tracking-tighter text-punk-white">
+                        {event.price}
+                        <span className="ml-1 font-body text-lg font-normal text-punk-white/90">€</span>
+                      </p>
+                    )}
+                    {event.ticketUrl && (
+                      <a
+                        href={event.ticketUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex flex-1 items-center justify-center gap-2 border-2 border-punk-red bg-punk-red px-4 py-3 font-punch text-sm uppercase tracking-widest text-punk-white transition-all hover:bg-punk-blood hover:border-punk-blood hover:shadow-[0_0_25px_rgba(230,0,38,0.5)]"
+                      >
+                        <img
+                          src="/svg/ticket-4-svgrepo-com.svg"
+                          alt=""
+                          width={20}
+                          height={20}
+                          className="h-5 w-5 object-contain"
+                          style={{
+                            filter: "brightness(0) invert(1)",
+                          }}
+                        />
+                        {tEvent("buyTickets")}
+                      </a>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
