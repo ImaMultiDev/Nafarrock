@@ -36,6 +36,7 @@ test-results/
 
 # IDE y sistema
 .DS_Store
+nul
 *.pem
 .idea
 .vscode/*
