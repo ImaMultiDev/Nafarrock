@@ -36,6 +36,7 @@
     "C:\\Users\\ima7m\\AppData\\Local\\Temp\\nafarrock-next/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "scripts"
   ]
 }
