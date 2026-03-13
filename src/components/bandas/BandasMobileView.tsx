@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useCallback, useState, useEffect } from "react";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -76,9 +76,16 @@ function BandCard({ band }: { band: BandItem }) {
 
 export function BandasMobileView() {
   const t = useTranslations("bands");
+  const queryClient = useQueryClient();
 
   const [location, setLocation] = useState("");
   const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    return () => {
+      queryClient.removeQueries({ queryKey: ["bandas"] });
+    };
+  }, [queryClient]);
 
   const {
     data,

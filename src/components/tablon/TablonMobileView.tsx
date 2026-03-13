@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useCallback, useState, useEffect } from "react";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useTranslations } from "next-intl";
 import { format } from "date-fns";
@@ -83,9 +83,16 @@ export function TablonMobileView() {
   const t = useTranslations("boardAnnouncement");
   const locale = useLocale();
   const dateLocale = getDateLocale(locale);
+  const queryClient = useQueryClient();
 
   const [category, setCategory] = useState("");
   const [territory, setTerritory] = useState("");
+
+  useEffect(() => {
+    return () => {
+      queryClient.removeQueries({ queryKey: ["tablon"] });
+    };
+  }, [queryClient]);
 
   const {
     data,

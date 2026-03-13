@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useCallback, useState, useEffect } from "react";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Link } from "@/i18n/navigation";
 import { format } from "date-fns";
@@ -129,9 +129,16 @@ export function EventosMobileView() {
   const tEventDetail = useTranslations("eventDetail");
   const locale = useLocale();
   const dateLocale = getDateLocale(locale);
+  const queryClient = useQueryClient();
 
   const [filter, setFilter] = useState<FilterValue>("");
   const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    return () => {
+      queryClient.removeQueries({ queryKey: ["eventos"] });
+    };
+  }, [queryClient]);
 
   const {
     data,

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useCallback, useState, useEffect } from "react";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -71,8 +71,15 @@ function FestivalCard({ festival }: { festival: FestivalItem }) {
 
 export function FestivalesMobileView() {
   const t = useTranslations("scene.festivals");
+  const queryClient = useQueryClient();
 
   const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    return () => {
+      queryClient.removeQueries({ queryKey: ["festivales"] });
+    };
+  }, [queryClient]);
 
   const {
     data,
