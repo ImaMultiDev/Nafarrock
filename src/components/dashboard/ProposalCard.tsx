@@ -3,15 +3,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Music2, Calendar, ClipboardList } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 type ProposalType = "band" | "event" | "announcement";
 
-const ICONS = {
-  band: Music2,
-  event: Calendar,
-  announcement: ClipboardList,
-} as const;
+const SVG_BY_TYPE: Record<ProposalType, string> = {
+  band: "/svg/group-549-svgrepo-com.svg",
+  event: "/svg/halloween-october-31-calendar-page-sketch-svgrepo-com.svg",
+  announcement: "/svg/trumpet-svgrepo-com.svg",
+};
 
 type Props = {
   href: string;
@@ -22,7 +22,7 @@ type Props = {
 };
 
 export function ProposalCard({ href, type, title, description, accent }: Props) {
-  const Icon = ICONS[type];
+  const svgSrc = SVG_BY_TYPE[type];
   const router = useRouter();
   const tCommon = useTranslations("common");
   const [showLimitModal, setShowLimitModal] = useState(false);
@@ -61,17 +61,30 @@ export function ProposalCard({ href, type, title, description, accent }: Props) 
       <a
         href={href}
         onClick={handleClick}
-        className={`group flex flex-col rounded-xl border-2 bg-gradient-to-br p-6 transition-all duration-200 ${accent}`}
+        className={`group flex flex-col rounded-xl border-2 bg-gradient-to-br p-4 transition-all duration-200 md:p-6 ${accent}`}
       >
-        <Icon size={28} className="text-punk-white/80" />
-        <h2 className="mt-4 font-display text-lg font-semibold text-punk-white">
-          {title}
-        </h2>
-        <p className="mt-2 flex-1 text-sm text-punk-white/60">
-          {description}
-        </p>
-        <span className="mt-4 inline-flex items-center gap-2 font-punch text-xs uppercase tracking-widest text-punk-white opacity-0 transition-opacity group-hover:opacity-100">
-          Proponer <span className="inline-block">→</span>
+        <div className="flex flex-1 flex-row items-start gap-4 md:flex-col md:gap-0">
+          <span className="relative flex h-10 w-10 shrink-0 md:mt-0">
+            <img
+              src={svgSrc}
+              alt=""
+              width={40}
+              height={40}
+              className="h-10 w-10 object-contain opacity-80"
+              style={{ filter: "brightness(0) invert(1)" }}
+            />
+          </span>
+          <div className="min-w-0 flex-1">
+            <h2 className="font-display text-base font-semibold text-punk-white md:mt-4 md:text-lg">
+              {title}
+            </h2>
+            <p className="mt-1 text-sm text-punk-white/60 md:mt-2 md:flex-1">
+              {description}
+            </p>
+          </div>
+        </div>
+        <span className="mt-3 inline-flex items-center gap-2 font-punch text-xs uppercase tracking-widest text-punk-white opacity-0 transition-opacity group-hover:opacity-100 md:mt-4">
+          Proponer <ArrowRight size={14} />
         </span>
       </a>
     </>

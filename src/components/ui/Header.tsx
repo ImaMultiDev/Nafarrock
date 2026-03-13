@@ -565,6 +565,7 @@ export function Header() {
                             <span className="flex-1 text-center">
                               {t(link.labelKey)}
                             </span>
+                            <span className="h-5 w-5 shrink-0" aria-hidden />
                             <ChevronDown
                               className={`absolute right-4 top-1/2 h-4 w-4 shrink-0 -translate-y-1/2 transition-transform duration-200 ${
                                 sceneMobileOpen ? "rotate-180" : ""
@@ -599,22 +600,23 @@ export function Header() {
                                           : "border-l-4 border-transparent text-punk-white/90"
                                       }`}
                                     >
-                                      <img
-                                        src={MOBILE_NAV_ICONS[sub.labelKey]}
-                                        alt=""
-                                        width={18}
-                                        height={18}
-                                        className="h-[18px] w-[18px] shrink-0 object-contain"
-                                        style={{
-                                          filter: subActive
-                                            ? "brightness(0) saturate(100%) invert(36%) sepia(100%) saturate(5000%) hue-rotate(310deg)"
-                                            : "brightness(0) invert(1)",
-                                        }}
-                                      />
-                                      <span className="flex-1 text-center">
-                                        {t(sub.labelKey)}
-                                      </span>
-                                    </Link>
+                                    <img
+                                      src={MOBILE_NAV_ICONS[sub.labelKey]}
+                                      alt=""
+                                      width={18}
+                                      height={18}
+                                      className="h-[18px] w-[18px] shrink-0 object-contain"
+                                      style={{
+                                        filter: subActive
+                                          ? "brightness(0) saturate(100%) invert(36%) sepia(100%) saturate(5000%) hue-rotate(310deg)"
+                                          : "brightness(0) invert(1)",
+                                      }}
+                                    />
+                                    <span className="flex-1 text-center">
+                                      {t(sub.labelKey)}
+                                    </span>
+                                    <span className="h-[18px] w-[18px] shrink-0" aria-hidden />
+                                  </Link>
                                   );
                                 })}
                               </div>
@@ -650,6 +652,7 @@ export function Header() {
                         <span className="flex-1 text-center">
                           {t(link.labelKey)}
                         </span>
+                        <span className="h-5 w-5 shrink-0" aria-hidden />
                       </Link>
                     );
                   })}
@@ -694,6 +697,7 @@ export function Header() {
                         <span className="flex-1 text-center">
                           {guideLink.label}
                         </span>
+                        <span className="h-5 w-5 shrink-0" aria-hidden />
                       </Link>
                     );
                   })()}
@@ -702,7 +706,12 @@ export function Header() {
                       <NextLink
                         href="/dashboard"
                         onClick={() => setMenuOpen(false)}
-                        className="mt-2 flex w-full items-center gap-2 rounded border-2 border-punk-green bg-punk-green px-4 py-3 font-punch text-xs uppercase tracking-widest text-punk-white transition-colors hover:bg-transparent hover:text-punk-green"
+                        className={`mt-2 flex w-full items-center gap-2 rounded border-2 border-punk-green px-4 py-3 font-punch text-xs uppercase tracking-widest text-punk-white transition-colors hover:bg-transparent hover:text-punk-green ${
+                          (pathname === "/dashboard" || pathname.startsWith("/dashboard/")) &&
+                          !(pathname === "/dashboard/buzon" || pathname.startsWith("/dashboard/buzon/"))
+                            ? "bg-punk-green ring-2 ring-punk-white ring-offset-2 ring-offset-punk-black"
+                            : "bg-punk-green"
+                        }`}
                       >
                         <img
                           src="/svg/dashboard-svgrepo-com.svg"
@@ -713,7 +722,8 @@ export function Header() {
                           style={{ filter: "brightness(0) invert(1)" }}
                         />
                         <span className="flex-1 text-center">{t("panel")}</span>
-                      </NextLink>
+                        <span className="h-5 w-5 shrink-0" aria-hidden />
+                    </NextLink>
                       <InboxBadge
                         variant="mobile-list"
                         onNavigate={() => setMenuOpen(false)}
@@ -739,6 +749,7 @@ export function Header() {
                         <span className="flex-1 text-center">
                           {t("logout")}
                         </span>
+                        <span className="h-5 w-5 shrink-0" aria-hidden />
                       </button>
                     </>
                   ) : (
