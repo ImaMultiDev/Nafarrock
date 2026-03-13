@@ -48,7 +48,7 @@ export function MapaWrapper({ points }: Props) {
   return (
     <div className="relative">
       {/* Mobile: mapa + overlays + barra inferior fija */}
-      <div className="relative md:hidden">
+      <div className="relative lg:hidden">
         {/* Contenedor mapa */}
         <div className="relative z-0 overflow-hidden">
           <MapaInteractivo
@@ -85,7 +85,7 @@ export function MapaWrapper({ points }: Props) {
       </div>
 
       {/* Desktop: layout clásico */}
-      <div className="hidden space-y-4 md:block">
+      <div className="hidden space-y-4 lg:block">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <p className="font-body text-punk-white/60">
             {t("subtitle", { count: filteredPoints.length })}

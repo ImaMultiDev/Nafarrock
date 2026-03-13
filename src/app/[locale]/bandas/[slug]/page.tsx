@@ -107,7 +107,7 @@ export default async function BandPage({
         </Link>
 
         {/* Mobile: header con estilo original - nombre neon ancho completo, metadata + status */}
-        <div className="mt-4 space-y-6 md:hidden">
+        <div className="mt-4 space-y-6 lg:hidden">
           {/* Nombre como letrero neón - ancho completo */}
           <h1 className="neon-band-name-sign w-full">
             <span className="neon-band-name-text font-display text-xl tracking-tighter sm:text-2xl">

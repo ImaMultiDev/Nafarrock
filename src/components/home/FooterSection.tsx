@@ -25,14 +25,14 @@ export function FooterSection() {
   return (
     <footer className="relative overflow-hidden border-t-2 border-punk-green bg-punk-black py-4 px-4 text-center max-[299px]:px-3 md:py-10 md:px-12 md:text-left lg:py-14 lg:px-20">
       {/* Mobile: solo copyright */}
-      <div className="md:hidden">
+      <div className="lg:hidden">
         <p className="font-body text-xs text-punk-white/40">
           {t("copyright", { year: new Date().getFullYear() })}
         </p>
       </div>
 
       {/* Desktop: footer completo */}
-      <div className="relative z-10 mx-auto max-w-7xl 2xl:max-w-content-wide hidden md:block">
+      <div className="relative z-10 mx-auto max-w-7xl 2xl:max-w-content-wide hidden lg:block">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,200,83,0.03)_0%,transparent_70%)]" />
         <div className="relative z-10">
           <div className="flex flex-col items-center justify-between gap-8 md:flex-row">

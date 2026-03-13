@@ -38,7 +38,7 @@ export default async function EventosPage({ searchParams }: Props) {
 
       {/* Título y descripción: solo desktop */}
       <AnimatedSection>
-        <div className="mb-10 hidden sm:mb-16 md:block">
+        <div className="mb-10 hidden sm:mb-16 lg:block">
           <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl lg:text-7xl">
             {t("title")}
           </h1>
@@ -50,13 +50,13 @@ export default async function EventosPage({ searchParams }: Props) {
 
       {/* Filtros: solo desktop */}
       <AnimatedSection delay={0.1}>
-        <div className="hidden md:block">
+        <div className="hidden lg:block">
           <EventosFilters />
         </div>
       </AnimatedSection>
 
       {/* Desktop: cards + paginación clásica */}
-      <div className="hidden pb-24 md:block md:pb-0">
+      <div className="hidden pb-24 lg:block lg:pb-0">
         {events.length > 0 && <EventosList events={events} />}
 
         <Pagination

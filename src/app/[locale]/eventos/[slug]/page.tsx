@@ -127,7 +127,7 @@ export default async function EventPage({
         </Link>
 
         {/* Mobile: layout optimizado similar a bandas */}
-        <div className="mt-4 space-y-6 md:hidden">
+        <div className="mt-4 space-y-6 lg:hidden">
           {/* Título neon con badge CONCIERTO/FESTIVAL arriba-derecha, inclinado */}
           <div className="relative w-full">
             <span
@@ -346,7 +346,7 @@ export default async function EventPage({
         </div>
 
         {/* Desktop: layout clásico */}
-        <article className="mt-10 hidden md:block">
+        <article className="mt-10 hidden lg:block">
         {/* Hero: título + CTA entradas arriba a la derecha */}
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
           <div className="min-w-0 flex-1">

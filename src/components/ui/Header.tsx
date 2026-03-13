@@ -184,8 +184,9 @@ export function Header() {
         window.innerWidth - document.documentElement.clientWidth;
       document.body.style.overflow = "hidden";
       document.body.style.paddingRight = `${scrollbarWidth}px`;
+      history.pushState({ menuOpen: true }, "", window.location.href);
       const onEscape = (e: KeyboardEvent) => {
-        if (e.key === "Escape") setMenuOpen(false);
+        if (e.key === "Escape") history.back();
       };
       window.addEventListener("keydown", onEscape);
       return () => window.removeEventListener("keydown", onEscape);
@@ -195,6 +196,14 @@ export function Header() {
       setSceneMobileOpen(false);
     }
   }, [menuOpen]);
+
+  useEffect(() => {
+    const onPopState = () => {
+      setMenuOpen(false);
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
 
   return (
     <header
@@ -480,7 +489,7 @@ export function Header() {
         {/* Mobile: hamburger - absoluto a la derecha para que logo quede centrado */}
         <button
           type="button"
-          onClick={() => setMenuOpen(!menuOpen)}
+          onClick={() => (menuOpen ? history.back() : setMenuOpen(true))}
           className="absolute right-4 top-1/2 flex h-10 w-10 shrink-0 -translate-y-1/2 items-center justify-center rounded border border-punk-white/30 text-punk-white nav:relative nav:right-0 nav:top-0 nav:translate-y-0 nav:hidden"
           aria-label={menuOpen ? tCommon("menuClose") : tCommon("menuOpen")}
           aria-expanded={menuOpen}
@@ -502,8 +511,8 @@ export function Header() {
             <div
               role="button"
               tabIndex={-1}
-              onClick={() => setMenuOpen(false)}
-              onKeyDown={(e) => e.key === "Escape" && setMenuOpen(false)}
+              onClick={() => history.back()}
+              onKeyDown={(e) => e.key === "Escape" && history.back()}
               className={`absolute inset-0 bg-punk-black/95 backdrop-blur-lg transition-opacity duration-300 ease-out ${
                 menuOpen ? "opacity-100" : "opacity-0"
               }`}

@@ -139,7 +139,7 @@ export default async function MapaPage() {
       />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(230,0,38,0.08)_0%,transparent_50%)]" />
       <div className="relative z-10 mx-auto w-full max-w-7xl px-0 py-0 md:px-6 md:py-12 lg:px-20 lg:py-20 2xl:max-w-content-wide">
-        <div className="mb-10 sm:mb-16 hidden md:block">
+        <div className="mb-10 sm:mb-16 hidden lg:block">
           <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl lg:text-7xl">
             {t("title")}
           </h1>

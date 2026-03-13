@@ -162,7 +162,7 @@ export function SalasMobileView() {
         onSubmit={handleSearchSubmit}
         controlled
       />
-      <div className="flex flex-col pb-24 md:hidden">
+      <div className="flex flex-col pb-24 lg:hidden">
         {isLoading ? (
           <PunkLoadingIndicator label={t("loading") || "Cargando espacios"} />
         ) : isError ? (

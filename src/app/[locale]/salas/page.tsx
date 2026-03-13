@@ -39,7 +39,7 @@ export default async function SalasPage({ searchParams }: Props) {
       <SalasMobileView />
 
       {/* Título y descripción: solo desktop */}
-      <div className="mb-10 hidden sm:mb-16 md:block">
+      <div className="mb-10 hidden sm:mb-16 lg:block">
         <h1 className="font-display text-5xl tracking-tighter text-punk-white sm:text-6xl lg:text-7xl">
           {t("metadata.title").toUpperCase()}
         </h1>
@@ -49,12 +49,12 @@ export default async function SalasPage({ searchParams }: Props) {
       </div>
 
       {/* Filtros: solo desktop */}
-      <div className="hidden md:block">
+      <div className="hidden lg:block">
         <SalasFilters />
       </div>
 
       {/* Desktop: cards + paginación clásica */}
-      <div className="hidden pb-24 md:block md:pb-0">
+      <div className="hidden pb-24 lg:block lg:pb-0">
         {venues.length > 0 && <SalasList venues={venues} />}
 
         <Pagination

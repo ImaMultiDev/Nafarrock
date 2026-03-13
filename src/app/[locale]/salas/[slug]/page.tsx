@@ -87,7 +87,7 @@ export default async function VenuePage({
         </Link>
 
         {/* Mobile: layout unificado como eventos */}
-        <div className="mt-4 space-y-6 md:hidden">
+        <div className="mt-4 space-y-6 lg:hidden">
           {/* Título neon */}
           <h1 className="neon-venue-name-sign w-full">
             <span className="neon-venue-name-text font-display text-xl tracking-tighter sm:text-2xl">
@@ -244,7 +244,7 @@ export default async function VenuePage({
         </div>
 
         {/* Desktop: layout clásico */}
-        <article className="mt-10 hidden md:block">
+        <article className="mt-10 hidden lg:block">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
             <div className="min-w-0 flex-1">
               <h1 className="font-display text-4xl tracking-tighter text-punk-white sm:text-5xl lg:text-6xl">
