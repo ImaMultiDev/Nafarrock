@@ -5,6 +5,8 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getLocale, getTranslations } from "next-intl/server";
 import { Providers } from "@/components/providers/Providers";
 import { Header } from "@/components/ui/Header";
+import { ScrollReset } from "@/components/ui/ScrollReset";
+import { PwaRegister } from "@/components/PwaRegister";
 import { BandVerificationBanner } from "@/components/BandVerificationBanner";
 import { InboxBanner } from "@/components/InboxBanner";
 import { ConditionalFooter } from "@/components/ConditionalFooter";
@@ -66,6 +68,8 @@ export default async function RootLayout({
     <html lang={locale} className={`${inter.variable} ${bebas.variable} ${spaceMono.variable}`}>
       <body className="font-body min-h-screen overflow-x-hidden bg-punk-black">
         <NextTopLoader color="#E60026" height={3} showSpinner={false} />
+        <ScrollReset />
+        <PwaRegister />
         <div className="noise-overlay" aria-hidden />
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Providers>

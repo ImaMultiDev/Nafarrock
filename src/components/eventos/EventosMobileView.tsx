@@ -191,6 +191,14 @@ export function EventosMobileView() {
   }, [filter, search]);
 
   useEffect(() => {
+    const onOrientationChange = () => {
+      parentRef.current?.scrollTo(0, 0);
+    };
+    window.addEventListener("orientationchange", onOrientationChange);
+    return () => window.removeEventListener("orientationchange", onOrientationChange);
+  }, []);
+
+  useEffect(() => {
     const el = parentRef.current;
     if (!el || allEvents.length === 0) return;
     const onScroll = () => {
