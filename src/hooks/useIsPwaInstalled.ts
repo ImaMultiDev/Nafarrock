@@ -31,7 +31,7 @@ export function useIsPwaInstalled(): boolean {
       try {
         const apps = await getInstalled();
         return Array.isArray(apps) && apps.some(
-          (app: { platform?: string }) => app?.platform === "webapp"
+          (app) => (app as { platform?: string })?.platform === "webapp"
         );
       } catch {
         return false;
