@@ -2,6 +2,7 @@ import { HeroSection } from "@/components/home/HeroSection";
 import { ExploreSection } from "@/components/home/ExploreSection";
 import { ExploreScrollIndicator } from "@/components/home/ExploreScrollIndicator";
 import { ManifestoSection } from "@/components/home/ManifestoSection";
+import { InstallAppSection } from "@/components/home/InstallAppSection";
 import { UpcomingEventsCarousel } from "@/components/home/UpcomingEventsCarousel";
 import { getEvents, getFeaturedEvents } from "@/services/event.service";
 import { getTranslations } from "next-intl/server";
@@ -58,6 +59,7 @@ export default async function HomePage() {
       <ExploreScrollIndicator variant="red" />
       <ExploreSection />
       <ManifestoSection />
+      <InstallAppSection />
     </main>
   );
 }

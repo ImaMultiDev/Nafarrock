@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { usePathname } from "@/i18n/navigation";
+import { usePathname } from "next/navigation";
 
 /**
  * Resetea el scroll al cambiar de orientación o de ruta.

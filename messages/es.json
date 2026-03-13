@@ -22,7 +22,8 @@
       "claim": "Reclamar",
       "claimProfile": "Reclamar perfil",
       "bolos": "Bolos",
-      "tablon": "ANUNCIOS"
+      "tablon": "ANUNCIOS",
+      "installApp": "Instalar app"
     },
     "actions": {
       "search": "Buscar",
@@ -758,5 +759,27 @@
     "cartelCount": "+{count}",
     "headliner": "cabecera",
     "doors": "Puertas"
+  },
+  "install": {
+    "title": "Instalar Nafarrock",
+    "subtitle": "Accede más rápido a la escena rock",
+    "description": "Instala Nafarrock como aplicación en tu móvil o escritorio. Acceso directo desde el icono, sin barras del navegador.",
+    "installNow": "Descargar Nafarrock",
+    "android": {
+      "title": "Android (Chrome)",
+      "steps": "Menú (⋮) → \"Instalar aplicación\" o \"Añadir a pantalla de inicio\""
+    },
+    "ios": {
+      "title": "iPhone / iPad (Safari)",
+      "steps": "Botón Compartir (□↑) → \"Añadir a pantalla de inicio\""
+    },
+    "desktop": {
+      "title": "Escritorio (Chrome, Edge)",
+      "steps": "Icono de instalación (⊕) en la barra de direcciones"
+    },
+    "metadata": {
+      "title": "Instalar app",
+      "description": "Instala Nafarrock como aplicación en tu dispositivo"
+    }
   }
 }

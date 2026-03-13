@@ -14,6 +14,8 @@ import { Menu, X, ChevronDown } from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { InboxBadge } from "@/components/InboxBadge";
+import { useIsPwaInstalled } from "@/hooks/useIsPwaInstalled";
+import { InstallAppButton } from "@/components/ui/InstallAppButton";
 
 const navLinks = [
   { href: "/", labelKey: "home" as const },
@@ -39,6 +41,7 @@ const MOBILE_NAV_ICONS: Record<string, string> = {
   festivals: "/svg/calendar-event-svgrepo-com.svg",
   map: "/svg/map2-svgrepo-com.svg",
   tablon: "/svg/trumpet-svgrepo-com.svg",
+  installApp: "/svg/download-svgrepo-com.svg",
 };
 
 const MANUAL_ROLES = [
@@ -134,6 +137,7 @@ export function Header() {
   const [sceneMobileOpen, setSceneMobileOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const sceneDropdownRef = useRef<HTMLDivElement>(null);
+  const isPwaInstalled = useIsPwaInstalled();
 
   const MENU_TRANSITION_MS = 350;
 
@@ -779,6 +783,18 @@ export function Header() {
                       >
                         {t("login")}
                       </Link>
+                    </div>
+                  )}
+                  {/* Instalar app: solo visible cuando la PWA no está instalada */}
+                  {!isPwaInstalled && (
+                    <div className="mt-12 border-t-2 border-punk-white/20 pt-8">
+                      <InstallAppButton
+                        variant="menu"
+                        onNavigate={() => setMenuOpen(false)}
+                        isActive={
+                          pathname === "/instalar" || pathname.endsWith("/instalar")
+                        }
+                      />
                     </div>
                   )}
                 </nav>

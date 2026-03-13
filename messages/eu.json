@@ -6,7 +6,7 @@
       "bands": "Taldeak",
       "bandsNeon": "TALDEAK",
       "eventsNeon": "EKITALDIAK",
-      "scene": "Eskena",
+      "scene": "Eszena",
       "salas": "Guneak",
       "festivals": "Jaialdiak",
       "map": "Mapa",
@@ -22,7 +22,8 @@
       "claim": "Eskatu",
       "claimProfile": "Eskatu profila",
       "bolos": "Bolos",
-      "tablon": "Iragarkiak"
+      "tablon": "Iragarkiak",
+      "installApp": "Instalatu aplikazioa"
     },
     "actions": {
       "search": "Bilatu",
@@ -758,5 +759,27 @@
     "cartelCount": "+{count}",
     "headliner": "buru",
     "doors": "Ateak"
+  },
+  "install": {
+    "title": "Instalatu Nafarrock",
+    "subtitle": "Sartu azkarrago rock eszenara",
+    "description": "Instalatu Nafarrock aplikazio gisa zure mugikorrean edo mahaigainean. Sarbide zuzena ikonoetatik, nabigatzaile barrak gabe.",
+    "installNow": "Deskargatu Nafarrock",
+    "android": {
+      "title": "Android (Chrome)",
+      "steps": "Menua (⋮) → \"Instalatu aplikazioa\" edo \"Gehitu hasierako pantailara\""
+    },
+    "ios": {
+      "title": "iPhone / iPad (Safari)",
+      "steps": "Partekatu botoia (□↑) → \"Gehitu hasierako pantailara\""
+    },
+    "desktop": {
+      "title": "Mahaigaina (Chrome, Edge)",
+      "steps": "Instalazio ikonoa (⊕) helbide barran"
+    },
+    "metadata": {
+      "title": "Instalatu appa",
+      "description": "Instalatu Nafarrock aplikazio gisa zure gailuan"
+    }
   }
 }
