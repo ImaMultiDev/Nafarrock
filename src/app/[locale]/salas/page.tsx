@@ -4,8 +4,10 @@ import { PageLayout } from "@/components/ui/PageLayout";
 import { SalasFilters } from "@/components/buscador/SalasFilters";
 import { SalasMobileView } from "@/components/salas/SalasMobileView";
 import { SalasList } from "@/components/salas/SalasList";
+import { SalasOptimizedView } from "@/components/salas/SalasOptimizedView";
 import { Pagination } from "@/components/ui/Pagination";
 import { getTranslations } from "next-intl/server";
+import { SALAS_VARIANT } from "@/lib/feature-flags";
 
 export async function generateMetadata() {
   const t = await getTranslations("scene.venues.metadata");
@@ -32,6 +34,10 @@ export default async function SalasPage({ searchParams }: Props) {
   });
 
   const t = await getTranslations("scene.venues");
+
+  if (SALAS_VARIANT === "optimized") {
+    return <SalasOptimizedView />;
+  }
 
   return (
     <PageLayout>

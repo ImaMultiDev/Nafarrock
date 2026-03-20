@@ -3,8 +3,8 @@
 import { useRouter } from "@/i18n/navigation";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { SearchInput } from "@/components/ui/SearchInput";
 import { BAND_LOCATIONS } from "@/lib/band-locations";
 
 type BandasMobilePanelProps = {
@@ -68,6 +68,19 @@ export function BandasMobilePanel({
     }
   };
 
+  const handleSearchChange = useCallback(
+    (v: string) => {
+      setSearch(v);
+      if (controlled) {
+        onSearchChange?.(v);
+        onSubmit?.(v);
+      } else {
+        applyFilters(v, currentLocation);
+      }
+    },
+    [controlled, currentLocation, onSearchChange, onSubmit, applyFilters],
+  );
+
   const handleFilterClick = (location: string) => {
     if (controlled) {
       onLocationChange?.(location);
@@ -90,26 +103,15 @@ export function BandasMobilePanel({
         className="flex flex-col gap-2 pl-[max(1rem,env(safe-area-inset-left,0px))] pr-[max(1rem,env(safe-area-inset-right,0px))]"
       >
         <div className="flex items-center gap-2">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => {
-              const v = e.target.value;
-              setSearch(v);
-              if (controlled) onSearchChange?.(v);
-            }}
+          <SearchInput
+            value={controlled ? (controlledSearch ?? search) : search}
+            onChange={handleSearchChange}
             placeholder={t("searchPlaceholder")}
-            className="min-h-[44px] min-w-0 flex-1 border-2 border-punk-green bg-punk-black px-3 py-2.5 font-body text-punk-white placeholder:text-punk-white/40 focus:outline-none"
             aria-label={t("search")}
+            accent="punk-green"
+            compact
+            variant="green"
           />
-          <button
-            type="submit"
-            className="map-filter-btn flex shrink-0 items-center gap-1.5 font-punch text-[10px] uppercase tracking-widest transition-all"
-            aria-label={t("searchButton")}
-          >
-            <Search className="h-4 w-4" />
-            {t("searchButton")}
-          </button>
         </div>
         <div className="flex min-w-0 flex-1 flex-nowrap gap-2 overflow-x-auto scrollbar-hide [scroll-snap-type:x_mandatory]">
           <div className="flex flex-nowrap gap-2 pl-0 pr-[max(1rem,env(safe-area-inset-right,0px))]">

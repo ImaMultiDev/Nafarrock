@@ -1,10 +1,7 @@
-import { HeroSection } from "@/components/home/HeroSection";
-import { ExploreSection } from "@/components/home/ExploreSection";
-import { ExploreScrollIndicator } from "@/components/home/ExploreScrollIndicator";
-import { ManifestoSection } from "@/components/home/ManifestoSection";
-import { InstallAppSection } from "@/components/home/InstallAppSection";
-import { UpcomingEventsCarousel } from "@/components/home/UpcomingEventsCarousel";
+import { HomeEditorialView } from "@/components/home/HomeEditorialView";
+import { HomeDataFocusedView } from "@/components/home/HomeDataFocusedView";
 import { getEvents, getFeaturedEvents } from "@/services/event.service";
+import { HOME_VARIANT } from "@/lib/feature-flags";
 import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata() {
@@ -45,21 +42,22 @@ export default async function HomePage() {
     getEvents({ pageSize: 12, includePast: false }),
   ]);
 
-  const featuredForHero = featuredEvents.map(toEventItem);
-  const upcomingForCarousel = upcomingEvents.map(toEventItem);
+  const featured = featuredEvents.map(toEventItem);
+  const upcoming = upcomingEvents.map(toEventItem);
+
+  if (HOME_VARIANT === "data-focused") {
+    return (
+      <HomeDataFocusedView
+        featuredEvents={featured}
+        upcomingEvents={upcoming}
+      />
+    );
+  }
 
   return (
-    <main className="min-h-screen bg-punk-black">
-      <HeroSection featuredEvents={featuredForHero} />
-      <section className="px-6 pt-4 pb-8 sm:px-12 sm:pt-0 lg:px-20 lg:pb-12">
-        <div className="mx-auto max-w-7xl 2xl:max-w-content-wide">
-          <UpcomingEventsCarousel events={upcomingForCarousel} />
-        </div>
-      </section>
-      <ExploreScrollIndicator variant="red" />
-      <ExploreSection />
-      <ManifestoSection />
-      <InstallAppSection />
-    </main>
+    <HomeEditorialView
+      featuredEvents={featured}
+      upcomingEvents={upcoming}
+    />
   );
 }

@@ -108,6 +108,16 @@
   }
 }
 
+/* SearchInput: ocultar botón nativo de limpiar (tenemos uno custom) */
+.search-input-wrapper input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+.search-input-wrapper input[type="search"]::-moz-search-cancel-button {
+  display: none;
+}
+
 /* Carruseles: scrollbar oculta para unificación visual */
 .scrollbar-hide {
   -ms-overflow-style: none;

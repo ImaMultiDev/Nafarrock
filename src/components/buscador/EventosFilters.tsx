@@ -1,32 +1,52 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
+import { SearchInput } from "@/components/ui/SearchInput";
 
 export function EventosFilters() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations("filters.eventos");
 
-  const handleSubmit = useCallback(
-    (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      const form = e.currentTarget;
-      const formData = new FormData(form);
+  const [search, setSearch] = useState(searchParams.get("search") ?? "");
+  const [type, setType] = useState(searchParams.get("type") ?? "");
+
+  useEffect(() => {
+    setSearch(searchParams.get("search") ?? "");
+    setType(searchParams.get("type") ?? "");
+  }, [searchParams]);
+
+  const applyFilters = useCallback(
+    (newSearch: string, newType: string) => {
       const params = new URLSearchParams();
-      params.set("search", (formData.get("search") as string) || "");
-      params.set("type", (formData.get("type") as string) || "");
+      if (newSearch.trim()) params.set("search", newSearch.trim());
+      if (newType) params.set("type", newType);
       router.push(`/eventos?${params.toString()}`);
     },
     [router],
   );
 
+  const handleSearchChange = useCallback(
+    (v: string) => {
+      setSearch(v);
+      applyFilters(v, type);
+    },
+    [type, applyFilters],
+  );
+
+  const handleTypeChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const v = e.target.value;
+      setType(v);
+      applyFilters(search, v);
+    },
+    [search, applyFilters],
+  );
+
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="mb-8 flex flex-wrap items-end gap-4 border-b-2 border-punk-red/30 pb-6"
-    >
+    <div className="mb-8 flex flex-wrap items-end gap-4 border-b-2 border-punk-red/30 pb-6">
       <div className="min-w-[180px] flex-1">
         <label
           htmlFor="eventos-search"
@@ -34,14 +54,16 @@ export function EventosFilters() {
         >
           {t("search")}
         </label>
-        <input
-          id="eventos-search"
-          name="search"
-          type="text"
-          defaultValue={searchParams.get("search") ?? ""}
-          placeholder={t("searchPlaceholder")}
-          className="mt-1 w-full border-2 border-punk-white/20 bg-punk-black px-4 py-2 font-body text-punk-white placeholder:text-punk-white/40 focus:border-punk-red focus:outline-none"
-        />
+        <div className="mt-1">
+          <SearchInput
+            id="eventos-search"
+            value={search}
+            onChange={handleSearchChange}
+            placeholder={t("searchPlaceholder")}
+            aria-label={t("search")}
+            accent="punk-red"
+          />
+        </div>
       </div>
       <div>
         <label
@@ -52,8 +74,8 @@ export function EventosFilters() {
         </label>
         <select
           id="eventos-type"
-          name="type"
-          defaultValue={searchParams.get("type") ?? ""}
+          value={type}
+          onChange={handleTypeChange}
           className="mt-1 border-2 border-punk-white/20 bg-punk-black px-4 py-2 font-body text-punk-white focus:border-punk-red focus:outline-none"
         >
           <option value="">{t("all")}</option>
@@ -61,12 +83,6 @@ export function EventosFilters() {
           <option value="FESTIVAL">{t("festival")}</option>
         </select>
       </div>
-      <button
-        type="submit"
-        className="border-2 border-punk-red bg-punk-red px-6 py-2 font-punch text-xs uppercase tracking-widest text-punk-black hover:bg-transparent hover:text-punk-red transition-colors"
-      >
-        {t("searchButton")}
-      </button>
-    </form>
+    </div>
   );
 }

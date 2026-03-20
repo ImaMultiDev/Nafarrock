@@ -3,8 +3,10 @@ import { Link } from "@/i18n/navigation";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { FestivalesMobileView } from "@/components/festivales/FestivalesMobileView";
 import { FestivalesList } from "@/components/festivales/FestivalesList";
+import { FestivalesOptimizedView } from "@/components/festivales/FestivalesOptimizedView";
 import { Pagination } from "@/components/ui/Pagination";
 import { getTranslations } from "next-intl/server";
+import { FESTIVALES_VARIANT } from "@/lib/feature-flags";
 
 export async function generateMetadata() {
   const t = await getTranslations("scene.festivals.metadata");
@@ -24,6 +26,10 @@ export default async function FestivalesPage({ searchParams }: Props) {
     { page, search: params.search || undefined },
     true,
   );
+
+  if (FESTIVALES_VARIANT === "optimized") {
+    return <FestivalesOptimizedView />;
+  }
 
   return (
     <PageLayout>

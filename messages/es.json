@@ -219,6 +219,8 @@
     "festivals": {
       "label": "Festivales",
       "desc": "Festivales de la escena",
+      "count": "{count} festival en Nafarroa.",
+      "count_other": "{count} festivales en Nafarroa.",
       "empty": "Aún no hay festivales registrados. Pronto habrá contenido. Mientras tanto, explora eventos y promotores.",
       "loading": "Cargando festivales...",
       "loadMore": "Cargar más",
@@ -377,6 +379,7 @@
     "salas": {
       "search": "Buscar",
       "searchPlaceholder": "Nombre o ciudad...",
+      "category": "Categoría",
       "all": "Todos",
       "TABERNA_BAR": "Tabernas",
       "SALA_CONCIERTOS": "Salas de Conciertos",

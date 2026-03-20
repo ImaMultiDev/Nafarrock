@@ -219,6 +219,8 @@
     "festivals": {
       "label": "Jaialdiak",
       "desc": "Eskenako jaialdiak",
+      "count": "{count} jaialdi Nafarroan.",
+      "count_other": "{count} jaialdi Nafarroan.",
       "empty": "Oraindik ez da jaialdirik erregistratu. Laster edukia egongo da. Bitartean, arakatu ekitaldiak eta sustatzaileak.",
       "loading": "Jaialdiak kargatzen...",
       "loadMore": "Kargatu gehiago",
@@ -377,6 +379,7 @@
     "salas": {
       "search": "Bilatu",
       "searchPlaceholder": "Izena edo hiria...",
+      "category": "Kategoria",
       "all": "Guztiak",
       "TABERNA_BAR": "Tabernak",
       "SALA_CONCIERTOS": "Kontzertu aretoak",

@@ -3,8 +3,8 @@
 import { useRouter } from "@/i18n/navigation";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { SearchInput } from "@/components/ui/SearchInput";
 
 export type FilterValue = "" | "CONCIERTO" | "FESTIVAL";
 
@@ -75,6 +75,19 @@ export function EventosMobilePanel({
     }
   };
 
+  const handleSearchChange = useCallback(
+    (v: string) => {
+      setSearch(v);
+      if (controlled) {
+        onSearchChange?.(v);
+        onSubmit?.(v);
+      } else {
+        applyFilters(v, currentType as FilterValue);
+      }
+    },
+    [controlled, currentType, onSearchChange, onSubmit, applyFilters],
+  );
+
   const handleFilterClick = (type: FilterValue) => {
     if (controlled) {
       onFilterChange?.(type);
@@ -94,26 +107,15 @@ export function EventosMobilePanel({
       {/* Buscador + filtros */}
       <form onSubmit={handleSubmit} className="flex flex-col gap-2 px-4">
         <div className="flex items-center gap-2">
-          <input
-            type="text"
+          <SearchInput
             value={controlled ? (controlledSearch ?? search) : search}
-            onChange={(e) => {
-              const v = e.target.value;
-              setSearch(v);
-              if (controlled) onSearchChange?.(v);
-            }}
+            onChange={handleSearchChange}
             placeholder={t("searchPlaceholder")}
-            className="min-h-[44px] min-w-0 flex-1 border-2 border-punk-green bg-punk-black px-3 py-2.5 font-body text-punk-white placeholder:text-punk-white/40 focus:outline-none"
             aria-label={t("search")}
+            accent="punk-green"
+            compact
+            variant="green"
           />
-          <button
-            type="submit"
-            className="map-filter-btn flex shrink-0 items-center gap-1.5 font-punch text-[10px] uppercase tracking-widest transition-all"
-            aria-label={t("searchButton")}
-          >
-            <Search className="h-4 w-4" />
-            {t("searchButton")}
-          </button>
         </div>
         <div className="flex min-w-0 flex-1 flex-nowrap gap-2 overflow-x-auto scrollbar-hide [scroll-snap-type:x_mandatory]">
           <div className="flex flex-nowrap gap-2 pl-0 pr-4">
