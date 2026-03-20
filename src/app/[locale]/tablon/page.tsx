@@ -4,9 +4,11 @@ import { PageLayout } from "@/components/ui/PageLayout";
 import { TablonFilters } from "@/components/tablon/TablonFilters";
 import { TablonMobileView } from "@/components/tablon/TablonMobileView";
 import { TablonList } from "@/components/tablon/TablonList";
+import { TablonOptimizedView } from "@/components/tablon/TablonOptimizedView";
 import { Pagination } from "@/components/ui/Pagination";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
 import { Link } from "@/i18n/navigation";
+import { TABLON_VARIANT } from "@/lib/feature-flags";
 
 type Props = {
   searchParams: Promise<Record<string, string | undefined>>;
@@ -31,6 +33,10 @@ export default async function TablonPage({ searchParams }: Props) {
     territory: params.territory || undefined,
     page,
   });
+
+  if (TABLON_VARIANT === "optimized") {
+    return <TablonOptimizedView />;
+  }
 
   return (
     <PageLayout>

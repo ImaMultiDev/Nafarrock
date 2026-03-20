@@ -302,6 +302,12 @@ export function Header() {
                   {t("tablon")}
                 </span>
               </span>
+            ) : pathname === "/" ? (
+              <span className="neon-mapa-sign">
+                <span className="neon-mapa-text font-display text-2xl tracking-tighter sm:text-3xl">
+                  {t("home")}
+                </span>
+              </span>
             ) : (
               <Image
                 src="/logo.png"

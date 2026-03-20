@@ -38,3 +38,10 @@ export const FESTIVALES_VARIANT: "classic" | "optimized" = "optimized";
  * - "optimized": UI/UX optimizada mobile-first y desktop con scroll-hide
  */
 export const SALAS_VARIANT: "classic" | "optimized" = "optimized";
+
+/**
+ * Variante de la página /tablon (anuncios):
+ * - "classic": diseño actual (panel inferior móvil, lista virtual, cards desktop)
+ * - "optimized": UI/UX optimizada mobile-first y desktop con scroll-hide
+ */
+export const TABLON_VARIANT: "classic" | "optimized" = "optimized";

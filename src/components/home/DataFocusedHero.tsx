@@ -8,6 +8,7 @@ import { getDateLocale } from "@/lib/date-locale";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { Star } from "lucide-react";
+import { NafarrockLogoAnimated } from "@/components/ui/NafarrockLogoAnimated";
 
 type EventItem = {
   id: string;

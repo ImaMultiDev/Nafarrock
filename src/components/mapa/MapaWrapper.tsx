@@ -1,8 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { MapPin } from "lucide-react";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
+import { useScrollHide } from "@/hooks/useScrollHide";
 import type { MapPoint } from "./MapaInteractivo";
 
 const MapaInteractivo = dynamic(() => import("./MapaInteractivo").then((m) => m.MapaInteractivo), {
@@ -33,6 +35,7 @@ type Props = {
 export function MapaWrapper({ points }: Props) {
   const t = useTranslations("map");
   const [filter, setFilter] = useState<FilterValue>("all");
+  const headerVisible = useScrollHide();
 
   const filteredPoints = useMemo(() => {
     if (filter === "all") return points;
@@ -84,31 +87,61 @@ export function MapaWrapper({ points }: Props) {
         </div>
       </div>
 
-      {/* Desktop: layout clásico */}
-      <div className="hidden space-y-4 lg:block">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <p className="font-body text-punk-white/60">
-            {t("subtitle", { count: filteredPoints.length })}
-          </p>
-          <div className="flex items-center gap-2">
-            <label htmlFor="map-filter" className="font-punch text-xs uppercase tracking-widest text-punk-white/70">
-              {t("filter.label")}
-            </label>
-            <select
-              id="map-filter"
-              value={filter}
-              onChange={(e) => setFilter(e.target.value as FilterValue)}
-              className="border-2 border-punk-white/20 bg-punk-black px-3 py-2 font-body text-punk-white focus:border-punk-pink focus:outline-none"
-            >
-              {FILTER_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {t(opt.labelKey)}
-                </option>
-              ))}
-            </select>
-          </div>
+      {/* Desktop: nuevo estilo con header scroll-hide (mobile sin cambios) */}
+      <div className="hidden lg:block">
+        {/* Header: se oculta al hacer scroll hacia abajo, reaparece al subir */}
+        <div
+          className={`overflow-hidden transition-all duration-300 ease-out ${
+            headerVisible ? "max-h-[180px] opacity-100" : "max-h-0 opacity-0 pointer-events-none"
+          }`}
+        >
+          <header className="sticky top-14 z-20 border-b-2 border-punk-white/10 bg-punk-black/95 px-6 py-4 backdrop-blur-md sm:px-12 lg:px-20 -mx-6 sm:-mx-12 lg:-mx-20">
+            <div className="mx-auto max-w-7xl 2xl:max-w-content-wide">
+              <h1 className="mb-4 font-display text-3xl tracking-tighter text-punk-white sm:text-4xl lg:text-5xl">
+                {t("title")}
+              </h1>
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <p className="font-body text-sm text-punk-white/60">
+                  {t("subtitle", { count: filteredPoints.length })}
+                </p>
+                <div className="flex items-center gap-2">
+                  <label htmlFor="map-filter" className="font-punch text-xs uppercase tracking-widest text-punk-white/70">
+                    {t("filter.label")}
+                  </label>
+                  <select
+                    id="map-filter"
+                    value={filter}
+                    onChange={(e) => setFilter(e.target.value as FilterValue)}
+                    className="rounded-lg border-2 border-punk-white/20 bg-punk-black px-3 py-2 font-body text-punk-white focus:border-punk-pink focus:outline-none"
+                  >
+                    {FILTER_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {t(opt.labelKey)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+          </header>
         </div>
-        <MapaInteractivo points={filteredPoints} />
+
+        {/* FAB: mostrar filtros cuando está oculto */}
+        {!headerVisible && (
+          <button
+            type="button"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            aria-label={t("filter.label")}
+            className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] right-[max(1.5rem,env(safe-area-inset-right))] z-30 flex items-center gap-2 rounded-full border-2 border-punk-pink bg-punk-pink px-4 py-3 font-punch text-xs uppercase tracking-widest text-punk-black shadow-lg transition-all hover:bg-transparent hover:text-punk-pink"
+          >
+            <MapPin className="h-4 w-4" />
+            <span className="hidden sm:inline">{t("filter.label")}</span>
+          </button>
+        )}
+
+        <div className="mt-4">
+          <MapaInteractivo points={filteredPoints} />
+        </div>
       </div>
     </div>
   );
