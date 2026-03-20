@@ -136,7 +136,7 @@ export default async function MapaPage() {
         }}
       />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(230,0,38,0.08)_0%,transparent_50%)]" />
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-0 py-0 md:px-6 md:py-12 lg:px-20 lg:py-20 2xl:max-w-content-wide">
+      <div className="relative z-10 px-0 py-0 lg:px-20 lg:py-10">
         <MapaWrapper points={points} />
       </div>
     </main>

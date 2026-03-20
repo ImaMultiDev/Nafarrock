@@ -95,7 +95,7 @@ export function MapaWrapper({ points }: Props) {
             headerVisible ? "max-h-[180px] opacity-100" : "max-h-0 opacity-0 pointer-events-none"
           }`}
         >
-          <header className="sticky top-14 z-20 border-b-2 border-punk-white/10 bg-punk-black/95 px-6 py-4 backdrop-blur-md sm:px-12 lg:px-20 -mx-6 sm:-mx-12 lg:-mx-20">
+          <header className="sticky top-14 z-20 border-b-2 border-punk-white/10 bg-punk-black/95 py-4 backdrop-blur-md">
             <div className="mx-auto max-w-7xl 2xl:max-w-content-wide">
               <h1 className="mb-4 font-display text-3xl tracking-tighter text-punk-white sm:text-4xl lg:text-5xl">
                 {t("title")}
@@ -139,7 +139,7 @@ export function MapaWrapper({ points }: Props) {
           </button>
         )}
 
-        <div className="mt-4">
+        <div className="mt-4 mx-auto max-w-7xl 2xl:max-w-content-wide">
           <MapaInteractivo points={filteredPoints} />
         </div>
       </div>
