@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { EventosFilters } from "@/components/buscador/EventosFilters";
