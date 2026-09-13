@@ -6,11 +6,11 @@ import NextLink from "next/link";
 import Image from "next/image";
 import { createPortal } from "react-dom";
 import { useSession } from "next-auth/react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { signOut } from "next-auth/react";
 import { useLocale } from "next-intl";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { InboxBadge } from "@/components/InboxBadge";
@@ -93,24 +93,6 @@ function isActivePath(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(href + "/");
 }
 
-function isEscenaActive(pathname: string): boolean {
-  return (
-    pathname === "/escena" ||
-    pathname.startsWith("/bandas") ||
-    pathname.startsWith("/salas") ||
-    pathname.startsWith("/festivales") ||
-    pathname.startsWith("/mapa") ||
-    pathname.startsWith("/promotores") ||
-    pathname.startsWith("/organizadores") ||
-    pathname.startsWith("/asociaciones")
-  );
-}
-
-/** Solo el ítem concreto del desplegable ESCENA está activo (ej: en /bandas solo BANDAS) */
-function isEscenaSubActive(pathname: string, href: string): boolean {
-  return pathname === href || pathname.startsWith(href + "/");
-}
-
 export function Header() {
   const pathname = usePathname();
   const locale = useLocale();
@@ -120,10 +102,7 @@ export function Header() {
   const isAdmin = pathname.startsWith("/admin");
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuClosing, setMenuClosing] = useState(false);
-  const [sceneOpen, setSceneOpen] = useState(false);
-  const [sceneMobileOpen, setSceneMobileOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const sceneDropdownRef = useRef<HTMLDivElement>(null);
   const isPwaInstalled = useIsPwaInstalled();
 
   const MENU_TRANSITION_MS = 350;
@@ -154,22 +133,6 @@ export function Header() {
   }, [menuOpen]);
 
   useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (
-        sceneDropdownRef.current &&
-        !sceneDropdownRef.current.contains(e.target as Node)
-      ) {
-        setSceneOpen(false);
-      }
-    }
-    if (sceneOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-      return () =>
-        document.removeEventListener("mousedown", handleClickOutside);
-    }
-  }, [sceneOpen]);
-
-  useEffect(() => {
     if (menuOpen) {
       const scrollbarWidth =
         window.innerWidth - document.documentElement.clientWidth;
@@ -184,7 +147,6 @@ export function Header() {
     } else {
       document.body.style.overflow = "";
       document.body.style.paddingRight = "";
-      setSceneMobileOpen(false);
     }
   }, [menuOpen]);
 
@@ -365,50 +327,6 @@ export function Header() {
         {/* Desktop: nav + redes + auth */}
         <div className="hidden items-center gap-6 nav:flex">
           {navLinks.map((link) => {
-            if ("dropdown" in link) {
-              return (
-                <div
-                  key={link.labelKey}
-                  className="relative"
-                  ref={sceneDropdownRef}
-                >
-                  <button
-                    type="button"
-                    onClick={() => setSceneOpen(!sceneOpen)}
-                    className={`flex items-center gap-1 font-punch text-xs uppercase tracking-widest transition-colors hover:text-punk-green ${
-                      isEscenaActive(pathname)
-                        ? "nav-link-active text-punk-red"
-                        : "text-punk-white/80"
-                    }`}
-                    aria-expanded={sceneOpen}
-                    aria-haspopup="true"
-                  >
-                    {t(link.labelKey)}
-                    <ChevronDown
-                      className={`h-4 w-4 transition-transform duration-200 ${sceneOpen ? "rotate-180" : ""}`}
-                    />
-                  </button>
-                  {sceneOpen && (
-                    <div className="absolute left-0 top-12 z-50 flex min-w-[240px] flex-nowrap gap-0 border-b-2 border-l-2 border-r-2 border-punk-red bg-punk-black py-2 shadow-lg">
-                      {(link.dropdown ?? []).map((sub) => (
-                        <Link
-                          key={sub.href}
-                          href={sub.href}
-                          onClick={() => setSceneOpen(false)}
-                          className={`relative whitespace-nowrap px-4 py-2 font-punch text-xs uppercase tracking-widest transition-colors hover:bg-punk-green/20 hover:text-punk-green ${
-                            isEscenaSubActive(pathname, sub.href)
-                              ? "nav-link-active text-punk-red after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:skew-x-[-12deg] after:bg-punk-red after:content-['']"
-                              : "text-punk-white/90"
-                          }`}
-                        >
-                          {t(sub.labelKey)}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            }
             const active = isActivePath(pathname, link.href);
             return (
               <Link
@@ -540,97 +458,6 @@ export function Header() {
                 {/* Nav links */}
                 <nav className="flex flex-col gap-1 mt-2">
                   {navLinks.map((link) => {
-                    if ("dropdown" in link) {
-                      return (
-                        <div
-                          key={link.labelKey}
-                          className="border-l-4 border-transparent"
-                        >
-                          <button
-                            type="button"
-                            onClick={() => setSceneMobileOpen(!sceneMobileOpen)}
-                            className={`relative flex w-full items-center gap-2 rounded-r px-4 py-3 font-punch text-sm uppercase tracking-widest transition-colors hover:bg-punk-white/10 hover:text-punk-green ${
-                              isEscenaActive(pathname)
-                                ? "nav-link-active text-punk-red"
-                                : "text-punk-white/90"
-                            }`}
-                            aria-expanded={sceneMobileOpen}
-                          >
-                            <img
-                              src={MOBILE_NAV_ICONS[link.labelKey]}
-                              alt=""
-                              width={20}
-                              height={20}
-                              className="h-5 w-5 shrink-0 object-contain"
-                              style={{
-                                filter: isEscenaActive(pathname)
-                                  ? "brightness(0) saturate(100%) invert(36%) sepia(100%) saturate(5000%) hue-rotate(310deg)"
-                                  : "brightness(0) invert(1)",
-                              }}
-                            />
-                            <span className="flex-1 text-center">
-                              {t(link.labelKey)}
-                            </span>
-                            <span className="h-5 w-5 shrink-0" aria-hidden />
-                            <ChevronDown
-                              className={`absolute right-4 top-1/2 h-4 w-4 shrink-0 -translate-y-1/2 transition-transform duration-200 ${
-                                sceneMobileOpen ? "rotate-180" : ""
-                              }`}
-                            />
-                          </button>
-                          <div
-                            className={`grid transition-[grid-template-rows] duration-300 ease-out ${
-                              sceneMobileOpen
-                                ? "grid-rows-[1fr]"
-                                : "grid-rows-[0fr]"
-                            }`}
-                          >
-                            <div className="overflow-hidden">
-                              <div className="flex flex-col">
-                                {(link.dropdown ?? []).map((sub) => {
-                                  const subActive = isEscenaSubActive(
-                                    pathname,
-                                    sub.href,
-                                  );
-                                  return (
-                                    <Link
-                                      key={sub.href}
-                                      href={sub.href}
-                                      onClick={() => {
-                                        setMenuOpen(false);
-                                        setSceneMobileOpen(false);
-                                      }}
-                                      className={`flex w-full items-center gap-4 rounded-r pl-14 pr-16 py-3 font-punch text-sm uppercase tracking-widest transition-colors hover:bg-punk-white/10 hover:text-punk-green ${
-                                        subActive
-                                          ? "nav-link-active border-l-4 border-punk-red bg-punk-red/10 text-punk-red"
-                                          : "border-l-4 border-transparent text-punk-white/90"
-                                      }`}
-                                    >
-                                    <img
-                                      src={MOBILE_NAV_ICONS[sub.labelKey]}
-                                      alt=""
-                                      width={18}
-                                      height={18}
-                                      className="h-[18px] w-[18px] shrink-0 object-contain"
-                                      style={{
-                                        filter: subActive
-                                          ? "brightness(0) saturate(100%) invert(36%) sepia(100%) saturate(5000%) hue-rotate(310deg)"
-                                          : "brightness(0) invert(1)",
-                                      }}
-                                    />
-                                    <span className="flex-1 text-center">
-                                      {t(sub.labelKey)}
-                                    </span>
-                                    <span className="h-[18px] w-[18px] shrink-0" aria-hidden />
-                                  </Link>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    }
                     const active = isActivePath(pathname, link.href);
                     return (
                       <Link
