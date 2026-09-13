@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { getVenues } from "@/services/venue.service";
 import { Link } from "@/i18n/navigation";
 import { PageLayout } from "@/components/ui/PageLayout";
@@ -7,7 +8,7 @@ import { SalasList } from "@/components/salas/SalasList";
 import { SalasOptimizedView } from "@/components/salas/SalasOptimizedView";
 import { Pagination } from "@/components/ui/Pagination";
 import { getTranslations } from "next-intl/server";
-import { SALAS_VARIANT } from "@/lib/feature-flags";
+import { ESPACIOS_HIDDEN, SALAS_VARIANT } from "@/lib/feature-flags";
 
 export async function generateMetadata() {
   const t = await getTranslations("scene.venues.metadata");
@@ -20,6 +21,8 @@ export async function generateMetadata() {
 type Props = { searchParams: Promise<Record<string, string | undefined>> };
 
 export default async function SalasPage({ searchParams }: Props) {
+  if (ESPACIOS_HIDDEN) redirect("/");
+
   const params = await searchParams;
   const page = Math.max(1, parseInt(params.page ?? "1", 10) || 1);
   const capacityMin = params.capacityMin ? parseInt(params.capacityMin, 10) : undefined;

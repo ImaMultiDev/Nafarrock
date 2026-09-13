@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { getBoardAnnouncements } from "@/services/board-announcement.service";
 import { getTranslations } from "next-intl/server";
 import { PageLayout } from "@/components/ui/PageLayout";
@@ -8,7 +9,7 @@ import { TablonOptimizedView } from "@/components/tablon/TablonOptimizedView";
 import { Pagination } from "@/components/ui/Pagination";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
 import { Link } from "@/i18n/navigation";
-import { TABLON_VARIANT } from "@/lib/feature-flags";
+import { ANUNCIOS_HIDDEN, TABLON_VARIANT } from "@/lib/feature-flags";
 
 type Props = {
   searchParams: Promise<Record<string, string | undefined>>;
@@ -23,6 +24,8 @@ export async function generateMetadata() {
 }
 
 export default async function TablonPage({ searchParams }: Props) {
+  if (ANUNCIOS_HIDDEN) redirect("/");
+
   const t = await getTranslations("boardAnnouncement");
   const tActions = await getTranslations("common.actions");
 

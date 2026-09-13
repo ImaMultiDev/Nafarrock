@@ -3,7 +3,7 @@
 import { Link } from "@/i18n/navigation";
 import { format } from "date-fns";
 import { useLocale } from "next-intl";
-import { getDateLocale } from "@/lib/date-locale";
+import { formatEventDayBadge, getDateLocale } from "@/lib/date-locale";
 import type { Locale } from "date-fns";
 import { useTranslations } from "next-intl";
 
@@ -53,9 +53,7 @@ export function EventosOptimizedCard({ event, dateLocale }: Props) {
         {/* Badge fecha sobre imagen */}
         <div className="absolute bottom-2 left-2 border-2 border-punk-red/70 bg-punk-black/90 px-3 py-2 backdrop-blur-sm">
           <span className="block font-display text-xl leading-none text-punk-red sm:text-2xl">
-            {endD
-              ? `${format(d, "d", { locale: dateLocale })}-${format(endD, "d", { locale: dateLocale })}`
-              : format(d, "dd", { locale: dateLocale })}
+            {formatEventDayBadge(d, endD, dateLocale)}
           </span>
           <span className="block font-punch text-[10px] uppercase tracking-widest text-punk-white/80">
             {format(d, "MMM", { locale: dateLocale })}

@@ -3,9 +3,8 @@ import { getEventBySlug } from "@/services/event.service";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
-import { format } from "date-fns";
 import { getTranslations, getLocale } from "next-intl/server";
-import { getDateLocale } from "@/lib/date-locale";
+import { formatEventDateLabel, getDateLocale } from "@/lib/date-locale";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { ImageLightbox } from "@/components/ui/ImageLightbox";
 import { SocialLinks, type SocialLinkItem } from "@/components/ui/SocialLinks";
@@ -89,26 +88,12 @@ export default async function EventPage({
       .map((l) => ({ kind: l.kind as SocialLinkItem["kind"], url: l.url, label: l.label ?? undefined })),
   ];
 
-  const formattedDate = event.endDate
-    ? locale === "eu"
-      ? (() => {
-          const year = format(event.date, "yyyy", { locale: dateLocale });
-          const month = format(event.date, "MMMM", { locale: dateLocale });
-          const monthGenitive = month.endsWith("a") ? month.slice(0, -1) + "aren" : month + "ren";
-          const startDay = format(event.date, "d", { locale: dateLocale });
-          const endDay = format(event.endDate!, "d", { locale: dateLocale });
-          return `${year}ko ${monthGenitive} ${startDay}tik ${endDay}ra`;
-        })()
-      : `Del ${format(event.date, "d 'de' MMMM", { locale: dateLocale })} al ${format(event.endDate, "d 'de' MMMM, yyyy", { locale: dateLocale })}`
-    : locale === "eu"
-      ? (() => {
-          const year = format(event.date, "yyyy", { locale: dateLocale });
-          const month = format(event.date, "MMMM", { locale: dateLocale });
-          const monthGenitive = month.endsWith("a") ? month.slice(0, -1) + "aren" : month + "ren";
-          const day = format(event.date, "d", { locale: dateLocale });
-          return `${year}ko ${monthGenitive} ${day}a`;
-        })()
-      : format(event.date, "EEEE d 'de' MMMM, yyyy", { locale: dateLocale });
+  const formattedDate = formatEventDateLabel(
+    event.date,
+    event.endDate,
+    locale,
+    dateLocale
+  );
 
   // Ubicación: venue (sala) > venueText (texto libre) > festival.location (lugar real) > festival.name (fallback)
   const locationDisplay = event.venue
@@ -376,32 +361,7 @@ export default async function EventPage({
               </div>
             )}
             <p className="mt-4 font-body text-lg text-punk-white/70">
-              {event.endDate ? (
-                locale === "eu" ? (
-                  (() => {
-                    const year = format(event.date, "yyyy", { locale: dateLocale });
-                    const month = format(event.date, "MMMM", { locale: dateLocale });
-                    const monthGenitive = month.endsWith("a") ? month.slice(0, -1) + "aren" : month + "ren";
-                    const startDay = format(event.date, "d", { locale: dateLocale });
-                    const endDay = format(event.endDate!, "d", { locale: dateLocale });
-                    return `${year}ko ${monthGenitive} ${startDay}tik ${endDay}ra`;
-                  })()
-                ) : (
-                  <>
-                    Del {format(event.date, "d 'de' MMMM", { locale: dateLocale })} al {format(event.endDate, "d 'de' MMMM, yyyy", { locale: dateLocale })}
-                  </>
-                )
-              ) : locale === "eu" ? (
-                (() => {
-                  const year = format(event.date, "yyyy", { locale: dateLocale });
-                  const month = format(event.date, "MMMM", { locale: dateLocale });
-                  const monthGenitive = month.endsWith("a") ? month.slice(0, -1) + "aren" : month + "ren";
-                  const day = format(event.date, "d", { locale: dateLocale });
-                  return `${year}ko ${monthGenitive} ${day}a`;
-                })()
-              ) : (
-                format(event.date, "EEEE d 'de' MMMM, yyyy", { locale: dateLocale })
-              )}
+              {formattedDate}
               {event.doorsOpen && ` · ${tEvent("doors")}: ${event.doorsOpen}`}
             </p>
           </div>

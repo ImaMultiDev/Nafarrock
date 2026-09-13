@@ -4,6 +4,7 @@ import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { ANUNCIOS_HIDDEN, MAPA_HIDDEN } from "@/lib/feature-flags";
 
 export function ExploreSection() {
   const ref = useRef(null);
@@ -29,21 +30,37 @@ export function ExploreSection() {
       size: "small",
     },
     {
-      href: "/mapa",
-      titleKey: "map.title" as const,
-      descKey: "map.desc" as const,
-      color: "punk-acid",
+      href: "/festivales",
+      titleKey: "festivals.title" as const,
+      descKey: "festivals.desc" as const,
+      color: "punk-yellow",
       delay: 0.15,
       size: "small",
     },
-    {
-      href: "/tablon",
-      titleKey: "announcements.title" as const,
-      descKey: "announcements.desc" as const,
-      color: "punk-yellow",
-      delay: 0.2,
-      size: "small",
-    },
+    ...(!MAPA_HIDDEN
+      ? [
+          {
+            href: "/mapa",
+            titleKey: "map.title" as const,
+            descKey: "map.desc" as const,
+            color: "punk-acid",
+            delay: 0.2,
+            size: "small",
+          },
+        ]
+      : []),
+    ...(!ANUNCIOS_HIDDEN
+      ? [
+          {
+            href: "/tablon",
+            titleKey: "announcements.title" as const,
+            descKey: "announcements.desc" as const,
+            color: "punk-pink",
+            delay: 0.25,
+            size: "small",
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -118,6 +135,8 @@ export function ExploreSection() {
                         ? "text-punk-green"
                         : item.color === "punk-red"
                         ? "text-punk-red"
+                        : item.color === "punk-yellow"
+                        ? "text-punk-yellow"
                         : item.color === "punk-pink"
                         ? "text-punk-pink"
                         : "text-punk-acid"

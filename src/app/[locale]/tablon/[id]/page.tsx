@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getBoardAnnouncementById } from "@/services/board-announcement.service";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { format } from "date-fns";
 import { getTranslations, getLocale } from "next-intl/server";
@@ -9,6 +9,7 @@ import { PageLayout } from "@/components/ui/PageLayout";
 import { ImageLightbox } from "@/components/ui/ImageLightbox";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
 import { getSiteUrl } from "@/lib/site-url";
+import { ANUNCIOS_HIDDEN } from "@/lib/feature-flags";
 
 export async function generateMetadata({
   params,
@@ -42,6 +43,8 @@ export default async function TablonAnnouncementPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  if (ANUNCIOS_HIDDEN) redirect("/");
+
   const { id } = await params;
   const a = await getBoardAnnouncementById(id);
   if (!a) notFound();

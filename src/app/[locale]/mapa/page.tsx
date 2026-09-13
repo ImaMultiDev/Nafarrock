@@ -1,9 +1,11 @@
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getCoordinatesForCity } from "@/lib/city-coordinates";
 import { MapaWrapper } from "@/components/mapa/MapaWrapper";
 import { MapPageBodyOverflow } from "@/components/mapa/MapPageBodyOverflow";
 import type { MapPoint } from "@/components/mapa/MapaInteractivo";
 import { getTranslations } from "next-intl/server";
+import { MAPA_HIDDEN } from "@/lib/feature-flags";
 
 export async function generateMetadata() {
   const t = await getTranslations("map");
@@ -53,6 +55,8 @@ function toMapPoint(
 }
 
 export default async function MapaPage() {
+  if (MAPA_HIDDEN) redirect("/");
+
   const [venues, festivals] = await Promise.all([
     prisma.venue.findMany({
       where: { approved: true, isActive: true },

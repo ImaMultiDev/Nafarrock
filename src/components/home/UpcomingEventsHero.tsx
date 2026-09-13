@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { format } from "date-fns";
 import { useLocale } from "next-intl";
-import { getDateLocale } from "@/lib/date-locale";
+import { formatEventDayBadge, getDateLocale } from "@/lib/date-locale";
 import { Link } from "@/i18n/navigation";
 
 type EventItem = {
@@ -64,9 +64,7 @@ export function UpcomingEventsHero({ events, title, viewAllLabel }: Props) {
               {/* Bloque fecha */}
               <div className="shrink-0 border-2 border-punk-red/50 bg-punk-red/10 px-3 py-2 text-center sm:px-4">
                 <span className="block font-display text-lg leading-none text-punk-red sm:text-xl">
-                  {endD
-                    ? `${format(d, "d", { locale: dateLocale })}-${format(endD, "d", { locale: dateLocale })}`
-                    : format(d, "dd", { locale: dateLocale })}
+                  {formatEventDayBadge(d, endD, dateLocale)}
                 </span>
                 <span className="block font-punch text-[10px] uppercase tracking-widest text-punk-white/70 sm:text-xs">
                   {format(d, "MMM", { locale: dateLocale })}

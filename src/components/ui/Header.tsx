@@ -16,20 +16,25 @@ import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { InboxBadge } from "@/components/InboxBadge";
 import { useIsPwaInstalled } from "@/hooks/useIsPwaInstalled";
 import { InstallAppButton } from "@/components/ui/InstallAppButton";
+import {
+  ANUNCIOS_HIDDEN,
+  ESPACIOS_HIDDEN,
+  MAPA_HIDDEN,
+} from "@/lib/feature-flags";
 
+/** Navbar plano: Eventos, Bandas y Festivales a primer nivel (sin desplegable Escena). */
 const navLinks = [
   { href: "/", labelKey: "home" as const },
   { href: "/eventos", labelKey: "events" as const },
-  {
-    labelKey: "scene" as const,
-    dropdown: [
-      { href: "/bandas", labelKey: "bands" as const },
-      { href: "/salas", labelKey: "salas" as const },
-      { href: "/festivales", labelKey: "festivals" as const },
-      { href: "/mapa", labelKey: "map" as const },
-    ] as const,
-  },
-  { href: "/tablon", labelKey: "tablon" as const },
+  { href: "/bandas", labelKey: "bands" as const },
+  { href: "/festivales", labelKey: "festivals" as const },
+  ...(!ESPACIOS_HIDDEN
+    ? [{ href: "/salas", labelKey: "salas" as const }]
+    : []),
+  ...(!MAPA_HIDDEN ? [{ href: "/mapa", labelKey: "map" as const }] : []),
+  ...(!ANUNCIOS_HIDDEN
+    ? [{ href: "/tablon", labelKey: "tablon" as const }]
+    : []),
 ];
 
 const MOBILE_NAV_ICONS: Record<string, string> = {
@@ -81,24 +86,6 @@ function isActivePath(pathname: string, href: string): boolean {
     return pathname === "/bolos" || pathname.startsWith("/bolos/");
   if (href === "/bolos-nav")
     return pathname === "/bolos" || pathname.startsWith("/bolos/");
-  if (
-    href === "/escena" ||
-    href === "/bandas" ||
-    href === "/salas" ||
-    href === "/festivales" ||
-    href === "/mapa"
-  ) {
-    return (
-      pathname === "/escena" ||
-      pathname.startsWith("/bandas") ||
-      pathname.startsWith("/promotores") ||
-      pathname.startsWith("/organizadores") ||
-      pathname.startsWith("/festivales") ||
-      pathname.startsWith("/asociaciones") ||
-      pathname.startsWith("/salas") ||
-      pathname.startsWith("/mapa")
-    );
-  }
   if (href === "/guia") return pathname === "/guia";
   if (href === "/tablon")
     return pathname === "/tablon" || pathname.startsWith("/tablon/");

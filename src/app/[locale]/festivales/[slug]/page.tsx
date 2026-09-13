@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { format } from "date-fns";
 import { getTranslations, getLocale } from "next-intl/server";
-import { getDateLocale } from "@/lib/date-locale";
+import { formatEventDateLabel, formatEventDayBadge, getDateLocale } from "@/lib/date-locale";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { ImageLightbox } from "@/components/ui/ImageLightbox";
 import { SocialLinks, type SocialLinkItem } from "@/components/ui/SocialLinks";
@@ -195,9 +195,7 @@ export default async function FestivalPage({
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                       <div className="shrink-0 border-2 border-punk-red/50 bg-punk-red/10 px-4 py-2 text-center">
                         <span className="block font-display text-2xl leading-none text-punk-red">
-                          {nextEvent.endDate
-                            ? `${format(nextEvent.date, "d", { locale: dateLocale })}-${format(nextEvent.endDate, "d", { locale: dateLocale })}`
-                            : format(nextEvent.date, "dd", { locale: dateLocale })}
+                          {formatEventDayBadge(nextEvent.date, nextEvent.endDate, dateLocale)}
                         </span>
                         <span className="block font-punch text-[10px] uppercase tracking-widest text-punk-white/70">
                           {format(nextEvent.date, "MMM", { locale: dateLocale })}
@@ -208,18 +206,7 @@ export default async function FestivalPage({
                           {nextEvent.title}
                         </h4>
                         <p className="mt-1 font-body text-sm text-punk-white/70">
-                          {nextEvent.endDate
-                            ? locale === "eu"
-                              ? (() => {
-                                  const year = format(nextEvent.date, "yyyy", { locale: dateLocale });
-                                  const month = format(nextEvent.date, "MMMM", { locale: dateLocale });
-                                  const monthGenitive = month.endsWith("a") ? month.slice(0, -1) + "aren" : month + "ren";
-                                  const startDay = format(nextEvent.date, "d", { locale: dateLocale });
-                                  const endDay = format(nextEvent.endDate!, "d", { locale: dateLocale });
-                                  return `${year}ko ${monthGenitive} ${startDay}tik ${endDay}ra`;
-                                })()
-                              : `Del ${format(nextEvent.date, "d 'de' MMMM", { locale: dateLocale })} al ${format(nextEvent.endDate, "d 'de' MMMM, yyyy", { locale: dateLocale })}`
-                            : format(nextEvent.date, "EEEE d 'de' MMMM, yyyy", { locale: dateLocale })}
+                          {formatEventDateLabel(nextEvent.date, nextEvent.endDate, locale, dateLocale)}
                           {nextEvent.venue ? ` · ${nextEvent.venue.name}` : nextEvent.venueText ? ` · ${nextEvent.venueText}` : ""}
                         </p>
                       </div>
@@ -281,9 +268,7 @@ export default async function FestivalPage({
                     <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-center">
                       <div className="shrink-0 border-2 border-punk-red/50 bg-punk-red/10 px-4 py-2 text-center">
                         <span className="block font-display text-2xl leading-none text-punk-red">
-                          {evt.endDate
-                            ? `${format(evt.date, "d", { locale: dateLocale })}-${format(evt.endDate, "d", { locale: dateLocale })}`
-                            : format(evt.date, "dd", { locale: dateLocale })}
+                          {formatEventDayBadge(evt.date, evt.endDate, dateLocale)}
                         </span>
                         <span className="block font-punch text-[10px] uppercase tracking-widest text-punk-white/70">
                           {format(evt.date, "MMM", { locale: dateLocale })}
@@ -451,18 +436,7 @@ export default async function FestivalPage({
                     {nextEvent.title}
                   </Link>
                   <p className="mt-2 font-body text-punk-white/70">
-                    {nextEvent.endDate
-                      ? locale === "eu"
-                        ? (() => {
-                            const year = format(nextEvent.date, "yyyy", { locale: dateLocale });
-                            const month = format(nextEvent.date, "MMMM", { locale: dateLocale });
-                            const monthGenitive = month.endsWith("a") ? month.slice(0, -1) + "aren" : month + "ren";
-                            const startDay = format(nextEvent.date, "d", { locale: dateLocale });
-                            const endDay = format(nextEvent.endDate!, "d", { locale: dateLocale });
-                            return `${year}ko ${monthGenitive} ${startDay}tik ${endDay}ra`;
-                          })()
-                        : `Del ${format(nextEvent.date, "d 'de' MMMM", { locale: dateLocale })} al ${format(nextEvent.endDate, "d 'de' MMMM, yyyy", { locale: dateLocale })}`
-                      : format(nextEvent.date, "EEEE d 'de' MMMM, yyyy", { locale: dateLocale })}
+                    {formatEventDateLabel(nextEvent.date, nextEvent.endDate, locale, dateLocale)}
                     {nextEvent.venue ? ` · ${nextEvent.venue.name}` : nextEvent.venueText ? ` · ${nextEvent.venueText}` : ""}
                   </p>
                   <div className="mt-4 flex flex-wrap gap-3">
@@ -534,9 +508,7 @@ export default async function FestivalPage({
                     <div className="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-center">
                       <div className="shrink-0 border-2 border-punk-red/50 bg-punk-red/10 px-6 py-3 text-center">
                         <span className="block font-display text-3xl leading-none text-punk-red">
-                          {evt.endDate
-                            ? `${format(evt.date, "d", { locale: dateLocale })}-${format(evt.endDate, "d", { locale: dateLocale })}`
-                            : format(evt.date, "dd", { locale: dateLocale })}
+                          {formatEventDayBadge(evt.date, evt.endDate, dateLocale)}
                         </span>
                         <span className="block font-punch text-xs uppercase tracking-widest text-punk-white/70">
                           {format(evt.date, "MMM", { locale: dateLocale })}

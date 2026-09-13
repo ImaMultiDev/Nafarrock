@@ -7,7 +7,7 @@ import { Link } from "@/i18n/navigation";
 import { format } from "date-fns";
 import { useTranslations } from "next-intl";
 import { useLocale } from "next-intl";
-import { getDateLocale } from "@/lib/date-locale";
+import { formatEventDayBadge, getDateLocale } from "@/lib/date-locale";
 import type { Locale } from "date-fns";
 import { EventosMobilePanel } from "./EventosMobilePanel";
 import { PunkLoadingIndicator } from "@/components/ui/PunkLoadingIndicator";
@@ -84,9 +84,7 @@ function EventCard({
       <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="shrink-0 border-2 border-punk-red/50 bg-punk-red/10 px-4 py-2 text-center">
           <span className="block font-display text-2xl leading-none text-punk-red">
-            {endD
-              ? `${format(d, "d", { locale: dateLocale })}-${format(endD, "d", { locale: dateLocale })}`
-              : format(d, "dd", { locale: dateLocale })}
+            {formatEventDayBadge(d, endD, dateLocale)}
           </span>
           <span className="block font-punch text-[10px] uppercase tracking-widest text-punk-white/70">
             {format(d, "MMM", { locale: dateLocale })}

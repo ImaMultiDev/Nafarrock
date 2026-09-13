@@ -4,6 +4,15 @@
  */
 export const ESCENA_HIDDEN = false; // Escena visible: Bandas, Salas, Festivales
 
+/** Ocultar página /mapa y sus enlaces públicos. false = visible. */
+export const MAPA_HIDDEN = true;
+
+/** Ocultar listado /salas (Espacios) y sus enlaces públicos. false = visible. */
+export const ESPACIOS_HIDDEN = true;
+
+/** Ocultar /tablon (Anuncios) y sus enlaces públicos. false = visible. */
+export const ANUNCIOS_HIDDEN = true;
+
 /**
  * Variante del home:
  * - "editorial": diseño actual (hero con guitarra, explorar, manifiesto)

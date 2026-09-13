@@ -4,13 +4,14 @@ import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { format } from "date-fns";
 import { getTranslations, getLocale } from "next-intl/server";
-import { getDateLocale } from "@/lib/date-locale";
+import { formatEventDayBadge, getDateLocale } from "@/lib/date-locale";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { ImageLightbox } from "@/components/ui/ImageLightbox";
 import { SocialLinks, type SocialLinkItem } from "@/components/ui/SocialLinks";
 import { Pagination } from "@/components/ui/Pagination";
 import { AnimatedSection } from "@/components/ui/AnimatedSection";
 import { getSiteUrl } from "@/lib/site-url";
+import { ESPACIOS_HIDDEN } from "@/lib/feature-flags";
 
 const EVENTS_PAGE_SIZE = 10;
 
@@ -78,13 +79,15 @@ export default async function VenuePage({
   return (
     <PageLayout>
       <AnimatedSection>
-        {/* Volver: solo desktop */}
-        <Link
-          href="/salas"
-          className="hidden font-punch text-xs uppercase tracking-widest text-punk-pink transition-colors hover:text-punk-pink/80 md:inline-block"
-        >
-          {t("backToVenues")}
-        </Link>
+        {/* Volver: solo desktop, y solo si el listado de espacios está visible */}
+        {!ESPACIOS_HIDDEN && (
+          <Link
+            href="/salas"
+            className="hidden font-punch text-xs uppercase tracking-widest text-punk-pink transition-colors hover:text-punk-pink/80 md:inline-block"
+          >
+            {t("backToVenues")}
+          </Link>
+        )}
 
         {/* Mobile: layout unificado como eventos */}
         <div className="mt-4 space-y-6 lg:hidden">
@@ -193,9 +196,7 @@ export default async function VenuePage({
                     <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-center">
                       <div className="shrink-0 border-2 border-punk-red/50 bg-punk-red/10 px-4 py-2 text-center">
                         <span className="block font-display text-2xl leading-none text-punk-red">
-                          {evt.endDate
-                            ? `${format(evt.date, "d", { locale: dateLocale })}-${format(evt.endDate, "d", { locale: dateLocale })}`
-                            : format(evt.date, "dd", { locale: dateLocale })}
+                          {formatEventDayBadge(evt.date, evt.endDate, dateLocale)}
                         </span>
                         <span className="block font-punch text-[10px] uppercase tracking-widest text-punk-white/70">
                           {format(evt.date, "MMM", { locale: dateLocale })}
@@ -393,9 +394,7 @@ export default async function VenuePage({
                     <div className="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-center">
                       <div className="shrink-0 border-2 border-punk-red/50 bg-punk-red/10 px-6 py-3 text-center">
                         <span className="block font-display text-3xl leading-none text-punk-red">
-                          {evt.endDate
-                            ? `${format(evt.date, "d", { locale: dateLocale })}-${format(evt.endDate, "d", { locale: dateLocale })}`
-                            : format(evt.date, "dd", { locale: dateLocale })}
+                          {formatEventDayBadge(evt.date, evt.endDate, dateLocale)}
                         </span>
                         <span className="block font-punch text-xs uppercase tracking-widest text-punk-white/70">
                           {format(evt.date, "MMM", { locale: dateLocale })}

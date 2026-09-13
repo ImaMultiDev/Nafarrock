@@ -110,6 +110,10 @@
         "title": "ANUNCIOS",
         "desc": "Convocatorias, búsquedas y oportunidades"
       },
+      "festivals": {
+        "title": "FESTIVALES",
+        "desc": "Festivales de la escena"
+      },
       "map": {
         "title": "MAPA",
         "desc": "Espacios y festivales en el mapa"

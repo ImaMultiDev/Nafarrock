@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { format } from "date-fns";
-import { getDateLocale } from "@/lib/date-locale";
+import { formatEventDayBadge, getDateLocale } from "@/lib/date-locale";
 import { PageLayout } from "@/components/ui/PageLayout";
 import { ImageLightbox } from "@/components/ui/ImageLightbox";
 import { SocialLinks, type SocialLinkItem } from "@/components/ui/SocialLinks";
@@ -224,9 +224,7 @@ export default async function BandPage({
                       <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-center">
                         <div className="shrink-0 border-2 border-punk-red/50 bg-punk-red/10 px-4 py-2 text-center">
                           <span className="block font-display text-2xl leading-none text-punk-red">
-                            {event.endDate
-                              ? `${format(event.date, "d", { locale: dateLocale })}-${format(event.endDate, "d", { locale: dateLocale })}`
-                              : format(event.date, "dd", { locale: dateLocale })}
+                            {formatEventDayBadge(event.date, event.endDate, dateLocale)}
                           </span>
                           <span className="block font-punch text-[10px] uppercase tracking-widest text-punk-white/70">
                             {format(event.date, "MMM", { locale: dateLocale })}
@@ -409,9 +407,7 @@ export default async function BandPage({
                       <div className="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-center">
                         <div className="shrink-0 border-2 border-punk-red/50 bg-punk-red/10 px-6 py-3 text-center">
                           <span className="block font-display text-3xl leading-none text-punk-red">
-                            {event.endDate
-                              ? `${format(event.date, "d", { locale: dateLocale })}-${format(event.endDate, "d", { locale: dateLocale })}`
-                              : format(event.date, "dd", { locale: dateLocale })}
+                            {formatEventDayBadge(event.date, event.endDate, dateLocale)}
                           </span>
                           <span className="block font-punch text-xs uppercase tracking-widest text-punk-white/70">
                             {format(event.date, "MMM", { locale: dateLocale })}

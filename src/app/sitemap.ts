@@ -2,6 +2,11 @@ import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
 import { getSiteUrl } from "@/lib/site-url";
 import { routing } from "@/i18n/routing";
+import {
+  ANUNCIOS_HIDDEN,
+  ESPACIOS_HIDDEN,
+  MAPA_HIDDEN,
+} from "@/lib/feature-flags";
 
 const LOCALES = routing.locales;
 const DEFAULT_LOCALE = routing.defaultLocale;
@@ -61,11 +66,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "", priority: 1, changeFrequency: "daily" as const },
     { path: "/bandas", priority: 0.9, changeFrequency: "daily" as const },
     { path: "/eventos", priority: 0.9, changeFrequency: "daily" as const },
-    { path: "/tablon", priority: 0.8, changeFrequency: "daily" as const },
+    ...(!ANUNCIOS_HIDDEN
+      ? [{ path: "/tablon", priority: 0.8, changeFrequency: "daily" as const }]
+      : []),
     { path: "/escena", priority: 0.8, changeFrequency: "weekly" as const },
-    { path: "/salas", priority: 0.8, changeFrequency: "weekly" as const },
+    ...(!ESPACIOS_HIDDEN
+      ? [{ path: "/salas", priority: 0.8, changeFrequency: "weekly" as const }]
+      : []),
     { path: "/festivales", priority: 0.8, changeFrequency: "weekly" as const },
-    { path: "/mapa", priority: 0.8, changeFrequency: "weekly" as const },
+    ...(!MAPA_HIDDEN
+      ? [{ path: "/mapa", priority: 0.8, changeFrequency: "weekly" as const }]
+      : []),
     { path: "/promotores", priority: 0.7, changeFrequency: "weekly" as const },
     { path: "/organizadores", priority: 0.7, changeFrequency: "weekly" as const },
     { path: "/asociaciones", priority: 0.7, changeFrequency: "weekly" as const },
@@ -112,15 +123,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
-  for (const venue of venues) {
-    const path = `/salas/${venue.slug}`;
-    urls.push({
-      url: `${base}${path}`,
-      lastModified: venue.updatedAt,
-      changeFrequency: "monthly",
-      priority: 0.7,
-      alternates: { languages: makeAlternates(path) },
-    });
+  if (!ESPACIOS_HIDDEN) {
+    for (const venue of venues) {
+      const path = `/salas/${venue.slug}`;
+      urls.push({
+        url: `${base}${path}`,
+        lastModified: venue.updatedAt,
+        changeFrequency: "monthly",
+        priority: 0.7,
+        alternates: { languages: makeAlternates(path) },
+      });
+    }
   }
 
   for (const festival of festivals) {

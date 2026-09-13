@@ -3,13 +3,19 @@
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { ANUNCIOS_HIDDEN, MAPA_HIDDEN } from "@/lib/feature-flags";
 
 const LINKS = [
   { href: "/eventos", key: "events" as const, color: "punk-red" },
   { href: "/bandas", key: "bands" as const, color: "punk-green" },
-  { href: "/mapa", key: "map" as const, color: "punk-acid" },
-  { href: "/tablon", key: "announcements" as const, color: "punk-yellow" },
-] as const;
+  { href: "/festivales", key: "festivals" as const, color: "punk-yellow" },
+  ...(!MAPA_HIDDEN
+    ? [{ href: "/mapa", key: "map" as const, color: "punk-acid" }]
+    : []),
+  ...(!ANUNCIOS_HIDDEN
+    ? [{ href: "/tablon", key: "announcements" as const, color: "punk-pink" }]
+    : []),
+];
 
 export function DataFocusedQuickLinks() {
   const t = useTranslations("home.explore");

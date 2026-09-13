@@ -110,6 +110,10 @@
         "title": "IRAGARKIAK",
         "desc": "Deialdiak, bilaketak eta aukerak"
       },
+      "festivals": {
+        "title": "JAIALDIAK",
+        "desc": "Eskenako jaialdiak"
+      },
       "map": {
         "title": "MAPA",
         "desc": "Guneak eta jaialdiak mapan"
