@@ -46,6 +46,31 @@
     "proposalLimitExceeded": "Solo puedes enviar una propuesta de este tipo cada 5 días. Por favor, espera antes de enviar otra.",
     "modalClose": "Aceptar"
   },
+  "premium": {
+    "egunerokoSaria": {
+      "metaTitle": "Eguneroko Saria — Sorteo diario | Nafarrock",
+      "metaDescription": "Gira el vinilo y gana premios rock. Sección Premium Nafarrock.",
+      "title": "Eguneroko Saria",
+      "subtitle": "Sorteo diario. Gira el vinilo y deja que la aguja elija tu premio.",
+      "mcTitle": "Maestro de ceremonias",
+      "play": "Start / Play",
+      "spinning": "Girando…",
+      "winMessage": "¡Zorionak! Te has llevado {prize}",
+      "comeTomorrow": "Vuelve mañana para probar suerte.",
+      "adminMode": "Modo pruebas — administración",
+      "back": "Inicio",
+      "prizes": {
+        "pick_x1": "Putua ×1",
+        "pick_x2": "Puntuak ×2",
+        "pick_x4": "Puntuak ×4",
+        "pick_x8": "Puntuak ×8",
+        "pick_x10": "Puntuak ×10",
+        "cd": "CD",
+        "shirt": "Camiseta",
+        "hoodie": "Sudadera"
+      }
+    }
+  },
   "eventForm": {
     "venueLabel": "Espacio / Festival",
     "venuePlaceholder": "Selecciona un espacio o festival",

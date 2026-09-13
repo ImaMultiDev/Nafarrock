@@ -1,8 +1,7 @@
 "use client";
 
-import { DataFocusedHero } from "./DataFocusedHero";
 import { DataFocusedEvents } from "./DataFocusedEvents";
-import { DataFocusedQuickLinks } from "./DataFocusedQuickLinks";
+import { ExploreSection } from "./ExploreSection";
 import { ManifestoSection } from "./ManifestoSection";
 import { InstallAppSection } from "./InstallAppSection";
 
@@ -24,18 +23,17 @@ type Props = {
 };
 
 /**
- * Variante del home centrada en datos: eventos destacados y próximos como foco principal.
- * Mobile-first, UI/UX agradable. Desktop con grid optimizado.
+ * Home centrado en datos.
+ * Orden: próximos eventos → explorar → manifiesto.
+ * (Hero logo/tagline oculto)
  */
 export function HomeDataFocusedView({
-  featuredEvents,
   upcomingEvents,
 }: Props) {
   return (
     <main className="min-h-screen bg-punk-black">
-      <DataFocusedHero featuredEvents={featuredEvents} />
       <DataFocusedEvents events={upcomingEvents} />
-      <DataFocusedQuickLinks />
+      <ExploreSection />
       <ManifestoSection />
       <InstallAppSection />
     </main>

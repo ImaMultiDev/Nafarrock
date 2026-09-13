@@ -46,6 +46,31 @@
     "proposalLimitExceeded": "Proposamen mota honetako bat bidal dezakezu 5 egunero. Mesedez, itxaron beste bat bidali aurretik.",
     "modalClose": "Onartu"
   },
+  "premium": {
+    "egunerokoSaria": {
+      "metaTitle": "Eguneroko Saria — Eguneko zozketa | Nafarrock",
+      "metaDescription": "Biratu biniloa eta irabazi sari rock-ak. Nafarrock Premium.",
+      "title": "Eguneroko Saria",
+      "subtitle": "Eguneko zozketa. Biratu biniloa eta utzi orratzak zure saria aukeratzen.",
+      "mcTitle": "Ekitaldien maisua",
+      "play": "Hasi / Play",
+      "spinning": "Biratzen…",
+      "winMessage": "Zorionak! {prize} irabazi duzu",
+      "comeTomorrow": "Itzuli bihar zorteaz probatzeko.",
+      "adminMode": "Proba modua — administrazioa",
+      "back": "Hasiera",
+      "prizes": {
+        "pick_x1": "Putua ×1",
+        "pick_x2": "Puntuak ×2",
+        "pick_x4": "Puntuak ×4",
+        "pick_x8": "Puntuak ×8",
+        "pick_x10": "Puntuak ×10",
+        "cd": "CD",
+        "shirt": "Kamiseta",
+        "hoodie": "Sudadera"
+      }
+    }
+  },
   "eventForm": {
     "venueLabel": "Gunea / Jaialdia",
     "venuePlaceholder": "Hautatu gune bat edo jaialdi bat",

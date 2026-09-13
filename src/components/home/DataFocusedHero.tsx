@@ -145,23 +145,6 @@ export function DataFocusedHero({ featuredEvents }: Props) {
               </div>
             </motion.div>
           )}
-
-          {/* CTA rápido si no hay destacados */}
-          {featuredEvents.length === 0 && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="flex justify-center"
-            >
-              <Link
-                href="/eventos"
-                className="rounded-lg border-2 border-punk-red bg-punk-red/20 px-8 py-4 font-punch text-sm uppercase tracking-widest text-punk-red transition-colors hover:bg-punk-red hover:text-punk-white"
-              >
-                {t("cta.exploreEvents")}
-              </Link>
-            </motion.div>
-          )}
         </div>
       </div>
     </section>

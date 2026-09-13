@@ -27,8 +27,10 @@ export default async function AdminLayout({
           <Link href="/admin/bandas" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Bandas</Link>
           <Link href="/admin/importacion-bandas" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Importar bandas</Link>
           <Link href="/admin/salas" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Espacios</Link>
+          <Link href="/admin/importacion-salas" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Importar espacios</Link>
           <Link href="/admin/eventos" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Eventos</Link>
           <Link href="/admin/festivales" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Festivales</Link>
+          <Link href="/admin/importacion-festivales" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Importar festivales</Link>
           <Link href="/admin/usuarios" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Usuarios</Link>
           {!EDITORIAL_MVP_MODE && (
             <>
@@ -39,6 +41,7 @@ export default async function AdminLayout({
             </>
           )}
           <Link href="/admin/bolos" className="font-punch text-xs uppercase tracking-widest text-punk-white/70 hover:text-punk-white">Anuncios</Link>
+          <Link href="/premium/eguneroko-saria" className="font-punch text-xs uppercase tracking-widest text-punk-yellow/80 hover:text-punk-yellow">Eguneroko Saria</Link>
         </div>
       </div>
       <AdminPendingBanners />

@@ -36,12 +36,20 @@ export default async function AdminSalasPage({ searchParams }: Props) {
             {total} espacios · {pending.length} pendientes de aprobar en esta página
           </p>
         </div>
-        <Link
-          href="/admin/salas/nueva"
-          className="border-2 border-punk-pink bg-punk-pink px-6 py-3 font-punch text-sm uppercase tracking-widest text-punk-black transition-all hover:bg-punk-pink/90"
-        >
-          Registrar espacio
-        </Link>
+        <div className="flex flex-wrap gap-3">
+          <Link
+            href="/admin/salas/nueva"
+            className="border-2 border-punk-pink bg-punk-pink px-6 py-3 font-punch text-sm uppercase tracking-widest text-punk-black transition-all hover:bg-punk-pink/90"
+          >
+            Registrar espacio
+          </Link>
+          <Link
+            href="/admin/importacion-salas"
+            className="border-2 border-punk-white/30 px-6 py-3 font-punch text-sm uppercase tracking-widest text-punk-white/70 hover:border-punk-pink hover:text-punk-pink"
+          >
+            Importar CSV
+          </Link>
+        </div>
       </div>
 
       <div className="mt-10 overflow-x-auto">

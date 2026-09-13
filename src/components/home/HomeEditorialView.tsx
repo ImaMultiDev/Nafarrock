@@ -25,8 +25,7 @@ type Props = {
 };
 
 /**
- * Variante editorial del home: hero con guitarra, explorar, manifiesto.
- * Diseño actual conservado para poder volver a él.
+ * Variante editorial: próximos eventos → explorar → hero.
  */
 export function HomeEditorialView({
   featuredEvents,
@@ -34,14 +33,14 @@ export function HomeEditorialView({
 }: Props) {
   return (
     <main className="min-h-screen bg-punk-black">
-      <HeroSection featuredEvents={featuredEvents} />
-      <section className="px-6 pt-4 pb-8 sm:px-12 sm:pt-0 lg:px-20 lg:pb-12">
+      <section className="px-6 pt-4 pb-8 sm:px-12 sm:pt-6 lg:px-20 lg:pb-12">
         <div className="mx-auto max-w-7xl 2xl:max-w-content-wide">
           <UpcomingEventsCarousel events={upcomingEvents} />
         </div>
       </section>
       <ExploreScrollIndicator variant="red" />
       <ExploreSection />
+      <HeroSection featuredEvents={featuredEvents} showCtas={false} />
       <ManifestoSection />
       <InstallAppSection />
     </main>

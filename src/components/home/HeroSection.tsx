@@ -22,9 +22,11 @@ type EventItem = {
 
 type Props = {
   featuredEvents?: EventItem[];
+  /** Si false, oculta los botones CTA (p. ej. para mostrarlos después de próximos eventos) */
+  showCtas?: boolean;
 };
 
-export function HeroSection({ featuredEvents = [] }: Props) {
+export function HeroSection({ featuredEvents = [], showCtas = true }: Props) {
   const t = useTranslations("home");
   return (
     <section className="relative min-h-0 overflow-hidden bg-punk-black sm:min-h-hero-cap">
@@ -151,6 +153,7 @@ export function HeroSection({ featuredEvents = [] }: Props) {
           </motion.p>
 
           {/* CTA: primario sólido + secundario ghost (jerarquía visual) */}
+          {showCtas && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -178,6 +181,7 @@ export function HeroSection({ featuredEvents = [] }: Props) {
               </Link>
             )}
           </motion.div>
+          )}
           </motion.div>
 
           {featuredEvents.length > 0 && (

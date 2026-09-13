@@ -36,12 +36,20 @@ export default async function AdminFestivalesPage({ searchParams }: Props) {
             {total} festivales · {pending.length} pendientes de aprobar en esta página
           </p>
         </div>
-        <Link
-          href="/admin/festivales/nueva"
-          className="border-2 border-punk-red bg-punk-red px-6 py-3 font-punch text-sm uppercase tracking-widest text-punk-black transition-all hover:bg-punk-red/90"
-        >
-          Registrar festival
-        </Link>
+        <div className="flex flex-wrap gap-3">
+          <Link
+            href="/admin/importacion-festivales"
+            className="border-2 border-punk-white/30 px-6 py-3 font-punch text-sm uppercase tracking-widest text-punk-white/70 transition-all hover:border-punk-pink hover:text-punk-pink"
+          >
+            Importar CSV
+          </Link>
+          <Link
+            href="/admin/festivales/nueva"
+            className="border-2 border-punk-red bg-punk-red px-6 py-3 font-punch text-sm uppercase tracking-widest text-punk-black transition-all hover:bg-punk-red/90"
+          >
+            Registrar festival
+          </Link>
+        </div>
       </div>
 
       <div className="mt-10 overflow-x-auto">
